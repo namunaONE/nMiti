@@ -1,0 +1,14 @@
+name: nepali_date_data
+description: Embedded, verified Bikram Sambat calendar tables (BS 1975-2100) for the nepali_date package.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  nepali_date: ^0.1.0
+
+dev_dependencies:
+  test: ">=1.25.0 <2.0.0"

@@ -1,0 +1,12 @@
+name: nmiti_cli
+description: Verification and site-build tools for the nMiti dataset.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  nepali_date: ^0.1.0
+  nepali_date_data: ^0.1.0

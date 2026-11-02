@@ -1,0 +1,25 @@
+name: Keep-alive
+
+# GitHub automatically DISABLES scheduled workflows in repositories with no
+# activity for 60 days. A data repository like this one can easily go months
+# without commits, which would silently kill the daily /today rebuild — the
+# exact failure mode that would end this project's freshness moat. This
+# monthly empty commit keeps the repository permanently "active".
+on:
+  schedule:
+    - cron: "0 3 1 * *" # monthly, 01st of month 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: |
+          git config user.name "nmiti-automation"
+          git config user.email "actions@users.noreply.github.com"
+          git commit --allow-empty -m "chore: keep-alive (prevents GitHub from disabling scheduled workflows after 60 days of inactivity)"
+          git push
