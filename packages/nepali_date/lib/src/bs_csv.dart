@@ -38,6 +38,8 @@ class BsYearRow {
 ///     bs_year,baisakh1,weekday,<12 month lengths>,days,evidence
 ///
 /// Lines starting with '#' are provenance comments and are skipped.
+/// The evidence column is last and may itself contain commas
+/// (comma-separated tags, e.g. "r12-verified,live-2026-11-02").
 /// All dates are parsed as UTC dates.
 List<BsYearRow> parseBsCalendarCsv(String csv) {
   final rows = <BsYearRow>[];
@@ -45,10 +47,10 @@ List<BsYearRow> parseBsCalendarCsv(String csv) {
     final trimmed = line.trim();
     if (trimmed.isEmpty || trimmed.startsWith('#')) continue;
     final cols = trimmed.split(',');
-    if (cols.length != 17) {
-      throw FormatException('Expected 17 columns, got ${cols.length}: "$trimmed"');
-    }
     if (cols[0] == 'bs_year') continue; // header row
+    if (cols.length < 17) {
+      throw FormatException('Expected at least 17 columns, got ${cols.length}: "$trimmed"');
+    }
     final year = int.parse(cols[0]);
     final baisakh1 = _parseIsoDate(cols[1]);
     final months = <int>[for (var i = 3; i <= 14; i++) int.parse(cols[i])];
@@ -58,7 +60,9 @@ List<BsYearRow> parseBsCalendarCsv(String csv) {
       weekday: cols[2],
       months: months,
       days: int.parse(cols[15]),
-      evidence: cols[16],
+      // The evidence column is last; multi-tag rows (e.g. 1989, 2083 in
+      // the core) legitimately carry more than 17 raw comma-separated fields.
+      evidence: cols.sublist(16).join(','),
     ));
   }
   rows.sort((a, b) => a.year.compareTo(b.year));

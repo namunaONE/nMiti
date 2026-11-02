@@ -8,6 +8,7 @@ bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir
 2082,2025-04-14,Mon,31,31,32,31,31,31,30,29,30,29,30,30,365,r12-verified
 2083,2026-04-14,Tue,31,31,32,31,31,31,30,29,30,29,30,30,365,r12-verified
 2084,2027-04-14,Wed,31,31,32,31,31,30,30,30,29,30,30,30,365,official-anchor
+2085,2028-04-13,Thu,31,32,31,32,30,31,30,30,29,30,30,30,366,projection
 ''';
 
 const _identicalRunCsv = '''
@@ -33,9 +34,19 @@ void main() {
   final tail = BsCalendar(allRows.where((r) => r.year >= 2084));
 
   test('parses rows and skips comments and header', () {
-    expect(cal.years, [2081, 2082, 2083, 2084]);
+    expect(cal.years, [2081, 2082, 2083, 2084, 2085]);
     expect(cal.firstYear, 2081);
-    expect(cal.lastYear, 2084);
+    expect(cal.lastYear, 2085);
+  });
+
+  test('parses multi-tag evidence columns (commas inside the last field)', () {
+    const csv = 'bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir,poush,magh,falgun,chaitra,days,evidence\n'
+        '2083,2026-04-14,Tue,31,31,32,31,31,31,30,29,30,29,30,30,365,r12-verified,live-2026-11-02\n';
+    final rows = parseBsCalendarCsv(csv);
+    expect(rows, hasLength(1));
+    expect(rows.first.evidence, 'r12-verified,live-2026-11-02');
+    expect(rows.first.days, 365);
+    expect(rows.first.months, hasLength(12));
   });
 
   test('rejects non-contiguous years', () {
@@ -63,7 +74,7 @@ void main() {
   test('range errors are loud, not silent', () {
     expect(() => cal.fromGregorian(DateTime.utc(1900, 1, 1)), throwsArgumentError);
     expect(() => cal.fromGregorian(DateTime.utc(2100, 1, 1)), throwsArgumentError);
-    expect(() => cal.toGregorian(const BsDate(2083, 7, 30)), throwsArgumentError);
+    expect(() => cal.toGregorian(const BsDate(2083, 7, 31)), throwsArgumentError);
   });
 
   test('invariants hold on the mini table', () {
