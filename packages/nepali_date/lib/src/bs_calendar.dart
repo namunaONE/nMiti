@@ -49,7 +49,7 @@ class BsCalendar {
   BsYearRow row(int year) {
     final r = _byYear[year];
     if (r == null) {
-      throw ArgumentError('BS year $year is outside ${firstYear}..${lastYear}.');
+      throw ArgumentError('BS year $year is outside $firstYear..$lastYear.');
     }
     return r;
   }

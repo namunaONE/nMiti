@@ -6,3 +6,6 @@ environment:
   sdk: ^3.13.0
 
 resolution: workspace
+
+dev_dependencies:
+  test: ">=1.25.0 <2.0.0"

@@ -61,10 +61,9 @@ void main(List<String> args) {
   _write(File('${out.path}/index.html'), _indexHtml(full, today, urlBase, commitSha));
   _write(File('${out.path}/404.html'), _notFoundHtml(urlBase));
   _write(File('${out.path}/robots.txt'),
-      'User-agent: *
-Allow: /
-Sitemap: ${urlBase}sitemap.xml
-');
+      'User-agent: *\n'
+      'Allow: /\n'
+      'Sitemap: ${urlBase}sitemap.xml\n');
   _write(File('${out.path}/.nojekyll'), '');
   _write(File('${out.path}/sitemap.xml'), _sitemap(urlBase));
   _write(File('${out.path}/llms.txt'), _llmsTxt(core, tail, urlBase, today));
@@ -262,12 +261,13 @@ String _monthGrid(BsCalendar full, BsDate today) {
     for (var i = 0; i < cells.length; i += 7)
       '<tr>${cells.sublist(i, i + 7).join()}</tr>'
   ].join();
-  return '<table>
+  return '''
+<table>
 <thead><tr>$heads</tr></thead>
 <tbody>
 $body
 </tbody>
-</table>';
+</table>''';
 }
 
 String _notFoundHtml(String urlBase) => '''
@@ -283,12 +283,12 @@ String _notFoundHtml(String urlBase) => '''
 </html>
 ''';
 
-String _sitemap(String urlBase) =>
-    '<?xml version="1.0" encoding="UTF-8"?>
+String _sitemap(String urlBase) => '''
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>$urlBase</loc><lastmod>${DateTime.now().toUtc().toIso8601String().substring(0, 10)}</lastmod></url>
 </urlset>
-';
+''';
 
 String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) {
   final label = '${bsMonthNameEn(today.month)} ${today.day}, ${today.year} BS';

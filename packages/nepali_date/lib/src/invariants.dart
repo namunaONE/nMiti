@@ -1,3 +1,5 @@
+import 'bs_calendar.dart';
+
 /// A single invariant violation found in calendar data.
 class InvariantViolation {
   final String code;
@@ -50,7 +52,7 @@ void _checkRow(BsCalendar cal, int y, List<InvariantViolation> out) {
       ));
     }
   }
-  final sum = row.months.fold<int>(0, (a, b) => a + b);
+  final sum = row.months.fold<int>(0, (int a, int b) => a + b);
   if (sum != row.days) {
     out.add(InvariantViolation(
       code: 'days-mismatch',
