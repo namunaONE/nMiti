@@ -23,6 +23,10 @@ void main(List<String> args) {
   final tail = tailCalendar;
   final full = fullCalendar;
 
+  // Build provenance, stamped into every artifact (traceable answers).
+  final commitSha = Platform.environment['NM_COMMIT_SHA'] ?? 'local';
+  final runId = Platform.environment['NM_RUN_ID'] ?? 'local';
+
   final fatal = [
     ...validateCore(core),
     ...validateTail(core, tail).where((v) => !v.knownDefect),
@@ -48,12 +52,13 @@ void main(List<String> args) {
   final apiDir = Directory('${out.path}/api/v1')..createSync(recursive: true);
   Directory('${apiDir.path}/calendar').createSync(recursive: true);
 
-  _write(File('${out.path}/api/v1/today.json'), _todayJson(full, today, todayAd, tomorrow, urlBase));
-  _write(File('${out.path}/api/v1/meta.json'), _metaJson(core, tail, urlBase));
+  _write(File('${out.path}/api/v1/today.json'),
+      _todayJson(full, today, todayAd, tomorrow, urlBase, commitSha, runId));
+  _write(File('${out.path}/api/v1/meta.json'), _metaJson(core, tail, urlBase, commitSha));
   for (final y in full.years) {
     _write(File('${apiDir.path}/calendar/$y.json'), _yearJson(full, y, urlBase));
   }
-  _write(File('${out.path}/index.html'), _indexHtml(full, today, urlBase));
+  _write(File('${out.path}/index.html'), _indexHtml(full, today, urlBase, commitSha));
   _write(File('${out.path}/404.html'), _notFoundHtml(urlBase));
   _write(File('${out.path}/robots.txt'),
       'User-agent: *
@@ -66,10 +71,11 @@ Sitemap: ${urlBase}sitemap.xml
 
   final tier = full.row(today.year).evidence.split(',').first;
   stdout.writeln('site built: BS ${today.year}-${today.month}-${today.day} '
-      '(tier: $tier), AD ${_iso(todayAd)}');
+      '(tier: $tier), AD ${_iso(todayAd)}, commit $commitSha');
 }
 
-String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorrow, String urlBase) {
+String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorrow,
+    String urlBase, String commitSha, String runId) {
   final row = full.row(today.year);
   final g = full.toGregorian(today);
   final gTomorrow = full.toGregorian(tomorrow);
@@ -103,6 +109,8 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
   },
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
+  "commit": "$commitSha",
+  "build": "run-$runId",
   "source": "nMiti verified Bikram Sambat dataset (R12 cross-validation, 2026-11-02)",
   "license": "CC0-1.0",
   "homepage": "$urlBase",
@@ -114,7 +122,7 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
 ''';
 }
 
-String _metaJson(BsCalendar core, BsCalendar tail, String urlBase) {
+String _metaJson(BsCalendar core, BsCalendar tail, String urlBase, String commitSha) {
   return '''
 {
   "name": "nmiti-bikram-sambat-dataset",
@@ -131,6 +139,7 @@ String _metaJson(BsCalendar core, BsCalendar tail, String urlBase) {
     "rows": ${tail.years.length},
     "evidence": "projection; only 2084 officially anchored; BS 2096 carries a known labeled defect (364 days)"
   },
+  "commit": "$commitSha",
   "license": "CC0-1.0",
   "homepage": "$urlBase",
   "repository": "https://github.com/namunaONE/nMiti"
@@ -161,7 +170,7 @@ String _yearJson(BsCalendar full, int year, String urlBase) {
 ''';
 }
 
-String _indexHtml(BsCalendar full, BsDate today, String urlBase) {
+String _indexHtml(BsCalendar full, BsDate today, String urlBase, String commitSha) {
   final row = full.row(today.year);
   final g = full.toGregorian(today);
   final tier = row.evidence.split(',').first;
@@ -174,6 +183,7 @@ String _indexHtml(BsCalendar full, BsDate today, String urlBase) {
   final adLabel = '$wdEn, ${_adMonthNames[g.month - 1]} ${g.day}, ${g.year}';
   final adLabelNp = '$wdNp, ${_adMonthNamesNp[g.month - 1]} ${toNepaliDigits(g.day.toString())}, ${toNepaliDigits(g.year.toString())}';
   final builtAt = DateTime.now().toUtc().toIso8601String();
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
   final b1 = full.baisakh1(today.year);
   final tierNote = tier == 'r12-verified'
       ? 'Verified core data (R12 cross-validation, 2026-11-02).'
@@ -222,7 +232,7 @@ ${_monthGrid(full, today)}
 <li><a href="https://github.com/namunaONE/nMiti">Dataset and source code on GitHub</a></li>
 </ul>
 <p>BS ${today.year} began on Baisakh 1, <strong>${_iso(b1)}</strong> (${row.weekday}). This page is rebuilt automatically from the verified dataset — no hand-typed dates anywhere.</p>
-<p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · rebuilt daily around 00:00 Nepal Time (UTC+05:45) · built $builtAt UTC</p>
+<p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · rebuilt daily around 00:00 Nepal Time (UTC+05:45) · built $builtAt UTC from $shortSha</p>
 </main>
 </body>
 </html>

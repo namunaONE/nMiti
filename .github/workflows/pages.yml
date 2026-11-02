@@ -21,14 +21,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: dart-lang/setup-dart@v1.8.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
         with:
           sdk: 3.13.7
       - run: dart pub get
       - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
       - run: dart run nmiti_cli:build_site --out build/site --url https://namunaone.github.io/nMiti/
-      - uses: actions/upload-pages-artifact@v5
+        env:
+          NM_COMMIT_SHA: ${{ github.sha }}
+          NM_RUN_ID: ${{ github.run_id }}
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: build/site
 
@@ -40,4 +43,115 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+  # Defense in depth, layer 6 — with an N-version twist: the deployed output
+  # is verified by an INDEPENDENT implementation (Python, straight from the
+  # canonical CSV), not by the Dart engine that produced it. Two code paths
+  # must agree. A wrong date on a date site is worse than no site.
+  smoke:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Verify deployed output against an independent implementation
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, sys, urllib.request, zoneinfo
+
+          url = "https://namunaone.github.io/nMiti/"
+          bust = "?cachebust=" + os.environ.get("GITHUB_RUN_ID", "0")
+
+          # Independent expectation: computed from the raw CSV, not via Dart.
+          rows = {}
+          with open("data/calendar_bs_core_1975_2083.csv") as f:
+              for line in f:
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  cols = line.split(",")
+                  if cols[0] == "bs_year":
+                      continue
+                  rows[int(cols[0])] = (
+                      datetime.date.fromisoformat(cols[1]),
+                      [int(x) for x in cols[3:15]],
+                  )
+          today = datetime.datetime.now(zoneinfo.ZoneInfo("Asia/Kathmandu")).date()
+          by = max(y for y in rows if rows[y][0] <= today)
+          b1, months = rows[by]
+          if today >= b1 + datetime.timedelta(days=sum(months)):
+              print("SMOKE FAIL: today falls outside the core table")
+              sys.exit(1)
+          doy = (today - b1).days + 1
+          m, d = 1, doy
+          for length in months:
+              if d <= length:
+                  break
+              d -= length
+              m += 1
+          expected = (by, m, d)
+
+          deployed = json.load(urllib.request.urlopen(url + "api/v1/today.json" + bust, timeout=60))
+          got = (deployed["bs"]["year"], deployed["bs"]["month"], deployed["bs"]["day"])
+          ok = True
+          if got != expected:
+              print("SMOKE FAIL: deployed " + str(got) + " != independently computed " + str(expected))
+              ok = False
+
+          gen = datetime.datetime.fromisoformat(deployed["generated_at_utc"].replace("Z", "+00:00"))
+          age = datetime.datetime.now(datetime.timezone.utc) - gen
+          if age > datetime.timedelta(hours=26):
+              print("SMOKE FAIL: stale build, generated " + str(age) + " ago (> 26h freshness SLA)")
+              ok = False
+
+          page = urllib.request.urlopen(url + "index.html" + bust, timeout=60).read().decode("utf-8")
+          names = ["Baisakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
+                   "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"]
+          label = names[m - 1] + " " + str(d) + ", " + str(by) + " BS"
+          if label not in page:
+              print("SMOKE FAIL: index.html does not contain the answer label '" + label + "'")
+              ok = False
+
+          for path in ["", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
+              r = urllib.request.urlopen(url + path + (bust if path else ""), timeout=60)
+              if r.status != 200:
+                  print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))
+                  ok = False
+
+          if not ok:
+              sys.exit(1)
+          print("SMOKE OK: deployed " + str(got) + " matches the independent computation; freshness " + str(age))
+          PY
+
+  # Defense in depth, layer 7 — alert-first. A wrong nightly build with no new
+  # commit cannot be fixed by a revert, so the universal action is an urgent
+  # issue; a push-triggered failure additionally gets an auto-revert PR that a
+  # human approves.
+  alert:
+    needs: smoke
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      - name: Open urgent issue (+ auto-revert PR for push-triggered failures)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh label create urgent --color d73a4a --description "needs urgent attention" --force 2>/dev/null || true
+          gh label create revert --color b60205 --description "auto-generated rollback" --force 2>/dev/null || true
+          gh issue create             --title "URGENT: post-deploy smoke test failed"             --body "The post-deploy smoke test failed after deploying to GitHub Pages. A wrong date on a date site is worse than no site — triage before the next rebuild. Failing run: ${RUN_URL}"             --label urgent || true
+          if [ "${{ github.event_name }}" = "push" ]; then
+            git config user.name "nmiti-automation"
+            git config user.email "actions@users.noreply.github.com"
+            git checkout -b "revert/smoke-${{ github.run_id }}" || exit 0
+            git revert --no-edit HEAD || exit 0
+            git push origin "revert/smoke-${{ github.run_id }}"
+            gh pr create               --title "revert: smoke test failed on main"               --body "Post-deploy smoke test failed; auto-generated revert. A human approves the rollback. Run: ${RUN_URL}"               --label revert --label urgent || true
+          fi

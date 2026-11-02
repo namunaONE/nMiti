@@ -1,0 +1,38 @@
+name: Freshness canary
+
+# Guards the freshness moat: if the daily rebuild silently stops (skipped
+# cron, disabled schedule, Pages outage), this catches it independently.
+# Runs daily at 00:15 NPT, right after the midnight rebuild should land.
+on:
+  schedule:
+    - cron: "30 18 * * *" # 18:30 UTC = 00:15 NPT
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert the live site was built within 26 hours
+        run: |
+          python3 - <<'PY'
+          import datetime, json, urllib.request
+          data = json.load(urllib.request.urlopen(
+              "https://namunaone.github.io/nMiti/api/v1/today.json?canary=1", timeout=60))
+          gen = datetime.datetime.fromisoformat(data["generated_at_utc"].replace("Z", "+00:00"))
+          age = datetime.datetime.now(datetime.timezone.utc) - gen
+          print("live site last built " + str(age) + " ago")
+          if age > datetime.timedelta(hours=26):
+              raise SystemExit(
+                  "STALE: live site built " + str(age) +
+                  " ago (> 26h freshness SLA). Scheduled rebuild likely skipped or disabled.")
+          PY
+      - name: Alert if stale
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create urgent --color d73a4a --force 2>/dev/null || true
+          gh issue create             --title "URGENT: site is stale — daily rebuild stopped"             --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs, whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project."             --label urgent || true
