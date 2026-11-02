@@ -17,6 +17,6 @@ jobs:
       - run: dart pub get
       - run: dart analyze
       # Workspace root has no test/ dir; the suites live in member packages.
-# 'dart test packages' scans all members, so future packages are covered automatically.
-- run: dart test packages
+      # 'dart test packages' scans all members, so future packages are covered automatically.
+      - run: dart test packages
       - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
