@@ -1,0 +1,30 @@
+/// Canonical projection-tail CSV (BS 2084-2100), byte-identical to
+/// data/calendar_bs_tail_2084_2100.csv. Kept in sync by the invariant checker.
+const String calendarBsTailCsv = r```
+# nMiti canonical Bikram Sambat calendar - projection tail (BS 2084-2100)
+# EVIDENCE TIER: projection. NOT officially verified beyond the first row.
+# Baisakh 1 2084 = Wed 2027-04-14 is the only official anchor; rows 2085-2100 chain from it.
+# BS 2096 = 364 days - genuine upstream defect, preserved and labeled (projection-defect).
+# It is flagged by the invariant checker as a known defect and must be replaced with official
+# data when Nepal publishes the BS 2084+ calendar. Do not silently fix it.
+# Format: bs_year,baisakh1_iso,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir,poush,magh,falgun,chaitra,days,evidence
+# License: CC0-1.0 (data). See data/README.md for full provenance.
+bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir,poush,magh,falgun,chaitra,days,evidence
+2084,2027-04-14,Wed,31,31,32,31,31,30,30,30,29,30,30,30,365,official-anchor
+2085,2028-04-13,Thu,31,32,31,32,30,31,30,30,29,30,30,30,366,projection
+2086,2029-04-14,Sat,30,32,31,32,31,30,30,30,29,30,30,30,365,projection
+2087,2030-04-14,Sun,31,31,32,31,31,31,30,29,30,30,30,30,366,projection
+2088,2031-04-15,Tue,30,31,32,32,30,31,30,30,29,30,30,30,365,projection
+2089,2032-04-14,Wed,30,32,31,32,31,30,30,30,29,30,30,30,365,projection
+2090,2033-04-14,Thu,30,32,31,32,31,30,30,30,29,30,30,30,365,projection
+2091,2034-04-14,Fri,31,31,32,31,31,31,30,30,29,30,30,30,366,projection
+2092,2035-04-15,Sun,30,31,32,32,31,30,30,30,29,30,30,30,365,projection
+2093,2036-04-14,Mon,30,32,31,32,31,30,30,30,29,30,30,30,365,projection
+2094,2037-04-14,Tue,31,31,32,31,31,30,30,30,29,30,30,30,365,projection
+2095,2038-04-14,Wed,31,31,32,31,31,31,30,29,30,30,30,30,366,projection
+2096,2039-04-15,Fri,30,31,32,32,31,30,30,29,30,29,30,30,364,projection-defect
+2097,2040-04-13,Fri,31,32,31,32,31,30,30,30,29,30,30,30,366,projection
+2098,2041-04-14,Sun,31,31,32,31,31,31,29,30,29,30,29,31,365,projection
+2099,2042-04-14,Mon,31,31,32,31,31,31,30,29,29,30,30,30,365,projection
+2100,2043-04-14,Tue,31,32,31,32,30,31,30,29,30,29,30,30,365,projection
+```;

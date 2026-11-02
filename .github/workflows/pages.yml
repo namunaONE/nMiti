@@ -1,0 +1,43 @@
+name: Site
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # 00:15 / 06:15 / 12:15 / 18:15 UTC — the 18:15 UTC run is 00:00 Nepal Time.
+    - cron: "15 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1.8.1
+        with:
+          sdk: 3.13.7
+      - run: dart pub get
+      - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
+      - run: dart run nmiti_cli:build_site --out build/site --url https://namunaone.github.io/nMiti/
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

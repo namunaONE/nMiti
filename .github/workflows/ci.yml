@@ -1,0 +1,19 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dart-lang/setup-dart@v1.8.1
+        with:
+          sdk: 3.13.7
+      - run: dart pub get
+      - run: dart analyze
+      - run: dart test
+      - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv

@@ -1,0 +1,8 @@
+name: nepali_date
+description: Open, verified Bikram Sambat (Nepali) calendar. BS <-> AD conversion with evidence-tagged data.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace

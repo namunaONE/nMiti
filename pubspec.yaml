@@ -1,0 +1,14 @@
+name: nmiti
+publish_to: none
+description: nMiti - open Bikram Sambat (Nepali) calendar commons. Workspace root.
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/nepali_date
+  - packages/nepali_date_data
+  - packages/nmiti_cli
+
+dev_dependencies:
+  lints: ">=5.0.0 <7.0.0"
+  test: ">=1.25.0 <2.0.0"
