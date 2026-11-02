@@ -4,8 +4,13 @@ on:
   push:
     branches: [main]
   schedule:
-    # 00:15 / 06:15 / 12:15 / 18:15 UTC — the 18:15 UTC run is 00:00 Nepal Time.
+    # Rebuild every 6h. GitHub docs: scheduled runs are delayed during high
+    # load (worst documented around the top of the hour; queued jobs can even
+    # be DROPPED). We run at :15 (off-peak) and add a midnight guard: if the
+    # 18:15 UTC (00:00 NPT) rollover run is dropped, the 19:15 UTC (01:00 NPT)
+    # run rebuilds within the hour.
     - cron: "15 */6 * * *"
+    - cron: "15 19 * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,6 +20,8 @@ permissions:
 
 concurrency:
   group: pages
+  # Note: a scheduled run may cancel an in-flight push deploy of the same
+  # commit; both deploy identical HEAD content, so this is harmless.
   cancel-in-progress: true
 
 jobs:
@@ -45,10 +52,11 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
 
-  # Defense in depth, layer 6 — with an N-version twist: the deployed output
-  # is verified by an INDEPENDENT implementation (Python, straight from the
-  # canonical CSV), not by the Dart engine that produced it. Two code paths
-  # must agree. A wrong date on a date site is worse than no site.
+  # Defense in depth, layer 6 — N-version: the deployed output is verified by
+  # an INDEPENDENT implementation (Python, straight from the canonical CSV),
+  # not by the Dart engine that produced it. A wrong date on a date site is
+  # worse than no site. Fetches retry: transient 5xx during CDN propagation
+  # must not produce false alarms.
   smoke:
     needs: deploy
     runs-on: ubuntu-latest
@@ -57,10 +65,20 @@ jobs:
       - name: Verify deployed output against an independent implementation
         run: |
           python3 - <<'PY'
-          import datetime, json, os, sys, urllib.request, zoneinfo
+          import datetime, json, os, sys, time, urllib.error, urllib.request, zoneinfo
 
           url = "https://namunaone.github.io/nMiti/"
           bust = "?cachebust=" + os.environ.get("GITHUB_RUN_ID", "0")
+
+          def get(u):
+              for attempt in range(3):
+                  try:
+                      return urllib.request.urlopen(u, timeout=60)
+                  except Exception as e:
+                      print("fetch attempt " + str(attempt + 1) + " of " + u + " failed: " + str(e))
+                      if attempt == 2:
+                          raise
+                      time.sleep(30)
 
           # Independent expectation: computed from the raw CSV, not via Dart.
           rows = {}
@@ -91,7 +109,7 @@ jobs:
               m += 1
           expected = (by, m, d)
 
-          deployed = json.load(urllib.request.urlopen(url + "api/v1/today.json" + bust, timeout=60))
+          deployed = json.load(get(url + "api/v1/today.json" + bust))
           got = (deployed["bs"]["year"], deployed["bs"]["month"], deployed["bs"]["day"])
           ok = True
           if got != expected:
@@ -104,7 +122,7 @@ jobs:
               print("SMOKE FAIL: stale build, generated " + str(age) + " ago (> 26h freshness SLA)")
               ok = False
 
-          page = urllib.request.urlopen(url + "index.html" + bust, timeout=60).read().decode("utf-8")
+          page = get(url + "index.html" + bust).read().decode("utf-8")
           names = ["Baisakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
                    "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"]
           label = names[m - 1] + " " + str(d) + ", " + str(by) + " BS"
@@ -113,7 +131,7 @@ jobs:
               ok = False
 
           for path in ["", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
-              r = urllib.request.urlopen(url + path + (bust if path else ""), timeout=60)
+              r = get(url + path + (bust if path else ""))
               if r.status != 200:
                   print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))
                   ok = False
@@ -126,7 +144,8 @@ jobs:
   # Defense in depth, layer 7 — alert-first. A wrong nightly build with no new
   # commit cannot be fixed by a revert, so the universal action is an urgent
   # issue; a push-triggered failure additionally gets an auto-revert PR that a
-  # human approves.
+  # human approves. Note: issues opened by the workflow token notify repo
+  # watchers — make sure the maintainer watches this repository.
   alert:
     needs: smoke
     if: failure()

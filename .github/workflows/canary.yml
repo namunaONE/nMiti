@@ -1,8 +1,8 @@
 name: Freshness canary
 
-# Guards the freshness moat: if the daily rebuild silently stops (skipped
-# cron, disabled schedule, Pages outage), this catches it independently.
-# Runs daily at 00:15 NPT, right after the midnight rebuild should land.
+# Guards the freshness moat: if the daily rebuild silently stops (dropped or
+# delayed cron, disabled schedule, Pages outage), this catches it
+# independently. Runs daily at 00:15 NPT, right after the midnight rebuild.
 on:
   schedule:
     - cron: "30 18 * * *" # 18:30 UTC = 00:15 NPT
@@ -18,16 +18,26 @@ jobs:
       - name: Assert the live site was built within 26 hours
         run: |
           python3 - <<'PY'
-          import datetime, json, urllib.request
-          data = json.load(urllib.request.urlopen(
-              "https://namunaone.github.io/nMiti/api/v1/today.json?canary=1", timeout=60))
+          import datetime, json, time, urllib.request
+
+          def get(u):
+              for attempt in range(3):
+                  try:
+                      return urllib.request.urlopen(u, timeout=60)
+                  except Exception as e:
+                      print("fetch attempt " + str(attempt + 1) + " failed: " + str(e))
+                      if attempt == 2:
+                          raise
+                      time.sleep(30)
+
+          data = json.load(get("https://namunaone.github.io/nMiti/api/v1/today.json?canary=1"))
           gen = datetime.datetime.fromisoformat(data["generated_at_utc"].replace("Z", "+00:00"))
           age = datetime.datetime.now(datetime.timezone.utc) - gen
           print("live site last built " + str(age) + " ago")
           if age > datetime.timedelta(hours=26):
               raise SystemExit(
                   "STALE: live site built " + str(age) +
-                  " ago (> 26h freshness SLA). Scheduled rebuild likely skipped or disabled.")
+                  " ago (> 26h freshness SLA). Scheduled rebuild likely dropped, delayed or disabled.")
           PY
       - name: Alert if stale
         if: failure()
@@ -35,4 +45,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create urgent --color d73a4a --force 2>/dev/null || true
-          gh issue create             --title "URGENT: site is stale — daily rebuild stopped"             --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs, whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project."             --label urgent || true
+          gh issue create             --title "URGENT: site is stale — daily rebuild stopped"             --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs (runs can be delayed or dropped under high load), whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project."             --label urgent || true
