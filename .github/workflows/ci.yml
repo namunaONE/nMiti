@@ -6,6 +6,9 @@ on:
   pull_request:
   merge_group: # merge-queue support: CI re-runs on the combined result
 
+permissions:
+  contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest

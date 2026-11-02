@@ -1,0 +1,8 @@
+Data files in this repository (data/*.csv and their embedded copies in
+packages/nepali_date_data) are dedicated to the public domain under the
+Creative Commons CC0 1.0 Universal (CC0-1.0) dedication.
+
+Full legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+Code (everything other than the data tables) is licensed under the MIT
+License — see the LICENSE file at the repository root.

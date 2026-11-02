@@ -165,7 +165,11 @@ jobs:
         run: |
           gh label create urgent --color d73a4a --description "needs urgent attention" --force 2>/dev/null || true
           gh label create revert --color b60205 --description "auto-generated rollback" --force 2>/dev/null || true
-          gh issue create             --title "URGENT: post-deploy smoke test failed"             --body "The post-deploy smoke test failed after deploying to GitHub Pages. A wrong date on a date site is worse than no site — triage before the next rebuild. Failing run: ${RUN_URL}"             --label urgent || true
+          if gh issue list --state open --json title --jq '.[].title' | grep -qF 'URGENT: post-deploy smoke test failed'; then
+            echo "urgent issue already open — not duplicating"
+          else
+            gh issue create --title "URGENT: post-deploy smoke test failed" --body "The post-deploy smoke test failed after deploying to GitHub Pages. A wrong date on a date site is worse than no site — triage before the next rebuild. Failing run: ${RUN_URL}" --label urgent || true
+          fi
           if [ "${{ github.event_name }}" = "push" ]; then
             git config user.name "nmiti-automation"
             git config user.email "actions@users.noreply.github.com"

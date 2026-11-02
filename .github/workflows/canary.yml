@@ -18,7 +18,7 @@ jobs:
       - name: Assert the live site was built within 26 hours
         run: |
           python3 - <<'PY'
-          import datetime, json, time, urllib.request
+          import datetime, json, os, time, urllib.request
 
           def get(u):
               for attempt in range(3):
@@ -30,7 +30,8 @@ jobs:
                           raise
                       time.sleep(30)
 
-          data = json.load(get("https://namunaone.github.io/nMiti/api/v1/today.json?canary=1"))
+          url = "https://namunaone.github.io/nMiti/api/v1/today.json?canary=" + os.environ.get("GITHUB_RUN_ID", "0")
+          data = json.load(get(url))
           gen = datetime.datetime.fromisoformat(data["generated_at_utc"].replace("Z", "+00:00"))
           age = datetime.datetime.now(datetime.timezone.utc) - gen
           print("live site last built " + str(age) + " ago")
@@ -45,4 +46,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create urgent --color d73a4a --force 2>/dev/null || true
-          gh issue create             --title "URGENT: site is stale — daily rebuild stopped"             --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs (runs can be delayed or dropped under high load), whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project."             --label urgent || true
+          if gh issue list --state open --json title --jq '.[].title' | grep -qF 'URGENT: site is stale — daily rebuild stopped'; then
+            echo "urgent issue already open — not duplicating"
+          else
+            gh issue create --title "URGENT: site is stale — daily rebuild stopped" --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs (runs can be delayed or dropped under high load), whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project." --label urgent || true
+          fi

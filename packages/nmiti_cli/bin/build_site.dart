@@ -103,7 +103,11 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
     "label_en": "$wdEn, ${_adMonthNames[todayAd.month - 1]} ${todayAd.day}, ${todayAd.year}"
   },
   "tomorrow": {
-    "bs": "$tomorrow",
+    "bs": {
+      "year": ${tomorrow.year},
+      "month": ${tomorrow.month},
+      "day": ${tomorrow.day}
+    },
     "ad": "${_iso(gTomorrow)}"
   },
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
