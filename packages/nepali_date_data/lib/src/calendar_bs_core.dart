@@ -1,6 +1,6 @@
 /// Canonical core CSV (BS 1975-2083), byte-identical to
 /// data/calendar_bs_core_1975_2083.csv. Kept in sync by the invariant checker.
-const String calendarBsCoreCsv = r```
+const String calendarBsCoreCsv = r'''
 # nMiti canonical Bikram Sambat calendar - core tier (BS 1975-2083)
 # Machine-verified 2026-11-02 (R12 cross-validation): 109/109 rows and 1308/1308 cells
 # identical to amitgaru/nepali-datetime calendar_bs.csv (blob 83e8c16794ba4aa3da4dee472efe18ac2fb8e94e).
@@ -120,4 +120,4 @@ bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir
 2081,2024-04-13,Sat,31,32,31,32,31,30,30,30,29,30,29,31,366,r12-verified
 2082,2025-04-14,Mon,31,31,32,31,31,31,30,29,30,29,30,30,365,r12-verified
 2083,2026-04-14,Tue,31,31,32,31,31,31,30,29,30,29,30,30,365,r12-verified,live-2026-11-02
-```;
+''';

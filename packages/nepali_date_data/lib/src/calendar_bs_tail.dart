@@ -1,6 +1,6 @@
 /// Canonical projection-tail CSV (BS 2084-2100), byte-identical to
 /// data/calendar_bs_tail_2084_2100.csv. Kept in sync by the invariant checker.
-const String calendarBsTailCsv = r```
+const String calendarBsTailCsv = r'''
 # nMiti canonical Bikram Sambat calendar - projection tail (BS 2084-2100)
 # EVIDENCE TIER: projection. NOT officially verified beyond the first row.
 # Baisakh 1 2084 = Wed 2027-04-14 is the only official anchor; rows 2085-2100 chain from it.
@@ -27,4 +27,4 @@ bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir
 2098,2041-04-14,Sun,31,31,32,31,31,31,29,30,29,30,29,31,365,projection
 2099,2042-04-14,Mon,31,31,32,31,31,31,30,29,29,30,30,30,365,projection
 2100,2043-04-14,Tue,31,32,31,32,30,31,30,29,30,29,30,30,365,projection
-```;
+''';
