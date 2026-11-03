@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:nepali_date/nepali_date.dart';
 import 'package:nepali_date_data/nepali_date_data.dart';
+import 'package:nepali_sankranti/nepali_sankranti.dart';
 
 const _adMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -27,9 +28,13 @@ void main(List<String> args) {
   final commitSha = Platform.environment['NM_COMMIT_SHA'] ?? 'local';
   final runId = Platform.environment['NM_RUN_ID'] ?? 'local';
 
+  final sankrantiRows = parseSankrantiTableCsv(
+      _readSourceFile('data/sankranti_moments_1975_2100.csv'));
+
   final fatal = [
     ...validateCore(core),
     ...validateTail(core, tail).where((v) => !v.knownDefect),
+    ..._validateSankrantiTable(full, sankrantiRows),
   ];
   if (fatal.isNotEmpty) {
     for (final v in fatal) {
@@ -54,6 +59,8 @@ void main(List<String> args) {
   _write(File('${out.path}/api/v1/today.json'),
       _todayJson(full, today, todayAd, tomorrow, urlBase, commitSha, runId));
   _write(File('${out.path}/api/v1/meta.json'), _metaJson(core, tail, urlBase, commitSha));
+  _write(File('${out.path}/api/v1/sankranti.json'),
+      _sankrantiJson(sankrantiRows, urlBase, commitSha));
   for (final y in full.years) {
     _write(File('${apiDir.path}/calendar/$y.json'), _yearJson(full, y, urlBase));
   }
@@ -69,6 +76,10 @@ void main(List<String> args) {
   final dataDir = Directory('${out.path}/data')..createSync(recursive: true);
   _write(File('${dataDir.path}/calendar_bs_core_1975_2083.csv'), calendarBsCoreCsv);
   _write(File('${dataDir.path}/calendar_bs_tail_2084_2100.csv'), calendarBsTailCsv);
+  _write(File('${dataDir.path}/sankranti_moments_1975_2100.csv'),
+      File('data/sankranti_moments_1975_2100.csv').readAsStringSync());
+  _write(File('${out.path}/sankranti.html'),
+      _sankrantiPageHtml(sankrantiRows, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -236,7 +247,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -454,7 +465,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -510,7 +521,7 @@ String _accuracyPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
 <p>Errors are fixed in the open. If you find a wrong date, <a href="https://github.com/namunaONE/nMiti/issues">open an issue</a> with evidence - a photo of a printed patro, an official publication, or a contradicting source. We verify, update the CSV with an evidence tag, and the correction is visible in the repository history. Projections are never silently corrected; only official data replaces a projection. Known defects stay visible and labeled until then.</p>
 
 <h2 id="scope">What nMiti is not</h2>
-<p>Not a panchang: no tithi, no festivals, no muhurta - only the civil Bikram Sambat calendar, the date layer every source agrees on. A sankranti-moments dataset (precise solar ingress timestamps, BS 1975-2100) is planned so every month boundary becomes independently checkable against the sun. Until a claim is on this site with evidence, we do not make it.</p>
+<p>Not a panchang: no tithi, no festivals, no muhurta - only the civil Bikram Sambat calendar, the date layer every source agrees on. The <a href="sankranti.html">sankranti moments</a> (precise solar ingress timestamps, BS 1975-2100) are now served, so every month boundary is independently checkable against the sun. Until a claim is on this site with evidence, we do not make it.</p>
 ''';
   return _docShell(
       'Accuracy &amp; honesty',
@@ -755,10 +766,210 @@ String _notFoundHtml(String urlBase) => '''
 </html>
 ''';
 
+/// Reads a source data file from the repository (not the build output).
+/// The build runs from the repo root; some runners use a package cwd.
+String _readSourceFile(String rel) {
+  for (final path in [rel, '../../' + rel]) {
+    final f = File(path);
+    if (f.existsSync()) return f.readAsStringSync();
+  }
+  throw StateError('Required source data file not found: ' + rel);
+}
+
+/// Build-time gate: the site refuses to deploy from a broken sankranti
+/// table. Everything except the six pinned projection-tail defects is
+/// fatal; the defects are the documented upstream month-length issue.
+List<String> _validateSankrantiTable(
+    BsCalendar full, List<SankrantiTableRow> rows) {
+  final problems = <String>[];
+  if (rows.length != 1512) {
+    problems.add('sankranti table must have 1,512 rows, got ' +
+        rows.length.toString());
+  }
+  if (rows.isNotEmpty &&
+      (rows.first.bsYear != 1975 || rows.last.bsYear != 2100)) {
+    problems.add('sankranti table must span BS 1975-2100');
+  }
+  for (final v in checkSankrantiWindows(full, rows)) {
+    if (!kProjectionWindowDefects.contains(v.key)) {
+      problems.add('sankranti window violation: ' + v.toString());
+    }
+  }
+  return problems;
+}
+
+String _skTwo(int n) => n < 10 ? '0' + n.toString() : n.toString();
+
+String _skUtc(DateTime t) =>
+    t.year.toString() +
+    '-' +
+    _skTwo(t.month) +
+    '-' +
+    _skTwo(t.day) +
+    'T' +
+    _skTwo(t.hour) +
+    ':' +
+    _skTwo(t.minute) +
+    ':00Z';
+
+String _skNpt(DateTime t) {
+  final wall = t.add(nepalTimeOffset);
+  return wall.year.toString() +
+      '-' +
+      _skTwo(wall.month) +
+      '-' +
+      _skTwo(wall.day) +
+      'T' +
+      _skTwo(wall.hour) +
+      ':' +
+      _skTwo(wall.minute) +
+      ':00+05:45';
+}
+
+/// api/v1/sankranti.json: the rasi the Sun is in now, and the next
+/// sankranti, derived from the published table. minutes_until counts
+/// from THIS BUILD; consumers should compute from instant_utc.
+String _sankrantiJson(
+    List<SankrantiTableRow> rows, String urlBase, String commitSha) {
+  final now = DateTime.now().toUtc();
+  var idx = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (!rows[i].ingressUtc.isAfter(now)) idx = i;
+  }
+  if (idx + 1 >= rows.length) {
+    throw StateError('No next sankranti after the table end.');
+  }
+  final cur = rows[idx];
+  final nxt = rows[idx + 1];
+  final minutesUntil = nxt.ingressUtc.difference(now).inMinutes;
+  return [
+    '{',
+    '  "as_of_utc": "' + _skUtc(now) + '",',
+    '  "as_of_npt": "' + _skNpt(now) + '",',
+    '  "current_rasi": {',
+    '    "index": ' + cur.monthNo.toString() + ',',
+    '    "rasi_en": "' + cur.rashiEn + '",',
+    '    "rasi_ne": "' + cur.rashiNe + '",',
+    '    "since_utc": "' + _skUtc(cur.ingressUtc) + '",',
+    '    "since_npt": "' + _skNpt(cur.ingressUtc) + '",',
+    '    "bs_year": ' + cur.bsYear.toString() + ',',
+    '    "month_no": ' + cur.monthNo.toString() + ',',
+    '    "month_en": "' + cur.monthEn + '"',
+    '  },',
+    '  "next": {',
+    '    "rasi_en": "' + nxt.rashiEn + '",',
+    '    "rasi_ne": "' + nxt.rashiNe + '",',
+    '    "bs_year": ' + nxt.bsYear.toString() + ',',
+    '    "month_no": ' + nxt.monthNo.toString() + ',',
+    '    "month_en": "' + nxt.monthEn + '",',
+    '    "instant_utc": "' + _skUtc(nxt.ingressUtc) + '",',
+    '    "instant_npt": "' + _skNpt(nxt.ingressUtc) + '",',
+    '    "minutes_until": ' + minutesUntil.toString() + ',',
+    '    "date_provisional": ' +
+        (nxt.dateProvisional ? 'true' : 'false') +
+        ',',
+    '    "evidence": "' + nxt.evidence + '"',
+    '  },',
+    '  "dataset": {',
+    '    "rows": 1512,',
+    '    "bs_range": "1975-2100",',
+    '    "csv": "' + urlBase + 'data/sankranti_moments_1975_2100.csv",',
+    '    "page": "' + urlBase + 'sankranti.html"',
+    '  },',
+    '  "generated_at_utc": "' + now.toIso8601String() + '",',
+    '  "commit": "' + commitSha + '"',
+    '}',
+  ].join('\n');
+}
+
+/// The /sankranti page: now-card, accuracy contract, window law, era
+/// law, the 24 cataloged exceptions and the 6 projection defects.
+String _sankrantiPageHtml(
+    List<SankrantiTableRow> rows, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final now = DateTime.now().toUtc();
+  var idx = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (!rows[i].ingressUtc.isAfter(now)) idx = i;
+  }
+  if (idx + 1 >= rows.length) {
+    throw StateError('No next sankranti after the table end.');
+  }
+  final cur = rows[idx];
+  final nxt = rows[idx + 1];
+  final minutesUntil = nxt.ingressUtc.difference(now).inMinutes;
+  final daysUntil = minutesUntil ~/ 1440;
+  final hoursUntil = (minutesUntil % 1440) ~/ 60;
+  final minsRemain = minutesUntil % 60;
+  final exceptions =
+      rows.where((r) => r.eraLaw == 'pre_2036_exception').toList();
+  final defects = rows.where((r) => r.eraLaw == 'projection_defect').toList();
+  final provisional = rows.where((r) => r.dateProvisional).length;
+  final d0 = rows.where((r) => r.startsOnDelta == 0).length;
+  final d1 = rows.where((r) => r.startsOnDelta == 1).length;
+  final dm1 = rows.where((r) => r.startsOnDelta == -1).length;
+  final body = '''
+<h1>Sankranti <span lang="ne">· संक्रान्ति</span></h1>
+<p>The Bikram Sambat calendar is solar: every BS month begins when the Sun crosses into a new rasi (zodiac sign) - a precise instant called the sankranti. This page serves those instants for BS 1975-2100, computed by the open <code>nepali_sankranti</code> engine and re-verified by CI on every run.</p>
+
+<h2 id="sankranti-now">Now</h2>
+<p>The Sun is currently in <strong lang="ne">${cur.rashiNe}</strong> (${cur.rashiEn}), since ${_skNpt(cur.ingressUtc)} Nepal Time.</p>
+<p>The next sankranti is <strong lang="ne">${nxt.rashiNe}</strong> (${nxt.rashiEn}) - the start of ${nxt.monthEn} ${nxt.bsYear} BS - at <strong>${_skNpt(nxt.ingressUtc)}</strong> NPT (${_skUtc(nxt.ingressUtc)} UTC), about ${daysUntil}d ${hoursUntil}h ${minsRemain}m from this build. This page is rebuilt every 6 hours: for a live countdown, use the instant from <a href="${urlBase}api/v1/sankranti.json">api/v1/sankranti.json</a>, not this page.</p>
+
+<h2 id="accuracy-contract">Accuracy contract</h2>
+<ul>
+<li><strong>Declared tolerance: &plusmn;31 seconds maximum</strong> (~15s mean) against published panchang sankranti times - the residual measured across all 1,308 verified moments of the R5 calibration artifact. Published instants are minute-rounded.</li>
+<li><strong>Engine:</strong> Meeus (<em>Astronomical Algorithms</em>, Ch.25) solar longitude plus the R5-calibrated Lahiri-family ayanamsa, solved to under a second. No third-party ephemeris.</li>
+<li><strong>Verification:</strong> the engine reproduces all 1,308 artifact moments with identical NPT civil dates, deltas and weekdays; CI re-computes all 1,512 published rows from the canonical calendar on every run and the site refuses to deploy on any mismatch.</li>
+<li><strong>Provisional dates:</strong> ${provisional} of 1,512 instants fall within 45 minutes of Nepal midnight and are flagged <code>date_provisional</code> in the data - a conservative honesty flag, not an error under the declared tolerance.</li>
+</ul>
+
+<h2 id="window-law">The window law</h2>
+<p>Every BS month must start on the NPT civil date of its sankranti or the day after - never before it. The dataset records this as <code>starts_on_delta</code>:</p>
+<table>
+<tr><th>Delta</th><th>Meaning</th><th>Rows</th></tr>
+<tr><td><code>0</code></td><td>Month starts on the ingress date.</td><td>${d0}</td></tr>
+<tr><td><code>1</code></td><td>Month starts the day after the ingress.</td><td>${d1}</td></tr>
+<tr><td><code>-1</code></td><td>Month starts <em>before</em> the ingress - only with an <code>era_law</code> label, never unlabeled.</td><td>${dm1}</td></tr>
+</table>
+<p><strong>Era law:</strong> <code>ok</code> (window holds) - the default; <code>pre_2036_exception</code> - the ${exceptions.length} cataloged pre-2036 consensus rows below; <code>projection_defect</code> - the ${defects.length} labeled projection-tail defects below. CI enforces the law over the entire calendar on every run.</p>
+
+<h2 id="exceptions">The ${exceptions.length} cataloged exceptions</h2>
+<p>All before-sankranti rows are pre-2036 consensus-class months, cataloged in the R5 verification experiment and pinned by test. They are data, not bugs: in these historical consensus rows the calendar month started a day before the computed ingress.</p>
+<table>
+<tr><th>BS year-month</th><th>Month</th><th>Rashi</th><th>Sankranti (NPT)</th></tr>
+${exceptions.map((r) => '<tr><td>' + r.bsYear.toString() + '-' + r.monthNo.toString() + '</td><td>' + r.monthEn + '</td><td>' + r.rashiEn + '</td><td>' + _skNpt(r.ingressUtc) + '</td></tr>').join('\n')}
+</table>
+
+<h2 id="projection-defects">Projection-tail defects, stated plainly</h2>
+<p>BS 2084-2100 month lengths are projections (only Baisakh 1 2084 is officially anchored). In ${defects.length} rows the projected month starts before its sankranti. These are upstream projection defects - preserved, labeled <code>projection_defect</code>, and pinned by test so any new one fails CI. They will be replaced with official data when Nepal publishes the BS 2084+ calendar. Not silently fixed.</p>
+<table>
+<tr><th>BS year-month</th><th>Month</th><th>Sankranti (NPT)</th></tr>
+${defects.map((r) => '<tr><td>' + r.bsYear.toString() + '-' + r.monthNo.toString() + '</td><td>' + r.monthEn + '</td><td>' + _skNpt(r.ingressUtc) + '</td></tr>').join('\n')}
+</table>
+<p><strong>BS 2096 note:</strong> the 364-day projection-defect year keeps every sankranti window - that defect is in the year length, not the month boundaries.</p>
+
+<h2 id="data">Data and API</h2>
+<ul>
+<li><a href="${urlBase}data/sankranti_moments_1975_2100.csv">Full CSV</a> - 1,512 rows, CC0-1.0, with provenance comments.</li>
+<li><a href="${urlBase}api/v1/sankranti.json">api/v1/sankranti.json</a> - current rasi and next sankranti, stamped with the deploy commit.</li>
+<li>Regenerate locally: <code>dart run nepali_sankranti:generate</code>.</li>
+<li><a href="${urlBase}methodology.html">Methodology</a> - how the engine and dataset are verified.</li>
+</ul>
+''';
+  return _docShell(
+      'Sankranti moments',
+      'Sidereal solar ingress (sankranti) moments for every BS month 1975-2100: current rasi, next sankranti, accuracy contract, era law and labeled defects.',
+      urlBase,
+      'sankranti.html',
+      body,
+      shortSha);
+}
+
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'sankranti.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -783,6 +994,8 @@ Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
 Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv
+Sankranti moments (solar ingress, current rasi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
+Served sankranti CSV: ${urlBase}data/sankranti_moments_1975_2100.csv
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 

@@ -138,11 +138,44 @@ jobs:
               print("SMOKE FAIL: index.html lost its client-guard anchors (ans-en / cal-grid)")
               ok = False
 
+          # Sankranti API: independently recomputed from the raw CSV.
+          sk_rows = []
+          with open("data/sankranti_moments_1975_2100.csv") as f:
+              for line in f:
+                  line = line.strip()
+                  if not line or line.startswith("#"):
+                      continue
+                  cols = line.split(",")
+                  if cols[0] == "bs_year":
+                      continue
+                  sk_rows.append((cols[5], int(cols[0]), int(cols[1])))
+          now_utc = datetime.datetime.now(datetime.timezone.utc)
+          cur = None
+          nxt = None
+          for r in sk_rows:
+              t = datetime.datetime.fromisoformat(r[0].replace("Z", "+00:00"))
+              if t <= now_utc:
+                  cur = r
+              elif nxt is None:
+                  nxt = r
+          sk = json.load(get(url + "api/v1/sankranti.json" + bust))
+          if sk["current_rasi"]["index"] != cur[2] or sk["current_rasi"]["bs_year"] != cur[1]:
+              print("SMOKE FAIL: deployed current rasi BS " + str(sk["current_rasi"]["bs_year"]) + "-" + str(sk["current_rasi"]["index"]) + " != independently computed BS " + str(cur[1]) + "-" + str(cur[2]))
+              ok = False
+          if sk["next"]["instant_utc"] != nxt[0]:
+              print("SMOKE FAIL: deployed next sankranti " + sk["next"]["instant_utc"] + " != CSV " + nxt[0])
+              ok = False
+          exp_mu = (datetime.datetime.fromisoformat(nxt[0].replace("Z", "+00:00")) - now_utc).total_seconds() / 60
+          if abs(sk["next"]["minutes_until"] - exp_mu) > 60:
+              print("SMOKE FAIL: minutes_until " + str(sk["next"]["minutes_until"]) + " vs expected ~" + str(int(exp_mu)))
+              ok = False
+
           # Honesty layer pages: deployed and carrying their key anchors.
           for path, markers in [
               ("accuracy.html", ['id="evidence-tiers"', "2096", "errata"]),
               ("methodology.html", ['id="layers"', "anchor chain"]),
               ("data.html", ['id="data-dictionary"', "data/calendar_bs_core_1975_2083.csv"]),
+              ("sankranti.html", ['id="sankranti-now"', "pre_2036_exception", "projection_defect"]),
           ]:
               doc = get(url + path + bust).read().decode("utf-8")
               for marker in markers:
@@ -159,6 +192,10 @@ jobs:
           if "2096" not in tail_csv or "projection-defect" not in tail_csv:
               print("SMOKE FAIL: served tail CSV is not the canonical file")
               ok = False
+          sk_csv = get(url + "data/sankranti_moments_1975_2100.csv" + bust).read().decode("utf-8")
+          if "bs_year,month_no,month_en" not in sk_csv or "era_law" not in sk_csv or ",2100," not in sk_csv:
+              print("SMOKE FAIL: served sankranti CSV is not the canonical file")
+              ok = False
 
           # Embeddable widget: file, contract markers, and example page.
           widget_js = get(url + "embed/v1/widget.js" + bust).read().decode("utf-8")
@@ -171,7 +208,7 @@ jobs:
               print("SMOKE FAIL: embed example page lost its snippet")
               ok = False
 
-          for path in ["", "accuracy.html", "methodology.html", "data.html", "embed/v1/widget.js", "embed/example.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
+          for path in ["", "accuracy.html", "methodology.html", "data.html", "embed/v1/widget.js", "embed/example.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "data/sankranti_moments_1975_2100.csv", "sankranti.html", "api/v1/sankranti.json", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
               r = get(url + path + (bust if path else ""))
               if r.status != 200:
                   print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))
