@@ -79,3 +79,13 @@ The brand/project remains nMiti. The dataset remains neutral CC0 data.
   100 accessibility, 100 SEO.
 - .pubignore and a publish dry-run size gate before any pub.dev release.
 - Every interactive addition must ship a size budget measured in CI.
+
+## Design system
+
+The UI follows a written rulebook, not taste: docs/design-system/RULES.md.
+Design inherits the same discipline as code: tokens are the only source of
+visual values, WCAG 2.2 AA is the accessibility floor, every design change
+ships through the PR checklist in the rulebook, and token changes follow
+SemVer with a changelog (docs/design-system/CHANGELOG.md). Deliberate
+deviations are recorded as ADRs (docs/design-system/adr/) — never made
+silently.
