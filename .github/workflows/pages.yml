@@ -160,7 +160,18 @@ jobs:
               print("SMOKE FAIL: served tail CSV is not the canonical file")
               ok = False
 
-          for path in ["", "accuracy.html", "methodology.html", "data.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
+          # Embeddable widget: file, contract markers, and example page.
+          widget_js = get(url + "embed/v1/widget.js" + bust).read().decode("utf-8")
+          for marker in ["data-nmiti", "NPT_MS", "attachShadow"]:
+              if marker not in widget_js:
+                  print("SMOKE FAIL: widget.js missing marker '" + marker + "'")
+                  ok = False
+          emb = get(url + "embed/example.html" + bust).read().decode("utf-8")
+          if "embed/v1/widget.js" not in emb or 'data-nmiti="today"' not in emb:
+              print("SMOKE FAIL: embed example page lost its snippet")
+              ok = False
+
+          for path in ["", "accuracy.html", "methodology.html", "data.html", "embed/v1/widget.js", "embed/example.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
               r = get(url + path + (bust if path else ""))
               if r.status != 200:
                   print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))

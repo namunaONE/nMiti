@@ -76,6 +76,10 @@ void main(List<String> args) {
       _methodologyPageHtml(urlBase, commitSha));
   _write(File('${out.path}/data.html'),
       _dataPageHtml(core, tail, urlBase, commitSha));
+  final embedDir = Directory('${out.path}/embed/v1')..createSync(recursive: true);
+  _write(File('${embedDir.path}/widget.js'), _widgetJs(full, today, urlBase));
+  _write(File('${out.path}/embed/example.html'),
+      _embedExampleHtml(urlBase, commitSha));
 
   final tier = full.row(today.year).evidence.split(',').first;
   stdout.writeln('site built: BS ${today.year}-${today.month}-${today.day} '
@@ -596,6 +600,149 @@ String _dataPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
       urlBase, 'data.html', body, shortSha);
 }
 
+/// Embeddable "today in BS" widget (HYA-399). A single dependency-free
+/// <script> that renders today's Bikram Sambat date into every
+/// <div data-nmiti="today"></div> on the host page, inside a Shadow DOM
+/// so no styles leak either way. The date is recomputed in the browser
+/// in Nepal Time (fixed UTC+05:45) from the same verified year rows as
+/// the site client-side guard, so embeds are correct at Nepal midnight
+/// without any server round-trip. Terms: free; the visible "via nMiti"
+/// credit link is the condition of use. No tracking, no cookies, no
+/// external requests. Fails closed: on any error an embed shows only
+/// the credit link, never a wrong date. Served from a versioned path
+/// (/embed/v1/); a future v2 will be a new path so v1 keeps working.
+String _widgetJs(BsCalendar full, BsDate today, String urlBase) {
+  final monthsEn = [for (var m = 1; m <= 12; m++) '"${bsMonthNameEn(m)}"'].join(',');
+  final monthsNp = [for (var m = 1; m <= 12; m++) '"${bsMonthNameNp(m)}"'].join(',');
+  final adEn = [for (final n in _adMonthNames) '"$n"'].join(',');
+  final adNp = [for (final n in _adMonthNamesNp) '"$n"'].join(',');
+  return '''
+/* nMiti "today in Bikram Sambat" embed widget v1.
+   Docs and terms: ${urlBase}embed/example.html
+   Free to use. Condition: the visible "via nMiti" credit link stays.
+   No tracking, no cookies, no external requests - the date is computed
+   in the browser from verified year rows (fails closed, never wrong). */
+(function () {
+  'use strict';
+  var NPT_MS = 20700000; // Nepal Time: fixed UTC+05:45, no DST, ever.
+  var ROWS = ${_rowsForJs(full, today.year)};
+  var M_EN = [$monthsEn];
+  var M_NP = [$monthsNp];
+  var AD_EN = [$adEn];
+  var AD_NP = [$adNp];
+  var W_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var W_NP = ['आइतबार', 'सोमबार', 'मङ्गलबार', 'बुधबार', 'बिहीबार', 'शुक्रबार', 'शनिबार'];
+  var NP_DIGITS = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+  var SITE = '$urlBase';
+  function npNum(n) {
+    n = String(n);
+    var out = '';
+    for (var i = 0; i < n.length; i++) {
+      out += (n[i] >= '0' && n[i] <= '9') ? NP_DIGITS[+n[i]] : n[i];
+    }
+    return out;
+  }
+  function parseIso(s) { return Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)); }
+  function isoOf(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function weekdayOf(adIso) { return new Date(parseIso(adIso) + 43200000).getUTCDay(); }
+  function bsFromAd(adIso) {
+    var t = parseIso(adIso);
+    for (var i = 0; i < ROWS.length; i++) {
+      var r = ROWS[i];
+      var b1 = parseIso(r[1]);
+      var days = 0;
+      for (var j = 0; j < 12; j++) { days += r[2][j]; }
+      if (t >= b1 && t < b1 + days * 86400000) {
+        var doy = Math.floor((t - b1) / 86400000) + 1;
+        var m = 1, d = doy;
+        for (var k = 0; k < 12; k++) { if (d <= r[2][k]) { break; } d -= r[2][k]; m++; }
+        return { y: r[0], m: m, d: d };
+      }
+    }
+    return null;
+  }
+  function creditHtml() {
+    return '<a class="nmiti-credit" href="' + SITE + '">via nMiti — open Bikram Sambat calendar</a>';
+  }
+  function render(host) {
+    var root = host.shadowRoot || host.attachShadow({ mode: 'open' });
+    var lang = host.getAttribute('data-nmiti-lang') || 'both';
+    var nowAd = isoOf(Date.now() + NPT_MS);
+    var nowBs = bsFromAd(nowAd);
+    var css = ''
+      + ':host{display:block;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;max-width:34rem}'
+      + '.nmiti-w{border:1px solid #8884;border-radius:10px;padding:.55rem .9rem}'
+      + '.nmiti-d{display:block;font-weight:600}'
+      + '.nmiti-credit{display:block;font-size:.75rem;opacity:.75;margin-top:.15rem;color:inherit}';
+    var html = '<style>' + css + '</style><div class="nmiti-w">';
+    if (nowBs) {
+      var wd = weekdayOf(nowAd);
+      var ay = +nowAd.slice(0, 4), am = +nowAd.slice(5, 7), ad = +nowAd.slice(8, 10);
+      if (lang !== 'ne') {
+        html += '<span class="nmiti-d">Today: ' + M_EN[nowBs.m - 1] + ' ' + nowBs.d + ', ' + nowBs.y + ' BS'
+          + ' — ' + W_EN[wd] + ', ' + AD_EN[am - 1] + ' ' + ad + ', ' + ay + '</span>';
+      }
+      if (lang !== 'en') {
+        html += '<span class="nmiti-d" lang="ne">' + (lang === 'ne' ? 'आज: ' : '') + M_NP[nowBs.m - 1] + ' ' + npNum(nowBs.d) + ', ' + npNum(nowBs.y)
+          + ' — ' + W_NP[wd] + ', ' + AD_NP[am - 1] + ' ' + npNum(ad) + ', ' + npNum(ay) + '</span>';
+      }
+    } else {
+      html += '<span class="nmiti-d">Today in Nepal (Bikram Sambat)</span>';
+    }
+    html += creditHtml() + '</div>';
+    root.innerHTML = html;
+  }
+  function scan() {
+    var nodes = document.querySelectorAll('[data-nmiti="today"]');
+    for (var i = 0; i < nodes.length; i++) {
+      try {
+        render(nodes[i]);
+      } catch (e) {
+        try { nodes[i].innerHTML = '<a href="' + SITE + '">via nMiti — open Bikram Sambat calendar</a>'; } catch (e2) {}
+      }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', scan);
+  } else {
+    scan();
+  }
+  setInterval(scan, 600000); // long-lived tabs roll over at Nepal midnight
+})();
+''';
+}
+
+/// The /embed/example.html page: how to embed the widget, the terms of
+/// use, and a live demo.
+String _embedExampleHtml(String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final body = '''
+<h1>Embed the "today in BS" widget <span lang="ne">· आजको मिति विजेट</span></h1>
+<p>Show today's Bikram Sambat date on your site - free, no tracking, no cookies, no external requests. The date is computed in the visitor's browser in Nepal Time (UTC+05:45) from nMiti's verified year rows, so embeds are correct at Nepal midnight without any server round-trip.</p>
+
+<h2 id="snippet">Copy-paste snippet</h2>
+<pre><code>&lt;div data-nmiti="today"&gt;&lt;/div&gt;
+&lt;script src="https://namunaone.github.io/nMiti/embed/v1/widget.js" async&gt;&lt;/script&gt;</code></pre>
+<p>Options: <code>data-nmiti-lang="both"</code> (default) — English + Nepali · <code>"en"</code> — English only · <code>"ne"</code> — Nepali only. Put the attribute on the target div.</p>
+
+<h2 id="terms">Terms</h2>
+<ul>
+<li>Free to use on any site. The visible "via nMiti" credit link must stay - you may rephrase the text, but it must link to nMiti.</li>
+<li>No tracking, no cookies, no external requests - the widget is a single static file and computes everything locally.</li>
+<li>Versioned: this is v1 at <code>/embed/v1/</code>; a future v2 will be a separate path so v1 keeps working forever.</li>
+<li>Data license: CC0-1.0 · code: MIT. If anything ever looks wrong, <a href="${urlBase}accuracy.html">we say so publicly</a>.</li>
+</ul>
+
+<h2 id="demo">Live demo</h2>
+<div data-nmiti="today"></div>
+<script src="v1/widget.js" async></script>
+''';
+  return _docShell(
+      'Embed widget',
+      'Free embeddable today in Bikram Sambat widget for any website - copy-paste, no tracking, correct at Nepal midnight by design.',
+      urlBase, 'embed/example.html', body, shortSha);
+}
+
 String _notFoundHtml(String urlBase) => '''
 <!DOCTYPE html>
 <html lang="en">
@@ -612,7 +759,7 @@ String _notFoundHtml(String urlBase) => '''
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -637,6 +784,7 @@ Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
 Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv
+Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 
 Coverage: verified core BS 1975-${core.lastYear}; labeled projection tail BS ${tail.firstYear}-${tail.lastYear}. Only Baisakh 1 2084 (2027-04-14) is officially anchored; BS 2096 carries a known upstream defect (364 days), preserved and labeled.
