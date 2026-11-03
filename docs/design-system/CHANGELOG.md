@@ -7,6 +7,27 @@ Format: Keep a Changelog. Versioning: SemVer.
 The token file (tokens.css) ships with the M3 site work; its values are
 governed by this changelog from now on.
 
+## [0.2.0] - 2026-11-03
+
+### Added
+- tokens.css v0.2.0 shipped as `packages/nmiti_cli/design/tokens.css`,
+  inlined into every page at build time; the site now runs on the system.
+- Answer-first premium homepage: sticky header + nav, hero with kicker and
+  the bilingual answers, boxed calendar lattice with per-cell Gregorian
+  dates, weekend-red legend (ADR-0001), verification stat tiles, a
+  machine-readable panel that now also links `llms.txt`, and a footer that
+  names the one script the page ships and why.
+
+### Fixed
+- Dark-mode AA contrast: the old accent `#0a72c4` (3.73:1 on dark) is
+  retired; pages now use the token accent `#2563eb` light (5.17:1) /
+  `#60a5fa` dark (7.31:1).
+
+### Changed
+- The client-side guard now rewrites the calendar with markup identical
+  to the build-time grid (Devanagari + Gregorian per cell, weekend red,
+  boxed lattice), so a midnight correction is visually seamless.
+
 ## [0.1.0] - 2026-11-03
 
 ### Added
