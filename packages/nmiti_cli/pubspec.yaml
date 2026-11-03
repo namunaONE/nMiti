@@ -10,3 +10,4 @@ resolution: workspace
 dependencies:
   nepali_date: ^0.1.0
   nepali_date_data: ^0.1.0
+  nepali_sankranti: ^0.1.0
