@@ -1,53 +1,105 @@
-name: Freshness canary
+name: Freshness & correctness canary
 
-# Guards the freshness moat: if the daily rebuild silently stops (dropped or
-# delayed cron, disabled schedule, Pages outage), this catches it
-# independently. Runs daily at 00:15 NPT, right after the midnight rebuild.
+# Guards two moats independently of the Site workflow:
+#   1. Freshness - if the daily rebuild silently stops (dropped, delayed or
+#      disabled cron; Pages outage), the 26h SLA alert fires.
+#   2. Correctness - the deployed today.json must carry the BS date that an
+#      INDEPENDENT implementation computes from the canonical CSVs in Nepal
+#      Time. A wrong date on a date site is worse than no site.
+# Runs 4x/day (every 6h NPT): 00:15, 06:15, 12:15, 18:15 NPT.
 on:
   schedule:
-    - cron: "30 18 * * *" # 18:30 UTC = 00:15 NPT
+    - cron: "30 18 * * *" # 18:30 UTC = 00:15 NPT - right after the midnight rollover
+    - cron: "30 0 * * *"  # 00:30 UTC = 06:15 NPT
+    - cron: "30 6 * * *"  # 06:30 UTC = 12:15 NPT
+    - cron: "30 12 * * *" # 12:30 UTC = 18:15 NPT
   workflow_dispatch:
 
 permissions:
+  contents: read # to read the canonical CSVs for the independent computation
   issues: write
 
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Assert the live site was built within 26 hours
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Assert the live site is fresh AND carries today's correct BS date
         run: |
           python3 - <<'PY'
-          import datetime, json, os, time, urllib.request
+          import datetime, json, os, time, urllib.request, zoneinfo
 
           def get(u):
               for attempt in range(3):
                   try:
                       return urllib.request.urlopen(u, timeout=60)
                   except Exception as e:
-                      print("fetch attempt " + str(attempt + 1) + " failed: " + str(e))
+                      print("fetch attempt " + str(attempt + 1) + " of " + u + " failed: " + str(e))
                       if attempt == 2:
                           raise
                       time.sleep(30)
 
           url = "https://namunaone.github.io/nMiti/api/v1/today.json?canary=" + os.environ.get("GITHUB_RUN_ID", "0")
           data = json.load(get(url))
+
+          problems = []
+
+          # 1. Freshness: built within 26h.
           gen = datetime.datetime.fromisoformat(data["generated_at_utc"].replace("Z", "+00:00"))
           age = datetime.datetime.now(datetime.timezone.utc) - gen
           print("live site last built " + str(age) + " ago")
           if age > datetime.timedelta(hours=26):
-              raise SystemExit(
-                  "STALE: live site built " + str(age) +
-                  " ago (> 26h freshness SLA). Scheduled rebuild likely dropped, delayed or disabled.")
+              problems.append("STALE: built " + str(age) + " ago (> 26h freshness SLA)")
+
+          # 2. Correctness: independent computation, straight from the raw
+          #    CSVs (never via the Dart engine), in Nepal Time.
+          rows = {}
+          for path in ["data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv"]:
+              with open(path) as f:
+                  for line in f:
+                      line = line.strip()
+                      if not line or line.startswith("#"):
+                          continue
+                      cols = line.split(",")
+                      if cols[0] == "bs_year":
+                          continue
+                      rows[int(cols[0])] = (
+                          datetime.date.fromisoformat(cols[1]),
+                          [int(x) for x in cols[3:15]],
+                      )
+          today = datetime.datetime.now(zoneinfo.ZoneInfo("Asia/Kathmandu")).date()
+          candidates = [y for y in rows if rows[y][0] <= today]
+          if not candidates:
+              raise SystemExit("CANARY FAIL: no calendar row covers today " + str(today))
+          by = max(candidates)
+          b1, months = rows[by]
+          if today >= b1 + datetime.timedelta(days=sum(months)):
+              raise SystemExit("CANARY FAIL: today " + str(today) + " falls outside the dataset (last row BS " + str(by) + ")")
+          doy = (today - b1).days + 1
+          m, d = 1, doy
+          for length in months:
+              if d <= length:
+                  break
+              d -= length
+              m += 1
+          expected = (by, m, d)
+          got = (data["bs"]["year"], data["bs"]["month"], data["bs"]["day"])
+          print("independent NPT computation: " + str(expected) + "; deployed: " + str(got))
+          if got != expected:
+              problems.append("WRONG DATE: deployed " + str(got) + " != independently computed " + str(expected) + " (Asia/Kathmandu)")
+
+          if problems:
+              raise SystemExit("CANARY FAIL: " + "; ".join(problems))
+          print("CANARY OK: fresh and correct (" + str(got) + ")")
           PY
-      - name: Alert if stale
+      - name: Alert
         if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh label create urgent --color d73a4a --force 2>/dev/null || true
-          if gh issue list --state open --json title --jq '.[].title' | grep -qF 'URGENT: site is stale — daily rebuild stopped'; then
-            echo "urgent issue already open — not duplicating"
+          if gh issue list --state open --json title --jq '.[].title' | grep -qF 'URGENT: live site stale or showing the wrong date'; then
+            echo "urgent issue already open - not duplicating"
           else
-            gh issue create --title "URGENT: site is stale — daily rebuild stopped" --body "The live site at https://namunaone.github.io/nMiti/ has not been rebuilt within the 26-hour freshness SLA. Check the Site workflow runs (runs can be delayed or dropped under high load), whether scheduled workflows were disabled (60-day inactivity rule), and Pages status. A stale 'today' page destroys the exact value proposition of this project." --label urgent || true
+            gh issue create --title "URGENT: live site stale or showing the wrong date" --body "The freshness/correctness canary failed for https://namunaone.github.io/nMiti/. Either the daily rebuild stopped (dropped, delayed or disabled cron; Pages outage) or the deployed today.json carries a BS date that does not match an independent computation from the canonical CSVs in Asia/Kathmandu time. A wrong date on a date site is worse than no site - triage now. Failing run: https://github.com/namunaONE/nMiti/actions/runs/${{ github.run_id }}" --label urgent || true
           fi

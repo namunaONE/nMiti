@@ -4,13 +4,17 @@ on:
   push:
     branches: [main]
   schedule:
-    # Rebuild every 6h. GitHub docs: scheduled runs are delayed during high
-    # load (worst documented around the top of the hour; queued jobs can even
-    # be DROPPED). We run at :15 (off-peak) and add a midnight guard: if the
-    # 18:15 UTC (00:00 NPT) rollover run is dropped, the 19:15 UTC (01:00 NPT)
-    # run rebuilds within the hour.
-    - cron: "15 */6 * * *"
-    - cron: "15 19 * * *"
+    # Rebuild every 6h. GitHub documents that scheduled runs are delayed
+    # under high load and queued jobs can be DROPPED - on the first night
+    # after launch (2026-11-02/03) BOTH midnight runs were skipped and the
+    # site served the previous date for hours. The Nepal-midnight rollover
+    # therefore gets THREE independent shots (00:00, 00:30, 01:00 NPT); the
+    # browser-side Nepal-time guard (build_site.dart) corrects the page for
+    # humans no matter what, and the correctness canary alarms if the static
+    # build is stale or wrong.
+    - cron: "15 */6 * * *" # 00:15/06:15/12:15/18:15 UTC; the 18:15 run = 00:00 NPT rollover
+    - cron: "45 18 * * *" # 18:45 UTC = 00:30 NPT rollover backstop
+    - cron: "15 19 * * *" # 19:15 UTC = 01:00 NPT rollover guard
   workflow_dispatch:
 
 permissions:
@@ -128,6 +132,10 @@ jobs:
           label = names[m - 1] + " " + str(d) + ", " + str(by) + " BS"
           if label not in page:
               print("SMOKE FAIL: index.html does not contain the answer label '" + label + "'")
+              ok = False
+
+          if ('id="ans-en"' not in page) or ('id="cal-grid"' not in page):
+              print("SMOKE FAIL: index.html lost its client-guard anchors (ans-en / cal-grid)")
               ok = False
 
           for path in ["", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
