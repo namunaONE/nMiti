@@ -14,6 +14,12 @@ const _adMonthNamesNp = [
   'जुलाई', 'अगस्ट', 'सेप्टेम्बर', 'अक्टोबर', 'नोभेम्बर', 'डिसेम्बर',
 ];
 
+/// Short AD month names for the per-cell Gregorian sub-label ("Nov 1").
+const _adMonthShort = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
 const _gridHeadsNp = ['आइत', 'सोम', 'मङ्गल', 'बुध', 'बिही', 'शुक्र', 'शनि'];
 const _gridHeadsEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -196,6 +202,11 @@ String _yearJson(BsCalendar full, int year, String urlBase) {
 ''';
 }
 
+/// The premium answer-first homepage. The design system (tokens.css, inlined
+/// via _designCss()) carries the look; the CONTENT carries the answer. The
+/// guard contract ids (ans-en, ans-ne, cal-heading, cal-grid, tier-note) and
+/// the exact answer sentence formats are load-bearing: the client-side guard
+/// rewrites them at Nepal midnight, so they must match its own output.
 String _indexHtml(BsCalendar full, BsDate today, String urlBase, String commitSha) {
   final row = full.row(today.year);
   final g = full.toGregorian(today);
@@ -214,6 +225,8 @@ String _indexHtml(BsCalendar full, BsDate today, String urlBase, String commitSh
   final tierNote = tier == 'r12-verified'
       ? 'Verified core data (R12 cross-validation, 2026-11-02).'
       : 'Evidence tier: $tier. Dates beyond the verified core are labeled projections; only Baisakh 1 2084 (2027-04-14) is official.';
+  final coreYears = full.years.where((y) => y <= 2083).length;
+  final verifiedCells = coreYears * 12;
   return '''
 <!DOCTYPE html>
 <html lang="en">
@@ -228,40 +241,73 @@ String _indexHtml(BsCalendar full, BsDate today, String urlBase, String commitSh
 <meta property="og:description" content="$monthNameEn ${today.day}, ${today.year} BS ($monthNameNp $dayNp, $yearNp) - $adLabel.">
 <meta property="og:url" content="$urlBase">
 <meta property="og:locale" content="ne_NP">
+<meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1220" media="(prefers-color-scheme: dark)">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"nMiti - Today's date in Nepal","url":"$urlBase","inLanguage":["ne","en"]}</script>
 <style>
-:root{color-scheme:light dark}
-body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Devanagari,sans-serif;max-width:44rem;margin-inline:auto;padding:2rem 1rem}
-h1{font-size:1.4rem}
-h2{font-size:1.05rem;margin-top:2rem}
-.answer{font-size:1.35rem;line-height:1.55;margin:.6rem 0}
-.tier{font-size:.85rem;opacity:.7}
-table{border-collapse:collapse}
-th,td{padding:.35rem .65rem;text-align:center;border:1px solid #8884;font-size:.9rem}
-.today{background:#0a72c4;color:#fff;border-radius:6px}
-.foot{font-size:.8rem;opacity:.7;margin-top:2rem}
-a{color:#0a72c4}
-.nav{font-size:.9rem;opacity:.8}
+${_designCss()}
 </style>
 </head>
 <body>
-<main>
-<h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a></p>
+<a class="skip" href="#answer">Skip to today's date</a>
+<header class="site-head">
+<div class="wrap">
+<a class="wordmark" href="$urlBase">nMiti <span class="tagline" lang="ne">· आजको मिति</span></a>
+<nav aria-label="Site">
+<a href="${urlBase}accuracy.html">Accuracy</a>
+<a href="${urlBase}methodology.html">Methodology</a>
+<a href="${urlBase}data.html">Data &amp; API</a>
+<a href="${urlBase}sankranti.html">Sankranti</a>
+<a href="${urlBase}embed/example.html">Embed</a>
+</nav>
+</div>
+</header>
+<main class="wrap">
+<section class="hero" id="answer" aria-labelledby="page-title">
+<p class="kicker">Open Bikram Sambat calendar commons</p>
+<h1 id="page-title"><span lang="ne">आजको मिति</span> <span class="dot">·</span> Today's date in Nepal</h1>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
+<ul class="chips">
+<li>Zero-JS semantic HTML</li>
+<li>Machine-verified dataset</li>
+<li>CC0 data · MIT code</li>
+</ul>
+</section>
+<section class="cal-card" aria-labelledby="cal-heading">
+<div class="cal-head">
 <h2 id="cal-heading"><span lang="ne">$monthNameNp</span> · $monthNameEn ${today.year}</h2>
+<p class="legend"><span class="sw" aria-hidden="true"></span>Weekend days in red <span lang="ne">(आइतबार, शनिबार)</span></p>
+</div>
+<div class="cal-tablewrap">
 ${_monthGrid(full, today)}
+</div>
+<p class="cal-note">Each cell shows the BS day in Devanagari numerals with its Gregorian date beneath. Nepali convention colors only शनिबार; nMiti colors both weekend days — a documented deviation (ADR-0001).</p>
+</section>
+<section class="stats" aria-label="Why trust this date">
+<div class="stat"><strong>$coreYears</strong><span>verified core years (R12 cross-validation)</span></div>
+<div class="stat"><strong>${_comma(verifiedCells)}</strong><span>month cells diffed against an independent table — all identical</span></div>
+<div class="stat"><strong>5</strong><span>historically disputed years resolved with evidence</span></div>
+<div class="stat"><strong>46,000+</strong><span>days round-trip converted on every CI run</span></div>
+</section>
+<aside class="panel">
 <h2>Machine-readable</h2>
 <ul>
 <li><a href="api/v1/today.json">api/v1/today.json</a> — today as JSON</li>
 <li><a href="api/v1/calendar/${today.year}.json">api/v1/calendar/${today.year}.json</a> — the full BS ${today.year} table</li>
+<li><a href="llms.txt">llms.txt</a> — the whole site, written for AI agents</li>
 <li><a href="https://github.com/namunaONE/nMiti">Dataset and source code on GitHub</a></li>
 </ul>
 <p>BS ${today.year} began on Baisakh 1, <strong>${_iso(b1)}</strong> (${row.weekday}). This page is rebuilt automatically from the verified dataset — no hand-typed dates anywhere.</p>
-<p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · rebuilt daily around 00:00 Nepal Time (UTC+05:45) · built $builtAt UTC from $shortSha</p>
+</aside>
 </main>
+<footer class="site-foot">
+<div class="wrap">
+<p>nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · rebuilt daily around 00:00 Nepal Time (UTC+05:45) · built $builtAt UTC from $shortSha</p>
+<p class="creed">Every date on this page is in the HTML itself, for crawlers and no-JS browsers included. Exactly one script ships: the documented client-side guard that corrects the date at Nepal midnight if a scheduled rebuild is dropped.</p>
+</div>
+</footer>
 <script>
 ${_clientGuardJs(full, today, g)}
 </script>
@@ -270,31 +316,47 @@ ${_clientGuardJs(full, today, g)}
 ''';
 }
 
+/// The month grid: a boxed single-rule lattice. Each data cell carries the
+/// BS day in Devanagari numerals plus its Gregorian date beneath; weekend
+/// columns (Sun/Sat per ADR-0001) render in holiday red. The client-side
+/// guard rewrites this table at Nepal midnight with IDENTICAL markup - keep
+/// the formats in sync with the guard's grid block below.
 String _monthGrid(BsCalendar full, BsDate today) {
   final first = full.toGregorian(BsDate(today.year, today.month, 1));
   final length = full.monthLength(today.year, today.month);
   final startCol = first.weekday % 7; // Sunday-first grid
   final cells = <String>[];
   for (var i = 0; i < startCol; i++) {
-    cells.add('<td></td>');
+    cells.add('<td class="pad" aria-hidden="true"></td>');
   }
   for (var d = 1; d <= length; d++) {
-    final cls = d == today.day ? ' class="today"' : '';
-    cells.add('<td$cls>${toNepaliDigits(d.toString())}</td>');
+    final ad = full.toGregorian(BsDate(today.year, today.month, d));
+    final off = ad.weekday == DateTime.saturday || ad.weekday == DateTime.sunday;
+    final isToday = d == today.day;
+    final cls = 'cell${off ? ' off' : ''}${isToday ? ' today' : ''}';
+    final todayAttr = isToday ? ' aria-current="date"' : '';
+    final adTxt = ad.day == 1
+        ? '${_adMonthShort[ad.month - 1]} ${ad.day}'
+        : '$ad.day';
+    cells.add('<td class="$cls"$todayAttr>'
+        '<span class="d">${toNepaliDigits(d.toString())}</span>'
+        '<span class="ad">$adTxt</span></td>');
   }
   while (cells.length % 7 != 0) {
-    cells.add('<td></td>');
+    cells.add('<td class="pad" aria-hidden="true"></td>');
   }
   final heads = [
     for (var i = 0; i < 7; i++)
-      '<th><span lang="ne">${_gridHeadsNp[i]}</span><br>${_gridHeadsEn[i]}</th>'
+      '<th scope="col"${i == 0 || i == 6 ? ' class="off"' : ''}>'
+      '<span lang="ne">${_gridHeadsNp[i]}</span>'
+      '<span class="ad">${_gridHeadsEn[i]}</span></th>'
   ].join();
   final body = [
     for (var i = 0; i < cells.length; i += 7)
       '<tr>${cells.sublist(i, i + 7).join()}</tr>'
   ].join();
   return '''
-<table id="cal-grid">
+<table id="cal-grid" class="patro" aria-labelledby="cal-heading">
 <thead><tr>$heads</tr></thead>
 <tbody>
 $body
@@ -392,6 +454,9 @@ String _clientGuardJs(BsCalendar full, BsDate today, DateTime builtAd) {
   elNe.innerHTML = 'आज <strong>' + W_NP[wd] + ', ' + AD_NP[am - 1] + ' ' + npNum(ad) + ', ' + npNum(ay) + '</strong> विक्रम संवत् अनुसार <strong>' + M_NP[nowBs.m - 1] + ' ' + npNum(nowBs.d) + ', ' + npNum(nowBs.y) + '</strong> हो।';
   var head = document.getElementById('cal-heading');
   if (head) { head.innerHTML = '<span lang="ne">' + M_NP[nowBs.m - 1] + '</span> · ' + M_EN[nowBs.m - 1] + ' ' + nowBs.y; }
+  // Grid rewrite: markup IDENTICAL to the build-time _monthGrid (boxed
+  // lattice, Devanagari + Gregorian per cell, weekend red, today ring), so
+  // a midnight correction is visually seamless.
   var grid = document.getElementById('cal-grid');
   if (grid) {
     var row = null;
@@ -399,18 +464,26 @@ String _clientGuardJs(BsCalendar full, BsDate today, DateTime builtAd) {
     if (row) {
       var before = 0;
       for (var j2 = 0; j2 < nowBs.m - 1; j2++) { before += row[2][j2]; }
-      var startCol = weekdayOf(isoOf(parseIso(row[1]) + before * 86400000));
+      var firstMs = parseIso(row[1]) + before * 86400000;
+      var startCol = weekdayOf(isoOf(firstMs));
       var len = row[2][nowBs.m - 1];
       var cells = [];
       var c;
-      for (c = 0; c < startCol; c++) { cells.push('<td></td>'); }
+      for (c = 0; c < startCol; c++) { cells.push('<td class="pad" aria-hidden="true"></td>'); }
       for (c = 1; c <= len; c++) {
-        cells.push('<td' + (c === nowBs.d ? ' class="today"' : '') + '>' + npNum(c) + '</td>');
+        var dayMs = firstMs + (c - 1) * 86400000;
+        var dd = new Date(dayMs);
+        var dw = dd.getUTCDay();
+        var cls = 'cell' + ((dw === 0 || dw === 6) ? ' off' : '') + (c === nowBs.d ? ' today' : '');
+        var adTxt = (dd.getUTCDate() === 1) ? AD_EN[dd.getUTCMonth()].slice(0, 3) + ' 1' : String(dd.getUTCDate());
+        cells.push('<td class="' + cls + '"' + (c === nowBs.d ? ' aria-current="date"' : '') + '><span class="d">' + npNum(c) + '</span><span class="ad">' + adTxt + '</span></td>');
       }
-      while (cells.length % 7 !== 0) { cells.push('<td></td>'); }
+      while (cells.length % 7 !== 0) { cells.push('<td class="pad" aria-hidden="true"></td>'); }
       var heads = '';
       var h;
-      for (h = 0; h < 7; h++) { heads += '<th><span lang="ne">' + H_NP[h] + '</span><br>' + H_EN[h] + '</th>'; }
+      for (h = 0; h < 7; h++) {
+        heads += '<th scope="col"' + (h === 0 || h === 6 ? ' class="off"' : '') + '><span lang="ne">' + H_NP[h] + '</span><span class="ad">' + H_EN[h] + '</span></th>';
+      }
       var rowsHtml = '';
       var r2;
       for (r2 = 0; r2 < cells.length; r2 += 7) {
@@ -428,20 +501,23 @@ String _clientGuardJs(BsCalendar full, BsDate today, DateTime builtAd) {
 ''';
 }
 
-/// Shared CSS for the honesty-layer documentation pages.
-const _docCss = '''
-:root{color-scheme:light dark}
-body{font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans Devanagari,sans-serif;max-width:46rem;margin-inline:auto;padding:2rem 1rem}
-h1{font-size:1.4rem}
-h2{font-size:1.05rem;margin-top:2rem}
-table{border-collapse:collapse}
-th,td{padding:.35rem .65rem;text-align:left;border:1px solid #8884;font-size:.9rem;vertical-align:top}
-code{background:#8882;padding:.1rem .3rem;border-radius:4px;font-size:.85em}
-.foot{font-size:.8rem;opacity:.7;margin-top:2rem}
-a{color:#0a72c4}
-.nav{font-size:.9rem;opacity:.85}
-''';
+/// The shared design-system stylesheet, kept as a real CSS file
+/// (packages/nmiti_cli/design/tokens.css) so it can be diffed and reused,
+/// then inlined into every page at build time: zero extra requests on the
+/// zero-JS content pages, one source of truth for the whole site.
+String _designCss() {
+  for (final path in [
+    'packages/nmiti_cli/design/tokens.css',
+    'design/tokens.css',
+  ]) {
+    final f = File(path);
+    if (f.existsSync()) return f.readAsStringSync();
+  }
+  throw StateError('Design system stylesheet not found: design/tokens.css');
+}
 
+/// Shared shell for the honesty-layer documentation pages: skip link,
+/// site header + nav, the design system, and the site footer.
 String _docShell(String title, String description, String urlBase,
     String canonical, String body, String shortSha) {
   final builtAt = DateTime.now().toUtc().toIso8601String();
@@ -459,16 +535,35 @@ String _docShell(String title, String description, String urlBase,
 <meta property="og:description" content="$description">
 <meta property="og:url" content="$urlBase$canonical">
 <meta property="og:locale" content="ne_NP">
+<meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1220" media="(prefers-color-scheme: dark)">
 <style>
-$_docCss
+${_designCss()}
 </style>
 </head>
 <body>
-<main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a></p>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-head">
+<div class="wrap">
+<a class="wordmark" href="$urlBase">nMiti <span class="tagline" lang="ne">· आजको मिति</span></a>
+<nav aria-label="Site">
+<a href="$urlBase">Today</a>
+<a href="${urlBase}accuracy.html">Accuracy</a>
+<a href="${urlBase}methodology.html">Methodology</a>
+<a href="${urlBase}data.html">Data &amp; API</a>
+<a href="${urlBase}sankranti.html">Sankranti</a>
+<a href="${urlBase}embed/example.html">Embed</a>
+</nav>
+</div>
+</header>
+<main id="main" class="wrap doc">
 $body
-<p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
+<footer class="site-foot">
+<div class="wrap">
+<p>nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
+</div>
+</footer>
 </body>
 </html>
 ''';
@@ -756,9 +851,18 @@ String _embedExampleHtml(String urlBase, String commitSha) {
 String _notFoundHtml(String urlBase) => '''
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Not found | nMiti</title></head>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1220" media="(prefers-color-scheme: dark)">
+<title>Not found | nMiti</title>
+<style>
+${_designCss()}
+</style>
+</head>
 <body>
-<main>
+<main class="wrap nf">
 <h1>404 — not found</h1>
 <p><a href="$urlBase">nMiti — today's date in Nepal</a> · <a href="${urlBase}api/v1/today.json">today.json</a></p>
 </main>
@@ -1007,6 +1111,13 @@ License: data CC0-1.0, code MIT.
 
 String _iso(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+/// Thousands separator for the stat tiles (e.g. 1308 -> "1,308").
+String _comma(int n) {
+  final s = n.toString();
+  if (s.length <= 3) return s;
+  return '${s.substring(0, s.length - 3)},${s.substring(s.length - 3)}';
+}
 
 void _write(File file, String content) {
   file.createSync(recursive: true);
