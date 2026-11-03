@@ -138,7 +138,29 @@ jobs:
               print("SMOKE FAIL: index.html lost its client-guard anchors (ans-en / cal-grid)")
               ok = False
 
-          for path in ["", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
+          # Honesty layer pages: deployed and carrying their key anchors.
+          for path, markers in [
+              ("accuracy.html", ['id="evidence-tiers"', "2096", "errata"]),
+              ("methodology.html", ['id="layers"', "anchor chain"]),
+              ("data.html", ['id="data-dictionary"', "data/calendar_bs_core_1975_2083.csv"]),
+          ]:
+              doc = get(url + path + bust).read().decode("utf-8")
+              for marker in markers:
+                  if marker not in doc:
+                      print("SMOKE FAIL: " + path + " missing marker '" + marker + "'")
+                      ok = False
+
+          # Served CSVs must be the canonical files.
+          core_csv = get(url + "data/calendar_bs_core_1975_2083.csv" + bust).read().decode("utf-8")
+          if "bs_year,baisakh1,weekday" not in core_csv or "2083,2026-04-14" not in core_csv:
+              print("SMOKE FAIL: served core CSV is not the canonical file")
+              ok = False
+          tail_csv = get(url + "data/calendar_bs_tail_2084_2100.csv" + bust).read().decode("utf-8")
+          if "2096" not in tail_csv or "projection-defect" not in tail_csv:
+              print("SMOKE FAIL: served tail CSV is not the canonical file")
+              ok = False
+
+          for path in ["", "accuracy.html", "methodology.html", "data.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
               r = get(url + path + (bust if path else ""))
               if r.status != 200:
                   print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))
