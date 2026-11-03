@@ -26,3 +26,11 @@ jobs:
       # Full site build as a PR gate: catches build_site.dart and data
       # regressions before merge, not only after the post-deploy smoke.
       - run: dart run nmiti_cli:build_site --out build/site --url https://namunaone.github.io/nMiti/
+
+      # Pre-merge smoke parity (incident 2026-11-03: the post-deploy smoke
+      # failed on main because its checks had never run pre-merge). The same
+      # independent Python contract the post-deploy smoke enforces, run here
+      # against the build output: static markers on every artifact plus the
+      # today/sankranti recomputes. Shared script - scripts/site_contract.py -
+      # so the pre-merge and post-deploy gates cannot drift apart.
+      - run: python3 scripts/site_contract.py --dir build/site

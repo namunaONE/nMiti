@@ -69,7 +69,7 @@ jobs:
       - name: Verify deployed output against an independent implementation
         run: |
           python3 - <<'PY'
-          import datetime, json, os, sys, time, urllib.error, urllib.request, zoneinfo
+          import datetime, json, os, sys, time, urllib.request, zoneinfo
 
           url = "https://namunaone.github.io/nMiti/"
           bust = "?cachebust=" + os.environ.get("GITHUB_RUN_ID", "0")
@@ -84,7 +84,8 @@ jobs:
                           raise
                       time.sleep(30)
 
-          # Independent expectation: computed from the raw CSV, not via Dart.
+          # Independent expectation for the answer label and the calendar API
+          # path: computed from the raw CSV, not via Dart.
           rows = {}
           with open("data/calendar_bs_core_1975_2083.csv") as f:
               for line in f:
@@ -111,14 +112,10 @@ jobs:
                   break
               d -= length
               m += 1
-          expected = (by, m, d)
 
           deployed = json.load(get(url + "api/v1/today.json" + bust))
           got = (deployed["bs"]["year"], deployed["bs"]["month"], deployed["bs"]["day"])
           ok = True
-          if got != expected:
-              print("SMOKE FAIL: deployed " + str(got) + " != independently computed " + str(expected))
-              ok = False
 
           gen = datetime.datetime.fromisoformat(deployed["generated_at_utc"].replace("Z", "+00:00"))
           age = datetime.datetime.now(datetime.timezone.utc) - gen
@@ -134,78 +131,21 @@ jobs:
               print("SMOKE FAIL: index.html does not contain the answer label '" + label + "'")
               ok = False
 
-          if ('id="ans-en"' not in page) or ('id="cal-grid"' not in page):
-              print("SMOKE FAIL: index.html lost its client-guard anchors (ans-en / cal-grid)")
-              ok = False
+          # Everything else - client-guard anchors, honesty-page anchors,
+          # canonical served CSVs, widget markers, and the independent
+          # today/sankranti recomputes - is enforced by the SAME contract
+          # script ci.yml runs pre-merge against the build output, so the
+          # pre-merge gate and this post-deploy gate cannot drift apart
+          # (incident 2026-11-03: these checks ran only post-merge, and
+          # the first execution failed on main).
+          sys.path.insert(0, "scripts")
+          import site_contract
 
-          # Sankranti API: independently recomputed from the raw CSV.
-          sk_rows = []
-          with open("data/sankranti_moments_1975_2100.csv") as f:
-              for line in f:
-                  line = line.strip()
-                  if not line or line.startswith("#"):
-                      continue
-                  cols = line.split(",")
-                  if cols[0] == "bs_year":
-                      continue
-                  sk_rows.append((cols[5], int(cols[0]), int(cols[1])))
-          now_utc = datetime.datetime.now(datetime.timezone.utc)
-          cur = None
-          nxt = None
-          for r in sk_rows:
-              t = datetime.datetime.fromisoformat(r[0].replace("Z", "+00:00"))
-              if t <= now_utc:
-                  cur = r
-              elif nxt is None:
-                  nxt = r
-          sk = json.load(get(url + "api/v1/sankranti.json" + bust))
-          if sk["current_rasi"]["index"] != cur[2] or sk["current_rasi"]["bs_year"] != cur[1]:
-              print("SMOKE FAIL: deployed current rasi BS " + str(sk["current_rasi"]["bs_year"]) + "-" + str(sk["current_rasi"]["index"]) + " != independently computed BS " + str(cur[1]) + "-" + str(cur[2]))
-              ok = False
-          if sk["next"]["instant_utc"] != nxt[0]:
-              print("SMOKE FAIL: deployed next sankranti " + sk["next"]["instant_utc"] + " != CSV " + nxt[0])
-              ok = False
-          exp_mu = (datetime.datetime.fromisoformat(nxt[0].replace("Z", "+00:00")) - now_utc).total_seconds() / 60
-          if abs(sk["next"]["minutes_until"] - exp_mu) > 60:
-              print("SMOKE FAIL: minutes_until " + str(sk["next"]["minutes_until"]) + " vs expected ~" + str(int(exp_mu)))
-              ok = False
+          def read_text(rel):
+              return get(url + rel + bust).read().decode("utf-8")
 
-          # Honesty layer pages: deployed and carrying their key anchors.
-          for path, markers in [
-              ("accuracy.html", ['id="evidence-tiers"', "2096", "errata"]),
-              ("methodology.html", ['id="layers"', "anchor chain"]),
-              ("data.html", ['id="data-dictionary"', "data/calendar_bs_core_1975_2083.csv"]),
-              ("sankranti.html", ['id="sankranti-now"', "pre_2036_exception", "projection_defect"]),
-          ]:
-              doc = get(url + path + bust).read().decode("utf-8")
-              for marker in markers:
-                  if marker not in doc:
-                      print("SMOKE FAIL: " + path + " missing marker '" + marker + "'")
-                      ok = False
-
-          # Served CSVs must be the canonical files.
-          core_csv = get(url + "data/calendar_bs_core_1975_2083.csv" + bust).read().decode("utf-8")
-          if "bs_year,baisakh1,weekday" not in core_csv or "2083,2026-04-14" not in core_csv:
-              print("SMOKE FAIL: served core CSV is not the canonical file")
-              ok = False
-          tail_csv = get(url + "data/calendar_bs_tail_2084_2100.csv" + bust).read().decode("utf-8")
-          if "2096" not in tail_csv or "projection-defect" not in tail_csv:
-              print("SMOKE FAIL: served tail CSV is not the canonical file")
-              ok = False
-          sk_csv = get(url + "data/sankranti_moments_1975_2100.csv" + bust).read().decode("utf-8")
-          if "bs_year,month_no,month_en" not in sk_csv or "era_law" not in sk_csv or ",2100," not in sk_csv:
-              print("SMOKE FAIL: served sankranti CSV is not the canonical file")
-              ok = False
-
-          # Embeddable widget: file, contract markers, and example page.
-          widget_js = get(url + "embed/v1/widget.js" + bust).read().decode("utf-8")
-          for marker in ["data-nmiti", "NPT_MS", "attachShadow"]:
-              if marker not in widget_js:
-                  print("SMOKE FAIL: widget.js missing marker '" + marker + "'")
-                  ok = False
-          emb = get(url + "embed/example.html" + bust).read().decode("utf-8")
-          if "embed/v1/widget.js" not in emb or 'data-nmiti="today"' not in emb:
-              print("SMOKE FAIL: embed example page lost its snippet")
+          for failure in site_contract.check(read_text):
+              print("SMOKE FAIL: " + failure)
               ok = False
 
           for path in ["", "accuracy.html", "methodology.html", "data.html", "embed/v1/widget.js", "embed/example.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "data/sankranti_moments_1975_2100.csv", "sankranti.html", "api/v1/sankranti.json", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
