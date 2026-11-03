@@ -1,0 +1,14 @@
+name: nepali_sankranti
+description: Dependency-free sidereal solar ingress (sankranti) engine. Meeus Ch.25 solar longitude + the calibrated Lahiri-family ayanamsa of the nMiti Commons Layer 1.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  nepali_date: ^0.1.0
+
+dev_dependencies:
+  test: ">=1.25.0 <2.0.0"
