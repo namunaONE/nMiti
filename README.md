@@ -26,6 +26,7 @@ nMiti fixes this with verifiable data instead of another unaudited copy.
     docs/
       architecture.md        bottlenecks avoided, decisions from day one
       data-provenance.md     R12 evidence record
+      design-system/         the design rulebook (RULES, CONTENT, CHANGELOG, ADRs)
 
 ## Quickstart (Dart 3.13+)
 
