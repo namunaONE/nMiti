@@ -39,7 +39,7 @@ void main() {
     expect(committed.where((r) => r.startsOnDelta == 0), hasLength(1142));
     expect(committed.where((r) => r.startsOnDelta == 1), hasLength(340));
     expect(committed.where((r) => r.startsOnDelta == -1), hasLength(30));
-    expect(committed.where((r) => r.eraLaw == 'ok'), hasLength(1476));
+    expect(committed.where((r) => r.eraLaw == 'ok'), hasLength(1482));
     final pre = committed
         .where((r) => r.eraLaw == 'pre_2036_exception')
         .map((r) => r.key)
