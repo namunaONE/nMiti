@@ -41,8 +41,7 @@ void main(List<String> args) {
   }
 
   // Nepal Time is a fixed UTC+05:45 offset (no DST, ever).
-  final npt = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 45));
-  final todayAd = DateTime.utc(npt.year, npt.month, npt.day);
+  final todayAd = todayInNepalTime();
   final today = full.fromGregorian(todayAd);
   final gToday = full.toGregorian(today);
   final tomorrow = full.fromGregorian(gToday.add(const Duration(days: 1)));
@@ -478,7 +477,7 @@ String _accuracyPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
 <li><strong>R12 cross-validation (2026-11-02):</strong> all ${core.years.length} core rows (BS 1975-${core.lastYear}) were machine-diffed against an independent reference table (amitgaru/nepali-datetime, calendar_bs.csv blob 83e8c16) - ${core.years.length}/${core.years.length} rows and 1,308/1,308 cells identical.</li>
 <li><strong>The anchor chain closes on an official date:</strong> counting Baisakh 1 + year length forward for ${core.years.length} years lands exactly on the only officially announced future date: Baisakh 1 2084 = Wednesday 2027-04-14. A century-long chain that closes on an official anchor is not a coincidence you can fake.</li>
 <li><strong>Live confirmation:</strong> on 2026-11-02 the table matched 10+ live Nepali calendar sites, and the 2083 row matches the national panchanga row quoted in dibas-np/NepalKit PR #34.</li>
-<li><strong>Checked continuously:</strong> CI enforces structural invariants on every build, and an independent Python implementation re-derives the deployed date from the raw CSVs after every deploy.</li>
+<li><strong>Checked continuously:</strong> CI enforces structural invariants on every build, and an independent Python implementation re-derives the deployed date from the raw CSVs after every deploy. The test suite also round-trip converts every single day of BS 1975-2100 (about 46,000 days) in both directions on every CI run.</li>
 </ul>
 
 <h2 id="evidence-tiers">Evidence tiers</h2>
@@ -532,7 +531,7 @@ String _methodologyPageHtml(String urlBase, String commitSha) {
 <li><strong>Machine diff (R12):</strong> the core CSV was diffed cell by cell against an independent reference table (amitgaru/nepali-datetime, calendar_bs.csv, blob 83e8c16): 109/109 rows and 1,308/1,308 cells identical.</li>
 <li><strong>Anchor chain:</strong> Baisakh 1 of each year plus that year's length must land exactly on Baisakh 1 of the next. The 109-year chain closes precisely on the official Baisakh 1 2084 = Wednesday 2027-04-14 - roughly 40,000 consecutive days that end on the one officially announced future date.</li>
 <li><strong>Live confirmation:</strong> on 2026-11-02 (Kartik 16, 2083) the current row matched 10+ live Nepali calendar sites and the national panchanga row quoted in dibas-np/NepalKit PR #34.</li>
-<li><strong>Continuous invariants, enforced by CI on every build:</strong> month lengths 29-32; core year lengths 365-366; chain continuity; every Baisakh 1 falls on April 11-15; the weekday column matches the baisakh1 date; no run of 3+ identical consecutive rows; the tail chains from the official 2084 anchor.</li>
+<li><strong>Continuous invariants, and an exhaustive trust machine, enforced by CI on every build:</strong> month lengths 29-32; core year lengths 365-366; chain continuity; every Baisakh 1 falls on April 11-15; the weekday column matches the baisakh1 date; no run of 3+ identical consecutive rows; the tail chains from the official 2084 anchor; and every one of the ~46,000 days (BS 1975-2100) is round-trip converted in both directions, with every day's weekday cross-checked by an independent path.</li>
 <li><strong>Independent re-derivation:</strong> after every deploy, a Python implementation - not the Dart engine that built the site - recomputes today's date straight from the raw CSVs and compares it against the deployed JSON. A 4-times-daily canary repeats the check against the live site.</li>
 </ol>
 
