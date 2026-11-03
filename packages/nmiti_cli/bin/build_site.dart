@@ -223,10 +223,10 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="answer">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
-<p class="answer" lang="ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
-<p class="tier">$tierNote</p>
-<h2><span lang="ne">$monthNameNp</span> · $monthNameEn ${today.year}</h2>
+<p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
+<p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
+<p class="tier" id="tier-note">$tierNote</p>
+<h2 id="cal-heading"><span lang="ne">$monthNameNp</span> · $monthNameEn ${today.year}</h2>
 ${_monthGrid(full, today)}
 <h2>Machine-readable</h2>
 <ul>
@@ -237,6 +237,9 @@ ${_monthGrid(full, today)}
 <p>BS ${today.year} began on Baisakh 1, <strong>${_iso(b1)}</strong> (${row.weekday}). This page is rebuilt automatically from the verified dataset — no hand-typed dates anywhere.</p>
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · rebuilt daily around 00:00 Nepal Time (UTC+05:45) · built $builtAt UTC from $shortSha</p>
 </main>
+<script>
+${_clientGuardJs(full, today, g)}
+</script>
 </body>
 </html>
 ''';
@@ -266,12 +269,138 @@ String _monthGrid(BsCalendar full, BsDate today) {
       '<tr>${cells.sublist(i, i + 7).join()}</tr>'
   ].join();
   return '''
-<table>
+<table id="cal-grid">
 <thead><tr>$heads</tr></thead>
 <tbody>
 $body
 </tbody>
 </table>''';
+}
+
+/// Year rows embedded for the client-side guard:
+/// [bsYear, "baisakh1 ISO", [12 month lengths]] for the years around the
+/// build date, so the browser can map any nearby AD date to a BS date.
+String _rowsForJs(BsCalendar full, int centerYear) {
+  final years = full.years
+      .where((y) => y >= centerYear - 1 && y <= centerYear + 2)
+      .toList()
+    ..sort();
+  final rows = [
+    for (final y in years)
+      '[${y},"${_iso(full.row(y).baisakh1)}",[${full.row(y).months.join(',')}]]'
+  ];
+  return '[${rows.join(',')}]';
+}
+
+/// Defense in depth, layer 11 - the last mile. The page is a build-time
+/// snapshot, but a visitor may arrive after the Nepal-midnight rollover
+/// while every scheduled rebuild is delayed or dropped (GitHub documents
+/// scheduled runs as delayed/dropped under load; on the first night after
+/// launch, 2026-11-02/03, BOTH midnight runs were skipped and the site
+/// served the previous date for hours). This tiny dependency-free script
+/// recomputes "today" in the visitor's browser, in Nepal Time (fixed
+/// UTC+05:45, no DST), from the same year rows, and corrects the page -
+/// honestly labeled - whenever the build is stale. If JS is off or the
+/// script fails, the page keeps its build-time content: it fails closed,
+/// never wronger. No framework; the static build remains the source of
+/// truth for crawlers.
+String _clientGuardJs(BsCalendar full, BsDate today, DateTime builtAd) {
+  final monthsEn = [for (var m = 1; m <= 12; m++) '"${bsMonthNameEn(m)}"'].join(',');
+  final monthsNp = [for (var m = 1; m <= 12; m++) '"${bsMonthNameNp(m)}"'].join(',');
+  final adEn = [for (final n in _adMonthNames) '"$n"'].join(',');
+  final adNp = [for (final n in _adMonthNamesNp) '"$n"'].join(',');
+  return '''
+(function () {
+  'use strict';
+  var NPT_MS = 20700000; // Nepal Time: fixed UTC+05:45, no DST, ever.
+  var ROWS = ${_rowsForJs(full, today.year)};
+  var BUILD_AD = "${_iso(builtAd)}";
+  var M_EN = [$monthsEn];
+  var M_NP = [$monthsNp];
+  var AD_EN = [$adEn];
+  var AD_NP = [$adNp];
+  var H_NP = ['आइत', 'सोम', 'मङ्गल', 'बुध', 'बिही', 'शुक्र', 'शनि'];
+  var H_EN = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var W_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var W_NP = ['आइतबार', 'सोमबार', 'मङ्गलबार', 'बुधबार', 'बिहीबार', 'शुक्रबार', 'शनिबार'];
+  var NP_DIGITS = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+  function npNum(n) {
+    n = String(n);
+    var out = '';
+    for (var i = 0; i < n.length; i++) {
+      out += (n[i] >= '0' && n[i] <= '9') ? NP_DIGITS[+n[i]] : n[i];
+    }
+    return out;
+  }
+  function parseIso(s) { return Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)); }
+  function isoOf(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function weekdayOf(adIso) { return new Date(parseIso(adIso) + 43200000).getUTCDay(); }
+  function bsFromAd(adIso) {
+    var t = parseIso(adIso);
+    for (var i = 0; i < ROWS.length; i++) {
+      var r = ROWS[i];
+      var b1 = parseIso(r[1]);
+      var days = 0;
+      for (var j = 0; j < 12; j++) { days += r[2][j]; }
+      if (t >= b1 && t < b1 + days * 86400000) {
+        var doy = Math.floor((t - b1) / 86400000) + 1;
+        var m = 1, d = doy;
+        for (var k = 0; k < 12; k++) { if (d <= r[2][k]) { break; } d -= r[2][k]; m++; }
+        return { y: r[0], m: m, d: d };
+      }
+    }
+    return null;
+  }
+  var nowAd = isoOf(Date.now() + NPT_MS);
+  var builtBs = bsFromAd(BUILD_AD);
+  var nowBs = bsFromAd(nowAd);
+  if (!builtBs || !nowBs) { return; }
+  if (builtBs.y === nowBs.y && builtBs.m === nowBs.m && builtBs.d === nowBs.d) { return; }
+  // The served build predates the current Nepal date (scheduled rebuild
+  // dropped or delayed). Correct the page, honestly labeled.
+  var wd = weekdayOf(nowAd);
+  var ay = +nowAd.slice(0, 4), am = +nowAd.slice(5, 7), ad = +nowAd.slice(8, 10);
+  var elEn = document.getElementById('ans-en');
+  var elNe = document.getElementById('ans-ne');
+  if (!elEn || !elNe) { return; }
+  elEn.innerHTML = 'Today is <strong>' + M_EN[nowBs.m - 1] + ' ' + nowBs.d + ', ' + nowBs.y + ' BS</strong> (<span lang="ne">' + M_NP[nowBs.m - 1] + ' ' + npNum(nowBs.d) + ', ' + npNum(nowBs.y) + '</span>)<br>— <strong>' + W_EN[wd] + ', ' + AD_EN[am - 1] + ' ' + ad + ', ' + ay + '</strong> (Gregorian).';
+  elNe.innerHTML = 'आज <strong>' + W_NP[wd] + ', ' + AD_NP[am - 1] + ' ' + npNum(ad) + ', ' + npNum(ay) + '</strong> विक्रम संवत् अनुसार <strong>' + M_NP[nowBs.m - 1] + ' ' + npNum(nowBs.d) + ', ' + npNum(nowBs.y) + '</strong> हो।';
+  var head = document.getElementById('cal-heading');
+  if (head) { head.innerHTML = '<span lang="ne">' + M_NP[nowBs.m - 1] + '</span> · ' + M_EN[nowBs.m - 1] + ' ' + nowBs.y; }
+  var grid = document.getElementById('cal-grid');
+  if (grid) {
+    var row = null;
+    for (var i2 = 0; i2 < ROWS.length; i2++) { if (ROWS[i2][0] === nowBs.y) { row = ROWS[i2]; } }
+    if (row) {
+      var before = 0;
+      for (var j2 = 0; j2 < nowBs.m - 1; j2++) { before += row[2][j2]; }
+      var startCol = weekdayOf(isoOf(parseIso(row[1]) + before * 86400000));
+      var len = row[2][nowBs.m - 1];
+      var cells = [];
+      var c;
+      for (c = 0; c < startCol; c++) { cells.push('<td></td>'); }
+      for (c = 1; c <= len; c++) {
+        cells.push('<td' + (c === nowBs.d ? ' class="today"' : '') + '>' + npNum(c) + '</td>');
+      }
+      while (cells.length % 7 !== 0) { cells.push('<td></td>'); }
+      var heads = '';
+      var h;
+      for (h = 0; h < 7; h++) { heads += '<th><span lang="ne">' + H_NP[h] + '</span><br>' + H_EN[h] + '</th>'; }
+      var rowsHtml = '';
+      var r2;
+      for (r2 = 0; r2 < cells.length; r2 += 7) {
+        rowsHtml += '<tr>' + cells.slice(r2, r2 + 7).join('') + '</tr>';
+      }
+      grid.innerHTML = '<thead><tr>' + heads + '</tr></thead><tbody>' + rowsHtml + '</tbody>';
+    }
+  }
+  var note = document.getElementById('tier-note');
+  if (note) {
+    note.innerHTML = note.innerHTML + ' <em>(Live date corrected to Nepal Time in your browser — the scheduled rebuild for ' + nowAd + ' had not run yet when this page was built.)</em>';
+  }
+  document.title = "आजको मिति - Today's date in Nepal: " + M_EN[nowBs.m - 1] + ' ' + nowBs.d + ', ' + nowBs.y + ' BS | nMiti';
+})();
+''';
 }
 
 String _notFoundHtml(String urlBase) => '''
