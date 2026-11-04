@@ -1205,3 +1205,30 @@ Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
 Documentation pack rendered verbatim (data dictionary, methodology, changelog, errata, provenance manifest): ${urlBase}docs.html
+Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv
+Served sankranti CSV copies: ${urlBase}data/sankranti_moments_1975_2083.csv and ${urlBase}data/sankranti_moments_1975_2100.csv
+SHA-256 checksums of every served CSV: ${urlBase}data.html#checksums
+Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
+Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
+Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
+
+Coverage: verified core BS 1975-${core.lastYear}; labeled projection tail BS ${tail.firstYear}-${tail.lastYear}. Only Baisakh 1 2084 (2027-04-14) is officially anchored; BS 2096 carries a known upstream defect (364 days), preserved and labeled.
+Today per this build: $label
+License: data CC0-1.0, code MIT.
+''';
+}
+
+String _iso(DateTime d) =>
+    '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+void _write(File file, String content) {
+  file.createSync(recursive: true);
+  file.writeAsStringSync(content);
+}
+
+String? _arg(List<String> args, String name) {
+  for (var i = 0; i + 1 < args.length; i++) {
+    if (args[i] == name) return args[i + 1];
+  }
+  return null;
+}
