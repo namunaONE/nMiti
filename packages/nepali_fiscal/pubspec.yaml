@@ -1,0 +1,14 @@
+name: nepali_fiscal
+description: Nepali fiscal year surfaces (Shrawan 1 -> Ashadh end) derived from the canonical nMiti BS calendar. No hardcoded dates.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.13.0
+
+resolution: workspace
+
+dependencies:
+  nepali_date: ^0.1.0
+
+dev_dependencies:
+  test: ">=1.25.0 <2.0.0"
