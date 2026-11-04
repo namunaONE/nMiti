@@ -2,7 +2,13 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
-## [Unreleased] — docs pack (this PR)
+## [Unreleased] — commons site pages /docs + /data (HYA-402)
+
+- Added `/docs` (`docs.html`): the documentation pack rendered verbatim as static semantic HTML by the site build, zero client JavaScript. Regenerated from `docs/*.md` on every build, so the page cannot drift from the repository files.
+- Extended `/data` (`data.html`): all four canonical CSVs downloadable (the two sankranti CSVs are now served too), a build-time SHA-256 checksum table computed from the exact bytes served, and an explicit CC0-1.0 data license notice.
+- The independent Python site contract (pre-merge and post-deploy) now also checks docs.html markers, the L1 CSV structure (1,308 rows, BS 1975–2083), and re-verifies every published SHA-256 digest against the served bytes. No data changes.
+
+## 2026-11-04 — docs pack (PR #15, merge `4ace3c9`)
 
 - Added commons documentation pack: docs index, data dictionary, methodology, changelog, errata log, provenance manifest (HYA-373). No data or code changes.
 
