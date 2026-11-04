@@ -11,9 +11,12 @@ bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir
 ''';
 
 /// The labeled upstream defect row (BS 2096, 364 days) with its neighbors.
+/// All three rows are verbatim from the canonical tail
+/// (data/calendar_bs_tail_2084_2100.csv) - never hand-shortened: a row with a
+/// missing month length would throw inside main() and silently skip the suite.
 const _defectCsv = '''
 bs_year,baisakh1,weekday,baisakh,jestha,ashar,shrawan,bhadra,asoj,kartik,mangsir,poush,magh,falgun,chaitra,days,evidence
-2094,2037-04-14,Tue,31,31,32,31,31,31,30,29,30,30,30,365,projection
+2094,2037-04-14,Tue,31,31,32,31,31,30,30,30,29,30,30,30,365,projection
 2095,2038-04-14,Wed,31,31,32,31,31,31,30,29,30,30,30,30,366,projection
 2096,2039-04-15,Fri,30,31,32,32,31,30,30,29,30,29,30,30,364,projection-defect
 ''';
