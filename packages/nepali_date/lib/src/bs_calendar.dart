@@ -1,5 +1,6 @@
 import 'bs_csv.dart';
 import 'bs_date.dart';
+import 'evidence.dart';
 
 /// An immutable table of contiguous BS years with month lengths and anchors.
 class BsCalendar {
@@ -45,11 +46,35 @@ class BsCalendar {
 
   bool containsYear(int year) => _byYear.containsKey(year);
 
+  /// The evidence tier and raw tags of BS [year], taken from its row so
+  /// surfaces never re-derive tiers from year numbers. Throws
+  /// [ArgumentError] outside the table, exactly like [row].
+  BsEvidence evidenceOfYear(int year) => BsEvidence.fromTags(row(year).evidence);
+
+  /// The evidence tier and raw tags for the BS [date]. The date is validated
+  /// exactly like [toGregorian], so evidence is never reported for a date the
+  /// calendar cannot convert.
+  BsEvidence evidenceOf(BsDate date) {
+    final r = row(date.year);
+    if (date.month < 1 || date.month > 12) {
+      throw ArgumentError('BS month must be 1..12, got ${date.month}.');
+    }
+    final length = r.months[date.month - 1];
+    if (date.day < 1 || date.day > length) {
+      throw ArgumentError(
+          'BS ${date.year} month ${date.month} has $length days, got day ${date.day}.');
+    }
+    return BsEvidence.fromTags(r.evidence);
+  }
+
   /// The row for BS [year]. Throws [ArgumentError] if outside the table.
   BsYearRow row(int year) {
     final r = _byYear[year];
     if (r == null) {
-      throw ArgumentError('BS year $year is outside $firstYear..$lastYear.');
+      throw ArgumentError(
+          'BS year $year is outside the declared range $firstYear..$lastYear. '
+          'Rows are evidence-tagged (verified or projection, see data/README.md); '
+          'beyond the table nMiti fails loudly instead of guessing.');
     }
     return r;
   }
@@ -76,7 +101,8 @@ class BsCalendar {
     }
     final length = r.months[date.month - 1];
     if (date.day < 1 || date.day > length) {
-      throw ArgumentError('BS ${date.year} month ${date.month} has $length days, got day ${date.day}.');
+      throw ArgumentError(
+          'BS ${date.year} month ${date.month} has $length days, got day ${date.day}.');
     }
     var offset = date.day - 1;
     for (var m = 0; m < date.month - 1; m++) {
@@ -90,11 +116,18 @@ class BsCalendar {
   BsDate fromGregorian(DateTime g) {
     final t = _utcDateOnly(g);
     if (t.isBefore(_starts.first)) {
-      throw ArgumentError('Date $t is before BS $firstYear.');
+      throw ArgumentError(
+          'Gregorian date ${_iso(t)} is before the first day of the table '
+          '(Baisakh 1, BS $firstYear = ${_iso(_starts.first)}). '
+          'nMiti never converts outside the declared range.');
     }
     final limit = _starts.last.add(Duration(days: _rows.last.days));
     if (!t.isBefore(limit)) {
-      throw ArgumentError('Date $t is after BS $lastYear.');
+      final lastDay = _starts.last.add(Duration(days: _rows.last.days - 1));
+      throw ArgumentError(
+          'Gregorian date ${_iso(t)} is after the last day of the table '
+          '(Chaitra end, BS $lastYear = ${_iso(lastDay)}). '
+          'nMiti never converts outside the declared range.');
     }
     var lo = 0;
     var hi = _starts.length - 1;
@@ -122,3 +155,9 @@ class BsCalendar {
 }
 
 DateTime _utcDateOnly(DateTime d) => DateTime.utc(d.year, d.month, d.day);
+
+String _iso(DateTime d) => '${_pad4(d.year)}-${_pad2(d.month)}-${_pad2(d.day)}';
+
+String _pad2(int value) => value < 10 ? '0$value' : '$value';
+
+String _pad4(int value) => value.toString().padLeft(4, '0');
