@@ -21,8 +21,8 @@ double sunriseUtcHours({
   double latitudeDeg = 27.7172,
   double longitudeDeg = 85.324,
 }) {
-  final firstOfYear = julianDayFromCivil(year, 1, 1, 0.0);
-  final jd0 = julianDayFromCivil(year, month, day, 0.0);
+  final firstOfYear = julianDayFromCivil(year, 1, 1.0);
+  final jd0 = julianDayFromCivil(year, month, day.toDouble());
   final dayOfYear = jd0 - firstOfYear + 1.0;
   final lngHour = longitudeDeg / 15.0;
   final t = dayOfYear + (6.0 - lngHour) / 24.0;
@@ -58,7 +58,7 @@ double sunriseJdUt({
   double latitudeDeg = 27.7172,
   double longitudeDeg = 85.324,
 }) {
-  return julianDayFromCivil(year, month, day, 0.0) +
+  return julianDayFromCivil(year, month, day.toDouble()) +
       sunriseUtcHours(
               year: year,
               month: month,
