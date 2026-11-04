@@ -7,5 +7,6 @@ export 'src/bs_calendar.dart';
 export 'src/bs_csv.dart';
 export 'src/bs_date.dart';
 export 'src/bs_month.dart';
+export 'src/evidence.dart';
 export 'src/invariants.dart';
 export 'src/npt.dart';
