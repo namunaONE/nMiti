@@ -5,14 +5,23 @@
 /// Ch.25 solar theory, a Delta-T table and per-source ayanamsa profiles - with
 /// no precomputed data files, covering the entire BS 1975-2100+ range.
 ///
-/// Step 2 (this revision) ships the astronomy core: the Meeus Ch.47 moon
-/// (example 47.a is its permanent unit test), the Ch.25 sun (example 25.a) and
-/// the Espenak-Meeus Delta-T polynomials. Limbs and wrap-safe solvers
-/// (step 3) and ayanamsa profiles (step 4) land in later steps; every step
-/// ships green before the next.
+/// Step 2 shipped the astronomy core: the Meeus Ch.47 moon (example 47.a is
+/// its permanent unit test), the Ch.25 sun (example 25.a) and the
+/// Espenak-Meeus Delta-T polynomials.
+///
+/// Step 3 (this revision) ships the limb layer on top of that core: tithi,
+/// nakshatra, yoga and karana angles with canonical name tables, the
+/// wrap-safe boundary solver, per-source ayanamsa profiles, NPT civil-time
+/// helpers and the USNO sunrise solver. The permanent accuracy gate against
+/// the 197-receipt golden corpus lives in test/receipts_calibration_test.dart.
 library;
 
+export 'src/ayanamsa.dart';
+export 'src/civil_time.dart';
 export 'src/delta_t.dart';
 export 'src/julian_day.dart';
+export 'src/limbs.dart';
 export 'src/moon.dart';
+export 'src/solver.dart';
 export 'src/sun.dart';
+export 'src/sunrise.dart';
