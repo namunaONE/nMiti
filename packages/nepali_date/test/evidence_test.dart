@@ -70,10 +70,12 @@ void main() {
       throwsA(isA<ArgumentError>().having((e) => e.message.toString(), 'message',
           allOf(contains('2026-04-14'), contains('never converts outside')))),
     );
+    // The table's last convertible day is Chaitra end, 2085 = 2029-04-13
+    // (2085 has 366 days; Baisakh 1 2086 would be 2029-04-14, outside).
     expect(
       () => cal.fromGregorian(DateTime.utc(2029, 4, 14)),
       throwsA(isA<ArgumentError>().having((e) => e.message.toString(), 'message',
-          allOf(contains('2029-04-12'), contains('never converts outside')))),
+          allOf(contains('2029-04-13'), contains('never converts outside')))),
     );
   });
 
@@ -86,6 +88,8 @@ void main() {
     expect(cal.fromGregorian(DateTime.utc(2026, 7, 17)), const BsDate(2083, 4, 1));
     // Projection tail still converts: Baisakh 1, 2085 = 2028-04-13.
     expect(cal.toGregorian(const BsDate(2085, 1, 1)), DateTime.utc(2028, 4, 13));
+    // Last convertible day round-trips: Chaitra 30, 2085 = 2029-04-13.
+    expect(cal.toGregorian(const BsDate(2085, 12, 30)), DateTime.utc(2029, 4, 13));
   });
 
   test('projection-defect year keeps its label and still converts', () {
