@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:nepali_date/nepali_date.dart';
 import 'package:nepali_date_data/nepali_date_data.dart';
 import 'package:nepali_sankranti/nepali_sankranti.dart';
@@ -78,6 +80,8 @@ void main(List<String> args) {
   _write(File('${dataDir.path}/calendar_bs_tail_2084_2100.csv'), calendarBsTailCsv);
   _write(File('${dataDir.path}/sankranti_moments_1975_2100.csv'),
       File('data/sankranti_moments_1975_2100.csv').readAsStringSync());
+  _write(File('${dataDir.path}/sankranti_moments_1975_2083.csv'),
+      _readSourceFile('data/sankranti_moments_1975_2083.csv'));
   _write(File('${out.path}/sankranti.html'),
       _sankrantiPageHtml(sankrantiRows, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
@@ -86,6 +90,7 @@ void main(List<String> args) {
       _methodologyPageHtml(urlBase, commitSha));
   _write(File('${out.path}/data.html'),
       _dataPageHtml(core, tail, urlBase, commitSha));
+  _write(File('${out.path}/docs.html'), _docsPageHtml(urlBase, commitSha));
   final embedDir = Directory('${out.path}/embed/v1')..createSync(recursive: true);
   _write(File('${embedDir.path}/widget.js'), _widgetJs(full, today, urlBase));
   _write(File('${out.path}/embed/example.html'),
@@ -247,7 +252,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -465,7 +470,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -570,16 +575,45 @@ String _methodologyPageHtml(String urlBase, String commitSha) {
 String _dataPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
     String commitSha) {
   final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  // Checksums are computed from the EXACT bytes the build serves, so the
+  // page can never list a digest that does not match the download. The
+  // independent Python contract re-derives every digest post-deploy.
+  final servedCsv = [
+    ('data/calendar_bs_core_1975_2083.csv', calendarBsCoreCsv),
+    ('data/calendar_bs_tail_2084_2100.csv', calendarBsTailCsv),
+    ('data/sankranti_moments_1975_2083.csv',
+        _readSourceFile('data/sankranti_moments_1975_2083.csv')),
+    ('data/sankranti_moments_1975_2100.csv',
+        _readSourceFile('data/sankranti_moments_1975_2100.csv')),
+  ];
+  final checksumRows = [
+    for (final f in servedCsv)
+      '<tr><td><a href="${f.$1}">${(f.$1).split('/').last}</a></td>'
+      '<td>${utf8.encode(f.$2).length}</td>'
+      '<td><code>${sha256.convert(utf8.encode(f.$2))}</code></td></tr>'
+  ].join('\n');
   final body = '''
 <h1>Data &amp; API <span lang="ne">· डाटा र एपीआई</span></h1>
-<p>Two canonical CSVs are the single source of truth for everything nMiti ships - the site, the JSON API, the Dart SDK. Nothing downstream may hard-code a date. Data license: <strong>CC0-1.0</strong> (public domain).</p>
+<p>Four canonical CSVs are the single source of truth for everything nMiti ships - the site, the JSON API, the Dart SDK. Nothing downstream may hard-code a date. Data license: <strong>CC0-1.0</strong> (public domain).</p>
 
 <h2 id="downloads">Downloads</h2>
 <ul>
 <li><a href="data/calendar_bs_core_1975_2083.csv">calendar_bs_core_1975_2083.csv</a> - verified core, ${core.years.length} years (BS 1975-${core.lastYear}), served as an exact copy of the repository file</li>
 <li><a href="data/calendar_bs_tail_2084_2100.csv">calendar_bs_tail_2084_2100.csv</a> - labeled projection tail, ${tail.years.length} years (BS ${tail.firstYear}-${tail.lastYear})</li>
+<li><a href="data/sankranti_moments_1975_2083.csv">sankranti_moments_1975_2083.csv</a> - Commons Layer 1: 1,308 verified sidereal ingress moments, NPT (BS 1975-${core.lastYear})</li>
+<li><a href="data/sankranti_moments_1975_2100.csv">sankranti_moments_1975_2100.csv</a> - Layer 1 extended through the projection tail: 1,512 rows (BS 1975-${tail.lastYear}); rows beyond ${core.lastYear} are labeled projections</li>
 <li>Canonical source and full history: <a href="https://github.com/namunaONE/nMiti/tree/main/data">github.com/namunaONE/nMiti/tree/main/data</a></li>
 </ul>
+
+<h2 id="checksums">SHA-256 checksums</h2>
+<p>Verify what you download: these digests are computed by the site build from the exact bytes served above, and re-verified after every deploy by the independent Python site contract.</p>
+<table>
+<tr><th>File</th><th>Bytes</th><th>SHA-256</th></tr>
+$checksumRows
+</table>
+
+<h2 id="license">License</h2>
+<p>The data files above are dedicated to the public domain: <strong>CC0-1.0</strong> (Creative Commons Zero). Calendar facts belong to everyone; no permission is needed and no attribution is required. License text: <a href="https://github.com/namunaONE/nMiti/blob/main/data/LICENSE">data/LICENSE</a>. The code is MIT-licensed.</p>
 
 <h2 id="data-dictionary">Data dictionary</h2>
 <p>Both CSVs share one format. Lines starting with <code>#</code> are provenance comments.</p>
@@ -602,7 +636,7 @@ String _dataPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
 
 <h2 id="cite">Using and citing</h2>
 <p>CC0 means no permission is needed for the data and no attribution is required - though it is always welcome: <em>"Data: nMiti - open Bikram Sambat dataset (CC0), namunaone.github.io/nMiti."</em> For reproducibility, pin a commit SHA; <code>today.json</code> carries the current one. The code is MIT-licensed.</p>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"nMiti Bikram Sambat calendar dataset","description":"Open, verified, evidence-tagged Bikram Sambat (Nepali) calendar data, BS 1975-2100.","license":"https://creativecommons.org/publicdomain/zero/1.0/","creator":{"@type":"Organization","name":"nMiti"},"distribution":[{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/calendar_bs_core_1975_2083.csv"},{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/calendar_bs_tail_2084_2100.csv"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"nMiti Bikram Sambat calendar dataset","description":"Open, verified, evidence-tagged Bikram Sambat (Nepali) calendar data, BS 1975-2100.","license":"https://creativecommons.org/publicdomain/zero/1.0/","creator":{"@type":"Organization","name":"nMiti"},"distribution":[{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/calendar_bs_core_1975_2083.csv"},{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/calendar_bs_tail_2084_2100.csv"},{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/sankranti_moments_1975_2083.csv"},{"@type":"DataDownload","encodingFormat":"text/csv","contentUrl":"${urlBase}data/sankranti_moments_1975_2100.csv"}]}</script>
 ''';
   return _docShell(
       'Data &amp; API',
@@ -753,6 +787,183 @@ String _embedExampleHtml(String urlBase, String commitSha) {
       urlBase, 'embed/example.html', body, shortSha);
 }
 
+/// The /docs page (HYA-402): the commons documentation pack rendered as
+/// static semantic HTML. The page is regenerated from docs/*.md on every
+/// build, so it can never drift from the repository files; crawlers and
+/// AI agents find the data dictionary and methodology verbatim. Zero
+/// client JavaScript - the entire page is pre-rendered.
+String _docsPageHtml(String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final pack = <List<String>>[
+    ['readme', 'Index', 'docs/README.md'],
+    ['data-dictionary', 'Data dictionary', 'docs/data-dictionary.md'],
+    ['methodology', 'Methodology', 'docs/methodology.md'],
+    ['changelog', 'Changelog', 'docs/changelog.md'],
+    ['errata', 'Errata', 'docs/errata.md'],
+    ['provenance', 'Provenance manifest', 'docs/provenance-manifest.md'],
+  ];
+  final toc = [
+    for (final p in pack) '<li><a href="#${p[0]}">${p[1]}</a></li>'
+  ].join('\n');
+  final articles = [
+    for (final p in pack)
+      '<article id="${p[0]}">\n${_mdToHtml(_readSourceFile(p[2]))}\n</article>'
+  ].join('\n');
+  final body = '''
+<h1>Documentation <span lang="ne">· कागजात</span></h1>
+<p>The commons documentation pack, rendered verbatim from <a href="https://github.com/namunaONE/nMiti/tree/main/docs">docs/</a> on every build - the repository files remain the single source of truth, so this page can never drift from them. Zero client JavaScript.</p>
+<ol id="docs-toc">
+$toc
+</ol>
+$articles
+''';
+  return _docShell(
+      'Documentation',
+      'The nMiti commons documentation pack rendered verbatim: data dictionary, methodology, changelog, public errata log and provenance manifest.',
+      urlBase, 'docs.html', body, shortSha);
+}
+
+/// Minimal markdown-to-HTML renderer for the docs pack. Handles exactly
+/// the constructs the docs use - ATX headings, paragraphs, ordered and
+/// unordered lists, pipe tables, indented code blocks, horizontal rules,
+/// and inline code/bold/italic/links - and HTML-escapes everything else.
+/// Text is preserved verbatim; anything unrecognized falls through to a
+/// paragraph, never dropped. Headings are demoted one level so the page
+/// keeps a single h1.
+String _mdToHtml(String md) {
+  final lines = md.split('\n');
+  final out = <String>[];
+  var i = 0;
+  while (i < lines.length) {
+    final line = lines[i];
+    final t = line.trim();
+    if (t.isEmpty) {
+      i++;
+      continue;
+    }
+    final indent = line.length - line.trimLeft().length;
+    if (indent >= 4) {
+      // Indented code block.
+      final buf = <String>[];
+      while (i < lines.length) {
+        final l = lines[i];
+        if (l.trim().isEmpty) {
+          buf.add('');
+          i++;
+        } else if (l.length - l.trimLeft().length >= 4) {
+          buf.add(l.substring(4));
+          i++;
+        } else {
+          break;
+        }
+      }
+      while (buf.isNotEmpty && buf.last.isEmpty) {
+        buf.removeLast();
+      }
+      out.add('<pre><code>${_htmlEscape(buf.join('\n'))}</code></pre>');
+      continue;
+    }
+    final h = RegExp(r'^(#{1,6})\s+(.*)$').firstMatch(t);
+    if (h != null) {
+      final level = h.group(1)!.length + 1;
+      out.add('<h$level>${_mdInline(h.group(2)!)}</h$level>');
+      i++;
+      continue;
+    }
+    if (RegExp(r'^(-{3,}|\*{3,}|_{3,})$').hasMatch(t)) {
+      out.add('<hr>');
+      i++;
+      continue;
+    }
+    if (t.startsWith('|') &&
+        i + 1 < lines.length &&
+        RegExp(r'^\|[\s:|-]+\|?$').hasMatch(lines[i + 1].trim())) {
+      // Pipe table: header row, separator row, then body rows.
+      String stripEdges(String row) {
+        var c = row.trim();
+        if (c.startsWith('|')) c = c.substring(1);
+        if (c.endsWith('|')) c = c.substring(0, c.length - 1);
+        return c;
+      }
+      final head = stripEdges(t)
+          .split('|')
+          .map((c) => '<th>${_mdInline(c.trim())}</th>')
+          .join();
+      i += 2;
+      final rows = <String>[];
+      while (i < lines.length && lines[i].trim().startsWith('|')) {
+        rows.add('<tr>'
+            '${stripEdges(lines[i]).split('|').map((c) => '<td>${_mdInline(c.trim())}</td>').join()}'
+            '</tr>');
+        i++;
+      }
+      out.add(
+          '<table><thead><tr>$head</tr></thead><tbody>${rows.join()}</tbody></table>');
+      continue;
+    }
+    final ul = RegExp(r'^[-*]\s+(.*)$').firstMatch(t);
+    final ol = RegExp(r'^\d+[.)]\s+(.*)$').firstMatch(t);
+    if (ul != null || ol != null) {
+      final ordered = ol != null;
+      final items = <String>[];
+      while (i < lines.length) {
+        final l = lines[i].trim();
+        final m = ordered
+            ? RegExp(r'^\d+[.)]\s+(.*)$').firstMatch(l)
+            : RegExp(r'^[-*]\s+(.*)$').firstMatch(l);
+        if (m == null) break;
+        items.add('<li>${_mdInline(m.group(1)!)}</li>');
+        i++;
+      }
+      out.add(ordered ? '<ol>${items.join()}</ol>' : '<ul>${items.join()}</ul>');
+      continue;
+    }
+    // Paragraph: consecutive plain lines.
+    final para = <String>[];
+    while (i < lines.length) {
+      final l = lines[i];
+      final lt = l.trim();
+      if (lt.isEmpty || l.length - l.trimLeft().length >= 4) break;
+      if (RegExp(r'^#{1,6}\s').hasMatch(lt) ||
+          RegExp(r'^[-*]\s').hasMatch(lt) ||
+          RegExp(r'^\d+[.)]\s').hasMatch(lt) ||
+          lt.startsWith('|') ||
+          RegExp(r'^(-{3,}|\*{3,}|_{3,})$').hasMatch(lt)) {
+        break;
+      }
+      para.add(lt);
+      i++;
+    }
+    out.add('<p>${_mdInline(para.join(' '))}</p>');
+  }
+  return out.join('\n');
+}
+
+/// Inline markdown: escape first, then code spans, links, bold, italic.
+/// Relative links to sibling .md docs resolve on GitHub, not on the
+/// served site, so they are pointed at the repository files.
+String _mdInline(String s) {
+  var out = _htmlEscape(s);
+  out = out.replaceAllMapped(
+      RegExp(r'`([^`]+)`'), (m) => '<code>${m.group(1)}</code>');
+  out = out.replaceAllMapped(RegExp(r'\[([^\]]+)\]\(([^)]+)\)'), (m) {
+    var href = m.group(2)!.trim();
+    if (!href.startsWith('http')) {
+      href = 'https://github.com/namunaONE/nMiti/blob/main/docs/$href';
+    }
+    return '<a href="$href">${m.group(1)}</a>';
+  });
+  out = out.replaceAllMapped(
+      RegExp(r'\*\*([^*]+)\*\*'), (m) => '<strong>${m.group(1)}</strong>');
+  out = out.replaceAllMapped(
+      RegExp(r'\*([^*]+)\*'), (m) => '<em>${m.group(1)}</em>');
+  return out;
+}
+
+String _htmlEscape(String s) => s
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 String _notFoundHtml(String urlBase) => '''
 <!DOCTYPE html>
 <html lang="en">
@@ -969,7 +1180,7 @@ ${defects.map((r) => '<tr><td>' + r.bsYear.toString() + '-' + r.monthNo.toString
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'sankranti.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -993,9 +1204,11 @@ Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (p
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
+Documentation pack rendered verbatim (data dictionary, methodology, changelog, errata, provenance manifest): ${urlBase}docs.html
 Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv
-Sankranti moments (solar ingress, current rasi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
-Served sankranti CSV: ${urlBase}data/sankranti_moments_1975_2100.csv
+Served sankranti CSV copies: ${urlBase}data/sankranti_moments_1975_2083.csv and ${urlBase}data/sankranti_moments_1975_2100.csv
+SHA-256 checksums of every served CSV: ${urlBase}data.html#checksums
+Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 

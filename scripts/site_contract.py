@@ -13,7 +13,11 @@ canonical CSVs), not the Dart engine that built the site. It verifies:
   - static markers on every page/widget/CSV artifact (client-guard
     anchors, honesty-page anchors, canonical CSV headers and rows);
   - today.json against a from-scratch Python recompute;
-  - sankranti.json against a from-scratch Python recompute.
+  - sankranti.json against a from-scratch Python recompute;
+  - the L1 core CSV structure (1,308 rows spanning BS 1975-2083);
+  - every SHA-256 digest the /data page publishes, recomputed
+    independently here from the served bytes (a page can never list
+    a checksum that does not match its own download).
 
 Usage:
   python3 scripts/site_contract.py --dir build/site            (local build)
@@ -22,6 +26,7 @@ Usage:
 
 import argparse
 import datetime
+import hashlib
 import json
 import sys
 import time
@@ -39,12 +44,36 @@ MARKERS = {
     "index.html": ['id="ans-en"', 'id="cal-grid"'],
     "accuracy.html": ['id="evidence-tiers"', "2096", "errata"],
     "methodology.html": ['id="layers"', "anchor chain"],
-    "data.html": ['id="data-dictionary"', "data/calendar_bs_core_1975_2083.csv"],
+    "data.html": [
+        'id="data-dictionary"',
+        'id="checksums"',
+        'id="license"',
+        "data/calendar_bs_core_1975_2083.csv",
+        "data/sankranti_moments_1975_2083.csv",
+        "data/sankranti_moments_1975_2100.csv",
+    ],
+    "docs.html": [
+        'id="docs-toc"',
+        'id="data-dictionary"',
+        'id="methodology"',
+        'id="changelog"',
+        'id="errata"',
+        'id="provenance"',
+        "83e8c16794ba4aa3da4dee472efe18ac2fb8e94e",
+        "fc1aae6",
+        "23.87508",
+        "sankranti_npt",
+        "projection-defect",
+    ],
     "sankranti.html": ['id="sankranti-now"', "pre_2036_exception", "projection_defect"],
     "embed/v1/widget.js": ["data-nmiti", "NPT_MS", "attachShadow"],
     "embed/example.html": ["embed/v1/widget.js", 'data-nmiti="today"'],
     "data/calendar_bs_core_1975_2083.csv": ["bs_year,baisakh1,weekday", "2083,2026-04-14"],
     "data/calendar_bs_tail_2084_2100.csv": ["2096", "projection-defect"],
+    "data/sankranti_moments_1975_2083.csv": [
+        "bs_year,month_no,month,rashi,sankranti_npt",
+        "2083,12,Chaitra",
+    ],
     "data/sankranti_moments_1975_2100.csv": [
         "bs_year,month_no,month_en",
         "era_law",
@@ -101,6 +130,58 @@ def check(read_text):
         for marker in markers:
             if marker not in body:
                 failures.append(rel + " missing marker '" + marker + "'")
+
+    # L1 core CSV structure: 1,308 ingress rows spanning BS 1975-2083,
+    # 12 rows per year, first and last rows exactly where they must be.
+    l1_rows = []
+    for line in text("data/sankranti_moments_1975_2083.csv").splitlines():
+        s = line.strip()
+        if not s or s.startswith("#") or s.startswith("bs_year,"):
+            continue
+        cols = s.split(",")
+        l1_rows.append((int(cols[0]), int(cols[1])))
+    if len(l1_rows) != 1308:
+        failures.append(
+            "L1 core CSV has " + str(len(l1_rows)) + " rows, expected 1308"
+        )
+    else:
+        years = [r[0] for r in l1_rows]
+        if years[0] != 1975 or years[-1] != 2083 or l1_rows[-1] != (2083, 12):
+            failures.append(
+                "L1 core CSV span is BS "
+                + str(years[0])
+                + "-"
+                + str(years[-1])
+                + " (last row month "
+                + str(l1_rows[-1][1])
+                + "), expected 1975-2083 ending 2083-12"
+            )
+        per_year = {}
+        for y, _m in l1_rows:
+            per_year[y] = per_year.get(y, 0) + 1
+        bad_years = [y for y in per_year if per_year[y] != 12]
+        if bad_years:
+            failures.append(
+                "L1 core CSV years without exactly 12 rows: "
+                + str(sorted(bad_years)[:5])
+            )
+
+    # SHA-256 re-verification: recompute the digest of every served CSV
+    # from the bytes this contract just fetched and require the digest
+    # the /data page displays to match. The page build computes these
+    # from the exact bytes it serves, so any drift fails here loudly.
+    data_html = text("data.html")
+    for rel in [
+        "data/calendar_bs_core_1975_2083.csv",
+        "data/calendar_bs_tail_2084_2100.csv",
+        "data/sankranti_moments_1975_2083.csv",
+        "data/sankranti_moments_1975_2100.csv",
+    ]:
+        digest = hashlib.sha256(text(rel).encode("utf-8")).hexdigest()
+        if digest not in data_html:
+            failures.append(
+                "data.html missing recomputed SHA-256 " + digest + " for " + rel
+            )
 
     # today.json: independently recomputed from the canonical core CSV.
     rows = _core_rows(text("data/calendar_bs_core_1975_2083.csv"))
