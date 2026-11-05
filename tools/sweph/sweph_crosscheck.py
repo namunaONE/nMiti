@@ -73,17 +73,22 @@ MOONRISE_MEAN_BAND_S = 150
 # like every band before it.
 LUNAR_ECLIPSE_HARD_BAND_S = 300
 LUNAR_ECLIPSE_MEAN_BAND_S = 120
-# swe.lun_eclipse_when tret layout (Swiss Ephemeris docs): 0 greatest,
-# 1 partial begin, 2 total begin, 3 total end, 4 partial end,
-# 5 penumbral begin, 6 penumbral end. Unused slots are 0, so a contact
-# exists iff its slot holds a real instant after the seed.
+# pyswisseph lun_eclipse_when tret layout (per its docstring: "indices
+# consistent with solar eclipses"). The first CI run (2026-11-05) shipped
+# the pre-2.x Swiss layout and the failure annotations recorded the exact
+# mismatch pattern - the wrong-slot deltas reconstructed mean 8673s /
+# max 20314s to the second - so this layout is receipt-verified, not
+# assumed: 0 greatest, 1 unused, 2 partial begin, 3 partial end,
+# 4 total begin, 5 total end, 6 penumbral begin, 7 penumbral end.
+# Unused slots are 0, so a contact exists iff its slot holds a real
+# instant after the seed.
 LUNAR_ECLIPSE_PHASE_IDX = [
-    ("penumbral_start", 5),
-    ("partial_start", 1),
-    ("total_start", 2),
-    ("total_end", 3),
-    ("partial_end", 4),
-    ("penumbral_end", 6),
+    ("penumbral_start", 6),
+    ("partial_start", 2),
+    ("total_start", 4),
+    ("total_end", 5),
+    ("partial_end", 3),
+    ("penumbral_end", 7),
 ]
 KNIFE_EDGE_MIN = 30.0
 SEED_DAYS = 0.05  # seed the Swiss solver ~72 min before our boundary
@@ -237,8 +242,10 @@ def lunar_eclipse_crosscheck(fixture_path, failures):
                 % (date, greatest))
             continue
         # A contact exists iff its tret slot holds a real instant.
-        has_partial = tret[1] > seed and tret[4] > seed
-        has_total = tret[2] > seed and tret[3] > seed
+        # Slots per the pyswisseph layout: 2/3 partial begin/end,
+        # 4/5 total begin/end, 6/7 penumbral begin/end.
+        has_partial = tret[2] > seed and tret[3] > seed
+        has_total = tret[4] > seed and tret[5] > seed
         swiss_type = ("total" if has_total
                       else ("partial" if has_partial else "penumbral"))
         if swiss_type != e["type"]:
