@@ -441,7 +441,11 @@ def solar_eclipse_loc_crosscheck(fixture_path, sw, failures):
                   "partial_end": tret[4]}
         row["stages"] = {}
         for key, swiss_jd in stages.items():
-            delta = (swiss_jd - npt_jd_of(sources[key])) * 86400.0
+            # The solar fixture's tAD stage times are NPT wall clock
+            # ("16:27:20") with the date carried by e["date"] - compose
+            # the ISO stamp the parser expects.
+            delta = (swiss_jd - npt_jd_of(
+                "%sT%s" % (date, sources[key]))) * 86400.0
             row["stages"][key] = {
                 "swiss_jd_ut": swiss_jd, "delta_s": round(delta, 2)}
             deltas.append(delta)
