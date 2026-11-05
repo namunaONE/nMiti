@@ -156,8 +156,8 @@ void main() {
           // 9 h before the moonrise for the grastodit case, 9 h before
           // the umbral first contact otherwise.
           final anchorIso = ev.risesEclipsed
-              ? tad?['moonrise'] as String?
-              : tad?['partial_start'] as String?;
+              ? (tad?['moonrise'] as String?)
+              : (tad?['partial_start'] as String?);
           if (anchorIso != null) {
             final delta =
                 _deltaMinutesIso(ev.jdUtSutakStart!, anchorIso);

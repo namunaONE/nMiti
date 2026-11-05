@@ -403,7 +403,7 @@ GrahanEvent _solarGrahanEvent(
     } else {
       // A sunset eclipse: the local moksha is the sunset.
       visEnd = _crossingBetween(
-              visStart!, c.jdUtPartialEnd, sunMargin, false) ??
+              visStart, c.jdUtPartialEnd, sunMargin, false) ??
           c.jdUtPartialEnd;
       sets = true;
     }
@@ -504,7 +504,7 @@ GrahanEvent _lunarGrahanEvent(LunarEclipseCircumstances c,
     setsEclipsed: sets,
     jdUtVisibleStart: visStart,
     jdUtVisibleEnd: visEnd,
-    jdUtSutakStart: sutak ? visStart! - sutakLunarHours / 24.0 : null,
+    jdUtSutakStart: sutak ? visStart - sutakLunarHours / 24.0 : null,
     jdUtSutakEnd: sutak ? visEnd : null,
     magnitude: umbral ? c.umbralMagnitude : c.penumbralMagnitude,
     obscuration: null,
