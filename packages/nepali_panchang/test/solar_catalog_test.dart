@@ -180,8 +180,13 @@ void main() {
             expect((cc.magnitude - receiptMag).abs(),
                 lessThanOrEqualTo(0.01));
           }
-          // Visible partials are shallow grazes by the display policy.
-          expect(cc.magnitude, lessThan(0.5));
+          // The visible partials of this catalog are shallow grazes at
+          // Kathmandu; below-horizon grazes can be deep night partials
+          // (12 Aug 2026 reaches magnitude 0.62 with the Sun at -46
+          // deg), so the depth bound applies to the visible ones only.
+          if (expected == 'aboveHorizon') {
+            expect(cc.magnitude, lessThan(0.5));
+          }
           expect(cc.obscuration, lessThan(cc.magnitude));
         });
       }
