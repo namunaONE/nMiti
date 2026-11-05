@@ -84,6 +84,9 @@ class PanchangDay {
   /// midnight element - the noon value is provided, midnight is not.
   final PanchangElement yogaAtNoon;
 
+  /// Karana running at local noon - the BhaktiBharat convention.
+  final PanchangElement karanaAtNoon;
+
   /// True when the same tithi runs at two consecutive udayas (vriddhi).
   final bool tithiVriddhi;
 
@@ -111,6 +114,7 @@ class PanchangDay {
     required this.tithiAtNoon,
     required this.nakshatraAtNoon,
     required this.yogaAtNoon,
+    required this.karanaAtNoon,
     required this.tithiVriddhi,
     required this.tithiKshaya,
     required this.tithiBorderline,
@@ -171,14 +175,14 @@ PanchangDay panchangFor({
   final prev = limbIndex('tithi', prevSunriseJdTt, sourceDelta);
   final next = limbIndex('tithi', nextSunriseJdTt, sourceDelta);
   final vriddhi = cur == next || cur == prev;
-  final kshaya =
-      (next - cur) % 30 == 2 || (cur - prev) % 30 == 2;
+  final kshaya = (next - cur) % 30 == 2 || (cur - prev) % 30 == 2;
 
   // Borderline: a tithi boundary lands within half an hour of an udaya.
-  final halfHour = const Duration(minutes: 30);
   final nextSunriseNpt = _nptWall(jdUtFromJdTt(nextSunriseJdTt));
-  final borderline = tithi.endsAtNpt.difference(sunriseNpt).abs() < halfHour ||
-      tithi.endsAtNpt.difference(nextSunriseNpt).abs() < halfHour;
+  final borderline =
+      tithi.endsAtNpt.difference(sunriseNpt).abs() < const Duration(minutes: 30) ||
+          tithi.endsAtNpt.difference(nextSunriseNpt).abs() <
+              const Duration(minutes: 30);
 
   return PanchangDay(
     dateNpt: dateNpt,
@@ -190,6 +194,7 @@ PanchangDay panchangFor({
     tithiAtNoon: at('tithi', noonJdTt, ReferenceMoment.madhyahna),
     nakshatraAtNoon: at('nakshatra', noonJdTt, ReferenceMoment.madhyahna),
     yogaAtNoon: at('yoga', noonJdTt, ReferenceMoment.madhyahna),
+    karanaAtNoon: at('karana', noonJdTt, ReferenceMoment.madhyahna),
     tithiVriddhi: vriddhi,
     tithiKshaya: kshaya,
     tithiBorderline: borderline,

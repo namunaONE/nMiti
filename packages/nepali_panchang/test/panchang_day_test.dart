@@ -9,8 +9,9 @@ import 'package:test/test.dart';
 /// Nov 18-19 2026 (starts Nov 18 06:20, ~2 min before sunrise);
 /// Krishna Dwitiya is a kshaya tithi around Oct 28 2026 (ends 04:22,
 /// running at neither udaya); on Dashain day Oct 18 2026 the karana at
-/// sunrise is Vishti (Hamro Patro) while at noon it is Bava (BhaktiBharat);
-/// yoga Indra ends Nov 5 06:42 (Hamro Patro profile).
+/// sunrise is Vishti (Hamro Patro) while at noon it is Bava (BhaktiBharat)
+/// and the noon tithi is Shukla Ashtami; yoga Indra ends Nov 5 06:42
+/// (Hamro Patro profile).
 
 void main() {
   test('Oct 26 2026: Purnima at udaya, ends late morning NPT', () {
@@ -62,7 +63,8 @@ void main() {
   test('Oct 18 2026 (Dashain): udaya karana Vishti vs noon karana Bava', () {
     final d = panchangFor(year: 2026, month: 10, day: 18);
     expect(d.karanaAtUdaya.name, 'Vishti');
-    expect(d.tithiAtNoon.name, 'Maha Ashtami');
+    expect(d.karanaAtNoon.name, 'Bava');
+    expect(d.tithiAtNoon.name, 'Shukla Ashtami');
   });
 
   test('Nov 5 2026: yoga Indra at udaya under the Hamro Patro profile', () {
