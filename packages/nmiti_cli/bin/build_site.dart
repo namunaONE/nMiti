@@ -114,6 +114,14 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
   final labelEn = '${bsMonthNameEn(today.month)} ${today.day}, ${today.year} BS';
   final labelNp = '${bsMonthNameNp(today.month)} ${toNepaliDigits(today.day.toString())}, ${toNepaliDigits(today.year.toString())}';
   final tier = row.evidence.split(',').first;
+  // R6a-3: the daily panchang block, engine-computed at build time.
+  final p = panchangFor(year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  String elJson(String ind, String key, PanchangElement e) =>
+      '$ind"$key": {"name": "${e.name}", "begins_at": "${isoNpt(e.beginsAtNpt)}", "ends_at": "${isoNpt(e.endsAtNpt)}"}';
+  String limbJson(String ind, PanchangElement udaya, PanchangElement noon) =>
+      '${elJson(ind, 'udaya', udaya)},\n${elJson(ind, 'madhyahna', noon)}';
   return '''
 {
   "bs": {
@@ -140,6 +148,34 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
       "day": ${tomorrow.day}
     },
     "ad": "${_iso(gTomorrow)}"
+  },
+  "panchang": {
+    "note": "engine-computed at build time; festivals are not covered (festival display rules ship separately)",
+    "conventions": {
+      "udaya": "element running at engine sunrise - the Hamro Patro display convention",
+      "madhyahna": "element running at local noon - the BhaktiBharat display convention"
+    },
+    "tithi": {
+${limbJson('      ', p.tithiAtUdaya, p.tithiAtNoon)}
+    },
+    "nakshatra": {
+${limbJson('      ', p.nakshatraAtUdaya, p.nakshatraAtNoon)}
+    },
+    "yoga": {
+${limbJson('      ', p.yogaAtUdaya, p.yogaAtNoon)}
+    },
+    "karana": {
+${limbJson('      ', p.karanaAtUdaya, p.karanaAtNoon)}
+    },
+    "sunrise_npt": "${isoNpt(p.sunriseNpt)}",
+    "flags": {
+      "tithi_vriddhi": ${p.tithiVriddhi},
+      "tithi_kshaya": ${p.tithiKshaya},
+      "tithi_borderline": ${p.tithiBorderline}
+    },
+    "provenance": "${p.provenance}",
+    "evidence_tier": "${p.evidenceTier}",
+    "details": "${urlBase}panchang.html"
   },
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
@@ -632,7 +668,7 @@ $checksumRows
 
 <h2 id="api">JSON API - static, no keys, CC0</h2>
 <ul>
-<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight. Stamped with the commit and build run.</li>
+<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - engine-computed at build time. Stamped with the commit and build run.</li>
 <li><code>api/v1/calendar/{bs_year}.json</code> - one BS year: baisakh1, weekday, days, the 12 month lengths, month names, evidence tier (BS 1975-2100). Example: <a href="api/v1/calendar/2083.json">api/v1/calendar/2083.json</a></li>
 <li><code><a href="api/v1/meta.json">api/v1/meta.json</a></code> - dataset metadata: coverage, evidence summary, license.</li>
 </ul>
@@ -1278,7 +1314,7 @@ String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) 
 > Verified, evidence-tagged Bikram Sambat dates for Nepal, rebuilt automatically every day at 00:00 Nepal Time (UTC+05:45).
 
 Today's date (bilingual page): $urlBase
-Today's date (JSON): ${urlBase}api/v1/today.json
+Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier): ${urlBase}api/v1/today.json
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
