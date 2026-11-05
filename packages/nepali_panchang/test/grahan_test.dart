@@ -152,19 +152,22 @@ void main() {
                   .abs(),
               lessThan(1e-9));
           expect(ev.jdUtSutakEnd, ev.jdUtVisibleEnd);
-          // The sutak starts on the anchor receipt, not hand-typed:
-          // 9 h before the moonrise for the grastodit case, 9 h before
-          // the umbral first contact otherwise.
+          // The sutak starts 9 h before the anchor receipt, not
+          // hand-typed: the moonrise for the grastodit case, the
+          // umbral first contact otherwise.
           final anchorIso = ev.risesEclipsed
               ? (tad?['moonrise'] as String?)
               : (tad?['partial_start'] as String?);
           if (anchorIso != null) {
-            final delta =
-                _deltaMinutesIso(ev.jdUtSutakStart!, anchorIso);
-            expect(delta.abs(), lessThanOrEqualTo(12.0),
+            // Anchor-receipt band: 12 min for a moonrise receipt,
+            // 4 min for a contact receipt.
+            final delta = _deltaMinutesIso(ev.jdUtSutakStart!, anchorIso) +
+                sutakLunarHours * 60.0;
+            final band = ev.risesEclipsed ? 12.0 : 4.0;
+            expect(delta.abs(), lessThanOrEqualTo(band),
                 reason: 'sutak start off by ' +
                     delta.toStringAsFixed(2) +
-                    ' min vs ' +
+                    ' min vs 9 h before ' +
                     anchorIso);
           }
         } else {
