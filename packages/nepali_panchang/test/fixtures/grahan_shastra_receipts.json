@@ -1,0 +1,279 @@
+{
+  "schema": "nmiti-grahan-shastra-receipts/1",
+  "crawl_date": "2026-11-05",
+  "location": {
+    "name": "Kathmandu",
+    "latitude_deg": 27.7172,
+    "longitude_deg": 85.324
+  },
+  "method": "Sutak and naming rules with verbatim quotes crawled 2026-11-05 from BhaktiBharat, PanchangBodh, HinduCalculator, nepalipatro (Nepal Panchang Nirnayak Committee reports), Nepal Jyotish, Hamro Patro, ratopati and drik (snippet). Lunar Kathmandu local circumstances from the timeanddate iso pages (stage tables, NPT wall clock). Never hand-transcribed.",
+  "sutak_rules": {
+    "solar_sutak_hours": 12,
+    "lunar_sutak_hours": 9,
+    "lunar_anchor": "umbral first contact",
+    "sutak_end": "moksha - the locally visible last contact",
+    "visibility_gated": true,
+    "penumbral_not_kept": true,
+    "exemption_prahar_hours": 3,
+    "receipts": [
+      {
+        "source": "bhaktibharat",
+        "url": "https://www.bhaktibharat.com/en/blogs/what-is-sutak-during-grahan-period",
+        "quote": "Sutak is observed for 4 prahars during surya grahan and sutak is observed for 3 prahars before eclipse during chandra grahan. There are a total of 8 Prahars from sunrise to sunrise. Hence Sutak is celebrated 12 hours before the surya grahan and 9 hours before the chandra grahan."
+      },
+      {
+        "source": "bhaktibharat",
+        "url": "https://www.bhaktibharat.com/en/blogs/what-is-sutak-during-grahan-period",
+        "quote": "The food limit for children, sick and old people is limited to only one prahar or 3 hours."
+      },
+      {
+        "source": "bhaktibharat",
+        "url": "https://www.bhaktibharat.com/en/blogs/what-is-sutak-during-grahan-period",
+        "quote": "Sutak is observed only when an eclipse is visible at the place in question."
+      },
+      {
+        "source": "hinducalculator",
+        "url": "https://hinducalculator.com/sutak-kaal/",
+        "quote": "The common panchang used here starts solar Sutak 12 hours before first contact and lunar Sutak 9 hours before umbral first contact. It ends at moksha. Hours are counted from local contacts for a solar eclipse visible in your city."
+      },
+      {
+        "source": "hinducalculator",
+        "url": "https://hinducalculator.com/sutak-kaal/",
+        "quote": "Some families shorten the hours for children, the elderly and the unwell, and some almanacs print a varna table (12 / 9 / 6 / 3 hours)."
+      },
+      {
+        "source": "panchangbodh",
+        "url": "https://panchangbodh.com/sutak-kaal-guide",
+        "quote": "Sutak ends when the eclipse ends - not when totality ends, but when the last sliver of shadow lifts from the disc of the Sun or Moon."
+      },
+      {
+        "source": "panchangbodh",
+        "url": "https://panchangbodh.com/sutak-kaal-guide",
+        "quote": "Mar 3 Total Lunar ... Sutak Window ~6:20 AM to ~6:47 PM, Mar 3 (approx 12.5 hrs) - sutak applies only when the eclipse is visible from your location."
+      },
+      {
+        "source": "nepalipatro",
+        "url": "https://nepalipatro.com.np/blog/en/total-luna-eclipse-2079-eng/",
+        "quote": "When the eclipse has already occurred even before the moon has risen, the eclipse sutak (impurities pertaining to the duration of the eclipse) is calculated based on the time when the moon rises in that particular place."
+      },
+      {
+        "source": "nepalipatro",
+        "url": "https://nepalipatro.com.np/blog/en/total-luna-eclipse-2079-eng/",
+        "quote": "Eclipse sutak (impurities) starts three praharas (9 hours) before the lunar eclipse and four praharas (12 hours) before the solar eclipse. Children, the elderly, and even the disabled are instructed not to eat at least one prahar (3 hours) before the eclipse by scriptures."
+      },
+      {
+        "source": "drikpanchang",
+        "url": "https://www.drikpanchang.com/eclipse/sutak-grahan.html",
+        "quote": "During Solar Eclipse Sutak is observed for 4 Prahars and during Lunar Eclipse Sutak is observed for 3 Prahars before Eclipse. Hence Sutak is observed for 12 hours before Solar Eclipse and for 9 hours before Lunar Eclipse. Sutak is observed only when Eclipse is visible at the place under discussion."
+      }
+    ]
+  },
+  "naming": {
+    "khagras": "total eclipse - the whole body is swallowed",
+    "khandagras": "partial eclipse - a part is swallowed",
+    "upachhaya": "penumbral lunar eclipse - not kept as grahan",
+    "grastodit": "the body rises already eclipsed (local first contact is the rise)",
+    "moksha": "eclipse conclusion (the locally visible last contact)",
+    "receipts": [
+      {
+        "source": "nepaljyotish",
+        "url": "https://nepaljyotish.org/en/astronomical-events/chandra-grahan/",
+        "quote": "Total Lunar Eclipse (Khagras) The Moon passes completely into the umbra - the whole Moon sits inside the Earth's dark shadow. Partial Lunar Eclipse (Khandagras) The Moon passes only partly through the umbra. Penumbral Eclipse (Upachhaya) The Moon passes only through the penumbra without touching the umbra at all."
+      },
+      {
+        "source": "ratopati",
+        "url": "https://english.ratopati.com/story/51418/todays-partial-lunar-eclipse-will-be-visible-from-nepal-for-about-an-hour",
+        "quote": "A partial lunar eclipse, where the rising moon is partially covered by the eclipse (Grastodit Khandagrahas), is set to occur this evening. When the moon rises at 6:03 PM, it will already be in the state of Grastodit Khandagrahas."
+      },
+      {
+        "source": "hamropatro",
+        "url": "https://www.hamropatro.com/en/date/2082-11-19",
+        "quote": "Khandagras Chandra Grahan - On Falgun 19, 2082 B.S. a lunar eclipse will occur on the full moon day. The eclipse will begin at 6:03 PM and remain visible until 7:02 PM, while the eclipse will conclude (moksha) at 2:38 AM. The duration of the eclipse will be 59 minutes. The sutak period of a lunar eclipse generally begins 9 hours before the eclipse starts."
+      }
+    ]
+  },
+  "collisions": [
+    {
+      "id": "C1",
+      "topic": "shadow enlargement: Danjon 1/85 (NASA bulletins, engine default) vs Chauvenet 1/50",
+      "resolution": "Danjon default, Chauvenet exposed via the shadowEnlargement parameter"
+    },
+    {
+      "id": "C2",
+      "topic": "Hamro Patro 3 Mar 2026 numbers vs NASA: moksha 2:38 AM and duration 59 min against NASA umbral contacts 09:50-13:17 UT (15:35-19:02 NPT) and penumbral end 20:08 NPT; the HP visible window 6:03-7:02 PM tracks Kathmandu moonrise to umbral end",
+      "resolution": "publisher divergence exposed with receipts, never chased"
+    },
+    {
+      "id": "C3",
+      "topic": "HinduCalculator eclipse-calendar FAQ reverses the sutak hours in one sentence",
+      "evidence": "https://hinducalculator.com/eclipse-calendar/ - 'nine hours before a solar eclipse and twelve before a lunar one by the usual rule' - against its own table, its myths section and every other source",
+      "resolution": "the common 12 h solar / 9 h lunar rule is served, the FAQ sentence receipt-recorded"
+    },
+    {
+      "id": "C4",
+      "topic": "sutak anchor: local visible contacts (prevailing) vs global event times for non-visible eclipses",
+      "resolution": "local visible contacts only - no visibility, no sutak"
+    },
+    {
+      "id": "C5",
+      "topic": "penumbral lunar eclipses kept as grahan?",
+      "resolution": "not kept - no sutak (HinduCalculator, PanchangBodh, Nepal Jyotish, drik all agree)"
+    },
+    {
+      "id": "C6",
+      "topic": "naming by global type vs locally observed phase: HP titles the 3 Mar 2026 total lunar eclipse Khandagras Chandra Grahan because Nepal observes only the partial phase at moonrise",
+      "resolution": "grahanClass is the global class; risesEclipsed and the visible window carry the local observation"
+    }
+  ],
+  "events": [
+    {
+      "date": "2026-03-03",
+      "kind": "lunar",
+      "type": "total",
+      "expected": {
+        "grahan_class": "khagras",
+        "kept_as_grahan": true,
+        "visible": true,
+        "rises_eclipsed": true,
+        "sets_eclipsed": false,
+        "nepali_name": "Khagras Chandra Grahan (grastodit)",
+        "sutak_anchor": "moonrise",
+        "nasa_umbral_magnitude": 1.1507
+      },
+      "kathmandu": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20260303",
+          "penumbral_start": "2026-03-03T14:29",
+          "partial_start": "2026-03-03T15:35",
+          "total_start": "2026-03-03T16:49",
+          "greatest": "2026-03-03T17:18",
+          "total_end": "2026-03-03T17:47",
+          "moonrise": "2026-03-03T18:03",
+          "partial_end": "2026-03-03T19:02",
+          "penumbral_end": "2026-03-03T20:08",
+          "observed_note": "The total phase of this lunar eclipse was not visible in Kathmandu, but it could be observed there as a partial lunar eclipse."
+        },
+        "hamro_patro": {
+          "url": "https://www.hamropatro.com/en/date/2082-11-19",
+          "visible_from": "6:03 PM",
+          "visible_until": "7:02 PM",
+          "title": "Khandagras Chandra Grahan",
+          "moksha_displayed": "2:38 AM",
+          "duration_displayed": "59 minutes",
+          "sutak_note": "The sutak period of a lunar eclipse generally begins 9 hours before the eclipse starts."
+        }
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "kind": "lunar",
+      "type": "partial",
+      "expected": {
+        "grahan_class": "khandagras",
+        "kept_as_grahan": true,
+        "visible": false,
+        "rises_eclipsed": false,
+        "sets_eclipsed": false,
+        "nepali_name": "Khandagras Chandra Grahan",
+        "nasa_umbral_magnitude": 0.9299
+      },
+      "kathmandu": {
+        "not_visible_note": "The umbral interval 02:34-05:52 UT falls in Kathmandu daylight with the Moon below the horizon; global phases are pinned by test/fixtures/nasa_lunar_2026.json (crawled 2026-11-05) and the HinduCalculator calendar receipt: 'In India it occurs during the day with the Moon below the horizon, so it is not visible and no Sutak Kaal is observed.'"
+      }
+    },
+    {
+      "date": "2027-02-21",
+      "kind": "lunar",
+      "type": "penumbral",
+      "expected": {
+        "grahan_class": "upachhaya",
+        "kept_as_grahan": false,
+        "visible": true,
+        "rises_eclipsed": false,
+        "sets_eclipsed": true,
+        "nepali_name": "Upachhaya Chandra Grahan (not kept as grahan)"
+      },
+      "kathmandu": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20270221",
+          "penumbral_start": "2027-02-21T02:57",
+          "greatest": "2027-02-21T04:57",
+          "moonset": "2027-02-21T06:38",
+          "penumbral_end": "2027-02-21T06:58",
+          "magnitude_displayed": "-0.057",
+          "observed_note": "The penumbra ends below the horizon in Kathmandu (moonset 06:38)."
+        }
+      }
+    },
+    {
+      "date": "2028-01-12",
+      "kind": "lunar",
+      "type": "partial",
+      "expected": {
+        "grahan_class": "khandagras",
+        "kept_as_grahan": true,
+        "visible": false,
+        "rises_eclipsed": false,
+        "sets_eclipsed": false,
+        "nepali_name": "Khandagras Chandra Grahan"
+      },
+      "kathmandu": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20280112",
+          "verdict": "Not Visible in Kathmandu"
+        }
+      }
+    },
+    {
+      "date": "2028-07-06",
+      "kind": "lunar",
+      "type": "partial",
+      "expected": {
+        "grahan_class": "khandagras",
+        "kept_as_grahan": true,
+        "visible": true,
+        "rises_eclipsed": false,
+        "sets_eclipsed": false,
+        "nepali_name": "Khandagras Chandra Grahan"
+      },
+      "kathmandu": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20280706",
+          "penumbral_start": "2028-07-06T21:29",
+          "partial_start": "2028-07-06T22:54",
+          "greatest": "2028-07-07T00:04",
+          "magnitude": 0.389,
+          "partial_end": "2028-07-07T01:15",
+          "penumbral_end": "2028-07-07T02:40"
+        }
+      }
+    },
+    {
+      "date": "2028-12-31",
+      "kind": "lunar",
+      "type": "total",
+      "expected": {
+        "grahan_class": "khagras",
+        "kept_as_grahan": true,
+        "visible": true,
+        "rises_eclipsed": false,
+        "sets_eclipsed": false,
+        "nepali_name": "Khagras Chandra Grahan"
+      },
+      "kathmandu": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20281231",
+          "penumbral_start": "2028-12-31T19:48",
+          "partial_start": "2028-12-31T20:52",
+          "total_start": "2028-12-31T22:01",
+          "greatest": "2028-12-31T22:37",
+          "magnitude": 1.246,
+          "total_end": "2028-12-31T23:12",
+          "partial_end": "2029-01-01T00:21",
+          "penumbral_end": "2029-01-01T01:25",
+          "observed_note": "This total lunar eclipse is fully visible in Kathmandu."
+        }
+      }
+    }
+  ]
+}
