@@ -302,10 +302,15 @@ void main() {
       final tad = (solarEvents
               .firstWhere((x) => x['date'] == '2027-08-02')['sources']
           as Map<String, dynamic>)['timeanddate'] as Map<String, dynamic>;
+      // The receipt contact is 12 h after the sutak start, so add
+      // the window back before banding against the receipt.
       final delta = _deltaMinutesNpt(
-          ev.jdUtSutakStart!, DateTime(2027, 8, 2), tad['partial_start'] as String);
+              ev.jdUtSutakStart!, DateTime(2027, 8, 2), tad['partial_start'] as String) +
+          sutakSolarHours * 60.0;
       expect(delta.abs(), lessThanOrEqualTo(4.0),
-          reason: 'sutak start off by ' + delta.toStringAsFixed(2) + ' min');
+          reason: 'sutak start off by ' +
+              delta.toStringAsFixed(2) +
+              ' min vs 12 h before the first contact');
     });
 
     test('12 Aug 2026 below-horizon solar graze carries no sutak', () {
@@ -406,7 +411,9 @@ void main() {
     expect(jan26, isNotNull);
     expect(jan26!.kind, GrahanKind.suryaGrahan);
     expect(jan26.visibleAtLocation, isFalse);
-    final jul6 = byDay[706];
+    // The greatest falls at 00:04 NPT on 7 July, just past civil
+    // midnight, so the key lands on the next day.
+    final jul6 = byDay[706] ?? byDay[707];
     expect(jul6, isNotNull);
     expect(jul6!.grahanClass, GrahanClass.khandagras);
     expect(jul6.visibleAtLocation, isTrue);
