@@ -584,6 +584,36 @@ def lunar_eclipse_loc_crosscheck(fixture_path, sw, failures):
             "swiss_jd_ut": greatest, "delta_s": round(grt_delta, 2)}
         event_pairs = [("greatest", grt_delta)]
         if expected.get("rises_eclipsed") or len(stages) <= 1:
+            if expected.get("rises_eclipsed") and \
+                    abs(grt_delta) > LUNAR_LOC_HARD_BAND_S and \
+                    "moonrise" in tad:
+                # Grastodit with an off-band greatest: the global
+                # greatest can fall below the horizon (17:18 NPT on
+                # 2026-03-03, before the 18:03 moonrise), in which case
+                # the local channel clamps its greatest to the moonrise
+                # instant. Score the clamp interpretation against the
+                # fixture's own moonrise receipt - the same empirical
+                # pattern as the slot-layout candidates - and keep the
+                # global instant pinned by the global-channel receipts.
+                rise_delta = (greatest -
+                              npt_jd_of(tad["moonrise"])) * 86400.0
+                if abs(rise_delta) <= LUNAR_LOC_HARD_BAND_S:
+                    row["stages"]["greatest"] = {
+                        "swiss_jd_ut": greatest,
+                        "delta_s": round(rise_delta, 2),
+                        "note": ("grastodit: the local channel clamps "
+                                 "its greatest to the moonrise "
+                                 "instant (global-greatest delta "
+                                 "%+.0fs; the global instant stays "
+                                 "pinned by the global-channel "
+                                 "receipts)" % grt_delta)}
+                    event_pairs = [("greatest@moonrise", rise_delta)]
+                else:
+                    failures.append(
+                        "%s: grastodit greatest matches neither the "
+                        "tAD global greatest (%+.0fs) nor the "
+                        "moonrise clamp (%+.0fs)"
+                        % (date, grt_delta, rise_delta))
             # Grastodit: the umbral and penumbral phases begin before
             # moonrise, so Swiss's own visibility gate clips (or clamps)
             # them - only the greatest instant is comparable. The full
