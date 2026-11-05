@@ -29,6 +29,11 @@
 /// samiti/publisher receipt corpus as the permanent CI gate. HYA-417 adds the
 /// moonrise solver, the nishita and chandrodaya conventions and the 2026
 /// festival receipt corpus (Shivaratri, Fagu Purnima, Janai Purnima, Teej).
+///
+/// L4 (HYA-420) opens the muhurta layer: the USNO sunset solver (step 1)
+/// and the BhaktiBharat muhurta receipts corpus for Nov 2026 (step 2) as
+/// the permanent CI gate. The muhurta recipes themselves (Rahu Kalam,
+/// Yamaganda, Gulika, Abhijit, Choghadiya, Hora) land with step 3.
 library;
 
 export 'src/ayanamsa.dart';
@@ -44,4 +49,5 @@ export 'src/panchang_day.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
 export 'src/sunrise.dart';
+export 'src/sunset.dart';
 export 'src/uncertainty.dart';
