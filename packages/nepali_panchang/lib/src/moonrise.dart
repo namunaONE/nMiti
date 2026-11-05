@@ -98,8 +98,14 @@ double? moonriseJdUt({
   double latitudeDeg = 27.7172,
   double longitudeDeg = 85.324,
 }) {
+  // 00:00 NPT = 18:15 UT of the previous UT day, i.e.
+  // jdFromCivil(y, m, d) - 5.75/24 (NPT = UT + 5:45). The previous
+  // - 18.25/24 anchor started the scan at 05:45 UT (11:30 NPT), so
+  // afternoon/evening rises were solved against the wrong window and
+  // the scan returned the previous day's rise (caught by the Mar 2/3
+  // 2026 Fagu Purnima goldens; the morning-rise goldens hid it).
   final dayStartUt =
-      julianDayFromCivil(year, month, day.toDouble()) - 18.25 / 24.0;
+      julianDayFromCivil(year, month, day.toDouble()) - 5.75 / 24.0;
   const step = 1.0 / 48.0; // 30 minutes
   double margin(double jdUt) =>
       moonGeocentricAltitudeDeg(
