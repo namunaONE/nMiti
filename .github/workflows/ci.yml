@@ -21,9 +21,19 @@ jobs:
       - run: dart analyze
       # Workspace root has no test/ dir; the suites live in member packages.
       # 'dart test packages' scans all members, so future packages are covered automatically.
-      # expanded for humans, github for the CI UI: failing
-      # tests surface as per-test annotations on the run page.
-      - run: dart test packages --reporter expanded --reporter github
+      # The expanded output is tee'd so the annotation step
+      # below can name every failing test on the run page (the
+      # aggregate exit-code line alone hides which test broke).
+      - name: dart test packages
+        run: |
+          set -o pipefail
+          dart test packages --reporter expanded 2>&1 | tee dart_test_output.txt
+      - name: name the failing tests as run annotations
+        if: failure()
+        run: |
+          grep -F '[E]' dart_test_output.txt | while IFS= read -r line; do
+            printf '::error::%s\n' "$(printf '%s' "$line" | sed 's/%/%25/g')"
+          done || true
       - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
       # Full site build as a PR gate: catches build_site.dart and data
       # regressions before merge, not only after the post-deploy smoke.
