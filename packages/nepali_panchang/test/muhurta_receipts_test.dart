@@ -51,7 +51,7 @@ const _gulikaParts = <String, int>{
 
 const _typeLords = <String, String>{
   'Udveg': 'Sun',
-  'Amrit': 'Moon',
+  'Amrut': 'Moon',
   'Rog': 'Mars',
   'Labh': 'Mercury',
   'Shubh': 'Jupiter',
