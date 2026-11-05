@@ -319,19 +319,33 @@ List<TithiOccasion> _occasions(List<PanchangDay> days, int tithiIndex,
       if (d.isBefore(windowStart) || d.isAfter(windowEnd)) {
         continue;
       }
-      if (day.tithiAtUdaya.index == tithiIndex) {
+      // Span-local: only days whose udaya element belongs to THIS run
+      // of the tithi (beginsAtNpt == b). A tithi index recurs every
+      // lunar month and a long window spans more than one run; without
+      // this restriction every occasion would inherit the other run's
+      // days too (the 2083 window holds two Pratipadas, two
+      // Trayodashis, two Amavasyas... - CI caught exactly that).
+      if (day.tithiAtUdaya.index == tithiIndex &&
+          day.tithiAtUdaya.beginsAtNpt == b) {
         udayaDays.add(d);
       }
       // Evening convention: the tithi running at 18:00 NPT. It is either
       // the noon tithi still running into the evening, or the next tithi
       // that begins at the noon tithi's end (any tithi beginning at or
       // before the evening reference is still running there, since no
-      // tithi is shorter than ~19.7 h).
+      // tithi is shorter than ~19.7 h). Both cases are span-local like
+      // the udaya test above: the deciding element must belong to THIS
+      // occasion's run (case 1: the noon element IS this run, so its
+      // beginsAtNpt is b; case 2: this run begins exactly at the noon
+      // element's end, so that end instant IS b).
       final noon = day.tithiAtNoon;
       final eveningRef = DateTime.utc(d.year, d.month, d.day, 18);
       final runningAtEvening =
-          (noon.index == tithiIndex && noon.endsAtNpt.isAfter(eveningRef)) ||
+          (noon.index == tithiIndex &&
+                  noon.beginsAtNpt == b &&
+                  noon.endsAtNpt.isAfter(eveningRef)) ||
               ((noon.index + 1) % 30 == tithiIndex &&
+                  noon.endsAtNpt == b &&
                   !noon.endsAtNpt.isAfter(eveningRef));
       if (runningAtEvening) {
         eveningDays.add(d);
