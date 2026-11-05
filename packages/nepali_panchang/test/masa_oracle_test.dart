@@ -26,7 +26,12 @@ LunarMonth _theirMonthOf(int ourMonthNumber) =>
     _theirOrder[ourMonthNumber % 12];
 
 void main() {
-  final oracle = Panchang([registerAllCities]);
+  // Amant system: our masa layer is amanta (new moon to new moon),
+  // the convention the Adhika Jestha 2026 receipts pin. tithi_engine
+  // defaults to Purnimant, which shifts month attribution by half a
+  // lunation - comparing systems would mismatch every paksha boundary.
+  final oracle =
+      Panchang([registerAllCities], system: MonthSystem.amant);
   final kathmandu = City.of('Kathmandu');
 
   final days = <DateTime>{};
