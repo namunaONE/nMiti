@@ -1,0 +1,56 @@
+{
+  "corpus": "Festival receipts 2026 (HYA-417): Maha Shivaratri, Fagu Purnima, Janai Purnima, Teej",
+  "crawled_utc": "2026-11-05",
+  "method": "Publisher day-labels pinned from Hamro Patro BS date pages (festival marks + displayed udaya tithi) and BhaktiBharat daily panchang (tithi transition times). Crawled 2026-11-05. BhaktiBharat live pages cover only a rolling ~2-3 month window, so Feb/Mar tithi timing values are absent; the receipts pin day-labels, udaya labels and convention attribution (the receipt classes the calibration skill accepts).",
+  "sources": {
+    "hamro_patro": "https://www.hamropatro.com/date/<bs-year-month-day>",
+    "bhakti_bharat": "https://panchang.bhaktibharat.com/"
+  },
+  "receipts": [
+    {
+      "id": "mahaShivaratri",
+      "bs_year": "2082",
+      "bs_date": "Falgun 3",
+      "ad_date": "2026-02-15",
+      "convention": "nishita",
+      "publisher": "Hamro Patro",
+      "source_url": "https://www.hamropatro.com/date/2082-11-03",
+      "udaya_tithi": "Krishna Trayodashi",
+      "receipt": "HP marks Maha Shivaratri on Falgun 3 = Feb 15 2026 (Sunday) with udaya tithi Krishna Trayodashi: Chaturdashi began later that day and ran through the midnight ending Feb 15 - the nishita-vyapini rule class ('the timing should be such that Chaturdashi should be till midnight', Dharma Sindhu ch. 5, V.D.N. Rao translation). The udaya convention gives Feb 16; publishers took Feb 15."
+    },
+    {
+      "id": "faguPurnima",
+      "bs_year": "2082",
+      "bs_date": "Falgun 18 (hills) / Falgun 19 (Terai)",
+      "ad_date": "2026-03-02",
+      "terai_ad_date": "2026-03-03",
+      "convention": "firstDay",
+      "publisher": "Hamro Patro (hills + Terai)",
+      "source_url": "https://www.hamropatro.com/date/2082-11-18",
+      "udaya_tithi": "Shukla Chaturdashi (Mar 2)",
+      "receipt": "HP marks Fagu Purnima (pahadi) on Falgun 18 = Mar 2 2026 with udaya tithi Shukla Chaturdashi: Purnima began mid-day Mar 2, so the hills convention is first-overlap. Terai Holi: Falgun 19 = Mar 3, udaya tithi Shukla Purnima. HP also notes khanda-gras chandra grahan (partial lunar eclipse) on the Terai day - recorded as an eclipse-module receipt (HYA-421)."
+    },
+    {
+      "id": "janaiPurnima",
+      "bs_year": "2083",
+      "bs_date": "Bhadra 12",
+      "ad_date": "2026-08-28",
+      "convention": "udaya",
+      "publisher": "BhaktiBharat + Hamro Patro",
+      "source_url": "https://panchang.bhaktibharat.com/",
+      "udaya_tithi": "Shukla Purnima",
+      "receipt": "Purnima began Aug 27 09:24 NPT (BhaktiBharat) and ran to Aug 28 ~10:04, so the first-overlap day is Aug 27; both publishers list Janai Purnima on Bhadra 12 = Aug 28 - the udaya day. A clean divergence receipt: publishers chose udaya-vyapini over purva-viddha."
+    },
+    {
+      "id": "teej",
+      "bs_year": "2083",
+      "bs_date": "Bhadra 29",
+      "ad_date": "2026-09-14",
+      "convention": "udaya",
+      "publisher": "BhaktiBharat + Hamro Patro",
+      "source_url": "https://panchang.bhaktibharat.com/",
+      "udaya_tithi": "Shukla Tritiya",
+      "receipt": "Shukla Tritiya ran Sep 13 07:24 NPT to Sep 14 07:23 NPT (BhaktiBharat), overlapping both days; HP marks Teej on Bhadra 29 = Sep 14 with udaya tithi Tritiya - the udaya day, not the first-overlap day Sep 13."
+    }
+  ]
+}
