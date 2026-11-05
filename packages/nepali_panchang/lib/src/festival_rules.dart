@@ -1,40 +1,79 @@
 import 'ayanamsa.dart';
 import 'limbs.dart';
+import 'moonrise.dart';
 import 'panchang_day.dart';
 
-/// Festival rules layer (R6b, HYA-367).
+/// Festival rules layer (R6b, HYA-367; shastra vocabulary and the
+/// nishita/chandrodaya conventions, HYA-417).
 ///
-/// Festivals are data, conventions are code. A festival rule names a tithi
-/// and the reference moment that decides its civil day; the scanner exposes
-/// every candidate day in every convention so callers (site, API, tests) can
-/// show a publisher's or the samiti's published choice alongside the
-/// engine's other conventions - never silently picking one.
+/// Festivals are data, conventions are code. A festival rule names a
+/// tithi and the reference moment that decides its civil day; the
+/// scanner exposes every candidate day in every convention so callers
+/// (site, API, tests) can show a publisher's or the samiti's published
+/// choice alongside the engine's other conventions - never silently
+/// picking one.
 ///
-/// Four day-choosing conventions, each pinned by 2083 receipts (see
-/// test/fixtures/festival_receipts_2083.json):
-///   udaya    - the tithi running at sunrise. The Hamro Patro display
-///              convention and the samiti's usual call (Ghatasthapana,
-///              Maha Navami, Vijaya Dashami, Kag/Kukur/Gai/Mha/Bhai Tika,
-///              Chhath).
-///   evening  - the tithi running at the 18:00 NPT evening reference, for
-///              night observances (Lakshmi Puja, Kojagrat Purnima,
-///              Dhanteras). The udaya convention gives the NEXT civil
-///              day; the 2083 receipts show publishers use the night.
-///   firstDay - the first civil day the tithi overlaps (Fulpati 2083:
-///              Saptami began 06:10 NPT on Asoj 30, minutes after
-///              sunrise, and the patros took that day, not the udaya day).
-///   allDays  - every civil day the tithi overlaps (Maha Ashtami 2083:
-///              the samiti listed both Kartik 1 and 2 - the first
-///              two-day Maha Ashtami since 2000 BS - as Ashtami ran
-///              Oct 18 08:44 to Oct 19 11:07 NPT).
+/// Six day-choosing conventions, each pinned by publisher/samiti
+/// receipts (see test/fixtures/festival_receipts_2083.json and
+/// test/fixtures/festival_receipts_2026.json):
+///   udaya     - the tithi running at sunrise. The Hamro Patro display
+///               convention and the samiti's usual call (Ghatasthapana,
+///               Maha Navami, Vijaya Dashami, Kag/Kukur/Gai/Mha/Bhai
+///               Tika, Chhath, Janai Purnima, Teej).
+///   evening   - the tithi running at the 18:00 NPT evening reference,
+///               for night observances (Lakshmi Puja, Kojagrat Purnima,
+///               Dhanteras). The udaya convention gives the NEXT civil
+///               day; the 2083 receipts show publishers use the night.
+///   firstDay  - the first civil day the tithi overlaps (Fulpati 2083:
+///               Saptami began 06:10 NPT on Asoj 30, minutes after
+///               sunrise, and the patros took that day; Fagu Purnima
+///               2082 hills: Purnima began mid-day Mar 2 2026 and the
+///               hills observed that day).
+///   allDays   - every civil day the tithi overlaps (Maha Ashtami
+///               2083: the samiti listed both Kartik 1 and 2 - the
+///               first two-day Maha Ashtami since 2000 BS).
+///   nishita   - the tithi running at the midnight ENDING the civil
+///               day. The Shivaratri class: Dharma Sindhu ch. 5 has
+///               'the timing should be such that Chaturdashi should be
+///               till midnight'; the 2082 receipt (Falgun 3 = Feb 15
+///               2026, udaya tithi Trayodashi, publishers took Feb 15)
+///               pins it.
+///   moonrise  - the tithi running at the day's moonrise, the
+///               chandrodaya-vyapti of Dharma Sindhu ch. 5's Sankata
+///               Chaturthi nirnaya ('reckoned as of Chandrodaya kaala
+///               Vyapti'). Unlocked by the HYA-417 moonrise solver; no
+///               battery entry yet (Sankata Chaturthi receipts are
+///               pending), the convention is exposed for callers.
 ///
 /// Completeness: every tithi lasts at least ~19.7 h while the engine's
 /// reference instants (udaya, noon) recur at most ~18 h apart, so every
 /// tithi run is captured as the udaya or noon element of at least one
-/// scanned day - no span can be invisible to the scanner.
+/// scanned day - no span can be invisible to the scanner. The nishita
+/// and chandrodaya day sets are direct span-membership tests against
+/// the complete run [b, e), exact by construction.
+///
+/// Shastra vocabulary (HYA-417): every battery rule carries the
+/// Sanskrit category of its day-choosing principle - udaya-vyapini,
+/// pradosha/ratri-vyapini, nishita-vyapini, chandrodaya-vyapti,
+/// purva-tithi-viddha, vriddhi - plus the citation it rests on. The
+/// citations are translation-level and say so (honesty before
+/// ornament): the condensed English rendering of Dharma Sindhu by
+/// V.D.N. Rao, with the shloka-level reference marked pending until a
+/// printed source is verified.
 
 /// How a festival's civil day is chosen from its tithi.
-enum FestivalConvention { udaya, evening, firstDay, allDays }
+enum FestivalConvention { udaya, evening, firstDay, allDays, nishita, moonrise }
+
+/// Dharma Sindhu, Tithi Vrata Nirnayas - the citation backing the
+/// day-choosing rules. Kashinatha Upadhyaya's 1790 digest, read through
+/// V.D.N. Rao's condensed English translation (kamakoti.org, ch. 5).
+/// Translation-level citation, stated as such; the shloka-level
+/// reference is pending printed-source verification.
+const String dharmaSindhuCh5Citation =
+    'Dharma Sindhu (Kashinatha Upadhyaya, 1790), ch. 5 \'Tithi Vrata '
+        'Nirnayas\'; condensed English translation by V.D.N. Rao '
+        '(kamakoti.org). Translation-level citation; shloka-level '
+        'reference pending printed-source verification.';
 
 /// One festival of the battery: a tithi plus the choosing convention.
 class FestivalRule {
@@ -57,6 +96,15 @@ class FestivalRule {
   /// Human-facing note naming the rule and the pinned evidence.
   final String note;
 
+  /// Sanskrit category of the day-choosing principle (udaya-vyapini,
+  /// pradosha/ratri-vyapini, nishita-vyapini, chandrodaya-vyapti,
+  /// purva-tithi-viddha, vriddhi).
+  final String? shastraCategory;
+
+  /// Shastra citation the rule rests on (see
+  /// [dharmaSindhuCh5Citation] for the shared source).
+  final String? shastraCitation;
+
   const FestivalRule({
     required this.id,
     required this.nameEn,
@@ -64,13 +112,25 @@ class FestivalRule {
     required this.tithiIndex,
     required this.convention,
     required this.note,
+    this.shastraCategory,
+    this.shastraCitation,
   });
 }
 
-/// The Dashain-Tihar festival battery. Every entry's convention is pinned
-/// by a 2083 publisher/samiti receipt in
-/// test/fixtures/festival_receipts_2083.json, which the festival test runs
-/// as a permanent CI gate.
+const String _udayaCat =
+    'udaya-vyapini - tithi prevailing at sunrise';
+const String _ratriCat =
+    'pradosha/ratri-vyapini - tithi prevailing in the night '
+        '(18:00 reference)';
+const String _viddhaCat =
+    'purva-tithi-viddha - first civil day the tithi overlaps';
+const String _vriddhiCat =
+    'vriddhi - every civil day the tithi overlaps (two-day observance)';
+
+/// The festival battery. Every entry's convention is pinned by a
+/// publisher/samiti receipt in test/fixtures/festival_receipts_2083.json
+/// or test/fixtures/festival_receipts_2026.json, which the festival
+/// tests run as a permanent CI gate.
 const List<FestivalRule> festivalBattery = [
   FestivalRule(
       id: 'ghatasthapana',
@@ -78,6 +138,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'घटस्थापना',
       tithiIndex: 0,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Pratipada at udaya; opens Dashain (Asoj).'),
   FestivalRule(
       id: 'fulpati',
@@ -85,6 +147,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'फूलपाती',
       tithiIndex: 6,
       convention: FestivalConvention.firstDay,
+      shastraCategory: _viddhaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Saptami; the samiti takes the day Saptami begins '
           '(2083: Asoj 30, minutes after sunrise - engine flags '
           'borderline).'),
@@ -94,6 +158,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'महाअष्टमी',
       tithiIndex: 7,
       convention: FestivalConvention.allDays,
+      shastraCategory: _vriddhiCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Every civil day Ashtami overlaps; the samiti listed both days '
           'in 2083 (first two-day Maha Ashtami since 2000 BS).'),
   FestivalRule(
@@ -102,6 +168,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'महानवमी',
       tithiIndex: 8,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Navami at udaya.'),
   FestivalRule(
       id: 'vijayaDashami',
@@ -109,6 +177,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'विजया दशमी',
       tithiIndex: 9,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Dashami at udaya; the tika day.'),
   FestivalRule(
       id: 'kojagratPurnima',
@@ -116,6 +186,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'कोजाग्रत पूर्णिमा',
       tithiIndex: 14,
       convention: FestivalConvention.evening,
+      shastraCategory: _ratriCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Kojagrat night: Purnima running in the evening; the udaya '
           'convention gives the next day.'),
   FestivalRule(
@@ -124,6 +196,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'धनतेरस',
       tithiIndex: 27,
       convention: FestivalConvention.evening,
+      shastraCategory: _ratriCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Krishna Trayodashi evening; Kag Tihar follows at the next '
           'udaya.'),
   FestivalRule(
@@ -132,6 +206,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'काग तिहार',
       tithiIndex: 27,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Krishna Trayodashi at udaya.'),
   FestivalRule(
       id: 'laxmiPuja',
@@ -139,6 +215,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'लक्ष्मी पूजा',
       tithiIndex: 29,
       convention: FestivalConvention.evening,
+      shastraCategory: _ratriCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Amavasya evening; the udaya convention gives the next day '
           '(Gai Puja).'),
   FestivalRule(
@@ -147,6 +225,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'कुकुर तिहार',
       tithiIndex: 28,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Krishna Chaturdashi at udaya.'),
   FestivalRule(
       id: 'gaiPuja',
@@ -154,6 +234,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'गाई पूजा',
       tithiIndex: 29,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Amavasya at udaya.'),
   FestivalRule(
       id: 'mhaPuja',
@@ -161,6 +243,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'म्हःपूजा',
       tithiIndex: 0,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Pratipada at udaya; Nepal Sambat new year.'),
   FestivalRule(
       id: 'bhaiTika',
@@ -168,6 +252,8 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'भाइटीका',
       tithiIndex: 1,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Dwitiya at udaya.'),
   FestivalRule(
       id: 'chhath',
@@ -175,7 +261,72 @@ const List<FestivalRule> festivalBattery = [
       nameNp: 'छठ पर्व',
       tithiIndex: 5,
       convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
       note: 'Shukla Shashthi at udaya (evening argha day).'),
+  FestivalRule(
+      id: 'mahaShivaratri',
+      nameEn: 'Maha Shivaratri',
+      nameNp: 'महाशिवरात्रि',
+      tithiIndex: 28,
+      convention: FestivalConvention.nishita,
+      shastraCategory:
+          'nishita-vyapini - tithi prevailing at the midnight ending '
+              'the civil day',
+      shastraCitation: dharmaSindhuCh5Citation,
+      note: 'Krishna Chaturdashi running at the midnight ending the '
+          'civil day. Dharma Sindhu ch. 5 (V.D.N. Rao translation): '
+          '\'On each Krishna Chaturdashi, Kamya Shiva Raatri Vrata is '
+          'performed as in the case of Maha Shiva Raatri; that is the '
+          'timing should be such that Chaturdashi should be till '
+          'midnight.\' 2082 receipt: Falgun 3 = Feb 15 2026, udaya '
+          'tithi Krishna Trayodashi (Hamro Patro) - Chaturdashi began '
+          'later that day and spanned the midnight, so the nishita day '
+          'is Feb 15 while the udaya convention gives Feb 16: a clean '
+          'divergence receipt for the nishita class.'),
+  FestivalRule(
+      id: 'faguPurnima',
+      nameEn: 'Fagu Purnima (hills)',
+      nameNp: 'फागु पूर्णिमा',
+      tithiIndex: 14,
+      convention: FestivalConvention.firstDay,
+      shastraCategory:
+          'purva-tithi-viddha (hills); the Terai takes the udaya day',
+      shastraCitation: dharmaSindhuCh5Citation,
+      note: 'Hills observe the first day Purnima overlaps (2082: '
+          'Falgun 18 = Mar 2 2026, udaya tithi Chaturdashi - Purnima '
+          'began mid-day, Hamro Patro). Terai Holi is the next udaya '
+          'day, Falgun 19 = Mar 3 (udaya Purnima; HP also notes a '
+          'khanda-gras chandra grahan that day - recorded for the '
+          'eclipse module). The battery rule encodes the hills '
+          'convention; the udaya days stay exposed as the Terai '
+          'choice.'),
+  FestivalRule(
+      id: 'janaiPurnima',
+      nameEn: 'Janai Purnima / Raksha Bandhan',
+      nameNp: 'जनै पूर्णिमा',
+      tithiIndex: 14,
+      convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
+      note: 'Shukla Purnima at udaya. 2083 receipt: Bhadra 12 = '
+          'Aug 28 2026 - Purnima began Aug 27 09:24 NPT (BhaktiBharat), '
+          'so the first-overlap day is Aug 27; both publishers took '
+          'the udaya day Aug 28 - publishers chose udaya-vyapini over '
+          'purva-viddha here, a clean divergence receipt.'),
+  FestivalRule(
+      id: 'teej',
+      nameEn: 'Teej (Hartalika)',
+      nameNp: 'तीज',
+      tithiIndex: 2,
+      convention: FestivalConvention.udaya,
+      shastraCategory: _udayaCat,
+      shastraCitation: dharmaSindhuCh5Citation,
+      note: 'Shukla Tritiya at udaya. 2083 receipt: Bhadra 29 = '
+          'Sep 14 2026 - Tritiya ran Sep 13 07:24 to Sep 14 07:23 NPT '
+          '(BhaktiBharat), overlapping both days; publishers took the '
+          'udaya day Sep 14 (Hamro Patro marks Teej with udaya '
+          'Tritiya).'),
 ];
 
 /// Looks up a battery rule by [id]. Throws [ArgumentError] when unknown.
@@ -206,6 +357,16 @@ class TithiOccasion {
   /// inside the tithi.
   final List<DateTime> eveningDays;
 
+  /// Days (within the window) whose midnight ending the civil day
+  /// (24:00 NPT) falls inside the tithi - the nishita convention
+  /// (Shivaratri class, HYA-417).
+  final List<DateTime> nishitaDays;
+
+  /// Days (within the window) whose moonrise falls inside the tithi -
+  /// the chandrodaya-vyapti convention (Sankata Chaturthi class,
+  /// HYA-417). Days with no moonrise cannot qualify.
+  final List<DateTime> moonriseDays;
+
   /// Every day (within the window) whose civil interval the tithi overlaps.
   final List<DateTime> overlapDays;
 
@@ -234,6 +395,8 @@ class TithiOccasion {
     required this.endsAtNpt,
     required this.udayaDays,
     required this.eveningDays,
+    required this.nishitaDays,
+    required this.moonriseDays,
     required this.overlapDays,
     required this.borderline,
     required this.spansMultipleDays,
@@ -311,6 +474,8 @@ List<TithiOccasion> _occasions(List<PanchangDay> days, int tithiIndex,
     final e = spanEnds[b]!;
     final udayaDays = <DateTime>[];
     final eveningDays = <DateTime>[];
+    final nishitaDays = <DateTime>[];
+    final moonriseDays = <DateTime>[];
     final overlapDays = <DateTime>[];
     var borderline = false;
     for (final day in days) {
@@ -350,13 +515,37 @@ List<TithiOccasion> _occasions(List<PanchangDay> days, int tithiIndex,
       if (runningAtEvening) {
         eveningDays.add(d);
       }
+      // Nishita convention (HYA-417): the tithi running at the midnight
+      // ENDING the civil day. The run [b, e) is complete from the
+      // deduped elements, so direct span membership is exact - no
+      // element indirection is needed (and none would be sound: the
+      // noon element's end may precede the midnight by hours without
+      // the next element belonging to this run's window day).
+      final nishitaRef =
+          DateTime.utc(d.year, d.month, d.day).add(const Duration(days: 1));
+      if (!nishitaRef.isBefore(b) && nishitaRef.isBefore(e)) {
+        nishitaDays.add(d);
+      }
+      // Chandrodaya convention (HYA-417): the tithi running at the
+      // day's moonrise - Dharma Sindhu ch. 5's Sankata Chaturthi rule
+      // ('reckoned as of Chandrodaya kaala Vyapti'). Direct span
+      // membership against the live moonrise; days with no moonrise
+      // (roughly one per lunar month) cannot qualify.
+      final moonriseRef = moonriseNpt(year: d.year, month: d.month, day: d.day);
+      if (moonriseRef != null &&
+          !moonriseRef.isBefore(b) &&
+          moonriseRef.isBefore(e)) {
+        moonriseDays.add(d);
+      }
       if (b.isBefore(d.add(const Duration(days: 1))) && e.isAfter(d)) {
         overlapDays.add(d);
       }
       if (day.tithiBorderline &&
           (udayaDays.contains(d) ||
               eveningDays.contains(d) ||
-              overlapDays.contains(d))) {
+              overlapDays.contains(d) ||
+              nishitaDays.contains(d) ||
+              moonriseDays.contains(d))) {
         borderline = true;
       }
     }
@@ -366,18 +555,23 @@ List<TithiOccasion> _occasions(List<PanchangDay> days, int tithiIndex,
       endsAtNpt: e,
       udayaDays: udayaDays,
       eveningDays: eveningDays,
+      nishitaDays: nishitaDays,
+      moonriseDays: moonriseDays,
       overlapDays: overlapDays,
       borderline: borderline,
       spansMultipleDays: overlapDays.length > 1,
       skippedInUdayaChain: udayaDays.isEmpty,
       provenance: 'nMiti nepali_panchang festival_rules on the runtime '
           'lunar engine (60-term Meeus Ch.47 moon, VSOP87D sun, '
-          'Espenak-Meeus Delta T); tithi span, udaya/evening/overlap days '
+          'Espenak-Meeus Delta T, HYA-417 Meeus 15.1 moonrise); tithi '
+          'span and udaya/evening/nishita/chandrodaya/overlap days '
           'computed, all conventions exposed.',
       evidenceTier: 'runtime-computed; festival days verified against '
-          'the 2083 festival receipt corpus (Hamro Patro labels and Nepal '
-          'Panchang Nirnayak Samiti adjudications, '
-          'test/fixtures/festival_receipts_2083.json)',
+          'the 2083 and 2026 festival receipt corpora (Hamro Patro '
+          'labels, BhaktiBharat transitions and Nepal Panchang Nirnayak '
+          'Samiti adjudications, '
+          'test/fixtures/festival_receipts_2083.json, '
+          'test/fixtures/festival_receipts_2026.json)',
     ));
   }
   return occasions;
@@ -447,6 +641,12 @@ FestivalObservance _resolve(FestivalRule rule, TithiOccasion occasion) {
       break;
     case FestivalConvention.allDays:
       chosen = occasion.overlapDays;
+      break;
+    case FestivalConvention.nishita:
+      chosen = occasion.nishitaDays;
+      break;
+    case FestivalConvention.moonrise:
+      chosen = occasion.moonriseDays;
       break;
   }
   var divergence = chosen.length != occasion.udayaDays.length;

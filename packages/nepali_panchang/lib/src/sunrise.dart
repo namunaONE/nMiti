@@ -58,14 +58,26 @@ double sunriseJdUt({
   double latitudeDeg = 27.7172,
   double longitudeDeg = 85.324,
 }) {
-  return julianDayFromCivil(year, month, day.toDouble()) +
-      sunriseUtcHours(
-              year: year,
-              month: month,
-              day: day,
-              latitudeDeg: latitudeDeg,
-              longitudeDeg: longitudeDeg) /
-          24.0;
+  final hours = sunriseUtcHours(
+      year: year,
+      month: month,
+      day: day,
+      latitudeDeg: latitudeDeg,
+      longitudeDeg: longitudeDeg);
+  final jd = julianDayFromCivil(year, month, day.toDouble());
+  // The USNO algorithm expresses the sunrise in UT hours of the
+  // civil date and [sunriseUtcHours] wraps negatives into [23, 24).
+  // From late April to early September the NPT civil day dawns
+  // BEFORE 00:00 UT of its civil date (the Kathmandu sunrise lands
+  // before 05:45 NPT), and the wrap placed such udayas one NPT day
+  // late - the Janai Purnima 2083 receipts caught it: the Aug 28
+  // udaya was being evaluated at Aug 29's dawn. East-longitude
+  // anchors can never see a genuine afternoon-UT sunrise, so a
+  // wrapped hour is always the previous UT day.
+  if (hours > 12.0 && longitudeDeg > 0.0) {
+    return jd - 1.0 + hours / 24.0;
+  }
+  return jd + hours / 24.0;
 }
 
 double _norm360(double deg) => deg % 360.0;

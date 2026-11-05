@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Swiss-truth cross-check of the nMiti lunar engine (HYA-369 prep).
+"""Swiss-truth cross-check of the nMiti lunar engine (HYA-369 prep,
+moonrise parity added by HYA-417).
 
 Reads the Dart engine's limb-boundary dump (nmiti_cli:dump_limb_instants)
 and re-solves every boundary with Swiss Ephemeris via pyswisseph, scoring
@@ -8,6 +9,13 @@ knife-edge boundaries (within 30 minutes of a Kathmandu sunrise - the days
 two honest panchangs can print different tithis), and measuring the Delta-T
 model residual (Swiss internal vs our Espenak-Meeus polynomial). Enforces
 provisional bands and writes a receipts JSON.
+
+HYA-417: the dump also carries the per-day moonrise (first rise within
+the NPT civil day, Meeus eq. 15.1 target 0.7276*pi - 34' on geocentric
+altitude, live parallax). The harness mirrors the IDENTICAL convention
+on Swiss Ephemeris - geocentric equatorial position, the same target,
+30-min stepped scan then bisection - so the moonrise score is pure
+ephemeris + algorithm parity: no rise/set convention gap enters.
 
 Ephemeris mode: FLG_MOSEPH (Moshier) - file-free, deterministic in CI,
 sub-arcsecond on the Moon. Sidereal mode: Swiss Lahiri (SIDM_LAHIRI); the
@@ -42,8 +50,16 @@ except ImportError:
 # yoga are wider because they include the ayanamsa convention gap.
 HARD_BAND_S = {"tithi": 300, "karana": 300, "nakshatra": 600, "yoga": 600}
 MEAN_BAND_S = {"tithi": 150, "karana": 150, "nakshatra": 300, "yoga": 300}
+# Moonrise parity band (HYA-417): same target convention on both sides,
+# so this is pure ephemeris + algorithm parity like tithi.
+MOONRISE_HARD_BAND_S = 300
+MOONRISE_MEAN_BAND_S = 150
 KNIFE_EDGE_MIN = 30.0
 SEED_DAYS = 0.05  # seed the Swiss solver ~72 min before our boundary
+KATHMANDU_LAT = 27.7172
+KATHMANDU_LON = 85.324
+AU_KM = 149597870.7
+EARTH_EQ_RADIUS_KM = 6378.1366
 
 
 def norm360(x):
@@ -56,6 +72,7 @@ class Sweph:
     def __init__(self):
         swe.set_sid_mode(swe.SIDM_LAHIRI, 0, 0)
         self.flags = swe.FLG_MOSEPH | swe.FLG_SPEED
+        self.eq_flags = swe.FLG_MOSEPH | swe.FLG_EQUATORIAL
 
     def lon(self, body, jd_ut):
         xx, ret = swe.calc_ut(jd_ut, body, self.flags)
@@ -75,6 +92,24 @@ class Sweph:
         moon = norm360(self.lon(swe.MOON, jd_ut) - ay)
         sun = norm360(self.lon(swe.SUN, jd_ut) - ay)
         return norm360(moon + sun)
+
+    def moon_margin(self, jd_ut):
+        """Geocentric center altitude minus the Meeus 15.1 rise target,
+        the exact quantity the Dart solver bisects to zero."""
+        xx, _ = swe.calc_ut(jd_ut, swe.MOON, self.eq_flags)
+        ra, dec, dist_au = xx[0], xx[1], xx[2]
+        dist_km = dist_au * AU_KM
+        parallax_deg = math.degrees(
+            math.asin(EARTH_EQ_RADIUS_KM / dist_km))
+        target = 0.7276 * parallax_deg - 34.0 / 60.0
+        gmst_deg = swe.sidtime(jd_ut) * 15.0
+        hour_angle = math.radians(norm360(gmst_deg + KATHMANDU_LON - ra))
+        lat = math.radians(KATHMANDU_LAT)
+        dec_r = math.radians(dec)
+        alt = math.degrees(math.asin(
+            math.sin(lat) * math.sin(dec_r) +
+            math.cos(lat) * math.cos(dec_r) * math.cos(hour_angle)))
+        return alt - target
 
 
 ANGLE_FNS = {
@@ -102,6 +137,29 @@ def next_boundary(angle_fn, span_deg, jd_seed):
         else:
             hi = mid
     return hi
+
+
+def sw_moonrise(sw, jd_ut_ref):
+    """First upward crossing of the Meeus 15.1 target after
+    jd_ut_ref - 30 min, mirroring the Dart scan-and-bisect solver."""
+    t0 = jd_ut_ref - 0.02
+    step = 1.0 / 48.0  # 30 minutes, same as the Dart scan
+    prev = t0
+    prev_f = sw.moon_margin(t0)
+    for i in range(1, 97):
+        t = t0 + i * step
+        f = sw.moon_margin(t)
+        if prev_f < 0.0 <= f:
+            lo, hi = prev, t
+            for _ in range(45):
+                mid = (lo + hi) / 2.0
+                if sw.moon_margin(mid) < 0.0:
+                    lo = mid
+                else:
+                    hi = mid
+            return hi
+        prev, prev_f = t, f
+    return None
 
 
 def stats(values):
@@ -209,6 +267,57 @@ def main():
               % (limb, st["n"], st["mean_s"], st["max_s"], signed,
                  hard, mean_band, "PASS" if ok else "FAIL"))
 
+    # HYA-417: moonrise parity - same Meeus 15.1 target on both sides.
+    moonrise_rows = dump.get("moonrises", [])
+    moonrise_out = None
+    if not moonrise_rows:
+        failures.append("no moonrises in dump")
+    else:
+        deltas = []
+        rows_out = []
+        for r in moonrise_rows:
+            jd_ut = r["jd_ut"]
+            if jd_ut < lo_limit or jd_ut > hi_limit:
+                continue
+            sw_jd = sw_moonrise(sw, jd_ut)
+            if sw_jd is None:
+                failures.append(
+                    "moonrise on %s: Swiss mirror found no rise" % r["date"])
+                continue
+            delta_s = (sw_jd - jd_ut) * 86400.0
+            deltas.append(delta_s)
+            rows_out.append({
+                "date": r["date"],
+                "utc": r["utc"],
+                "jd_ut": jd_ut,
+                "swiss_jd_ut": sw_jd,
+                "delta_s": round(delta_s, 2),
+            })
+        st = stats([abs(d) for d in deltas])
+        signed = sum(deltas) / len(deltas) if deltas else 0.0
+        ok = st["max_s"] <= MOONRISE_HARD_BAND_S and \
+            st["mean_s"] <= MOONRISE_MEAN_BAND_S
+        if not ok:
+            failures.append(
+                "moonrise: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+                % (st["max_s"], MOONRISE_HARD_BAND_S,
+                   st["mean_s"], MOONRISE_MEAN_BAND_S))
+        moonrise_out = {
+            **st,
+            "signed_mean_s": round(signed, 2),
+            "hard_band_s": MOONRISE_HARD_BAND_S,
+            "mean_band_s": MOONRISE_MEAN_BAND_S,
+            "days_without_rise": dump.get("moonrise_days_without_rise"),
+            "pass": ok,
+        }
+        print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+              "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+              "band %d/%d %s"
+              % ("moonrise", st["n"], st["mean_s"], st["max_s"], signed,
+                 MOONRISE_HARD_BAND_S, MOONRISE_MEAN_BAND_S,
+                 "PASS" if ok else "FAIL"))
+        all_rows.extend(rows_out)
+
     dt_st = stats([abs(d) for d in dt_residuals])
     dt_signed = sum(dt_residuals) / len(dt_residuals) if dt_residuals else 0.0
     print("delta T residual (Swiss - Espenak-Meeus): mean=%+.2fs "
@@ -237,6 +346,7 @@ def main():
             "engine_ayanamsa_profile": dump.get("ayanamsa_profile"),
             "knife_edge_def_min": KNIFE_EDGE_MIN,
             "limbs": per_limb,
+            "moonrise": moonrise_out,
             "delta_t_residual": {
                 **dt_st,
                 "signed_mean_s": round(dt_signed, 2),

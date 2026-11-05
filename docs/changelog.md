@@ -2,6 +2,13 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — moonrise solver + festival shastra layer (HYA-417)
+
+- Added `packages/nepali_panchang/lib/src/moonrise.dart`: the first moonrise within an NPT civil day at the Kathmandu anchor — Meeus eq. 15.1 target (0.7276·π − 34′, live parallax) on the same 60-term Ch.47 ephemeris the lunar engine uses. Golden receipts from JPL Horizons topocentric samples pin six 2026 festival dates to a provisional ±12 min band (`test/moonrise_test.dart`).
+- `festival_rules.dart`: two new day-choosing conventions — `nishita` (the tithi running at the midnight ending the civil day; Dharma Sindhu ch. 5: "Chaturdashi should be till midnight") and `moonrise` (chandrodaya-vyāpti, Sankata Chaturthi's class; unlocked by the solver, battery entry pending receipts). Every battery rule now carries `shastraCategory` + `shastraCitation` — translation-level (V.D.N. Rao's condensed rendering, kamakoti.org), with the shloka-level citation marked pending.
+- Battery extended with four receipt-pinned entries: Maha Shivaratri (Krishna Chaturdashi, nishita — Falgun 3 = Feb 15 2026, udaya gives Feb 16, divergence exposed), Fagu Purnima (Purnima, firstDay hills / udaya Terai, Mar 2–3 2026), Janai Purnima (udaya Aug 28 2026, publishers chose udaya over first-overlap Aug 27) and Teej (udaya Sep 14 2026). New corpus `test/fixtures/festival_receipts_2026.json` + permanent CI gate.
+- CI harness: `dump_limb_instants` dumps the per-day moonrise (+ no-rise day count); `sweph_crosscheck.py` mirrors the identical Meeus 15.1 convention on Swiss Ephemeris (geocentric equatorial, same target, 30-min scan + bisection) and enforces provisional 300/150 s moonrise bands. No site or data changes.
+
 ## [Unreleased] — Swiss-truth cross-check harness (HYA-369)
 
 - Added `packages/nmiti_cli/bin/dump_limb_instants.dart`: engine-side dump of every lunar limb boundary (base ayanamsa profile) and Kathmandu sunrise in a window — an MIT-clean facts-out command for any truth harness.
