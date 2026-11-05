@@ -18,11 +18,16 @@
 /// R6a-3 (HYA-416) adds the daily-shape layer: panchangFor composes the limbs
 /// into the per-day block the site and API serve, with reference moments,
 /// vriddhi/kshaya flags and honesty fields.
+///
+/// R6b (HYA-367) adds the festival rules layer: the Dashain-Tihar festival
+/// battery as data, four day-choosing conventions as code, and the 2083
+/// samiti/publisher receipt corpus as the permanent CI gate.
 library;
 
 export 'src/ayanamsa.dart';
 export 'src/civil_time.dart';
 export 'src/delta_t.dart';
+export 'src/festival_rules.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';
 export 'src/moon.dart';
