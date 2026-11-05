@@ -143,7 +143,9 @@ PanchangDay panchangFor({
       year: prevCivil.year, month: prevCivil.month, day: prevCivil.day));
   final nextSunriseJdTt = jdTtFromJdUt(sunriseJdUt(
       year: nextCivil.year, month: nextCivil.month, day: nextCivil.day));
-  final sunriseNpt = _nptWall(sunriseJd);
+  // sunriseJd is a UT Julian Day; _nptWall expects TT, so convert first
+  // (previously double-subtracted Delta T, ~75.6 s early in 2026).
+  final sunriseNpt = _nptWall(jdTtFromJdUt(sunriseJd));
 
   // Reference instants (TT): udaya = this day's sunrise; noon = 12:00 NPT.
   final udayaJdTt = jdTtFromJdUt(sunriseJd);
