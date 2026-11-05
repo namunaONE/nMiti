@@ -1,0 +1,1414 @@
+{
+  "schema": "nmiti-muhurta-receipts/1",
+  "crawl_date": "2026-11-05",
+  "source": "bhaktibharat",
+  "location": {
+    "name": "Kathmandu",
+    "latitude": 27.7172,
+    "longitude": 85.324,
+    "timezone": "NPT+05:45"
+  },
+  "same_day_reverify": "Nov 6-22 pages were pre-published at crawl time; re-crawl each page on its live date before locking the corpus. Nov 5 was final.",
+  "conventions": {
+    "rahu_yama_gulika": "sunrise to sunset divided into 8 equal parts; part picked by weekday table (rule_tables.weekday_part_1_indexed)",
+    "brahma_muhurta": "publisher uses FIXED 96/48 min before the same-day sunrise, NOT night/15 - convention collision recorded; engine will expose both",
+    "abhijit": "publisher TABULATES a stepped window (11:23-12:11 Nov 5-14, 11:24-12:12 Nov 15-19, 11:25-12:13 Nov 20-22) instead of recomputing daylight/15 per day; recorded divergence from day/15 is 1.3-2.9 min, publisher display convention; engine computes the 8th of 15 daylight muhurtas",
+    "dur_muhurta": "weekday table disagrees between sources (mahadasha vs hinducalculator); windows recorded as data, rule NOT validated or shipped",
+    "varjyam_amrit": "nakshatra-based windows; recorded as data only, deferred to a later layer",
+    "sunrise_sunset": "BB sunrise runs ~4-5 min behind the engine and BB sunset ~3-4 min ahead of the engine (their display convention); hinducalculator matches the engine on the Nov 5 spot"
+  },
+  "engine_offset_recorded": {
+    "sunrise_vs_bb_min": [
+      4,
+      5
+    ],
+    "sunset_vs_bb_min": [
+      -4,
+      -3
+    ],
+    "note": "measured with the sandbox TS replica of the USNO solver against this corpus, 2026-11-05; the authoritative Dart bands live in test/sunset_test.dart"
+  },
+  "rule_tables": {
+    "weekday_part_1_indexed": {
+      "rahu": {
+        "Sunday": 8,
+        "Monday": 2,
+        "Tuesday": 7,
+        "Wednesday": 5,
+        "Thursday": 6,
+        "Friday": 4,
+        "Saturday": 3
+      },
+      "yamaganda": {
+        "Sunday": 5,
+        "Monday": 4,
+        "Tuesday": 3,
+        "Wednesday": 2,
+        "Thursday": 1,
+        "Friday": 7,
+        "Saturday": 6
+      },
+      "gulika": {
+        "Sunday": 7,
+        "Monday": 6,
+        "Tuesday": 5,
+        "Wednesday": 4,
+        "Thursday": 3,
+        "Friday": 2,
+        "Saturday": 1
+      }
+    },
+    "choghadiya": {
+      "provenance": "indianfestivaldiary full weekday tables, cross-confirmed cell-by-cell against the muhuratchoghadiya live 2026-11-05 Thursday page (16/16 exact) and hindutone rule windows",
+      "types": [
+        "Udveg",
+        "Amrut",
+        "Rog",
+        "Labh",
+        "Shubh",
+        "Chal",
+        "Kal"
+      ],
+      "day_cycle_lords": [
+        "Jupiter",
+        "Mars",
+        "Sun",
+        "Venus",
+        "Mercury",
+        "Moon",
+        "Saturn"
+      ],
+      "night_cycle_lords": [
+        "Sun",
+        "Jupiter",
+        "Moon",
+        "Venus",
+        "Mars",
+        "Saturn",
+        "Mercury"
+      ],
+      "night_part1_rule": "first night part lord = lord of the weekday 3 days later",
+      "day": {
+        "Sunday": [
+          "Udveg",
+          "Chal",
+          "Labh",
+          "Amrut",
+          "Kal",
+          "Shubh",
+          "Rog",
+          "Udveg"
+        ],
+        "Monday": [
+          "Amrut",
+          "Kal",
+          "Shubh",
+          "Rog",
+          "Udveg",
+          "Chal",
+          "Labh",
+          "Amrut"
+        ],
+        "Tuesday": [
+          "Rog",
+          "Udveg",
+          "Chal",
+          "Labh",
+          "Amrut",
+          "Kal",
+          "Shubh",
+          "Rog"
+        ],
+        "Wednesday": [
+          "Labh",
+          "Amrut",
+          "Kal",
+          "Shubh",
+          "Rog",
+          "Udveg",
+          "Chal",
+          "Labh"
+        ],
+        "Thursday": [
+          "Shubh",
+          "Rog",
+          "Udveg",
+          "Chal",
+          "Labh",
+          "Amrut",
+          "Kal",
+          "Shubh"
+        ],
+        "Friday": [
+          "Chal",
+          "Labh",
+          "Amrut",
+          "Kal",
+          "Shubh",
+          "Rog",
+          "Udveg",
+          "Chal"
+        ],
+        "Saturday": [
+          "Kal",
+          "Shubh",
+          "Rog",
+          "Udveg",
+          "Chal",
+          "Labh",
+          "Amrut",
+          "Kal"
+        ]
+      },
+      "night": {
+        "Monday": [
+          "Shubh",
+          "Amrut",
+          "Chal",
+          "Rog",
+          "Kal",
+          "Labh",
+          "Udveg",
+          "Shubh"
+        ],
+        "Tuesday": [
+          "Chal",
+          "Rog",
+          "Kal",
+          "Labh",
+          "Udveg",
+          "Shubh",
+          "Amrut",
+          "Chal"
+        ],
+        "Wednesday": [
+          "Kal",
+          "Labh",
+          "Udveg",
+          "Shubh",
+          "Amrut",
+          "Chal",
+          "Rog",
+          "Kal"
+        ],
+        "Thursday": [
+          "Udveg",
+          "Shubh",
+          "Amrut",
+          "Chal",
+          "Rog",
+          "Kal",
+          "Labh",
+          "Udveg"
+        ],
+        "Friday": [
+          "Amrut",
+          "Chal",
+          "Rog",
+          "Kal",
+          "Labh",
+          "Udveg",
+          "Shubh",
+          "Amrut"
+        ],
+        "Saturday": [
+          "Rog",
+          "Kal",
+          "Labh",
+          "Udveg",
+          "Shubh",
+          "Amrut",
+          "Chal",
+          "Rog"
+        ],
+        "Sunday": [
+          "Labh",
+          "Udveg",
+          "Shubh",
+          "Amrut",
+          "Chal",
+          "Rog",
+          "Kal",
+          "Labh"
+        ]
+      }
+    }
+  },
+  "days": [
+    {
+      "date": "2026-11-05",
+      "weekday": "Thursday",
+      "prepublished": false,
+      "sunrise": {
+        "display": "6:13 AM",
+        "minutes": 373
+      },
+      "sunset": {
+        "display": "5:20 PM",
+        "minutes": 1040
+      },
+      "moonrise": {
+        "display": "2:23 AM",
+        "minutes": 143
+      },
+      "rahu": {
+        "display": "1:10 PM-2:33 PM",
+        "start": 790,
+        "end": 873
+      },
+      "yamaganda": {
+        "display": "6:13 AM-7:36 AM",
+        "start": 373,
+        "end": 456
+      },
+      "gulika": {
+        "display": "9:00 AM-10:23 AM",
+        "start": 540,
+        "end": 623
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:37 AM-5:25 AM",
+        "start": 277,
+        "end": 325
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:20 AM-8:04 AM",
+          "start": 440,
+          "end": 484
+        },
+        {
+          "display": "10:40 AM-11:24 AM",
+          "start": 640,
+          "end": 684
+        }
+      ],
+      "varjyam": {
+        "display": "7:42 AM-9:20 AM",
+        "start": 462,
+        "end": 560
+      },
+      "amrit_kalam": {
+        "display": "7:43 AM-9:13 AM",
+        "start": 463,
+        "end": 553
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "weekday": "Friday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:14 AM",
+        "minutes": 374
+      },
+      "sunset": {
+        "display": "5:20 PM",
+        "minutes": 1040
+      },
+      "moonrise": {
+        "display": "3:21 AM",
+        "minutes": 201
+      },
+      "rahu": {
+        "display": "10:23 AM-11:47 AM",
+        "start": 623,
+        "end": 707
+      },
+      "yamaganda": {
+        "display": "2:33 PM-3:56 PM",
+        "start": 873,
+        "end": 956
+      },
+      "gulika": {
+        "display": "7:37 AM-9:00 AM",
+        "start": 457,
+        "end": 540
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:38 AM-5:26 AM",
+        "start": 278,
+        "end": 326
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:27 AM-9:11 AM",
+          "start": 507,
+          "end": 551
+        },
+        {
+          "display": "11:24 AM-12:09 PM",
+          "start": 684,
+          "end": 729
+        }
+      ],
+      "varjyam": {
+        "display": "4:27 PM-6:06 PM",
+        "start": 987,
+        "end": 1086
+      },
+      "amrit_kalam": {
+        "display": "7:44 AM-9:14 AM",
+        "start": 464,
+        "end": 554
+      }
+    },
+    {
+      "date": "2026-11-07",
+      "weekday": "Saturday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:14 AM",
+        "minutes": 374
+      },
+      "sunset": {
+        "display": "5:19 PM",
+        "minutes": 1039
+      },
+      "moonrise": {
+        "display": "4:18 AM",
+        "minutes": 258
+      },
+      "rahu": {
+        "display": "9:01 AM-10:24 AM",
+        "start": 541,
+        "end": 624
+      },
+      "yamaganda": {
+        "display": "1:10 PM-2:33 PM",
+        "start": 790,
+        "end": 873
+      },
+      "gulika": {
+        "display": "6:14 AM-7:37 AM",
+        "start": 374,
+        "end": 457
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:38 AM-5:26 AM",
+        "start": 278,
+        "end": 326
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:43 AM-8:27 AM",
+          "start": 463,
+          "end": 507
+        },
+        {
+          "display": "8:49 AM-9:34 AM",
+          "start": 529,
+          "end": 574
+        }
+      ],
+      "varjyam": {
+        "display": "1:48 AM-3:29 AM",
+        "start": 108,
+        "end": 209
+      },
+      "amrit_kalam": {
+        "display": "7:44 AM-9:14 AM",
+        "start": 464,
+        "end": 554
+      }
+    },
+    {
+      "date": "2026-11-08",
+      "weekday": "Sunday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:15 AM",
+        "minutes": 375
+      },
+      "sunset": {
+        "display": "5:19 PM",
+        "minutes": 1039
+      },
+      "moonrise": {
+        "display": "5:16 AM",
+        "minutes": 316
+      },
+      "rahu": {
+        "display": "3:56 PM-5:19 PM",
+        "start": 956,
+        "end": 1039
+      },
+      "yamaganda": {
+        "display": "11:47 AM-1:10 PM",
+        "start": 707,
+        "end": 790
+      },
+      "gulika": {
+        "display": "2:33 PM-3:56 PM",
+        "start": 873,
+        "end": 956
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:39 AM-5:27 AM",
+        "start": 279,
+        "end": 327
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:06 AM-8:50 AM",
+          "start": 486,
+          "end": 530
+        },
+        {
+          "display": "11:25 AM-12:09 PM",
+          "start": 685,
+          "end": 729
+        }
+      ],
+      "varjyam": {
+        "display": "2:30 PM-4:12 PM",
+        "start": 870,
+        "end": 972
+      },
+      "amrit_kalam": {
+        "display": "7:45 AM-9:15 AM",
+        "start": 465,
+        "end": 555
+      }
+    },
+    {
+      "date": "2026-11-09",
+      "weekday": "Monday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:16 AM",
+        "minutes": 376
+      },
+      "sunset": {
+        "display": "5:18 PM",
+        "minutes": 1038
+      },
+      "moonrise": {
+        "display": "6:14 AM",
+        "minutes": 374
+      },
+      "rahu": {
+        "display": "7:39 AM-9:01 AM",
+        "start": 459,
+        "end": 541
+      },
+      "yamaganda": {
+        "display": "10:24 AM-11:47 AM",
+        "start": 624,
+        "end": 707
+      },
+      "gulika": {
+        "display": "1:10 PM-2:32 PM",
+        "start": 790,
+        "end": 872
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:40 AM-5:28 AM",
+        "start": 280,
+        "end": 328
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:28 AM-9:12 AM",
+          "start": 508,
+          "end": 552
+        },
+        {
+          "display": "12:09 PM-12:53 PM",
+          "start": 729,
+          "end": 773
+        }
+      ],
+      "varjyam": {
+        "display": "8:29 PM-10:12 PM",
+        "start": 1229,
+        "end": 1332
+      },
+      "amrit_kalam": {
+        "display": "7:46 AM-9:16 AM",
+        "start": 466,
+        "end": 556
+      }
+    },
+    {
+      "date": "2026-11-10",
+      "weekday": "Tuesday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:16 AM",
+        "minutes": 376
+      },
+      "sunset": {
+        "display": "5:17 PM",
+        "minutes": 1037
+      },
+      "moonrise": {
+        "display": "7:12 AM",
+        "minutes": 432
+      },
+      "rahu": {
+        "display": "2:32 PM-3:55 PM",
+        "start": 872,
+        "end": 955
+      },
+      "yamaganda": {
+        "display": "9:02 AM-10:24 AM",
+        "start": 542,
+        "end": 624
+      },
+      "gulika": {
+        "display": "11:47 AM-1:10 PM",
+        "start": 707,
+        "end": 790
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:40 AM-5:28 AM",
+        "start": 280,
+        "end": 328
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:23 AM-8:07 AM",
+          "start": 443,
+          "end": 487
+        },
+        {
+          "display": "9:57 AM-10:41 AM",
+          "start": 597,
+          "end": 641
+        }
+      ],
+      "varjyam": {
+        "display": "6:12 PM-7:58 PM",
+        "start": 1092,
+        "end": 1198
+      },
+      "amrit_kalam": {
+        "display": "7:46 AM-9:16 AM",
+        "start": 466,
+        "end": 556
+      }
+    },
+    {
+      "date": "2026-11-11",
+      "weekday": "Wednesday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:17 AM",
+        "minutes": 377
+      },
+      "sunset": {
+        "display": "5:17 PM",
+        "minutes": 1037
+      },
+      "moonrise": {
+        "display": "8:09 AM",
+        "minutes": 489
+      },
+      "rahu": {
+        "display": "11:47 AM-1:10 PM",
+        "start": 707,
+        "end": 790
+      },
+      "yamaganda": {
+        "display": "7:40 AM-9:02 AM",
+        "start": 460,
+        "end": 542
+      },
+      "gulika": {
+        "display": "10:25 AM-11:47 AM",
+        "start": 625,
+        "end": 707
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:41 AM-5:29 AM",
+        "start": 281,
+        "end": 329
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:45 AM-8:29 AM",
+          "start": 465,
+          "end": 509
+        },
+        {
+          "display": "11:03 AM-11:47 AM",
+          "start": 663,
+          "end": 707
+        }
+      ],
+      "varjyam": {
+        "display": "4:12 PM-5:58 PM",
+        "start": 972,
+        "end": 1078
+      },
+      "amrit_kalam": {
+        "display": "7:47 AM-9:17 AM",
+        "start": 467,
+        "end": 557
+      }
+    },
+    {
+      "date": "2026-11-12",
+      "weekday": "Thursday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:18 AM",
+        "minutes": 378
+      },
+      "sunset": {
+        "display": "5:16 PM",
+        "minutes": 1036
+      },
+      "moonrise": {
+        "display": "9:04 AM",
+        "minutes": 544
+      },
+      "rahu": {
+        "display": "1:09 PM-2:32 PM",
+        "start": 789,
+        "end": 872
+      },
+      "yamaganda": {
+        "display": "6:18 AM-7:40 AM",
+        "start": 378,
+        "end": 460
+      },
+      "gulika": {
+        "display": "9:03 AM-10:25 AM",
+        "start": 543,
+        "end": 625
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:42 AM-5:30 AM",
+        "start": 282,
+        "end": 330
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:24 AM-8:08 AM",
+          "start": 444,
+          "end": 488
+        },
+        {
+          "display": "10:41 AM-11:25 AM",
+          "start": 641,
+          "end": 685
+        }
+      ],
+      "varjyam": {
+        "display": "4:12 PM-5:58 PM",
+        "start": 972,
+        "end": 1078
+      },
+      "amrit_kalam": {
+        "display": "7:48 AM-9:18 AM",
+        "start": 468,
+        "end": 558
+      }
+    },
+    {
+      "date": "2026-11-13",
+      "weekday": "Friday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:19 AM",
+        "minutes": 379
+      },
+      "sunset": {
+        "display": "5:16 PM",
+        "minutes": 1036
+      },
+      "moonrise": {
+        "display": "9:54 AM",
+        "minutes": 594
+      },
+      "rahu": {
+        "display": "10:25 AM-11:47 AM",
+        "start": 625,
+        "end": 707
+      },
+      "yamaganda": {
+        "display": "2:32 PM-3:54 PM",
+        "start": 872,
+        "end": 954
+      },
+      "gulika": {
+        "display": "7:41 AM-9:03 AM",
+        "start": 461,
+        "end": 543
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:43 AM-5:31 AM",
+        "start": 283,
+        "end": 331
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:30 AM-9:14 AM",
+          "start": 510,
+          "end": 554
+        },
+        {
+          "display": "11:25 AM-12:09 PM",
+          "start": 685,
+          "end": 729
+        }
+      ],
+      "varjyam": {
+        "display": "3:55 AM-5:43 AM",
+        "start": 235,
+        "end": 343
+      },
+      "amrit_kalam": {
+        "display": "7:49 AM-9:19 AM",
+        "start": 469,
+        "end": 559
+      }
+    },
+    {
+      "date": "2026-11-14",
+      "weekday": "Saturday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:19 AM",
+        "minutes": 379
+      },
+      "sunset": {
+        "display": "5:15 PM",
+        "minutes": 1035
+      },
+      "moonrise": {
+        "display": "10:40 AM",
+        "minutes": 640
+      },
+      "rahu": {
+        "display": "9:03 AM-10:25 AM",
+        "start": 543,
+        "end": 625
+      },
+      "yamaganda": {
+        "display": "1:09 PM-2:31 PM",
+        "start": 789,
+        "end": 871
+      },
+      "gulika": {
+        "display": "6:19 AM-7:41 AM",
+        "start": 379,
+        "end": 461
+      },
+      "abhijit": {
+        "display": "11:23 AM-12:11 PM",
+        "start": 683,
+        "end": 731
+      },
+      "brahma_muhurta": {
+        "display": "4:43 AM-5:31 AM",
+        "start": 283,
+        "end": 331
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:47 AM-8:31 AM",
+          "start": 467,
+          "end": 511
+        },
+        {
+          "display": "8:53 AM-9:36 AM",
+          "start": 533,
+          "end": 576
+        }
+      ],
+      "varjyam": {
+        "display": "4:00 PM-5:48 PM",
+        "start": 960,
+        "end": 1068
+      },
+      "amrit_kalam": {
+        "display": "7:49 AM-9:19 AM",
+        "start": 469,
+        "end": 559
+      }
+    },
+    {
+      "date": "2026-11-15",
+      "weekday": "Sunday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:20 AM",
+        "minutes": 380
+      },
+      "sunset": {
+        "display": "5:15 PM",
+        "minutes": 1035
+      },
+      "moonrise": {
+        "display": "11:20 AM",
+        "minutes": 680
+      },
+      "rahu": {
+        "display": "3:53 PM-5:15 PM",
+        "start": 953,
+        "end": 1035
+      },
+      "yamaganda": {
+        "display": "11:48 AM-1:09 PM",
+        "start": 708,
+        "end": 789
+      },
+      "gulika": {
+        "display": "2:31 PM-3:53 PM",
+        "start": 871,
+        "end": 953
+      },
+      "abhijit": {
+        "display": "11:24 AM-12:12 PM",
+        "start": 684,
+        "end": 732
+      },
+      "brahma_muhurta": {
+        "display": "4:44 AM-5:32 AM",
+        "start": 284,
+        "end": 332
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:09 AM-8:53 AM",
+          "start": 489,
+          "end": 533
+        },
+        {
+          "display": "11:26 AM-12:09 PM",
+          "start": 686,
+          "end": 729
+        }
+      ],
+      "varjyam": {
+        "display": "5:32 AM-7:21 AM",
+        "start": 332,
+        "end": 441
+      },
+      "amrit_kalam": {
+        "display": "7:50 AM-9:20 AM",
+        "start": 470,
+        "end": 560
+      }
+    },
+    {
+      "date": "2026-11-16",
+      "weekday": "Monday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:21 AM",
+        "minutes": 381
+      },
+      "sunset": {
+        "display": "5:15 PM",
+        "minutes": 1035
+      },
+      "moonrise": {
+        "display": "11:56 AM",
+        "minutes": 716
+      },
+      "rahu": {
+        "display": "7:43 AM-9:04 AM",
+        "start": 463,
+        "end": 544
+      },
+      "yamaganda": {
+        "display": "10:26 AM-11:48 AM",
+        "start": 626,
+        "end": 708
+      },
+      "gulika": {
+        "display": "1:10 PM-2:31 PM",
+        "start": 790,
+        "end": 871
+      },
+      "abhijit": {
+        "display": "11:24 AM-12:12 PM",
+        "start": 684,
+        "end": 732
+      },
+      "brahma_muhurta": {
+        "display": "4:45 AM-5:33 AM",
+        "start": 285,
+        "end": 333
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:32 AM-9:15 AM",
+          "start": 512,
+          "end": 555
+        },
+        {
+          "display": "12:10 PM-12:53 PM",
+          "start": 730,
+          "end": 773
+        }
+      ],
+      "varjyam": {
+        "display": "9:56 PM-11:43 PM",
+        "start": 1316,
+        "end": 1423
+      },
+      "amrit_kalam": {
+        "display": "7:51 AM-9:21 AM",
+        "start": 471,
+        "end": 561
+      }
+    },
+    {
+      "date": "2026-11-17",
+      "weekday": "Tuesday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:22 AM",
+        "minutes": 382
+      },
+      "sunset": {
+        "display": "5:14 PM",
+        "minutes": 1034
+      },
+      "moonrise": {
+        "display": "12:29 PM",
+        "minutes": 749
+      },
+      "rahu": {
+        "display": "2:31 PM-3:53 PM",
+        "start": 871,
+        "end": 953
+      },
+      "yamaganda": {
+        "display": "9:05 AM-10:26 AM",
+        "start": 545,
+        "end": 626
+      },
+      "gulika": {
+        "display": "11:48 AM-1:10 PM",
+        "start": 708,
+        "end": 790
+      },
+      "abhijit": {
+        "display": "11:24 AM-12:12 PM",
+        "start": 684,
+        "end": 732
+      },
+      "brahma_muhurta": {
+        "display": "4:46 AM-5:34 AM",
+        "start": 286,
+        "end": 334
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:27 AM-8:10 AM",
+          "start": 447,
+          "end": 490
+        },
+        {
+          "display": "9:59 AM-10:43 AM",
+          "start": 599,
+          "end": 643
+        }
+      ],
+      "varjyam": {
+        "display": "6:47 AM-8:32 AM",
+        "start": 407,
+        "end": 512
+      },
+      "amrit_kalam": {
+        "display": "7:52 AM-9:22 AM",
+        "start": 472,
+        "end": 562
+      }
+    },
+    {
+      "date": "2026-11-18",
+      "weekday": "Wednesday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:23 AM",
+        "minutes": 383
+      },
+      "sunset": {
+        "display": "5:14 PM",
+        "minutes": 1034
+      },
+      "moonrise": {
+        "display": "12:59 PM",
+        "minutes": 779
+      },
+      "rahu": {
+        "display": "11:48 AM-1:10 PM",
+        "start": 708,
+        "end": 790
+      },
+      "yamaganda": {
+        "display": "7:44 AM-9:05 AM",
+        "start": 464,
+        "end": 545
+      },
+      "gulika": {
+        "display": "10:27 AM-11:48 AM",
+        "start": 627,
+        "end": 708
+      },
+      "abhijit": {
+        "display": "11:24 AM-12:12 PM",
+        "start": 684,
+        "end": 732
+      },
+      "brahma_muhurta": {
+        "display": "4:47 AM-5:35 AM",
+        "start": 287,
+        "end": 335
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:49 AM-8:33 AM",
+          "start": 469,
+          "end": 513
+        },
+        {
+          "display": "11:05 AM-11:48 AM",
+          "start": 665,
+          "end": 708
+        }
+      ],
+      "varjyam": {
+        "display": "5:30 PM-7:12 PM",
+        "start": 1050,
+        "end": 1152
+      },
+      "amrit_kalam": {
+        "display": "7:53 AM-9:23 AM",
+        "start": 473,
+        "end": 563
+      }
+    },
+    {
+      "date": "2026-11-19",
+      "weekday": "Thursday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:23 AM",
+        "minutes": 383
+      },
+      "sunset": {
+        "display": "5:14 PM",
+        "minutes": 1034
+      },
+      "moonrise": {
+        "display": "1:29 PM",
+        "minutes": 809
+      },
+      "rahu": {
+        "display": "1:10 PM-2:31 PM",
+        "start": 790,
+        "end": 871
+      },
+      "yamaganda": {
+        "display": "6:23 AM-7:45 AM",
+        "start": 383,
+        "end": 465
+      },
+      "gulika": {
+        "display": "9:06 AM-10:27 AM",
+        "start": 546,
+        "end": 627
+      },
+      "abhijit": {
+        "display": "11:24 AM-12:12 PM",
+        "start": 684,
+        "end": 732
+      },
+      "brahma_muhurta": {
+        "display": "4:47 AM-5:35 AM",
+        "start": 287,
+        "end": 335
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:28 AM-8:12 AM",
+          "start": 448,
+          "end": 492
+        },
+        {
+          "display": "10:43 AM-11:27 AM",
+          "start": 643,
+          "end": 687
+        }
+      ],
+      "varjyam": {
+        "display": "2:33 PM-4:12 PM",
+        "start": 873,
+        "end": 972
+      },
+      "amrit_kalam": {
+        "display": "7:53 AM-9:23 AM",
+        "start": 473,
+        "end": 563
+      }
+    },
+    {
+      "date": "2026-11-20",
+      "weekday": "Friday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:24 AM",
+        "minutes": 384
+      },
+      "sunset": {
+        "display": "5:13 PM",
+        "minutes": 1033
+      },
+      "moonrise": {
+        "display": "1:59 PM",
+        "minutes": 839
+      },
+      "rahu": {
+        "display": "10:27 AM-11:49 AM",
+        "start": 627,
+        "end": 709
+      },
+      "yamaganda": {
+        "display": "2:31 PM-3:52 PM",
+        "start": 871,
+        "end": 952
+      },
+      "gulika": {
+        "display": "7:45 AM-9:06 AM",
+        "start": 465,
+        "end": 546
+      },
+      "abhijit": {
+        "display": "11:25 AM-12:13 PM",
+        "start": 685,
+        "end": 733
+      },
+      "brahma_muhurta": {
+        "display": "4:48 AM-5:36 AM",
+        "start": 288,
+        "end": 336
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:34 AM-9:17 AM",
+          "start": 514,
+          "end": 557
+        },
+        {
+          "display": "11:27 AM-12:10 PM",
+          "start": 687,
+          "end": 730
+        }
+      ],
+      "varjyam": {
+        "display": "7:01 PM-8:37 PM",
+        "start": 1141,
+        "end": 1237
+      },
+      "amrit_kalam": {
+        "display": "7:54 AM-9:24 AM",
+        "start": 474,
+        "end": 564
+      }
+    },
+    {
+      "date": "2026-11-21",
+      "weekday": "Saturday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:25 AM",
+        "minutes": 385
+      },
+      "sunset": {
+        "display": "5:13 PM",
+        "minutes": 1033
+      },
+      "moonrise": {
+        "display": "2:32 PM",
+        "minutes": 872
+      },
+      "rahu": {
+        "display": "9:07 AM-10:28 AM",
+        "start": 547,
+        "end": 628
+      },
+      "yamaganda": {
+        "display": "1:10 PM-2:31 PM",
+        "start": 790,
+        "end": 871
+      },
+      "gulika": {
+        "display": "6:25 AM-7:46 AM",
+        "start": 385,
+        "end": 466
+      },
+      "abhijit": {
+        "display": "11:25 AM-12:13 PM",
+        "start": 685,
+        "end": 733
+      },
+      "brahma_muhurta": {
+        "display": "4:49 AM-5:37 AM",
+        "start": 289,
+        "end": 337
+      },
+      "dur_muhurta": [
+        {
+          "display": "7:51 AM-8:34 AM",
+          "start": 471,
+          "end": 514
+        },
+        {
+          "display": "8:56 AM-9:39 AM",
+          "start": 536,
+          "end": 579
+        }
+      ],
+      "varjyam": {
+        "display": "10:49 AM-12:21 PM",
+        "start": 649,
+        "end": 741
+      },
+      "amrit_kalam": {
+        "display": "7:55 AM-9:25 AM",
+        "start": 475,
+        "end": 565
+      }
+    },
+    {
+      "date": "2026-11-22",
+      "weekday": "Sunday",
+      "prepublished": true,
+      "sunrise": {
+        "display": "6:26 AM",
+        "minutes": 386
+      },
+      "sunset": {
+        "display": "5:13 PM",
+        "minutes": 1033
+      },
+      "moonrise": {
+        "display": "3:08 PM",
+        "minutes": 908
+      },
+      "rahu": {
+        "display": "3:52 PM-5:13 PM",
+        "start": 952,
+        "end": 1033
+      },
+      "yamaganda": {
+        "display": "11:49 AM-1:10 PM",
+        "start": 709,
+        "end": 790
+      },
+      "gulika": {
+        "display": "2:31 PM-3:52 PM",
+        "start": 871,
+        "end": 952
+      },
+      "abhijit": {
+        "display": "11:25 AM-12:13 PM",
+        "start": 685,
+        "end": 733
+      },
+      "brahma_muhurta": {
+        "display": "4:50 AM-5:38 AM",
+        "start": 290,
+        "end": 338
+      },
+      "dur_muhurta": [
+        {
+          "display": "8:13 AM-8:57 AM",
+          "start": 493,
+          "end": 537
+        },
+        {
+          "display": "11:28 AM-12:11 PM",
+          "start": 688,
+          "end": 731
+        }
+      ],
+      "varjyam": {
+        "display": "12:40 AM-2:10 AM",
+        "start": 40,
+        "end": 130
+      },
+      "amrit_kalam": {
+        "display": "7:56 AM-9:26 AM",
+        "start": 476,
+        "end": 566
+      }
+    }
+  ],
+  "spot_receipts": {
+    "hinducalculator_2026-11-05": {
+      "source": "hinducalculator.com/panchang/kathmandu",
+      "note": "today-only page (no date parameter); spot receipts only",
+      "sunrise": 377,
+      "sunset": 1037,
+      "rahu": {
+        "display": "1:09 PM-2:32 PM",
+        "start": 789,
+        "end": 872
+      },
+      "yamaganda": {
+        "display": "6:17 AM-7:39 AM",
+        "start": 377,
+        "end": 459
+      },
+      "gulika": {
+        "display": "9:02 AM-10:24 AM",
+        "start": 542,
+        "end": 624
+      }
+    }
+  }
+}
