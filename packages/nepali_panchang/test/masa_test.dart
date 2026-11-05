@@ -106,8 +106,10 @@ void main() {
     for (var i = 0; i < months.length; i++) {
       final span =
           months[i].endsAtNpt.difference(months[i].beginsAtNpt).inDays;
-      expect(span, inInclusive(28, 32),
-          reason: 'lunar month span out of band: $span days');
+      expect(span, greaterThanOrEqualTo(28),
+          reason: 'lunar month span too short: $span days');
+      expect(span, lessThanOrEqualTo(32),
+          reason: 'lunar month span too long: $span days');
       if (i > 0) {
         expect(months[i].beginsAtNpt, months[i - 1].endsAtNpt,
             reason: 'new-moon chain must be monotonic and contiguous');
