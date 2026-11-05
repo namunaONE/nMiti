@@ -11,13 +11,18 @@
 ///
 /// Step 3 ships the limb layer on top of that core: tithi, nakshatra, yoga
 /// and karana angles with canonical name tables, the wrap-safe boundary
-/// solver, per-source ayanamsa profiles, NPT civil-time helpers and the USNO
-/// sunrise solver. The permanent accuracy gate against the 197-receipt golden
-/// corpus lives in test/receipts_calibration_test.dart.
+/// solver, per-source ayanamsa profiles, NPT civil-time helpers and the
+/// USNO sunrise solver. The permanent accuracy gate against the 197-receipt
+/// golden corpus lives in test/receipts_calibration_test.dart.
 ///
 /// R6a-3 (HYA-416) adds the daily-shape layer: panchangFor composes the limbs
 /// into the per-day block the site and API serve, with reference moments,
 /// vriddhi/kshaya flags and honesty fields.
+///
+/// L1 (HYA-419) adds the masa layer: amanta lunar months with adhika/kshaya
+/// detection from the engine's own new-moon scan and sankranti overlay,
+/// receipt-anchored to the 2026 Adhika Jestha and cross-checked against the
+/// tithi_engine oracle in CI.
 ///
 /// R6b (HYA-367) adds the festival rules layer: the Dashain-Tihar festival
 /// battery as data, day-choosing conventions as code, and the 2083
@@ -32,6 +37,7 @@ export 'src/delta_t.dart';
 export 'src/festival_rules.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';
+export 'src/masa.dart';
 export 'src/moon.dart';
 export 'src/moonrise.dart';
 export 'src/panchang_day.dart';
