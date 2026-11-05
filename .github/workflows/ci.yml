@@ -31,7 +31,7 @@ jobs:
       - name: name the failing tests as run annotations
         if: failure()
         run: |
-          grep -F '[E]' dart_test_output.txt | while IFS= read -r line; do
+          grep -A 6 -F '[E]' dart_test_output.txt | while IFS= read -r line; do
             printf '::error::%s\n' "$(printf '%s' "$line" | sed 's/%/%25/g')"
           done || true
       - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
