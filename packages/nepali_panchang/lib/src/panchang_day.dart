@@ -3,6 +3,7 @@ import 'civil_time.dart';
 import 'limbs.dart';
 import 'solver.dart';
 import 'sunrise.dart';
+import 'uncertainty.dart';
 
 /// Daily panchang shape (R6a-3, HYA-416).
 ///
@@ -103,6 +104,10 @@ class PanchangDay {
 
   /// Evidence statement for every value in this day block.
   final String evidenceTier;
+
+  /// Published uncertainty bands for this day's values (HYA-423); the
+  /// same constants the methodology documents and the CI tests guard.
+  List<UncertaintyBand> get uncertainty => publishedErrorBars;
 
   const PanchangDay({
     required this.dateNpt,
