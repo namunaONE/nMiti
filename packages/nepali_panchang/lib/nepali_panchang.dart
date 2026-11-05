@@ -2,8 +2,8 @@
 ///
 /// The engine computes tithi, nakshatra, yoga, karana and sunrise moments at
 /// runtime from celestial mechanics - full 60-term Meeus Ch.47 moon series,
-/// Ch.25 solar theory, a Delta-T table and per-source ayanamsa profiles - with
-/// no precomputed data files, covering the entire BS 1975-2100+ range.
+/// Ch.25 solar theory, a Delta-T table and per-source ayanamsa profiles -
+/// with no precomputed data files, covering the entire BS 1975-2100+ range.
 ///
 /// Step 2 shipped the astronomy core: the Meeus Ch.47 moon (example 47.a is
 /// its permanent unit test), the Ch.25 sun (example 25.a) and the
@@ -20,8 +20,10 @@
 /// vriddhi/kshaya flags and honesty fields.
 ///
 /// R6b (HYA-367) adds the festival rules layer: the Dashain-Tihar festival
-/// battery as data, four day-choosing conventions as code, and the 2083
-/// samiti/publisher receipt corpus as the permanent CI gate.
+/// battery as data, day-choosing conventions as code, and the 2083
+/// samiti/publisher receipt corpus as the permanent CI gate. HYA-417 adds the
+/// moonrise solver, the nishita and chandrodaya conventions and the 2026
+/// festival receipt corpus (Shivaratri, Fagu Purnima, Janai Purnima, Teej).
 library;
 
 export 'src/ayanamsa.dart';
@@ -31,6 +33,7 @@ export 'src/festival_rules.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';
 export 'src/moon.dart';
+export 'src/moonrise.dart';
 export 'src/panchang_day.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
