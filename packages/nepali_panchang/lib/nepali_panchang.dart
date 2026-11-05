@@ -35,3 +35,4 @@ export 'src/panchang_day.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
 export 'src/sunrise.dart';
+export 'src/uncertainty.dart';

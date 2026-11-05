@@ -49,3 +49,31 @@ Every row states its rung on the ladder:
 11. The post-deploy smoke is N-version: an independent Python implementation recomputes today's BS date from the raw CSV and compares it to the deployed JSON and HTML. Freshness SLA: 26 hours.
 
 **Accuracy claim (honest, current):** astronomy ±minutes (SWEPH-comparable at date level); civil rules NPNS-validated. No ephemeris knows NPNS committee discretion — where the print record exists, it wins.
+
+## Error bars (lunar engine, R6a/R6b)
+
+The lunar engine (`packages/nepali_panchang`) publishes an uncertainty band
+for every served value, derived from recorded evidence — never aspiration.
+Two anchors:
+
+1. **Publisher parity** — the locked receipt corpora (226 limb boundaries +
+   76 karana/sunrise receipts, BhaktiBharat + Hamro Patro, Oct–Nov 2026)
+   gate CI on every push; bands are honest ceilings over the observed maxima.
+2. **Ephemeris parity** — a Swiss-anchored independent engine (`tithi_engine`,
+   Apache-2.0, dev-dependency only) cross-checks our tithi in CI: every
+   day-tithi label agrees and transition instants sit inside the provisional
+   bands.
+
+| Limb | ± minutes | Basis |
+| -- | -- | -- |
+| tithi | ±1.5 | corpus max ~1.0 min; oracle labels agree, transitions mean < 2 min |
+| nakshatra | ±2.0 | typical ≤0.94, observed max 1.7 near lunar perigee |
+| yoga | ±2.0 | max ~0.97 post ayanamsa fit |
+| karana | 0 | convention-anchored: 76/76 exact at the pinned reference moment |
+| sunrise | ±1.0 | vs geometric (NOAA-style) rise; BhaktiBharat's ~+4.5 min is a stated convention offset, not an error |
+
+Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
+2–13 min on the same boundaries) is a measured fact about Nepali publishing —
+stated, never absorbed into our bands. Named systematic contributors: the
+ΔT source gap (Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) ≈ 6.6 s, and
+Meeus Ch.47 truncation ≈ 20 s of boundary time.
