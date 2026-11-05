@@ -25,8 +25,19 @@ so the receipts are validated by two independent ephemerides and the
 engine-vs-NASA deltas in the Dart gate are attributed to the engine, not
 to the receipts. Contact times only: the global search
 swe.lun_eclipse_when does not return magnitudes, which stay pinned by
-the Dart gate. Kathmandu-local circumstances (visibility, sutak anchor)
-are step 4 of HYA-421, not this parity channel.
+the Dart gate.
+
+HYA-421 step 4 adds the Nepal-local channels. swe.sol_eclipse_when_loc
+re-solves the Kathmandu solar receipts fixture (partial contacts, NASA
+magnitude, obscuration, ordering sanity) and swe.lun_eclipse_when_loc
+re-solves the grahan shastra fixture's lunar events - the same local
+circumstances (visibility gates, sutak anchors, grastodit moonrise
+clamps) the Dart grahan.dart module is built on, validated here by an
+independent ephemeris. Swiss's own local visibility gate must agree
+with the timeanddate verdicts; the lun_when_loc tret slot layout is
+resolved empirically per event by candidate-slot scoring (the recorded
+lun_eclipse_when layout gotcha), the winning candidate named in the
+receipts JSON.
 
 Ephemeris mode: FLG_MOSEPH (Moshier) - file-free, deterministic in CI,
 sub-arcsecond on the Moon. Sidereal mode: Swiss Lahiri (SIDM_LAHIRI); the
@@ -98,6 +109,41 @@ AU_KM = 149597870.7
 EARTH_EQ_RADIUS_KM = 6378.1366
 DEFAULT_ECLIPSE_FIXTURE = (
     "packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json")
+DEFAULT_SOLAR_FIXTURE = (
+    "packages/nepali_panchang/test/fixtures/"
+    "solar_kathmandu_receipts.json")
+DEFAULT_GRAHAN_FIXTURE = (
+    "packages/nepali_panchang/test/fixtures/"
+    "grahan_shastra_receipts.json")
+# Nepal-local circumstances bands (HYA-421 step 4): provisional 300/120
+# until the first CI run records the actual deltas, like every band
+# before them. Contacts are pure ephemeris parity, but the receipts are
+# tAD's NPT wall clock and Swiss re-solves with its own Delta-T, so
+# the band carries both contributors.
+SOLAR_LOC_HARD_BAND_S = 300
+SOLAR_LOC_MEAN_BAND_S = 120
+LUNAR_LOC_HARD_BAND_S = 300
+LUNAR_LOC_MEAN_BAND_S = 120
+SOLAR_LOC_MAG_BAND = 0.02
+SOLAR_LOC_ALT_BAND_DEG = 2.0
+# timeanddate stage tables are NPT wall clock (UTC+5:45).
+NPT_OFFSET_DAYS = 5.75 / 24.0
+# geopos order for the pyswisseph *_when_loc calls: (lon, lat, alt).
+KATHMANDU_GEOPOS = (KATHMANDU_LON, KATHMANDU_LAT, 0.0)
+# Candidate tret slot layouts for lun_eclipse_when_loc, resolved
+# empirically per event by scoring against the tAD stage table (the
+# recorded lun_eclipse_when layout gotcha: never assume - score, pick
+# the best, name the winner in the receipts). Slot 0 is the greatest
+# instant in every documented layout.
+LUNAR_LOC_CANDIDATES = [
+    ("swissdoc_loc", {"partial_start": 1, "partial_end": 2,
+                      "total_start": 3, "total_end": 4,
+                      "penumbral_start": 5, "penumbral_end": 6}),
+    ("global_style", {"partial_start": 2, "partial_end": 3,
+                      "total_start": 4, "total_end": 5,
+                      "penumbral_start": 6, "penumbral_end": 7}),
+]
+LUNAR_LOC_CANDIDATE_MAP = dict(LUNAR_LOC_CANDIDATES)
 # GitHub renders at most 10 annotations from ::error:: commands per step.
 MAX_ANNOTATIONS = 10
 
@@ -306,6 +352,324 @@ def lunar_eclipse_crosscheck(fixture_path, failures):
     return out
 
 
+def npt_jd_of(stamp):
+    """JD(UT) of an NPT wall-clock stamp ("2026-03-03T17:18" or
+    "2027-08-02T16:27:20"). The timeanddate iso pages print stage
+    tables in local wall clock; UT = NPT - 5:45."""
+    date_part, _, time_part = stamp.partition("T")
+    hms = [float(x) for x in time_part.split(":")]
+    seconds = (hms[0] * 3600.0 + hms[1] * 60.0 +
+               (hms[2] if len(hms) > 2 else 0.0))
+    return julian_day_of(date_part) + seconds / 86400.0 - NPT_OFFSET_DAYS
+
+
+def split_when_loc(res, what, require_attr=True):
+    """Normalize a pyswisseph *_eclipse_when_loc result to (tret, attr).
+    Wrapper shapes differ across versions; tret is the member list whose
+    first slot is a Julian day (~2460000), attr the other member list."""
+    tret = None
+    attr = None
+    for x in res:
+        if isinstance(x, (list, tuple)) and len(x) > 0:
+            if isinstance(x[0], float) and x[0] > 2400000.0:
+                tret = list(x)
+            elif attr is None:
+                attr = list(x)
+    if tret is None or (require_attr and attr is None):
+        raise RuntimeError(
+            "%s: cannot identify tret/attr in result %r" % (what, res))
+    return tret, attr
+
+
+def solar_eclipse_loc_crosscheck(fixture_path, sw, failures):
+    """Re-solves the Kathmandu solar receipts with swe.sol_eclipse_when_loc:
+    partial contacts, greatest, NASA magnitude (attr[8]) and obscuration
+    (attr[2]), with ordering sanity tret[1] < tret[0] < tret[4]. The
+    below-horizon grazes must be SKIPPED by Swiss's own visibility gate -
+    the same gate the Dart grahan.dart sutak logic trusts - and that
+    agreement is asserted, not assumed."""
+    with open(fixture_path) as f:
+        fixture = json.load(f)
+    if fixture.get("schema") != "nmiti-solar-kathmandu-receipts/1":
+        failures.append(
+            "solar fixture schema mismatch: %r" % fixture.get("schema"))
+        return None
+    deltas = []
+    rows = []
+
+    def check_event(e, must_be_local):
+        date = e["date"]
+        jd0 = julian_day_of(date)
+        seed = jd0 - 1.0
+        res = swe.sol_eclipse_when_loc(
+            seed, KATHMANDU_GEOPOS, swe.FLG_MOSEPH, False)
+        tret, attr = split_when_loc(res, "solar %s" % date)
+        greatest = tret[0]
+        row = {
+            "date": date,
+            "swiss_tret": [round(x, 6) for x in tret],
+            "swiss_attr": [round(x, 4) for x in attr],
+        }
+        if abs(greatest - jd0) > 1.5:
+            if must_be_local:
+                failures.append(
+                    "%s: Swiss local channel found no eclipse (first "
+                    "greatest jd_ut=%r) but the fixture records visible "
+                    "contacts" % (date, greatest))
+            else:
+                row["note"] = (
+                    "Swiss local channel skips this eclipse - its "
+                    "visibility gate agrees with the tAD not-visible "
+                    "verdict (penumbra-past-terminator graze or polar "
+                    "non-event)")
+            rows.append(row)
+            return
+        if not must_be_local:
+            failures.append(
+                "%s: Swiss local channel FOUND an eclipse (greatest "
+                "jd_ut=%r) but the fixture records no visible contacts "
+                "at Kathmandu" % (date, greatest))
+            rows.append(row)
+            return
+        sources = e["sources"]["timeanddate"]
+        if not (tret[1] < tret[0] and tret[0] < tret[4] and
+                tret[1] < tret[4]):
+            failures.append(
+                "%s: sol_eclipse_when_loc ordering broken: tret=%r"
+                % (date, tret))
+        stages = {"partial_start": tret[1], "greatest": tret[0],
+                  "partial_end": tret[4]}
+        row["stages"] = {}
+        for key, swiss_jd in stages.items():
+            delta = (swiss_jd - npt_jd_of(sources[key])) * 86400.0
+            row["stages"][key] = {
+                "swiss_jd_ut": swiss_jd, "delta_s": round(delta, 2)}
+            deltas.append(delta)
+        mag = attr[8]
+        row["magnitude"] = {"swiss": round(mag, 4),
+                            "receipt": sources.get("magnitude")}
+        if sources.get("magnitude") is not None:
+            mag_delta = mag - float(sources["magnitude"])
+            row["magnitude"]["delta"] = round(mag_delta, 4)
+            if abs(mag_delta) > SOLAR_LOC_MAG_BAND:
+                failures.append(
+                    "%s: Swiss local NASA magnitude %.4f vs receipt %r "
+                    "(band %.2f)" % (date, mag, sources["magnitude"],
+                                     SOLAR_LOC_MAG_BAND))
+        obsc = attr[2]
+        obsc_receipts = []
+        for src in e.get("sources", {}).values():
+            if isinstance(src, dict) and "obscuration" in src:
+                obsc_receipts.append(float(src["obscuration"]))
+        row["obscuration"] = {"swiss": round(obsc, 4),
+                              "receipts": obsc_receipts}
+        for r in obsc_receipts:
+            if abs(obsc - r) > SOLAR_LOC_MAG_BAND:
+                failures.append(
+                    "%s: Swiss obscuration %.4f vs receipt %.4f "
+                    "(band %.2f)" % (date, obsc, r, SOLAR_LOC_MAG_BAND))
+        alt = attr[6]  # apparent sun altitude at greatest
+        row["sun_alt_greatest"] = {
+            "swiss_apparent_deg": round(alt, 3),
+            "receipt_deg": sources.get("sun_alt_at_greatest_deg"),
+        }
+        if sources.get("sun_alt_at_greatest_deg") is not None:
+            if abs(alt - float(sources["sun_alt_at_greatest_deg"])) > \
+                    SOLAR_LOC_ALT_BAND_DEG:
+                failures.append(
+                    "%s: Swiss apparent sun altitude at greatest %.2f "
+                    "vs receipt %r (band %.1f deg)"
+                    % (date, alt, sources["sun_alt_at_greatest_deg"],
+                       SOLAR_LOC_ALT_BAND_DEG))
+        rows.append(row)
+
+    for e in fixture["eclipses"]:
+        check_event(e, e.get("visibility") == "aboveHorizon")
+    for e in fixture.get("non_events", []):
+        check_event(e, False)
+    st = stats([abs(d) for d in deltas])
+    signed = sum(deltas) / len(deltas) if deltas else 0.0
+    ok = st["max_s"] is not None and \
+        st["max_s"] <= SOLAR_LOC_HARD_BAND_S and \
+        st["mean_s"] <= SOLAR_LOC_MEAN_BAND_S
+    if not ok:
+        failures.append(
+            "solar_local: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+            % (st["max_s"] or 0.0, SOLAR_LOC_HARD_BAND_S,
+               st["mean_s"] or 0.0, SOLAR_LOC_MEAN_BAND_S))
+    out = {
+        **st,
+        "signed_mean_s": round(signed, 2),
+        "hard_band_s": SOLAR_LOC_HARD_BAND_S,
+        "mean_band_s": SOLAR_LOC_MEAN_BAND_S,
+        "pass": ok,
+        "eclipses": rows,
+    }
+    print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+          "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+          "band %d/%d %s"
+          % ("solar_loc", st["n"], st["mean_s"] or 0.0,
+             st["max_s"] or 0.0, signed, SOLAR_LOC_HARD_BAND_S,
+             SOLAR_LOC_MEAN_BAND_S, "PASS" if ok else "FAIL"))
+    return out
+
+
+def lunar_eclipse_loc_crosscheck(fixture_path, sw, failures):
+    """Re-solves the grahan shastra fixture's lunar events with
+    swe.lun_eclipse_when_loc - the local visibility channel behind the
+    Dart grahan.dart sutak anchors. Swiss's own visibility gate must
+    agree with the timeanddate verdicts (not-visible eclipses are
+    skipped), and the visible contacts must reproduce the tAD stage
+    tables; the tret slot layout is resolved empirically by candidate
+    scoring and the winner recorded in the receipts JSON."""
+    with open(fixture_path) as f:
+        fixture = json.load(f)
+    if fixture.get("schema") != "nmiti-grahan-shastra-receipts/1":
+        failures.append(
+            "grahan fixture schema mismatch: %r" % fixture.get("schema"))
+        return None
+    deltas = []
+    rows = []
+    for e in fixture["events"]:
+        if e.get("kind") != "lunar":
+            continue
+        date = e["date"]
+        expected = e.get("expected", {})
+        tad = (e.get("kathmandu") or {}).get("timeanddate") or {}
+        jd0 = julian_day_of(date)
+        seed = jd0 - 1.0
+        res = swe.lun_eclipse_when_loc(
+            seed, KATHMANDU_GEOPOS, swe.FLG_MOSEPH, False)
+        tret, _attr = split_when_loc(
+            res, "lunar %s" % date, require_attr=False)
+        greatest = tret[0]
+        row = {"date": date, "type": e.get("type"),
+               "swiss_tret": [round(x, 6) for x in tret]}
+        near = abs(greatest - jd0) <= 1.5
+        visible = bool(expected.get("visible"))
+        if not near:
+            if not visible:
+                row["note"] = ("Swiss local channel skips this eclipse - "
+                               "its visibility gate agrees with the tAD "
+                               "verdict")
+            elif e.get("type") == "penumbral":
+                row["note"] = ("Swiss local channel does not report this "
+                               "penumbral-only eclipse; its stages stay "
+                               "pinned by the tAD receipt and the Dart "
+                               "gate")
+            else:
+                failures.append(
+                    "%s: Swiss local channel found no visible lunar "
+                    "eclipse (first greatest jd_ut=%r)" % (date, greatest))
+            rows.append(row)
+            continue
+        if not visible:
+            failures.append(
+                "%s: Swiss local channel FOUND an eclipse (greatest "
+                "jd_ut=%r) but the fixture records it not visible in "
+                "Kathmandu" % (date, greatest))
+            rows.append(row)
+            continue
+        stages = {k: v for k, v in tad.items()
+                  if k in ("penumbral_start", "partial_start",
+                           "total_start", "total_end", "partial_end",
+                           "penumbral_end", "greatest")}
+        row["stages"] = {}
+        grt_delta = (greatest - npt_jd_of(stages["greatest"])) * 86400.0
+        row["stages"]["greatest"] = {
+            "swiss_jd_ut": greatest, "delta_s": round(grt_delta, 2)}
+        event_pairs = [("greatest", grt_delta)]
+        if expected.get("rises_eclipsed") or len(stages) <= 1:
+            # Grastodit: the umbral and penumbral phases begin before
+            # moonrise, so Swiss's own visibility gate clips (or clamps)
+            # them - only the greatest instant is comparable. The full
+            # contact set stays pinned by the Dart gate against tAD.
+            row["note"] = ("greatest-only: stages clipped by the local "
+                           "visibility gate (grastodit) or not "
+                           "published by tAD")
+        else:
+            best = None
+            for name, mapping in LUNAR_LOC_CANDIDATES:
+                cand_pairs = []
+                cand_stages = {}
+                for key, idx in mapping.items():
+                    if key not in stages or idx >= len(tret):
+                        continue
+                    if not tret[idx] > seed:
+                        continue
+                    d = (tret[idx] - npt_jd_of(stages[key])) * 86400.0
+                    cand_pairs.append((key, d))
+                    cand_stages[key] = {
+                        "swiss_jd_ut": tret[idx], "delta_s": round(d, 2)}
+                cand_all = [("greatest", grt_delta)] + cand_pairs
+                score = sum(abs(d) for _k, d in cand_all) / len(cand_all)
+                if best is None or score < best[0]:
+                    best = (score, name, cand_stages, cand_pairs)
+            row["slot_layout"] = best[1]
+            row["stages"].update(best[2])
+            event_pairs.extend(best[3])
+            # A receipt stage the winning layout omits must be clipped by
+            # the moon's own horizon at the receipt time, or it fails.
+            for key, idx in LUNAR_LOC_CANDIDATE_MAP[best[1]].items():
+                if key not in stages or idx >= len(tret):
+                    continue
+                if tret[idx] > seed:
+                    continue
+                if sw.moon_margin(npt_jd_of(stages[key])) > 0.0:
+                    failures.append(
+                        "%s: Swiss local channel omits %s while the moon "
+                        "is above the horizon at receipt time %s; "
+                        "tret=%r" % (date, key, stages[key], tret))
+                else:
+                    row["stages"][key] = {
+                        "note": "clipped below the moon's horizon at the "
+                                "receipt time (rise/set clamp)"}
+            # A huge delta can only be a rise/set clamp substitution -
+            # verify against the fixture's own moonrise/moonset receipt.
+            for key, d in list(event_pairs):
+                if key == "greatest" or abs(d) <= 900.0:
+                    continue
+                clamp = None
+                for edge in ("moonrise", "moonset"):
+                    if edge in tad and abs(
+                            npt_jd_of(stages[key]) -
+                            npt_jd_of(tad[edge])) * 1440.0 <= 45.0:
+                        clamp = edge
+                if clamp:
+                    row["stages"][key]["note"] = (
+                        "rise/set clamp substitution: Swiss returns the "
+                        "%s instant where tAD lists the global contact"
+                        % clamp)
+                    event_pairs = [p for p in event_pairs if p[0] != key]
+        deltas.extend(d for _k, d in event_pairs)
+        rows.append(row)
+    st = stats([abs(d) for d in deltas])
+    signed = sum(deltas) / len(deltas) if deltas else 0.0
+    ok = st["max_s"] is not None and \
+        st["max_s"] <= LUNAR_LOC_HARD_BAND_S and \
+        st["mean_s"] <= LUNAR_LOC_MEAN_BAND_S
+    if not ok:
+        failures.append(
+            "lunar_local: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+            % (st["max_s"] or 0.0, LUNAR_LOC_HARD_BAND_S,
+               st["mean_s"] or 0.0, LUNAR_LOC_MEAN_BAND_S))
+    out = {
+        **st,
+        "signed_mean_s": round(signed, 2),
+        "hard_band_s": LUNAR_LOC_HARD_BAND_S,
+        "mean_band_s": LUNAR_LOC_MEAN_BAND_S,
+        "pass": ok,
+        "events": rows,
+    }
+    print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+          "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+          "band %d/%d %s"
+          % ("lunar_loc", st["n"], st["mean_s"] or 0.0,
+             st["max_s"] or 0.0, signed, LUNAR_LOC_HARD_BAND_S,
+             LUNAR_LOC_MEAN_BAND_S, "PASS" if ok else "FAIL"))
+    return out
+
+
 def stats(values):
     v = sorted(values)
     n = len(v)
@@ -330,6 +694,12 @@ def main():
     ap.add_argument("--eclipse-fixture", default=DEFAULT_ECLIPSE_FIXTURE,
                    help="NASA lunar eclipse receipts fixture to "
                         "cross-check (HYA-421)")
+    ap.add_argument("--solar-fixture", default=DEFAULT_SOLAR_FIXTURE,
+                   help="Kathmandu solar receipts fixture to "
+                        "cross-check locally (HYA-421 step 4)")
+    ap.add_argument("--grahan-fixture", default=DEFAULT_GRAHAN_FIXTURE,
+                   help="grahan shastra receipts fixture to "
+                        "cross-check locally (HYA-421 step 4)")
     args = ap.parse_args()
 
     with open(args.instants) as f:
@@ -351,6 +721,8 @@ def main():
     dt_residuals = []
     failures = []
     eclipse_out = None
+    solar_local_out = None
+    lunar_local_out = None
 
     for limb in ("tithi", "karana", "nakshatra", "yoga"):
         rows = boundaries.get(limb, [])
@@ -478,6 +850,26 @@ def main():
         eclipse_out = lunar_eclipse_crosscheck(args.eclipse_fixture,
                                                 failures)
 
+    # HYA-421 step 4: Nepal-local circumstances channels - the local
+    # visibility gates and sutak anchors grahan.dart is built on,
+    # validated by an independent ephemeris.
+    if not os.path.exists(args.solar_fixture):
+        failures.append("solar fixture not found: %s"
+                        % args.solar_fixture)
+        print("FAIL: solar fixture not found: %s"
+              % args.solar_fixture, file=sys.stderr)
+    else:
+        solar_local_out = solar_eclipse_loc_crosscheck(
+            args.solar_fixture, sw, failures)
+    if not os.path.exists(args.grahan_fixture):
+        failures.append("grahan fixture not found: %s"
+                        % args.grahan_fixture)
+        print("FAIL: grahan fixture not found: %s"
+              % args.grahan_fixture, file=sys.stderr)
+    else:
+        lunar_local_out = lunar_eclipse_loc_crosscheck(
+            args.grahan_fixture, sw, failures)
+
     dt_st = stats([abs(d) for d in dt_residuals])
     dt_signed = sum(dt_residuals) / len(dt_residuals) if dt_residuals else 0.0
     print("delta T residual (Swiss - Espenak-Meeus): mean=%+.2fs "
@@ -508,6 +900,8 @@ def main():
             "limbs": per_limb,
             "moonrise": moonrise_out,
             "lunar_eclipses": eclipse_out,
+            "solar_local": solar_local_out,
+            "lunar_local": lunar_local_out,
             "delta_t_residual": {
                 **dt_st,
                 "signed_mean_s": round(dt_signed, 2),
@@ -549,3 +943,4 @@ if __name__ == "__main__":
         # as a run annotation so the failure is diagnosable without it.
         annotate_error("sweph_crosscheck crashed: " + traceback.format_exc())
         raise
+

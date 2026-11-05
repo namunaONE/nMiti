@@ -46,8 +46,15 @@
 /// visibility gated on the Sun's altitude at the contacts - the penumbra
 /// reaches past the terminator, so a graze can be geometrically real yet
 /// below the horizon - receipt-anchored to the freshly-parsed Kathmandu
-/// corpus (timeanddate, time.now, heliora). The Nepal receipts corpus and
-/// the shastra module follow in steps 3-5.
+/// corpus (timeanddate, time.now, heliora). Step 3 ships the NASA solar
+/// catalog receipts (2026-2030) as the permanent CI gate. Step 4 ships
+/// the grahan shastra module: sutak windows anchored to the local visible
+/// contacts (12 hours before a solar, 9 hours before a lunar eclipse,
+/// ending at moksha), visibility-gated (no visible contact, no sutak),
+/// penumbral eclipses not kept as grahan, Khagras/Khandagras/Grastodit
+/// naming, and the C1-C6 publisher convention collisions decoded and
+/// exposed rather than silently resolved. Step 5 (site/API display)
+/// follows.
 library;
 
 export 'src/ayanamsa.dart';
@@ -56,6 +63,7 @@ export 'src/delta_t.dart';
 export 'src/eclipse_lunar.dart';
 export 'src/eclipse_solar.dart';
 export 'src/festival_rules.dart';
+export 'src/grahan.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';
 export 'src/masa.dart';
