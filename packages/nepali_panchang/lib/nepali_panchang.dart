@@ -32,8 +32,9 @@
 ///
 /// L4 (HYA-420) opens the muhurta layer: the USNO sunset solver (step 1)
 /// and the BhaktiBharat muhurta receipts corpus for Nov 2026 (step 2) as
-/// the permanent CI gate. The muhurta recipes themselves (Rahu Kalam,
-/// Yamaganda, Gulika, Abhijit, Choghadiya, Hora) land with step 3.
+/// the permanent CI gate. Step 3 ships the muhurta recipes themselves
+/// (Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma, Choghadiya, Hora)
+/// as muhurta.dart, receipt-calibrated against that corpus.
 library;
 
 export 'src/ayanamsa.dart';
@@ -45,6 +46,7 @@ export 'src/limbs.dart';
 export 'src/masa.dart';
 export 'src/moon.dart';
 export 'src/moonrise.dart';
+export 'src/muhurta.dart';
 export 'src/panchang_day.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
