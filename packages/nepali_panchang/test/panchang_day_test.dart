@@ -89,8 +89,11 @@ void main() {
 
   test('Nov 5 2026: sunrise lands in the Kathmandu dawn window', () {
     final d = panchangFor(year: 2026, month: 11, day: 5);
-    expect(d.sunriseNpt.isAfter(DateTime.utc(2026, 11, 5, 6, 0)), isTrue);
-    expect(d.sunriseNpt.isBefore(DateTime.utc(2026, 11, 5, 6, 45)), isTrue);
+    // Regression guard for the UT->TT wall-clock fix (HYA-416): the
+    // pre-fix displayed sunrise was ~75.6 s early (~06:15 NPT); the
+    // corrected value is ~06:16-06:17 NPT.
+    expect(d.sunriseNpt.isAfter(DateTime.utc(2026, 11, 5, 6, 16)), isTrue);
+    expect(d.sunriseNpt.isBefore(DateTime.utc(2026, 11, 5, 6, 20)), isTrue);
   });
 
   test('structure holds across the whole Oct-Nov 2026 corpus window', () {
