@@ -40,6 +40,25 @@ The harness also reports:
   the days two honest panchangs can print different limbs. This list is
   the input the festival layer (R6b) consumes for per-source attribution.
 
+## Lunar eclipse receipts cross-check (HYA-421)
+
+The harness also cross-checks the NASA 2026 lunar eclipse receipts
+fixture (default
+`packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json`, override
+with `--eclipse-fixture`) - the same corpus the Dart CI gate pins
+`eclipse_lunar.dart` against - by re-solving each eclipse with
+`swe.lun_eclipse_when` (global, geocentric: the same channel the Dart
+solver computes). The receipts are therefore validated by two independent
+ephemerides, and the engine-vs-NASA deltas measured in the Dart gate are
+attributed to the engine, not to the receipts.
+
+Contact times only: the global search does not return magnitudes, which
+stay pinned by the Dart gate. Provisional band 300/120 s (max/mean),
+tightened once the first runs record the actual Swiss-vs-NASA deltas.
+Kathmandu-local circumstances (visibility at the contacts, the sutak
+anchor) are step 4 of HYA-421 and will need
+`swe.lun_eclipse_when_loc`, not this parity channel.
+
 ## License boundary (AGPL facts-out) - read this before touching
 
 Swiss Ephemeris is AGPL-3 (free for open-source use; CHF 700 commercial).

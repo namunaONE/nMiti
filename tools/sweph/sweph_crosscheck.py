@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Swiss-truth cross-check of the nMiti lunar engine (HYA-369 prep,
-moonrise parity added by HYA-417).
+moonrise parity added by HYA-417, lunar eclipse receipts added by
+HYA-421).
 
 Reads the Dart engine's limb-boundary dump (nmiti_cli:dump_limb_instants)
 and re-solves every boundary with Swiss Ephemeris via pyswisseph, scoring
@@ -16,6 +17,16 @@ altitude, live parallax). The harness mirrors the IDENTICAL convention
 on Swiss Ephemeris - geocentric equatorial position, the same target,
 30-min stepped scan then bisection - so the moonrise score is pure
 ephemeris + algorithm parity: no rise/set convention gap enters.
+
+HYA-421: cross-checks the NASA 2026 lunar eclipse receipts fixture
+(packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json - the same
+corpus the Dart CI gate pins the engine against) with Swiss Ephemeris,
+so the receipts are validated by two independent ephemerides and the
+engine-vs-NASA deltas in the Dart gate are attributed to the engine, not
+to the receipts. Contact times only: the global search
+swe.lun_eclipse_when does not return magnitudes, which stay pinned by
+the Dart gate. Kathmandu-local circumstances (visibility, sutak anchor)
+are step 4 of HYA-421, not this parity channel.
 
 Ephemeris mode: FLG_MOSEPH (Moshier) - file-free, deterministic in CI,
 sub-arcsecond on the Moon. Sidereal mode: Swiss Lahiri (SIDM_LAHIRI); the
@@ -35,6 +46,7 @@ import argparse
 import datetime as _dt
 import json
 import math
+import os
 import sys
 
 try:
@@ -54,12 +66,32 @@ MEAN_BAND_S = {"tithi": 150, "karana": 150, "nakshatra": 300, "yoga": 300}
 # so this is pure ephemeris + algorithm parity like tithi.
 MOONRISE_HARD_BAND_S = 300
 MOONRISE_MEAN_BAND_S = 150
+# Lunar eclipse receipts band (HYA-421): Swiss Moshier vs the NASA
+# bulletin values, both on the Danjon 1/85 shadow convention. Provisional
+# 300/120 until the first CI run records the actual deltas; then tighten
+# like every band before it.
+LUNAR_ECLIPSE_HARD_BAND_S = 300
+LUNAR_ECLIPSE_MEAN_BAND_S = 120
+# swe.lun_eclipse_when tret layout (Swiss Ephemeris docs): 0 greatest,
+# 1 partial begin, 2 total begin, 3 total end, 4 partial end,
+# 5 penumbral begin, 6 penumbral end. Unused slots are 0, so a contact
+# exists iff its slot holds a real instant after the seed.
+LUNAR_ECLIPSE_PHASE_IDX = [
+    ("penumbral_start", 5),
+    ("partial_start", 1),
+    ("total_start", 2),
+    ("total_end", 3),
+    ("partial_end", 4),
+    ("penumbral_end", 6),
+]
 KNIFE_EDGE_MIN = 30.0
 SEED_DAYS = 0.05  # seed the Swiss solver ~72 min before our boundary
 KATHMANDU_LAT = 27.7172
 KATHMANDU_LON = 85.324
 AU_KM = 149597870.7
 EARTH_EQ_RADIUS_KM = 6378.1366
+DEFAULT_ECLIPSE_FIXTURE = (
+    "packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json")
 
 
 def norm360(x):
@@ -162,6 +194,91 @@ def sw_moonrise(sw, jd_ut_ref):
     return None
 
 
+def lunar_eclipse_crosscheck(fixture_path, failures):
+    """Re-solves every eclipse of the NASA 2026 receipts fixture with
+    swe.lun_eclipse_when (global, geocentric - the same channel the Dart
+    eclipse_lunar.dart solver computes) and scores the contact deltas."""
+    with open(fixture_path) as f:
+        fixture = json.load(f)
+    if fixture.get("schema") != "nmiti-nasa-lunar-2026/1":
+        failures.append(
+            "eclipse fixture schema mismatch: %r" % fixture.get("schema"))
+        return None
+    deltas = []
+    rows = []
+    for e in fixture["eclipses"]:
+        date = e["date"]
+        jd0 = julian_day_of(date)
+        seed = jd0 - 1.0
+        res = swe.lun_eclipse_when(seed, swe.FLG_MOSEPH, False)
+        retflag, tret = res[0], res[1]
+        greatest = tret[0]
+        if abs(greatest - jd0) > 1.5:
+            failures.append(
+                "%s: Swiss found a different eclipse (greatest jd_ut=%r)"
+                % (date, greatest))
+            continue
+        # A contact exists iff its tret slot holds a real instant.
+        has_partial = tret[1] > seed and tret[4] > seed
+        has_total = tret[2] > seed and tret[3] > seed
+        swiss_type = ("total" if has_total
+                      else ("partial" if has_partial else "penumbral"))
+        if swiss_type != e["type"]:
+            failures.append("%s: Swiss type %s != fixture type %s"
+                            % (date, swiss_type, e["type"]))
+        phases = e["phases"]
+        row = {"date": date, "swiss_type": swiss_type, "phases": {}}
+        delta = (greatest -
+                 (jd0 + phases["greatest"]["minutes"] / 1440.0)) * 86400.0
+        row["phases"]["greatest"] = {
+            "swiss_jd_ut": greatest, "delta_s": round(delta, 2)}
+        deltas.append(abs(delta))
+        for key, idx in LUNAR_ECLIPSE_PHASE_IDX:
+            receipt = phases[key]
+            if receipt is None:
+                if tret[idx] > seed:
+                    failures.append(
+                        "%s: Swiss has phase %s the fixture says is absent"
+                        % (date, key))
+                continue
+            if not tret[idx] > seed:
+                failures.append(
+                    "%s: Swiss lacks phase %s the fixture records"
+                    % (date, key))
+                continue
+            delta = (tret[idx] -
+                     (jd0 + receipt["minutes"] / 1440.0)) * 86400.0
+            row["phases"][key] = {
+                "swiss_jd_ut": tret[idx], "delta_s": round(delta, 2)}
+            deltas.append(abs(delta))
+        rows.append(row)
+    st = stats([abs(d) for d in deltas])
+    signed = sum(deltas) / len(deltas) if deltas else 0.0
+    ok = (st["max_s"] is not None and
+          st["max_s"] <= LUNAR_ECLIPSE_HARD_BAND_S and
+          st["mean_s"] <= LUNAR_ECLIPSE_MEAN_BAND_S)
+    if not ok:
+        failures.append(
+            "lunar_eclipse: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+            % (st["max_s"] or 0.0, LUNAR_ECLIPSE_HARD_BAND_S,
+               st["mean_s"] or 0.0, LUNAR_ECLIPSE_MEAN_BAND_S))
+    out = {
+        **st,
+        "signed_mean_s": round(signed, 2),
+        "hard_band_s": LUNAR_ECLIPSE_HARD_BAND_S,
+        "mean_band_s": LUNAR_ECLIPSE_MEAN_BAND_S,
+        "pass": ok,
+        "eclipses": rows,
+    }
+    print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+          "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+          "band %d/%d %s"
+          % ("lunar_ecl", st["n"], st["mean_s"] or 0.0, st["max_s"] or 0.0,
+             signed, LUNAR_ECLIPSE_HARD_BAND_S, LUNAR_ECLIPSE_MEAN_BAND_S,
+             "PASS" if ok else "FAIL"))
+    return out
+
+
 def stats(values):
     v = sorted(values)
     n = len(v)
@@ -183,6 +300,9 @@ def main():
     ap.add_argument("--trim-days", type=float, default=1.0,
                    help="interior trim: skip boundaries this close to the "
                         "window edges (solver warm-up)")
+    ap.add_argument("--eclipse-fixture", default=DEFAULT_ECLIPSE_FIXTURE,
+                   help="NASA lunar eclipse receipts fixture to "
+                        "cross-check (HYA-421)")
     args = ap.parse_args()
 
     with open(args.instants) as f:
@@ -318,6 +438,18 @@ def main():
                  "PASS" if ok else "FAIL"))
         all_rows.extend(rows_out)
 
+    # HYA-421: NASA lunar eclipse receipts vs Swiss Ephemeris - the same
+    # fixture the Dart CI gate pins eclipse_lunar.dart against, validated
+    # here by an independent ephemeris.
+    if not os.path.exists(args.eclipse_fixture):
+        failures.append("eclipse fixture not found: %s"
+                        % args.eclipse_fixture)
+        print("FAIL: eclipse fixture not found: %s"
+              % args.eclipse_fixture, file=sys.stderr)
+    else:
+        eclipse_out = lunar_eclipse_crosscheck(args.eclipse_fixture,
+                                                failures)
+
     dt_st = stats([abs(d) for d in dt_residuals])
     dt_signed = sum(dt_residuals) / len(dt_residuals) if dt_residuals else 0.0
     print("delta T residual (Swiss - Espenak-Meeus): mean=%+.2fs "
@@ -347,6 +479,7 @@ def main():
             "knife_edge_def_min": KNIFE_EDGE_MIN,
             "limbs": per_limb,
             "moonrise": moonrise_out,
+            "lunar_eclipses": eclipse_out,
             "delta_t_residual": {
                 **dt_st,
                 "signed_mean_s": round(dt_signed, 2),
