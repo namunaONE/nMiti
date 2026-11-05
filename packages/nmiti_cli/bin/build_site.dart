@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:nepali_date/nepali_date.dart';
 import 'package:nepali_date_data/nepali_date_data.dart';
 import 'package:nepali_sankranti/nepali_sankranti.dart';
+import 'package:nepali_panchang/nepali_panchang.dart';
 
 const _adMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -84,6 +85,8 @@ void main(List<String> args) {
       _readSourceFile('data/sankranti_moments_1975_2083.csv'));
   _write(File('${out.path}/sankranti.html'),
       _sankrantiPageHtml(sankrantiRows, urlBase, commitSha));
+  _write(File('${out.path}/panchang.html'),
+      _panchangPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -252,7 +255,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -470,7 +473,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}docs.html">Docs</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -1177,10 +1180,86 @@ ${defects.map((r) => '<tr><td>' + r.bsYear.toString() + '-' + r.monthNo.toString
       shortSha);
 }
 
+/// The /panchang page (R6a-3, HYA-416): today's lunar panchang details,
+/// computed at BUILD TIME by the open nepali_panchang engine (full 60-term
+/// Meeus Ch.47 moon, VSOP87D sun, Espenak-Meeus Delta T, per-source
+/// ayanamsa profiles) - runtime compute, zero data files, zero client
+/// JavaScript. Conventions are exposed, never silently picked: every limb
+/// is shown at BOTH reference moments (udaya = the Hamro Patro display
+/// convention; madhyahna = the BhaktiBharat convention), and every value
+/// carries the engine provenance and evidence tier per the public
+/// truth-data policy.
+String _panchangPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final d = panchangFor(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String when(DateTime t) {
+    final later = t.isAfter(
+        DateTime.utc(todayAd.year, todayAd.month, todayAd.day, 23, 59));
+    final earlier = t
+        .isBefore(DateTime.utc(todayAd.year, todayAd.month, todayAd.day));
+    return '${hm(t)} NPT${later ? ' (next day)' : ''}${earlier ? ' (prev day)' : ''}';
+  }
+  String row(String limbNp, String limbEn, PanchangElement udaya,
+          PanchangElement noon) =>
+      '<tr><th lang="ne">${limbNp}</th><th>${limbEn}</th>'
+      '<td>${udaya.name}<br><small>ends ${when(udaya.endsAtNpt)}</small></td>'
+      '<td>${noon.name}<br><small>ends ${when(noon.endsAtNpt)}</small></td></tr>';
+  final flags = <String>[];
+  if (d.tithiVriddhi) {
+    flags.add(
+        '<li><strong>वृद्धि (vriddhi):</strong> the same tithi runs at two consecutive sunrises - a vriddhi day.</li>');
+  }
+  if (d.tithiKshaya) {
+    flags.add(
+        '<li><strong>क्षय (kshaya):</strong> a tithi ends between two sunrises without being present at either - a kshaya day.</li>');
+  }
+  if (d.tithiBorderline) {
+    flags.add(
+        '<li><strong>Borderline:</strong> a tithi boundary falls within half an hour of a sunrise - the day label is convention-sensitive.</li>');
+  }
+  final flagsHtml = flags.isEmpty
+      ? '<p>No vriddhi, kshaya or borderline conditions on this day.</p>'
+      : '<ul>\n${flags.join('\n')}\n</ul>';
+  final body = '''
+<h1>Panchang <span lang="ne">· आजको पञ्चाङ्ग</span></h1>
+<p>Today's lunar details for Kathmandu (27.7172 N, 85.324 E), NPT (UTC+05:45), computed by the open <code>nepali_panchang</code> engine at build time - no precomputed data files. Nepal's publishers differ by display convention, so every limb is shown at both reference moments: <strong>उदय udaya</strong> (at sunrise; the Hamro Patro convention) and <strong>मध्याह्न madhyahna</strong> (at noon; the BhaktiBharat convention).</p>
+
+<table id="panchang-tithi">
+<tr><th></th><th></th><th>उदय · at sunrise</th><th>मध्याह्न · at noon</th></tr>
+${row('तिथि', 'Tithi', d.tithiAtUdaya, d.tithiAtNoon)}
+${row('नक्षत्र', 'Nakshatra', d.nakshatraAtUdaya, d.nakshatraAtNoon)}
+${row('योग', 'Yoga', d.yogaAtUdaya, d.yogaAtNoon)}
+${row('करण', 'Karana', d.karanaAtUdaya, d.karanaAtNoon)}
+</table>
+
+<p id="panchang-sunrise"><strong>सूर्योदय · Sunrise:</strong> ${hm(d.sunriseNpt)} NPT</p>
+
+<h2>वृद्धि / क्षय · vriddhi, kshaya, borderline</h2>
+$flagsHtml
+
+<h2 id="panchang-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${d.provenance}</li>
+<li><strong>Evidence:</strong> ${d.evidenceTier}</li>
+<li><strong>Accuracy:</strong> minute-level parity with the locked BhaktiBharat and Hamro Patro golden corpora (226 boundary receipts), enforced by CI on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Festivals are not yet covered.</strong> Festival display rules arrive with the festival-rules layer; until then vriddhi/kshaya facts are shown so borderline days are never silently decided.</li>
+</ul>
+''';
+  return _docShell(
+      'Panchang today',
+      'Today\'s lunar panchang for Kathmandu: tithi, nakshatra, yoga, karana and sunrise, engine-computed with both udaya and madhyahna display conventions.',
+      urlBase,
+      'panchang.html',
+      body,
+      shortSha);
+}
+
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -1209,6 +1288,7 @@ Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}d
 Served sankranti CSV copies: ${urlBase}data/sankranti_moments_1975_2083.csv and ${urlBase}data/sankranti_moments_1975_2100.csv
 SHA-256 checksums of every served CSV: ${urlBase}data.html#checksums
 Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
+Panchang for today (tithi, nakshatra, yoga, karana, sunrise; engine-computed at build time, both udaya and madhyahna conventions): ${urlBase}panchang.html
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 
