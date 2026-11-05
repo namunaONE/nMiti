@@ -1,0 +1,196 @@
+{
+  "schema": "nmiti-festival-receipts/1",
+  "description": "nMiti festival receipt corpus - golden fixtures for the R6b festival rules layer (HYA-367). Festival-day receipts for the BS 2083 Dashain-Tihar stretch: the civil day each festival was assigned by Hamro Patro's date pages (festival labels and displayed tithi) and by the Nepal Panchang Nirnayak Samiti as reported in the press, together with the convention that produces each published day. All times are NPT (UTC+05:45). The lunar chains behind these dates (Saptami begins Oct 17 06:10; Ashtami spans Oct 18 08:44 - Oct 19 11:07; Purnima ends Oct 26 09:57; Amavasya ends Nov 9 12:47) are locked in the lunar corpora lunar_receipts_2026_10.json / _11.json; this fixture pins only the festival-day assignments and the choosing convention.",
+  "crawl_date": "2026-11-05",
+  "bs_year": 2083,
+  "ad_bs_anchor": "Kartik 1 2083 = 2026-10-18 (locked in lunar_receipts_2026_10.json)",
+  "conventions": {
+    "udaya": "tithi running at sunrise (the Hamro Patro display convention and the samiti's usual call)",
+    "evening": "tithi running at the evening/night reference; used for night observances (Lakshmi Puja, Kojagrat Purnima, Dhanteras). The udaya convention gives the next civil day.",
+    "first-day": "first civil day the tithi overlaps; used by the samiti for Fulpati 2083, where Saptami began 06:10 NPT on Asoj 30, minutes after sunrise",
+    "all-days": "every civil day the tithi overlaps; used by the samiti for Maha Ashtami 2083 (Kartik 1 and 2, first two-day Maha Ashtami since 2000 BS)"
+  },
+  "sources": {
+    "hp": {
+      "name": "Hamro Patro SSR date pages (festival labels and displayed tithi)",
+      "url_pattern": "https://www.hamropatro.com/date/2083-{bsMonth}-{bsDay}",
+      "crawled": "2026-11-05",
+      "notes": "Date-page tithi display = udaya convention, except on vriddhi/starred pages where the flagged tithi shows on both days it spans (Dashain Maha Ashtami carried * on Kartik 1, whose samapti field showed Ashtami's START 08:43). The sidebar festival list is crawl-date-relative but BS-day-labeled; the BS day numbers are absolute."
+    },
+    "bb": {
+      "name": "BhaktiBharat Kathmandu daily panchangam (tithi chains)",
+      "notes": "Chains locked in lunar_receipts_2026_10.json; the Dashain window was re-crawled 2026-11-05 for this fixture (Saptami begins 06:10 Oct 17; Shashthi is the sunrise tithi on Oct 17, ending minutes after sunrise)."
+    },
+    "samiti_news": {
+      "name": "Nepal Panchang Nirnayak Samiti adjudications as reported in the press",
+      "articles": [
+        "https://www.samacharpati.com/2026/10/blog-post_18.html",
+        "https://tvannapurna.com/253949/2026/10/19/",
+        "https://nagariknews.nagariknetwork.com/Dharma-Saskriti/the-ninth-day-of-navratri-on-kartik-2-the-rituals-of-maha-ashtami-should-be-repeated-73-33.html",
+        "https://nepalicalendar.online/festivals/phulpati/2083"
+      ]
+    }
+  },
+  "receipts": [
+    {
+      "id": "ghatasthapana",
+      "convention": "udaya",
+      "ad_date": "2026-10-11",
+      "bs": "2083-06-25",
+      "label": "घटस्थापना व्रत / नवरात्र आरम्भ",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-6-25",
+      "crawl_date": "2026-11-05",
+      "note": "Shukla Pratipada at udaya, ends 21:47 NPT per BhaktiBharat chain."
+    },
+    {
+      "id": "fulpati",
+      "convention": "first-day",
+      "ad_date": "2026-10-17",
+      "bs": "2083-06-30",
+      "label": "फूलपाती",
+      "publisher": "nepalicalendar.online / tourisminfonepal (patro date)",
+      "url": "https://nepalicalendar.online/festivals/phulpati/2083",
+      "crawl_date": "2026-11-05",
+      "note": "Saptami begins 06:10 NPT on Asoj 30, minutes after sunrise; the patros took Asoj 30. HP date pages show षष्ठी on Asoj 30 (Shashthi is the sunrise tithi, ending 06:10). Engine flags the occasion borderline; the udaya convention would give Kartik 1 (Oct 18)."
+    },
+    {
+      "id": "mahaAshtami",
+      "convention": "all-days",
+      "ad_dates": [
+        "2026-10-18",
+        "2026-10-19"
+      ],
+      "bs": "2083-07-01 and 2083-07-02",
+      "label": "महाअष्टमी व्रत / तुला संक्रान्ति / कालरात्रि (Kartik 1); आज पनि महाअष्टमी, कात्तिक १ कै कर्म दोहोर्‍याउनुपर्ने (Kartik 2)",
+      "publisher": "samiti (via press) + hp",
+      "url": "https://www.hamropatro.com/date/2083-7-1",
+      "crawl_date": "2026-11-05",
+      "note": "First two-day Maha Ashtami since 2000 BS: Ashtami ran Oct 18 08:44 - Oct 19 11:07 NPT (26.4 h) and the samiti listed both Kartik 1 and Kartik 2, the second day repeating the first's rites. The strict udaya convention gives only Kartik 2."
+    },
+    {
+      "id": "mahaNavami",
+      "convention": "udaya",
+      "ad_date": "2026-10-20",
+      "bs": "2083-07-03",
+      "label": "महानवमी व्रत",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-3",
+      "crawl_date": "2026-11-05"
+    },
+    {
+      "id": "vijayaDashami",
+      "convention": "udaya",
+      "ad_date": "2026-10-21",
+      "bs": "2083-07-04",
+      "label": "विजया दशमी / देवी विसर्जन",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-4",
+      "crawl_date": "2026-11-05",
+      "note": "The tika day; Dashami runs Oct 20 13:06 - Oct 21 14:28 and its udaya day is Kartik 4."
+    },
+    {
+      "id": "kojagratPurnima",
+      "convention": "evening",
+      "ad_date": "2026-10-25",
+      "bs": "2083-07-08",
+      "label": "कोजाग्रत व्रत / पूर्णिमा व्रत",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-8",
+      "crawl_date": "2026-11-05",
+      "note": "HP labels Kojagrat on Kartik 8 where the page tithi is शुक्ल चतुर्दशी: Purnima begins Oct 25 ~12:12 NPT and runs through that night, so the jagaran is Kartik 8's night. The udaya convention gives Kartik 9 (Oct 26), which carries the full-moon display but not the Kojagrat label."
+    },
+    {
+      "id": "dhanteras",
+      "convention": "evening",
+      "ad_date": "2026-11-06",
+      "bs": "2083-07-20",
+      "label": "धन त्रयोदशी व्रत (धनतेरस) / यमदीपदान आरम्भ",
+      "publisher": "hp (sidebar)",
+      "crawl_date": "2026-11-05",
+      "note": "Krishna Trayodashi begins the morning of Kartik 20; the Dhanteras shopping evening is that day."
+    },
+    {
+      "id": "kagTihar",
+      "convention": "udaya",
+      "ad_date": "2026-11-07",
+      "bs": "2083-07-21",
+      "label": "धनवन्तरी जयन्ती / काग तिहार",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-21",
+      "crawl_date": "2026-11-05",
+      "note": "Same Trayodashi run as Dhanteras; page tithi त्रयोदशी· कृष्ण."
+    },
+    {
+      "id": "laxmiPuja",
+      "convention": "evening",
+      "ad_date": "2026-11-08",
+      "bs": "2083-07-22",
+      "label": "लक्ष्मी पूजा / सुखरात्री",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-22",
+      "crawl_date": "2026-11-05",
+      "note": "Amavasya begins midday Nov 8 and runs to Nov 9 12:47 NPT; the Lakshmi night is Kartik 22. The udaya convention gives Kartik 23 (Gai Puja)."
+    },
+    {
+      "id": "kukurTihar",
+      "convention": "udaya",
+      "ad_date": "2026-11-08",
+      "bs": "2083-07-22",
+      "label": "कुकुर तिहार / नरक चतुर्दशी",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-22",
+      "crawl_date": "2026-11-05",
+      "note": "Same day as Lakshmi Puja; page tithi चतुर्दशी· कृष्ण (Chaturdashi at udaya)."
+    },
+    {
+      "id": "gaiPuja",
+      "convention": "udaya",
+      "ad_date": "2026-11-09",
+      "bs": "2083-07-23",
+      "label": "गाई पूजा (औंसी)",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-23",
+      "crawl_date": "2026-11-05",
+      "note": "Amavasya at udaya; same Amavasya run as Lakshmi Puja."
+    },
+    {
+      "id": "mhaPuja",
+      "convention": "udaya",
+      "ad_date": "2026-11-10",
+      "bs": "2083-07-24",
+      "label": "गोवर्धन पूजा / म्हपूजा / नेपाल सम्वत ११४७ प्रारम्भ",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-24",
+      "crawl_date": "2026-11-05",
+      "note": "Shukla Pratipada at udaya; the Newar Mha Puja and Nepal Sambat new year."
+    },
+    {
+      "id": "bhaiTika",
+      "convention": "udaya",
+      "ad_date": "2026-11-11",
+      "bs": "2083-07-25",
+      "label": "भाइटीका / किजा पूजा",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-25",
+      "crawl_date": "2026-11-05",
+      "note": "Shukla Dwitiya at udaya."
+    },
+    {
+      "id": "chhath",
+      "convention": "udaya",
+      "ad_date": "2026-11-15",
+      "bs": "2083-07-29",
+      "label": "छठ पर्व",
+      "publisher": "hp",
+      "url": "https://www.hamropatro.com/date/2083-7-29",
+      "crawl_date": "2026-11-05",
+      "note": "Shukla Shashthi at udaya; the main evening argha day."
+    }
+  ],
+  "out_of_scope_notes": [
+    "Tula Sankranti also falls on Kartik 1 (Oct 18, 2026, per the HP Kartik 1 label); solar sankranti dates belong to the nepali_sankranti package and are not part of the lunar battery.",
+    "The NPNS annual override file (rule type 4 in HYA-367) is deferred until a second samiti-year of adjudications is collected; the 2083 calls are pinned by this fixture instead.",
+    "Fagu Purnima / Holi regional rules, Shivaratri, Teej and Janai Purnima fall outside the crawled 2083 window and will be added as their receipts are crawled."
+  ]
+}
