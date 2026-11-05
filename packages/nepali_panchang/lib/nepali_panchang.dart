@@ -39,14 +39,22 @@
 /// L6 (HYA-421) opens the grahan layer: step 1 ships the geocentric lunar
 /// eclipse solver (Danjon 1/85 shadow enlargement by default, the
 /// Chauvenet 1/50 rule decoded and exposed) with the freshly-parsed NASA
-/// 2026 receipts as the permanent CI gate. Local solar circumstances, the
-/// Nepal receipts corpus and the shastra module follow in steps 2-5.
+/// 2026 receipts as the permanent CI gate. Step 2 ships the local solar
+/// circumstances solver: topocentric separation on the reference
+/// ellipsoid, a coarse-grid + golden-section minimum (the parallax wobble
+/// makes the topocentric minimum multimodal near the new moon), and
+/// visibility gated on the Sun's altitude at the contacts - the penumbra
+/// reaches past the terminator, so a graze can be geometrically real yet
+/// below the horizon - receipt-anchored to the freshly-parsed Kathmandu
+/// corpus (timeanddate, time.now, heliora). The Nepal receipts corpus and
+/// the shastra module follow in steps 3-5.
 library;
 
 export 'src/ayanamsa.dart';
 export 'src/civil_time.dart';
 export 'src/delta_t.dart';
 export 'src/eclipse_lunar.dart';
+export 'src/eclipse_solar.dart';
 export 'src/festival_rules.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';
