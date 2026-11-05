@@ -34,3 +34,15 @@ jobs:
       # today/sankranti recomputes. Shared script - scripts/site_contract.py -
       # so the pre-merge and post-deploy gates cannot drift apart.
       - run: python3 scripts/site_contract.py --dir build/site
+
+      # HYA-369: Swiss-truth cross-check of the lunar engine. The MIT engine
+      # dumps every limb boundary + Kathmandu sunrise in the corpus window;
+      # this harness re-solves each boundary with Swiss Ephemeris (pyswisseph,
+      # Moshier file-free mode, Lahiri sidereal mode), scores the gap, flags
+      # knife-edge boundaries and enforces the provisional bands. License
+      # boundary: pyswisseph is AGPL-3 and is invoked only by this CI harness
+      # - no shipped package links against it, and the only outputs are
+      # numeric facts. See tools/sweph/README.md.
+      - run: dart run nmiti_cli:dump_limb_instants --start 2026-10-16 --end 2026-12-02 --out build/limb_instants.json
+      - run: python3 -m pip install --quiet pyswisseph
+      - run: python3 tools/sweph/sweph_crosscheck.py --instants build/limb_instants.json --receipts build/sweph_receipts.json

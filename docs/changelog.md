@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Swiss-truth cross-check harness (HYA-369)
+
+- Added `packages/nmiti_cli/bin/dump_limb_instants.dart`: engine-side dump of every lunar limb boundary (base ayanamsa profile) and Kathmandu sunrise in a window — an MIT-clean facts-out command for any truth harness.
+- Added `tools/sweph/sweph_crosscheck.py` (+ README): Swiss Ephemeris (pyswisseph, Moshier file-free mode, Lahiri sidereal mode) re-solves every dumped boundary, scores the reconstruction gap per limb, flags knife-edge boundaries (≤30 min from a sunrise) and measures the ΔT-model residual (Swiss internal vs our Espenak–Meeus). AGPL harness boundary: no package imports it, nothing ships from it, outputs are numeric facts only.
+- CI (`ci.yml` verify) now runs the dump + cross-check on every push with provisional bands (tithi/karana 300/150 s; nakshatra/yoga 600/300 s — wider because they include the ayanamsa convention gap). No data changes.
+
 ## [Unreleased] — commons site pages /docs + /data (HYA-402)
 
 - Added `/docs` (`docs.html`): the documentation pack rendered verbatim as static semantic HTML by the site build, zero client JavaScript. Regenerated from `docs/*.md` on every build, so the page cannot drift from the repository files.
