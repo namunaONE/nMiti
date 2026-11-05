@@ -7,7 +7,8 @@ import 'package:nepali_panchang/nepali_panchang.dart';
 /// instant in a window, as computed by the MIT lunar engine, for the
 /// independent Swiss-truth harness (tools/sweph/sweph_crosscheck.py) to
 /// re-solve and score (HYA-369 deliverable 1: quantify the reconstruction
-/// gap at knife-edge boundaries).
+/// gap at knife-edge boundaries). HYA-417 adds the day's moonrise per the
+/// Meeus eq. 15.1 solver, scored by the same harness.
 ///
 /// Facts out, license clean: this command depends only on the MIT engine
 /// and emits plain numeric facts (instants). The sidereal limbs use the
@@ -72,6 +73,8 @@ void main(List<String> args) {
   }
 
   final sunrises = <Map<String, Object?>>[];
+  final moonrises = <Map<String, Object?>>[];
+  var moonriseDaysWithoutRise = 0;
   final lastDay = DateTime.utc(end.year, end.month, end.day);
   for (var d = DateTime.utc(start.year, start.month, start.day);
       !d.isAfter(lastDay);
@@ -82,13 +85,26 @@ void main(List<String> args) {
       'jd_ut': jdUt,
       'utc': _isoUtcOfJdUt(jdUt),
     });
+    final moonJdUt = moonriseJdUt(year: d.year, month: d.month, day: d.day);
+    if (moonJdUt == null) {
+      // Roughly one day per lunar month the rise falls into a
+      // neighbouring civil day; the count is dumped for the harness.
+      moonriseDaysWithoutRise++;
+    } else {
+      moonrises.add(<String, Object?>{
+        'date': _isoDateOf(d),
+        'jd_ut': moonJdUt,
+        'utc': _isoUtcOfJdUt(moonJdUt),
+      });
+    }
   }
 
   final doc = <String, Object?>{
     'window': <String, String>{'start': startIso, 'end': endIso},
     'generated_at_utc': DateTime.now().toUtc().toIso8601String(),
     'engine': 'nepali_panchang (Meeus Ch.47 moon, VSOP87D sun, '
-        'Espenak-Meeus delta T, base ayanamsa profile)',
+        'Espenak-Meeus delta T, base ayanamsa profile, HYA-417 '
+        'Meeus 15.1 moonrise)',
     'ayanamsa_profile': 'base (source delta 0.0)',
     'limb_spans_deg': <String, double>{
       'tithi': tithiSpanDeg,
@@ -98,6 +114,8 @@ void main(List<String> args) {
     },
     'boundaries': boundaries,
     'sunrises': sunrises,
+    'moonrises': moonrises,
+    'moonrise_days_without_rise': moonriseDaysWithoutRise,
   };
   File(outPath)
     ..createSync(recursive: true)
@@ -110,7 +128,11 @@ void main(List<String> args) {
       counts +
       ' sunrises=' +
       sunrises.length.toString() +
-      ' -> ' +
+      ' moonrises=' +
+      moonrises.length.toString() +
+      ' (no-rise days: ' +
+      moonriseDaysWithoutRise.toString() +
+      ') -> ' +
       outPath);
 }
 
@@ -158,12 +180,12 @@ String _isoUtcOfJdUt(double jdUt) {
 String _isoDateOf(DateTime t) =>
     t.year.toString().padLeft(4, '0') + '-' + _two(t.month) + '-' + _two(t.day);
 
-String _two(int n) => n < 10 ? '0$n' : '$n';
+String _two(int n) => n < 10 ? '0\$n' : '\$n';
 
 DateTime? _parseIso(String s) {
-  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(s);
+  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})\$').firstMatch(s);
   if (m == null) {
-    stderr.writeln('dump_limb_instants: bad date "$s" (want YYYY-MM-DD)');
+    stderr.writeln('dump_limb_instants: bad date "\$s" (want YYYY-MM-DD)');
     return null;
   }
   return DateTime.utc(
