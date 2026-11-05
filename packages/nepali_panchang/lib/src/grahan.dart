@@ -279,9 +279,10 @@ const String _grahanProvenance =
 
 const String _grahanEvidenceTier =
     'runtime-computed eclipse geometry; the sutak rules are '
-    'triple-confirmed (BhaktiBharat, PanchangBodh, HinduCalculator, '
-    'nepalipatro, drik); the local windows are banded against the '
-    'timeanddate Kathmandu stage tables in test/grahan_test.dart.';
+    'receipt-anchored (BhaktiBharat, PanchangBodh, HinduCalculator, '
+    'nepalipatro, drik - nmiti-grahan-shastra-receipts/1); the local '
+    'windows are banded against the timeanddate Kathmandu stage '
+    'tables in test/grahan_test.dart.';
 
 const String _grahanExemptionsNote =
     'Children, the sick and the elderly traditionally observe one '
