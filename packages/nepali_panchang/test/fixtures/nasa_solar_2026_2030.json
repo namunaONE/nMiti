@@ -1,0 +1,233 @@
+{
+  "schema": "nmiti-nasa-solar-catalog/1",
+  "crawl_date": "2026-11-05",
+  "catalog_source": "https://eclipse.gsfc.nasa.gov/OH/OH2026.html .. OH2030.html",
+  "verdicts_source": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu",
+  "location": {
+    "name": "Kathmandu",
+    "latitude_deg": 27.7172,
+    "longitude_deg": 85.324
+  },
+  "notes": [
+    "All twelve solar eclipses of 2026-2030 from the five NASA/GSFC 'Eclipses During YYYY' bulletins, parsed programmatically on 2026-11-05 - never hand-transcribed.",
+    "expected_engine_class is the reconciled classification of the local solver at Kathmandu, decoded during the crawl: aboveHorizon (penumbra reaches with the Sun up), belowHorizon (penumbra reaches past the terminator with the Sun down - timeanddate lists these as not visible), or null (penumbra never reaches Kathmandu).",
+    "timeanddate computes 2027-08-02 with Delta T = 69.8 s (stated on the page) and 2030-06-01 with Delta T = 0 s; the engine uses Espenak-Meeus (~75.7 s / ~77.8 s). These are named seconds-level contributors to the clock-receipt residuals, which stay under 70 s."
+  ],
+  "eclipses": [
+    {
+      "date": "2026-02-17",
+      "type": "annular",
+      "nasa_greatest_td": "12:13:06",
+      "nasa_greatest_ut": "12:12",
+      "nasa_delta_t_seconds": 75.1,
+      "nasa_magnitude": 0.96299,
+      "nasa_gamma": -0.97427,
+      "nasa_saros": 121,
+      "nasa_greatest_point": "64.7S 86.8E",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20260217",
+        "verdict": "not_visible",
+        "note": "17 February 2026 - Annular Solar Eclipse is not visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "type": "total",
+      "nasa_greatest_td": "17:47:06",
+      "nasa_greatest_ut": "17:46",
+      "nasa_delta_t_seconds": 75.4,
+      "nasa_magnitude": 1.03863,
+      "nasa_gamma": 0.89774,
+      "nasa_saros": 126,
+      "nasa_greatest_point": "65.2N 25.2W",
+      "expected_engine_class": "belowHorizon",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20260812",
+        "verdict": "not_visible",
+        "note": "12 August 2026 Total Solar Eclipse is not visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2027-02-06",
+      "type": "annular",
+      "nasa_greatest_td": "16:00:48",
+      "nasa_greatest_ut": "16:00",
+      "nasa_delta_t_seconds": 75.7,
+      "nasa_magnitude": 0.92811,
+      "nasa_gamma": -0.29515,
+      "nasa_saros": 131,
+      "nasa_greatest_point": "31.3S 48.5W",
+      "expected_engine_class": "belowHorizon",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20270206",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2027-08-02",
+      "type": "total",
+      "nasa_greatest_td": "10:07:50",
+      "nasa_greatest_ut": "10:07",
+      "nasa_delta_t_seconds": 76,
+      "nasa_magnitude": 1.07903,
+      "nasa_gamma": 0.14209,
+      "nasa_saros": 136,
+      "nasa_greatest_point": "25.5N 33.2E",
+      "expected_engine_class": "aboveHorizon",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20270802",
+        "verdict": "visible",
+        "partial_start": "16:27:20",
+        "greatest": "16:50:06",
+        "partial_end": "17:12:07",
+        "magnitude": 0.075,
+        "duration_minutes": 45,
+        "delta_t_seconds": 69.8
+      }
+    },
+    {
+      "date": "2028-01-26",
+      "type": "annular",
+      "nasa_greatest_td": "15:08:59",
+      "nasa_greatest_ut": "15:08",
+      "nasa_delta_t_seconds": 76.3,
+      "nasa_magnitude": 0.92079,
+      "nasa_gamma": 0.39015,
+      "nasa_saros": 141,
+      "nasa_greatest_point": "3.0N 51.5W",
+      "expected_engine_class": "belowHorizon",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20280126",
+        "verdict": "not_visible",
+        "note": "26 January 2028 - Annular Solar Eclipse is not visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2028-07-22",
+      "type": "total",
+      "nasa_greatest_td": "02:56:40",
+      "nasa_greatest_ut": "02:55",
+      "nasa_delta_t_seconds": 76.6,
+      "nasa_magnitude": 1.05602,
+      "nasa_gamma": -0.60557,
+      "nasa_saros": 146,
+      "nasa_greatest_point": "15.6S 126.7E",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20280722",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2029-01-14",
+      "type": "partial",
+      "nasa_greatest_td": "17:13:48",
+      "nasa_greatest_ut": "17:13",
+      "nasa_delta_t_seconds": 76.9,
+      "nasa_magnitude": 0.87138,
+      "nasa_gamma": 1.05532,
+      "nasa_saros": 151,
+      "nasa_greatest_point": "63.7N 114.2W",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20290114",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2029-06-12",
+      "type": "partial",
+      "nasa_greatest_td": "04:06:13",
+      "nasa_greatest_ut": "04:05",
+      "nasa_delta_t_seconds": 77.2,
+      "nasa_magnitude": 0.45759,
+      "nasa_gamma": 1.29432,
+      "nasa_saros": 118,
+      "nasa_greatest_point": "66.8N 66.2W",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20290612",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2029-07-11",
+      "type": "partial",
+      "nasa_greatest_td": "15:37:19",
+      "nasa_greatest_ut": "15:36",
+      "nasa_delta_t_seconds": 77.2,
+      "nasa_magnitude": 0.23029,
+      "nasa_gamma": -1.41909,
+      "nasa_saros": 156,
+      "nasa_greatest_point": "64.3S 85.6W",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20290711",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2029-12-05",
+      "type": "partial",
+      "nasa_greatest_td": "15:03:58",
+      "nasa_greatest_ut": "15:03",
+      "nasa_delta_t_seconds": 77.5,
+      "nasa_magnitude": 0.89106,
+      "nasa_gamma": -1.0609,
+      "nasa_saros": 123,
+      "nasa_greatest_point": "67.5S 135.7E",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20291205",
+        "verdict": "not_visible",
+        "note": "Not Visible in Kathmandu"
+      }
+    },
+    {
+      "date": "2030-06-01",
+      "type": "annular",
+      "nasa_greatest_td": "06:29:13",
+      "nasa_greatest_ut": "06:28",
+      "nasa_delta_t_seconds": 77.8,
+      "nasa_magnitude": 0.94426,
+      "nasa_gamma": 0.56265,
+      "nasa_saros": 128,
+      "nasa_greatest_point": "56.5N 80.1E",
+      "expected_engine_class": "aboveHorizon",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20300601",
+        "verdict": "visible",
+        "partial_start": "11:10",
+        "greatest": "12:23",
+        "partial_end": "13:33",
+        "magnitude": 0.16,
+        "duration_minutes": 143,
+        "delta_t_seconds": 0,
+        "note": "The annular phase of this solar eclipse is not visible in Kathmandu, but it can be observed there as a partial solar eclipse."
+      }
+    },
+    {
+      "date": "2030-11-25",
+      "type": "total",
+      "nasa_greatest_td": "06:51:37",
+      "nasa_greatest_ut": "06:50",
+      "nasa_delta_t_seconds": 78.1,
+      "nasa_magnitude": 1.04684,
+      "nasa_gamma": -0.38669,
+      "nasa_saros": 133,
+      "nasa_greatest_point": "43.6S 71.2E",
+      "expected_engine_class": "null",
+      "timeanddate": {
+        "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20301125",
+        "verdict": "not_visible",
+        "note": "25 November 2030 - Total Solar Eclipse is not visible in Kathmandu"
+      }
+    }
+  ]
+}
