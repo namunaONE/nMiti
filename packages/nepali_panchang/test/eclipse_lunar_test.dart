@@ -51,12 +51,22 @@ void main() {
     final dateStr = e['date'] as String;
     final phases = e['phases'] as Map<String, dynamic>;
     final receiptType = e['type'] as String;
-    final c = lunarEclipseNear(date.year, date.month, date.day);
+    final circumstances = lunarEclipseNear(date.year, date.month, date.day);
+
+    if (circumstances == null) {
+      // Keep the receipt date visible in the failure.
+      group('NASA receipt ' + dateStr, () {
+        test('eclipse is detected with the NASA type', () {
+          fail('no lunar eclipse found for ' + dateStr);
+        });
+      });
+      continue;
+    }
+    final c = circumstances;
 
     group('NASA receipt ' + dateStr, () {
       test('eclipse is detected with the NASA type', () {
-        expect(c, isNotNull, reason: 'no lunar eclipse found for ' + dateStr);
-        expect(c!.type.name, receiptType);
+        expect(c.type.name, receiptType);
       });
 
       test('all contacts within 3 min of NASA (provisional band)', () {
@@ -91,7 +101,7 @@ void main() {
 
       test('magnitudes within the NASA bands', () {
         expect(
-            (c!.umbralMagnitude - (e['umbral_magnitude'] as num)).abs(),
+            (c.umbralMagnitude - (e['umbral_magnitude'] as num)).abs(),
             lessThanOrEqualTo(0.01));
         expect(
             (c.penumbralMagnitude - (e['penumbral_magnitude'] as num)).abs(),
@@ -99,7 +109,7 @@ void main() {
       });
 
       test('phase order, durations and type thresholds are sane', () {
-        expect(c!.jdUtGreatest, greaterThan(c.jdUtPenumbralStart));
+        expect(c.jdUtGreatest, greaterThan(c.jdUtPenumbralStart));
         expect(c.jdUtGreatest, lessThan(c.jdUtPenumbralEnd));
         // The whole penumbral event lasts at most about six hours.
         expect(
@@ -130,7 +140,7 @@ void main() {
       });
 
       test('greatest sits near the midpoint of the contacts', () {
-        final mid = c!.jdUtPenumbralStart +
+        final mid = c.jdUtPenumbralStart +
             (c.jdUtPenumbralEnd - c.jdUtPenumbralStart) / 2.0;
         expect((c.jdUtGreatest - mid).abs() * 1440.0, lessThan(3.0));
       });
