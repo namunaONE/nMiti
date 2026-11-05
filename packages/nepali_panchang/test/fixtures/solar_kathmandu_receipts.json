@@ -1,0 +1,92 @@
+{
+  "schema": "nmiti-solar-kathmandu-receipts/1",
+  "crawl_date": "2026-11-05",
+  "location": {
+    "name": "Kathmandu",
+    "latitude_deg": 27.7172,
+    "longitude_deg": 85.324
+  },
+  "sources": {
+    "timeanddate": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu",
+    "time_now": "https://time.now/kathmandu/eclipses/",
+    "heliora": "https://heliora.app/guide/en/solar-eclipse-2027/kathmandu-np"
+  },
+  "eclipses": [
+    {
+      "date": "2027-08-02",
+      "visibility": "aboveHorizon",
+      "sources": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20270802",
+          "partial_start": "16:27:20",
+          "greatest": "16:50:06",
+          "partial_end": "17:12:07",
+          "duration_minutes": 45,
+          "magnitude": 0.075,
+          "sun_alt_at_start_deg": 30.5,
+          "sun_alt_at_greatest_deg": 25.5,
+          "sun_alt_at_end_deg": 20.7,
+          "delta_t_seconds": 69.8
+        },
+        "time_now": {
+          "url": "https://time.now/kathmandu/eclipses/2027-08-02/",
+          "partial_start": "16:26:59",
+          "greatest": "16:49:59",
+          "partial_end": "17:12:59",
+          "magnitude": 0.075,
+          "obscuration": 0.025,
+          "sun_alt_at_start_deg": 30.5,
+          "sun_alt_at_greatest_deg": 25.5,
+          "sun_alt_at_end_deg": 20.4
+        },
+        "heliora": {
+          "url": "https://heliora.app/guide/en/solar-eclipse-2027/kathmandu-np",
+          "partial_start": "16:27",
+          "greatest": "16:50",
+          "obscuration": 0.0242,
+          "sun_alt_at_greatest_deg": 26
+        }
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "visibility": "belowHorizon",
+      "sources": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20260812",
+          "note": "Not Visible in Kathmandu - 12 August 2026 Total Solar Eclipse is not visible in Kathmandu"
+        }
+      }
+    },
+    {
+      "date": "2027-02-06",
+      "visibility": "belowHorizon",
+      "sources": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20270206",
+          "note": "Not Visible in Kathmandu"
+        }
+      }
+    }
+  ],
+  "non_events": [
+    {
+      "date": "2026-02-17",
+      "sources": {
+        "timeanddate": {
+          "url": "https://www.timeanddate.com/eclipse/in/nepal/kathmandu?iso=20260217",
+          "note": "Not Visible in Kathmandu - 17 February 2026 Annular Solar Eclipse is not visible in Kathmandu"
+        }
+      }
+    }
+  ],
+  "source_discrepancies": [
+    {
+      "sources": [
+        "time_now",
+        "heliora"
+      ],
+      "detail": "time.now lists the 2027-08-02 Kathmandu obscuration as 1.7% on its index page but 2.5% on the event page; the engine (2.40%) and heliora (2.42%) agree with the event page, so the event-page value is the receipt."
+    }
+  ]
+}
