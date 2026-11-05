@@ -195,20 +195,18 @@ void main() {
     for (final d in days) {
       test((d['date'] as String) + ' windows follow the 8-part rule', () {
         final wd = d['weekday'] as String;
-        final specs = <String, Map<String, int>>{
-          'rahu': partTables['rahu'] as Map<String, int>,
-          'yamaganda': partTables['yamaganda'] as Map<String, int>,
-          'gulika': partTables['gulika'] as Map<String, int>,
-        };
-        for (final entry in specs.entries) {
-          final exp = _eightPartWindow(d, entry.value[wd]!);
-          final pub = d[entry.key] as Map<String, dynamic>;
+        for (final name in ['rahu', 'yamaganda', 'gulika']) {
+          // jsonDecode yields Map<String, dynamic>: never cast the nested
+          // table to Map<String, int>, read the value with an int cast.
+          final table = partTables[name] as Map<String, dynamic>;
+          final exp = _eightPartWindow(d, table[wd] as int);
+          final pub = d[name] as Map<String, dynamic>;
           expect(((pub['start'] as int) - exp['start']!).abs(),
               lessThanOrEqualTo(2),
-              reason: entry.key + ' start off on ' + (d['date'] as String));
+              reason: name + ' start off on ' + (d['date'] as String));
           expect(((pub['end'] as int) - exp['end']!).abs(),
               lessThanOrEqualTo(2),
-              reason: entry.key + ' end off on ' + (d['date'] as String));
+              reason: name + ' end off on ' + (d['date'] as String));
         }
       });
     }
