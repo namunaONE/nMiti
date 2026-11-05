@@ -25,7 +25,8 @@ void main() {
     final newMoonTt = nextNewMoonJdTt(jdStart);
     final wall = dateTimeUtcFromJd(jdUtFromJdTt(newMoonTt))
         .add(const Duration(milliseconds: nptOffsetMs));
-    expect(wall, DateTime.utc(2026, 11, 9));
+    expect([wall.year, wall.month, wall.day], [2026, 11, 9],
+        reason: 'new moon must fall on Nov 9 2026 NPT');
     final receipt = DateTime.utc(2026, 11, 9, 12, 47);
     expect(wall.difference(receipt).inMinutes.abs(), lessThan(2),
         reason: 'new moon off the locked receipt: $wall vs $receipt');

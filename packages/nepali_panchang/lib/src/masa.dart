@@ -204,18 +204,25 @@ List<MasaInfo> masaList({
       jdTtFromJdUt(jdFromDateTimeUtc(startNpt.subtract(const Duration(days: 34))));
   final scanHiTt =
       jdTtFromJdUt(jdFromDateTimeUtc(endNpt.add(const Duration(days: 2))));
+  final winLoTt =
+      jdTtFromJdUt(jdFromDateTimeUtc(startNpt.subtract(const Duration(days: 1))));
+  final winHiTt =
+      jdTtFromJdUt(jdFromDateTimeUtc(endNpt.add(const Duration(days: 1))));
 
   // New-moon chain. The first new moon after scanLoTt is < 29.6 days before
-  // startNpt, so months (nm_i, nm_{i+1}) cover the window head. Keep one
-  // extra new moon past scanHiTt so the last month closes.
+  // startNpt, so months (nm_i, nm_{i+1}) cover the window head. TWO extra
+  // lunations are scanned past the end: an adhika month is named after the
+  // month that FOLLOWS it, so the follower must be classifiable too.
   final newMoonsTt = <double>[];
   var nm = nextNewMoonJdTt(scanLoTt);
-  while (nm < scanHiTt + 32.0) {
+  while (nm < scanHiTt + 62.0) {
     newMoonsTt.add(nm);
     nm = nextNewMoonJdTt(nm);
   }
 
-  // Raw classification per month.
+  // Raw classification per month. Only months that intersect the window
+  // (plus one month past its head, so a trailing adhika can be named) are
+  // classified; everything scanned beyond that is context, never served.
   final count = newMoonsTt.length - 1;
   final numbers = List<int>.filled(count, 0);
   final adhika = List<bool>.filled(count, false);
@@ -225,6 +232,7 @@ List<MasaInfo> masaList({
   for (var i = 0; i < count; i++) {
     final lo = newMoonsTt[i];
     final hi = newMoonsTt[i + 1];
+    if (hi <= winLoTt || lo >= winHiTt + 33.0) continue;
     final rasis = _sankrantiRasis(lo, hi, sourceDelta);
     for (final r in rasis) {
       sankrantiTt[i].add(_ingressJdTt(30.0 * (r - 1), lo, hi, sourceDelta));
@@ -238,12 +246,12 @@ List<MasaInfo> masaList({
       numbers[i] = _monthOfRasi(rasis.first);
     }
   }
-  // Adhika months take the number of the following month.
+  // Adhika months take the number of the following month. A window month's
+  // follower always lies inside the classified band (months span < 32
+  // days), so an unclassified follower can only belong to an adhika month
+  // outside the window - context only, never served.
   for (var i = 0; i < count; i++) {
-    if (adhika[i]) {
-      if (i + 1 >= count) {
-        throw StateError('adhika month at scan tail: widen the window');
-      }
+    if (adhika[i] && i + 1 < count && numbers[i + 1] != 0) {
       numbers[i] = numbers[i + 1];
     }
   }
