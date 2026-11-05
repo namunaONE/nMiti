@@ -1,0 +1,79 @@
+{
+  "schema": "nmiti-nasa-lunar-2026/1",
+  "source": "https://eclipse.gsfc.nasa.gov/OH/OH2026.html",
+  "crawl_date": "2026-11-05",
+  "convention_notes": [
+    "NASA/GSFC (F. Espenak) Eclipses During 2026 bulletin tables, parsed programmatically on the crawl date - never hand-transcribed.",
+    "All phase times are UT minutes from 00:00 on the eclipse date (minutes = HH*60+MM).",
+    "NASA tabulates with the Danjon 1/85 shadow enlargement (collision C1 of the HYA-421 research pass); the Chauvenet 1/50 rule is decoded and exposed in eclipse_lunar.dart, never silently substituted.",
+    "total_start/total_end are null for the 2026-08-28 partial eclipse (no total phase)."
+  ],
+  "eclipses": [
+    {
+      "date": "2026-03-03",
+      "type": "total",
+      "phases": {
+        "penumbral_start": {
+          "minutes": 524,
+          "label": "08:44 UT"
+        },
+        "partial_start": {
+          "minutes": 590,
+          "label": "09:50 UT"
+        },
+        "total_start": {
+          "minutes": 664,
+          "label": "11:04 UT"
+        },
+        "greatest": {
+          "minutes": 694,
+          "label": "11:34 UT"
+        },
+        "total_end": {
+          "minutes": 723,
+          "label": "12:03 UT"
+        },
+        "partial_end": {
+          "minutes": 797,
+          "label": "13:17 UT"
+        },
+        "penumbral_end": {
+          "minutes": 863,
+          "label": "14:23 UT"
+        }
+      },
+      "umbral_magnitude": 1.1507,
+      "penumbral_magnitude": 2.1838
+    },
+    {
+      "date": "2026-08-28",
+      "type": "partial",
+      "phases": {
+        "penumbral_start": {
+          "minutes": 84,
+          "label": "01:24 UT"
+        },
+        "partial_start": {
+          "minutes": 154,
+          "label": "02:34 UT"
+        },
+        "total_start": null,
+        "greatest": {
+          "minutes": 253,
+          "label": "04:13 UT"
+        },
+        "total_end": null,
+        "partial_end": {
+          "minutes": 352,
+          "label": "05:52 UT"
+        },
+        "penumbral_end": {
+          "minutes": 422,
+          "label": "07:02 UT"
+        }
+      },
+      "umbral_magnitude": 0.9299,
+      "penumbral_magnitude": 1.9645
+    }
+  ]
+}

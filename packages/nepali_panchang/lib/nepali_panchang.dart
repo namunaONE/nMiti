@@ -35,11 +35,18 @@
 /// the permanent CI gate. Step 3 ships the muhurta recipes themselves
 /// (Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma, Choghadiya, Hora)
 /// as muhurta.dart, receipt-calibrated against that corpus.
+///
+/// L6 (HYA-421) opens the grahan layer: step 1 ships the geocentric lunar
+/// eclipse solver (Danjon 1/85 shadow enlargement by default, the
+/// Chauvenet 1/50 rule decoded and exposed) with the freshly-parsed NASA
+/// 2026 receipts as the permanent CI gate. Local solar circumstances, the
+/// Nepal receipts corpus and the shastra module follow in steps 2-5.
 library;
 
 export 'src/ayanamsa.dart';
 export 'src/civil_time.dart';
 export 'src/delta_t.dart';
+export 'src/eclipse_lunar.dart';
 export 'src/festival_rules.dart';
 export 'src/julian_day.dart';
 export 'src/limbs.dart';

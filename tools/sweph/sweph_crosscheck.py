@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Swiss-truth cross-check of the nMiti lunar engine (HYA-369 prep,
-moonrise parity added by HYA-417).
+moonrise parity added by HYA-417, lunar eclipse receipts added by
+HYA-421).
 
 Reads the Dart engine's limb-boundary dump (nmiti_cli:dump_limb_instants)
 and re-solves every boundary with Swiss Ephemeris via pyswisseph, scoring
@@ -16,6 +17,16 @@ altitude, live parallax). The harness mirrors the IDENTICAL convention
 on Swiss Ephemeris - geocentric equatorial position, the same target,
 30-min stepped scan then bisection - so the moonrise score is pure
 ephemeris + algorithm parity: no rise/set convention gap enters.
+
+HYA-421: cross-checks the NASA 2026 lunar eclipse receipts fixture
+(packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json - the same
+corpus the Dart CI gate pins the engine against) with Swiss Ephemeris,
+so the receipts are validated by two independent ephemerides and the
+engine-vs-NASA deltas in the Dart gate are attributed to the engine, not
+to the receipts. Contact times only: the global search
+swe.lun_eclipse_when does not return magnitudes, which stay pinned by
+the Dart gate. Kathmandu-local circumstances (visibility, sutak anchor)
+are step 4 of HYA-421, not this parity channel.
 
 Ephemeris mode: FLG_MOSEPH (Moshier) - file-free, deterministic in CI,
 sub-arcsecond on the Moon. Sidereal mode: Swiss Lahiri (SIDM_LAHIRI); the
@@ -35,7 +46,9 @@ import argparse
 import datetime as _dt
 import json
 import math
+import os
 import sys
+import traceback
 
 try:
     import swisseph as swe
@@ -54,16 +67,57 @@ MEAN_BAND_S = {"tithi": 150, "karana": 150, "nakshatra": 300, "yoga": 300}
 # so this is pure ephemeris + algorithm parity like tithi.
 MOONRISE_HARD_BAND_S = 300
 MOONRISE_MEAN_BAND_S = 150
+# Lunar eclipse receipts band (HYA-421): Swiss Moshier vs the NASA
+# bulletin values, both on the Danjon 1/85 shadow convention. Provisional
+# 300/120 until the first CI run records the actual deltas; then tighten
+# like every band before it.
+LUNAR_ECLIPSE_HARD_BAND_S = 300
+LUNAR_ECLIPSE_MEAN_BAND_S = 120
+# pyswisseph lun_eclipse_when tret layout (per its docstring: "indices
+# consistent with solar eclipses"). The first CI run (2026-11-05) shipped
+# the pre-2.x Swiss layout and the failure annotations recorded the exact
+# mismatch pattern - the wrong-slot deltas reconstructed mean 8673s /
+# max 20314s to the second - so this layout is receipt-verified, not
+# assumed: 0 greatest, 1 unused, 2 partial begin, 3 partial end,
+# 4 total begin, 5 total end, 6 penumbral begin, 7 penumbral end.
+# Unused slots are 0, so a contact exists iff its slot holds a real
+# instant after the seed.
+LUNAR_ECLIPSE_PHASE_IDX = [
+    ("penumbral_start", 6),
+    ("partial_start", 2),
+    ("total_start", 4),
+    ("total_end", 5),
+    ("partial_end", 3),
+    ("penumbral_end", 7),
+]
 KNIFE_EDGE_MIN = 30.0
 SEED_DAYS = 0.05  # seed the Swiss solver ~72 min before our boundary
 KATHMANDU_LAT = 27.7172
 KATHMANDU_LON = 85.324
 AU_KM = 149597870.7
 EARTH_EQ_RADIUS_KM = 6378.1366
+DEFAULT_ECLIPSE_FIXTURE = (
+    "packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json")
+# GitHub renders at most 10 annotations from ::error:: commands per step.
+MAX_ANNOTATIONS = 10
 
 
 def norm360(x):
     return x % 360.0
+
+
+def annotate_error(msg):
+    """Emit a GitHub Actions error annotation carrying the ACTUAL
+    failure payload (band numbers, deltas, traceback). The workflow log
+    is sign-in gated, but the run page's annotations table renders
+    server-side - so the real numbers stay readable without log access.
+    No-op outside Actions (GITHUB_ACTIONS unset)."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    one_line = " ".join(str(msg).split())
+    if len(one_line) > 900:
+        one_line = one_line[:900] + "... (truncated)"
+    print("::error::" + one_line.replace("%", "%25"))
 
 
 class Sweph:
@@ -162,6 +216,96 @@ def sw_moonrise(sw, jd_ut_ref):
     return None
 
 
+def lunar_eclipse_crosscheck(fixture_path, failures):
+    """Re-solves every eclipse of the NASA 2026 receipts fixture with
+    swe.lun_eclipse_when (global, geocentric - the same channel the Dart
+    eclipse_lunar.dart solver computes) and scores the contact deltas."""
+    with open(fixture_path) as f:
+        fixture = json.load(f)
+    if fixture.get("schema") != "nmiti-nasa-lunar-2026/1":
+        failures.append(
+            "eclipse fixture schema mismatch: %r" % fixture.get("schema"))
+        return None
+    deltas = []
+    signed_deltas = []
+    rows = []
+    for e in fixture["eclipses"]:
+        date = e["date"]
+        jd0 = julian_day_of(date)
+        seed = jd0 - 1.0
+        res = swe.lun_eclipse_when(seed, swe.FLG_MOSEPH, False)
+        retflag, tret = res[0], res[1]
+        greatest = tret[0]
+        if abs(greatest - jd0) > 1.5:
+            failures.append(
+                "%s: Swiss found a different eclipse (greatest jd_ut=%r)"
+                % (date, greatest))
+            continue
+        # A contact exists iff its tret slot holds a real instant.
+        # Slots per the pyswisseph layout: 2/3 partial begin/end,
+        # 4/5 total begin/end, 6/7 penumbral begin/end.
+        has_partial = tret[2] > seed and tret[3] > seed
+        has_total = tret[4] > seed and tret[5] > seed
+        swiss_type = ("total" if has_total
+                      else ("partial" if has_partial else "penumbral"))
+        if swiss_type != e["type"]:
+            failures.append("%s: Swiss type %s != fixture type %s"
+                            % (date, swiss_type, e["type"]))
+        phases = e["phases"]
+        row = {"date": date, "swiss_type": swiss_type, "phases": {}}
+        delta = (greatest -
+                 (jd0 + phases["greatest"]["minutes"] / 1440.0)) * 86400.0
+        row["phases"]["greatest"] = {
+            "swiss_jd_ut": greatest, "delta_s": round(delta, 2)}
+        deltas.append(abs(delta))
+        signed_deltas.append(delta)
+        for key, idx in LUNAR_ECLIPSE_PHASE_IDX:
+            receipt = phases[key]
+            if receipt is None:
+                if tret[idx] > seed:
+                    failures.append(
+                        "%s: Swiss has phase %s the fixture says is absent"
+                        % (date, key))
+                continue
+            if not tret[idx] > seed:
+                failures.append(
+                    "%s: Swiss lacks phase %s the fixture records"
+                    % (date, key))
+                continue
+            delta = (tret[idx] -
+                     (jd0 + receipt["minutes"] / 1440.0)) * 86400.0
+            row["phases"][key] = {
+                "swiss_jd_ut": tret[idx], "delta_s": round(delta, 2)}
+            deltas.append(abs(delta))
+            signed_deltas.append(delta)
+        rows.append(row)
+    st = stats(deltas)
+    signed = sum(signed_deltas) / len(signed_deltas) if signed_deltas else 0.0
+    ok = (st["max_s"] is not None and
+          st["max_s"] <= LUNAR_ECLIPSE_HARD_BAND_S and
+          st["mean_s"] <= LUNAR_ECLIPSE_MEAN_BAND_S)
+    if not ok:
+        failures.append(
+            "lunar_eclipse: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+            % (st["max_s"] or 0.0, LUNAR_ECLIPSE_HARD_BAND_S,
+               st["mean_s"] or 0.0, LUNAR_ECLIPSE_MEAN_BAND_S))
+    out = {
+        **st,
+        "signed_mean_s": round(signed, 2),
+        "hard_band_s": LUNAR_ECLIPSE_HARD_BAND_S,
+        "mean_band_s": LUNAR_ECLIPSE_MEAN_BAND_S,
+        "pass": ok,
+        "eclipses": rows,
+    }
+    print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+          "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+          "band %d/%d %s"
+          % ("lunar_ecl", st["n"], st["mean_s"] or 0.0, st["max_s"] or 0.0,
+             signed, LUNAR_ECLIPSE_HARD_BAND_S, LUNAR_ECLIPSE_MEAN_BAND_S,
+             "PASS" if ok else "FAIL"))
+    return out
+
+
 def stats(values):
     v = sorted(values)
     n = len(v)
@@ -183,6 +327,9 @@ def main():
     ap.add_argument("--trim-days", type=float, default=1.0,
                    help="interior trim: skip boundaries this close to the "
                         "window edges (solver warm-up)")
+    ap.add_argument("--eclipse-fixture", default=DEFAULT_ECLIPSE_FIXTURE,
+                   help="NASA lunar eclipse receipts fixture to "
+                        "cross-check (HYA-421)")
     args = ap.parse_args()
 
     with open(args.instants) as f:
@@ -203,6 +350,7 @@ def main():
     knife_edges = []
     dt_residuals = []
     failures = []
+    eclipse_out = None
 
     for limb in ("tithi", "karana", "nakshatra", "yoga"):
         rows = boundaries.get(limb, [])
@@ -318,6 +466,18 @@ def main():
                  "PASS" if ok else "FAIL"))
         all_rows.extend(rows_out)
 
+    # HYA-421: NASA lunar eclipse receipts vs Swiss Ephemeris - the same
+    # fixture the Dart CI gate pins eclipse_lunar.dart against, validated
+    # here by an independent ephemeris.
+    if not os.path.exists(args.eclipse_fixture):
+        failures.append("eclipse fixture not found: %s"
+                        % args.eclipse_fixture)
+        print("FAIL: eclipse fixture not found: %s"
+              % args.eclipse_fixture, file=sys.stderr)
+    else:
+        eclipse_out = lunar_eclipse_crosscheck(args.eclipse_fixture,
+                                                failures)
+
     dt_st = stats([abs(d) for d in dt_residuals])
     dt_signed = sum(dt_residuals) / len(dt_residuals) if dt_residuals else 0.0
     print("delta T residual (Swiss - Espenak-Meeus): mean=%+.2fs "
@@ -347,6 +507,7 @@ def main():
             "knife_edge_def_min": KNIFE_EDGE_MIN,
             "limbs": per_limb,
             "moonrise": moonrise_out,
+            "lunar_eclipses": eclipse_out,
             "delta_t_residual": {
                 **dt_st,
                 "signed_mean_s": round(dt_signed, 2),
@@ -359,8 +520,10 @@ def main():
         print("receipts written: %s" % args.receipts)
 
     if failures:
-        for msg in failures:
+        for i, msg in enumerate(failures):
             print("FAIL: " + msg, file=sys.stderr)
+            if i < MAX_ANNOTATIONS:
+                annotate_error(msg)
         sys.exit(1)
     print("SWEPH cross-check: all provisional bands hold.")
 
@@ -377,4 +540,12 @@ def julian_day_of(iso_date):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except BaseException:
+        # The traceback lives only in the sign-in-gated log; surface it
+        # as a run annotation so the failure is diagnosable without it.
+        annotate_error("sweph_crosscheck crashed: " + traceback.format_exc())
+        raise
