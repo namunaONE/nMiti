@@ -48,6 +48,7 @@ import json
 import math
 import os
 import sys
+import traceback
 
 try:
     import swisseph as swe
@@ -92,10 +93,26 @@ AU_KM = 149597870.7
 EARTH_EQ_RADIUS_KM = 6378.1366
 DEFAULT_ECLIPSE_FIXTURE = (
     "packages/nepali_panchang/test/fixtures/nasa_lunar_2026.json")
+# GitHub renders at most 10 annotations from ::error:: commands per step.
+MAX_ANNOTATIONS = 10
 
 
 def norm360(x):
     return x % 360.0
+
+
+def annotate_error(msg):
+    """Emit a GitHub Actions error annotation carrying the ACTUAL
+    failure payload (band numbers, deltas, traceback). The workflow log
+    is sign-in gated, but the run page's annotations table renders
+    server-side - so the real numbers stay readable without log access.
+    No-op outside Actions (GITHUB_ACTIONS unset)."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    one_line = " ".join(str(msg).split())
+    if len(one_line) > 900:
+        one_line = one_line[:900] + "... (truncated)"
+    print("::error::" + one_line.replace("%", "%25"))
 
 
 class Sweph:
@@ -205,6 +222,7 @@ def lunar_eclipse_crosscheck(fixture_path, failures):
             "eclipse fixture schema mismatch: %r" % fixture.get("schema"))
         return None
     deltas = []
+    signed_deltas = []
     rows = []
     for e in fixture["eclipses"]:
         date = e["date"]
@@ -233,6 +251,7 @@ def lunar_eclipse_crosscheck(fixture_path, failures):
         row["phases"]["greatest"] = {
             "swiss_jd_ut": greatest, "delta_s": round(delta, 2)}
         deltas.append(abs(delta))
+        signed_deltas.append(delta)
         for key, idx in LUNAR_ECLIPSE_PHASE_IDX:
             receipt = phases[key]
             if receipt is None:
@@ -251,9 +270,10 @@ def lunar_eclipse_crosscheck(fixture_path, failures):
             row["phases"][key] = {
                 "swiss_jd_ut": tret[idx], "delta_s": round(delta, 2)}
             deltas.append(abs(delta))
+            signed_deltas.append(delta)
         rows.append(row)
-    st = stats([abs(d) for d in deltas])
-    signed = sum(deltas) / len(deltas) if deltas else 0.0
+    st = stats(deltas)
+    signed = sum(signed_deltas) / len(signed_deltas) if signed_deltas else 0.0
     ok = (st["max_s"] is not None and
           st["max_s"] <= LUNAR_ECLIPSE_HARD_BAND_S and
           st["mean_s"] <= LUNAR_ECLIPSE_MEAN_BAND_S)
@@ -323,6 +343,7 @@ def main():
     knife_edges = []
     dt_residuals = []
     failures = []
+    eclipse_out = None
 
     for limb in ("tithi", "karana", "nakshatra", "yoga"):
         rows = boundaries.get(limb, [])
@@ -492,8 +513,10 @@ def main():
         print("receipts written: %s" % args.receipts)
 
     if failures:
-        for msg in failures:
+        for i, msg in enumerate(failures):
             print("FAIL: " + msg, file=sys.stderr)
+            if i < MAX_ANNOTATIONS:
+                annotate_error(msg)
         sys.exit(1)
     print("SWEPH cross-check: all provisional bands hold.")
 
@@ -510,4 +533,12 @@ def julian_day_of(iso_date):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        raise
+    except BaseException:
+        # The traceback lives only in the sign-in-gated log; surface it
+        # as a run annotation so the failure is diagnosable without it.
+        annotate_error("sweph_crosscheck crashed: " + traceback.format_exc())
+        raise
