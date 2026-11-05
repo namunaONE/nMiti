@@ -66,6 +66,7 @@ MARKERS = {
         "projection-defect",
     ],
     "sankranti.html": ['id="sankranti-now"', "pre_2036_exception", "projection_defect"],
+    "panchang.html": ['id="panchang-tithi"', 'id="panchang-sunrise"', 'id="panchang-meta"', "udaya", "madhyahna"],
     "embed/v1/widget.js": ["data-nmiti", "NPT_MS", "attachShadow"],
     "embed/example.html": ["embed/v1/widget.js", 'data-nmiti="today"'],
     "data/calendar_bs_core_1975_2083.csv": ["bs_year,baisakh1,weekday", "2083,2026-04-14"],
