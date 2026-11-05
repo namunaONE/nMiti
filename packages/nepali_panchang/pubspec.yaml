@@ -9,3 +9,8 @@ resolution: workspace
 
 dev_dependencies:
   test: ">=1.25.0 <2.0.0"
+  # Independent tithi oracle (HYA-418): dev/test-only cross-check, never a
+  # production dependency. tithi_engine is Swiss-Ephemeris-anchored and
+  # supports Kathmandu, so agreement with it approximates agreement with
+  # Swiss ahead of the full SWEPH comparison (HYA-369).
+  tithi_engine: ^6.0.0
