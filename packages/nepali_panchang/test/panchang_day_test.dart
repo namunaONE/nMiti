@@ -3,15 +3,17 @@ import 'package:test/test.dart';
 
 /// Daily-shape layer tests (R6a-3, HYA-416).
 ///
-/// Anchors are corpus-pinned facts from the locked golden corpora:
+/// Anchors are corpus-pinned facts from the locked golden fixtures
+/// (test/fixtures/lunar_receipts_2026_10.json and _11.json):
 /// Purnima ends Oct 26 2026 09:57 NPT; Amavasya ends Nov 9 12:47;
 /// Rohini ends Oct 29 11:20; Shukla Navami is a vriddhi tithi on
-/// Nov 18-19 2026 (starts Nov 18 06:20, ~2 min before sunrise);
+/// Nov 18-19 2026 (starts Nov 18 06:21, minutes before sunrise);
 /// Krishna Dwitiya is a kshaya tithi around Oct 28 2026 (ends 04:22,
-/// running at neither udaya); on Dashain day Oct 18 2026 the karana at
-/// sunrise is Vishti (Hamro Patro) while at noon it is Bava (BhaktiBharat)
-/// and the noon tithi is Shukla Ashtami; yoga Indra ends Nov 5 06:42
-/// (Hamro Patro profile).
+/// running at neither udaya); on Dashain day Oct 18 2026 the udaya karana
+/// is Vanija (Hamro Patro receipt) while the noon karana is Vishti
+/// (BhaktiBharat receipt) and the noon tithi is Shukla Ashtami; on
+/// Nov 4 2026 the udaya karana is Vishti (HP) while the noon karana is
+/// Bava (BB); yoga Indra ends Nov 5 ~06:42 (Hamro Patro profile).
 
 void main() {
   test('Oct 26 2026: Purnima at udaya, ends late morning NPT', () {
@@ -60,11 +62,17 @@ void main() {
     expect(day27.tithiKshaya || day28.tithiKshaya, isTrue);
   });
 
-  test('Oct 18 2026 (Dashain): udaya karana Vishti vs noon karana Bava', () {
+  test('Oct 18 2026 (Dashain): udaya karana Vanija vs noon karana Vishti', () {
     final d = panchangFor(year: 2026, month: 10, day: 18);
+    expect(d.karanaAtUdaya.name, 'Vanija');
+    expect(d.karanaAtNoon.name, 'Vishti');
+    expect(d.tithiAtNoon.name, 'Shukla Ashtami');
+  });
+
+  test('Nov 4 2026: udaya karana Vishti vs noon karana Bava', () {
+    final d = panchangFor(year: 2026, month: 11, day: 4);
     expect(d.karanaAtUdaya.name, 'Vishti');
     expect(d.karanaAtNoon.name, 'Bava');
-    expect(d.tithiAtNoon.name, 'Shukla Ashtami');
   });
 
   test('Nov 5 2026: yoga Indra at udaya under the Hamro Patro profile', () {
