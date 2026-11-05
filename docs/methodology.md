@@ -77,3 +77,42 @@ Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
 stated, never absorbed into our bands. Named systematic contributors: the
 ΔT source gap (Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) ≈ 6.6 s, and
 Meeus Ch.47 truncation ≈ 20 s of boundary time.
+
+## Swiss-truth cross-check (HYA-369)
+
+The engine is now also verified against Swiss Ephemeris itself, in CI on
+every push. The Dart engine dumps every tithi, karana, nakshatra and yoga
+boundary in the corpus window (2026-10-16 → 2026-12-02) plus every Kathmandu
+sunrise (`nmiti_cli:dump_limb_instants`, base ayanamsa profile); an
+independent Python harness (`tools/sweph/sweph_crosscheck.py`) re-solves
+each boundary with Swiss Ephemeris (pyswisseph, Moshier file-free mode,
+Lahiri sidereal mode) and scores the gap.
+
+| Limb | provisional band (max / mean, seconds) |
+| -- | -- |
+| tithi | 300 / 150 |
+| karana | 300 / 150 |
+| nakshatra | 600 / 300 |
+| yoga | 600 / 300 |
+
+Tithi and karana are pure ephemeris parity (no ayanamsa enters). The
+nakshatra and yoga bands are wider because they include the ayanamsa
+convention gap — our fitted base profile vs Swiss Lahiri — which is itself
+an informative number, not noise. Bands are provisional and tighten as
+receipts accumulate, exactly like the publisher corpus bands before them.
+
+The harness also reports the **ΔT residual** (Swiss internal model minus our
+Espenak–Meeus polynomial, at every boundary) — a direct measurement of the
+named systematic contributor in the error bars above — and flags
+**knife-edge boundaries**: any boundary within 30 minutes of a sunrise, the
+days where two honest panchangs can print different limbs. The knife-edge
+list is the input the festival layer (R6b) consumes for per-source
+attribution.
+
+**License boundary (AGPL facts-out):** Swiss Ephemeris is AGPL-3. It is
+invoked only by the CI verification harness; no nMiti package imports or
+links against it, no ephemeris data ships in the repository or the site,
+and the harness's only outputs are numeric facts (deltas and counts). The
+Dart engine stays MIT and dependency-free. This is the AGPL-compliant
+harness strategy adopted in HYA-369: compute in the harness, ship only
+facts. Full statement and procedure: `tools/sweph/README.md`.
