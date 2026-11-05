@@ -116,3 +116,47 @@ and the harness's only outputs are numeric facts (deltas and counts). The
 Dart engine stays MIT and dependency-free. This is the AGPL-compliant
 harness strategy adopted in HYA-369: compute in the harness, ship only
 facts. Full statement and procedure: `tools/sweph/README.md`.
+
+## Moonrise and the nishita/chandrodaya conventions (HYA-417)
+
+The lunar engine now also solves **moonrise**: the first rising of the
+Moon within an NPT civil day, Kathmandu-anchored. The rise condition is
+Meeus eq. 15.1 — the geocentric center altitude reaches
+`0.7276·π − 34′` (standard upper-limb rise with refraction folded into
+the target, live lunar parallax) — evaluated on the same 60-term
+Meeus Ch.47 series that produces every tithi boundary, so moonrise and
+the limbs share one ephemeris. Receipts: a JPL Horizons golden table
+(topocentric samples at the festival dates) holds the printed values
+inside a provisional ±12 min band, and the Swiss-truth harness mirrors
+the **identical** target convention on Swiss Ephemeris in CI, enforcing
+provisional 300/150 s bands — pure ephemeris and algorithm parity, no
+rise/set convention gap.
+
+The festival layer gained the two conventions those shastra rules
+require, with the citations printed on every battery rule:
+
+- **nishita-vyāpinī** — the tithi running at the midnight *ending* the
+  civil day. Dharma Sindhu ch. 5 (V.D.N. Rao translation): "On each
+  Krishna Chaturdashi, Kamya Shiva Raatri Vrata is performed as in the
+  case of Maha Shiva Raatri; that is the timing should be such that
+  Chaturdashi should be till midnight." The 2082 receipt pins it:
+  Falgun 3 = Feb 15 2026 carried udaya tithi Trayodashi, Chaturdashi
+  spanned the midnight — publishers took Feb 15 while the udaya
+  convention gives Feb 16. The divergence is exposed, not absorbed.
+- **chandrodaya-vyāpti** — the tithi running at the day's moonrise:
+  Dharma Sindhu ch. 5's Sankata Chaturthi rule ("reckoned as of
+  Chandrodaya kaala Vyapti"). Unlocked by the moonrise solver; the
+  Sankata Chaturthi battery entry is pending receipts, the convention
+  is exposed for callers meanwhile.
+
+The 2026 receipt corpus (`test/fixtures/festival_receipts_2026.json`) —
+Maha Shivaratri, Fagu Purnima, Janai Purnima, Teej — runs in CI as a
+permanent gate alongside the 2083 corpus. Two notable receipts: Janai
+Purnima 2083 (Purnima began Aug 27 09:24 NPT, publishers took the udaya
+day Aug 28, *not* the first-overlap day — publishers choose udaya-vyāpinī
+over pūrva-viddhā here), and Fagu Purnima 2082 (hills observe the
+first-overlap day Mar 2, Terai the udaya day Mar 3 — both exposed; the
+Terai day also carries a khanda-gras chandra grahan note recorded for
+the eclipse module). Citations are translation-level and say so: the
+shloka-level references stay marked pending until printed sources are
+verified — honesty before ornament.
