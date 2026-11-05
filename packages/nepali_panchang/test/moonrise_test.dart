@@ -42,23 +42,23 @@ void main() {
     final y = int.parse(date.substring(0, 4));
     final mo = int.parse(date.substring(5, 7));
     final d = int.parse(date.substring(8, 10));
-    test('\$date: moonrise inside the Horizons band (+-12 min of '
-        '\${row[1]} NPT)', () {
+    test('$date: moonrise inside the Horizons band (+-12 min of '
+        '${row[1]} NPT)', () {
       final rise = moonriseNpt(year: y, month: mo, day: d);
-      expect(rise, isNotNull, reason: 'no moonrise found on \$date');
+      expect(rise, isNotNull, reason: 'no moonrise found on $date');
       final diffMin = rise!.difference(expected).inMinutes.abs();
       expect(diffMin, lessThan(12),
-          reason: 'moonrise \$rise vs Horizons estimate \$expected');
+          reason: 'moonrise $rise vs Horizons estimate $expected');
       expect([rise.year, rise.month, rise.day], [y, mo, d],
           reason: 'the rise must land on its own NPT civil day');
     });
-    test('\$date: the rise instant sits on the target altitude', () {
+    test('$date: the rise instant sits on the target altitude', () {
       final jdUt = moonriseJdUt(year: y, month: mo, day: d);
       expect(jdUt, isNotNull);
       final h = moonGeocentricAltitudeDeg(jdUt: jdUt!);
       final target = moonRiseTargetAltitudeDeg(jdUt);
       expect((h - target).abs(), lessThan(0.02),
-          reason: 'h=\$h vs h0=\$target - the solver must stop at '
+          reason: 'h=$h vs h0=$target - the solver must stop at '
               'the Meeus 15.1 target');
       double margin(double jd) =>
           moonGeocentricAltitudeDeg(jdUt: jd) -

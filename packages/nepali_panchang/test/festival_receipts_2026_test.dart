@@ -40,18 +40,18 @@ void main() {
   test('the whole battery carries the shastra vocabulary (HYA-417)', () {
     for (final rule in festivalBattery) {
       expect(rule.shastraCategory, isNotNull,
-          reason: '\${rule.id} lacks shastraCategory');
+          reason: '${rule.id} lacks shastraCategory');
       expect(rule.shastraCitation, isNotNull,
-          reason: '\${rule.id} lacks shastraCitation');
+          reason: '${rule.id} lacks shastraCitation');
       expect(rule.shastraCitation, contains('Dharma Sindhu'),
-          reason: '\${rule.id} citation must name its source');
+          reason: '${rule.id} citation must name its source');
     }
   });
 
   for (final r in receipts) {
     final id = r['id'] as String;
     final expected = _d(r['ad_date'] as String);
-    test('HYA-417 \$id: engine reproduces the published day', () {
+    test('HYA-417 $id: engine reproduces the published day', () {
       final mine = scanFestivals(
           start: expected.subtract(const Duration(days: 5)),
           end: expected.add(const Duration(days: 5)),
@@ -59,8 +59,8 @@ void main() {
       final matches =
           mine.where((o) => o.chosenDays.contains(expected)).toList();
       expect(matches, isNotEmpty,
-          reason: 'no \$id observance chose \$expected; candidates: '
-              '\${mine.map((o) => o.chosenDays.join('|')).join(' ; ')}');
+          reason: 'no $id observance chose $expected; candidates: '
+              '${mine.map((o) => o.chosenDays.join('|')).join(' ; ')}');
     });
   }
 

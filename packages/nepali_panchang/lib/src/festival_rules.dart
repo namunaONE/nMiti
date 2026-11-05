@@ -333,7 +333,7 @@ const List<FestivalRule> festivalBattery = [
 FestivalRule festivalRuleById(String id) {
   final rules = festivalBattery.where((r) => r.id == id).toList();
   if (rules.length != 1) {
-    throw ArgumentError('unknown festival rule id: \$id');
+    throw ArgumentError('unknown festival rule id: $id');
   }
   return rules.first;
 }

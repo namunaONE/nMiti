@@ -180,12 +180,12 @@ String _isoUtcOfJdUt(double jdUt) {
 String _isoDateOf(DateTime t) =>
     t.year.toString().padLeft(4, '0') + '-' + _two(t.month) + '-' + _two(t.day);
 
-String _two(int n) => n < 10 ? '0\$n' : '\$n';
+String _two(int n) => n < 10 ? '0$n' : '$n';
 
 DateTime? _parseIso(String s) {
-  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})\$').firstMatch(s);
+  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(s);
   if (m == null) {
-    stderr.writeln('dump_limb_instants: bad date "\$s" (want YYYY-MM-DD)');
+    stderr.writeln('dump_limb_instants: bad date "$s" (want YYYY-MM-DD)');
     return null;
   }
   return DateTime.utc(
