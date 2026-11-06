@@ -220,6 +220,7 @@ to the moonrise instant. The display layer maps sutak windows onto
 Nepali civil days (a 12-hour solar sutak can begin the previous
 evening) by querying the day before, the day itself and the day
 after.
+
 ## NPNS full-year daily-tithi audit (HYA-369)
 
 The lunar engine is now also checked against a full-year publisher corpus, not just festival windows: every day of BS 2082 and BS 2083 — 730 receipts — crawled live from the Hamro Patro portal (the NPNS-aligned publisher), each carrying the tithi label and paksha exactly as displayed plus the portal’s own rendered AD date. The corpus itself is gated in CI: 365 days per year, month lengths matching the portal month ends, and a strictly consecutive AD chain from 2025-04-14 to 2027-04-13 — an independent cross-check of the portal’s BS↔AD mapping. The decoded label chain walks the tithi cycle with only legal udaya steps (689 normal, 26 kshaya, 14 vriddhi over the two years) — astronomy visible in the raw labels, nothing hand-transcribed.
