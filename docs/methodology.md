@@ -160,3 +160,31 @@ Terai day also carries a khanda-gras chandra grahan note recorded for
 the eclipse module). Citations are translation-level and say so: the
 shloka-level references stay marked pending until printed sources are
 verified — honesty before ornament.
+
+## Grahan (eclipses) — computed, receipt-anchored, collisions exposed (HYA-421)
+
+The grahan layer serves every eclipse that touches the Kathmandu
+anchor — visible or not — as a runtime-computed event:
+geocentric lunar shadow geometry (Danjon 1/85 shadow enlargement by
+default, the Chauvenet variant exposed as collision C1) and
+topocentric solar circumstances. The shastra rules are
+receipt-anchored, never invented: sutak is 12 hours (solar) or 9
+hours (lunar) before the LOCAL visible contacts and ends at the
+locally visible moksha (C4: an eclipse not visible from the location
+carries no sutak); a penumbral lunar eclipse is upachhaya — not kept
+as a grahan, no sutak (C5); a grastodit rise anchors the sutak clock
+to the local rise. Every publisher collision is decoded and
+displayed (C6: global class vs locally observed phase; C2: Hamro
+Patro’s 59-minute “duration”; C3: the reversed-hours FAQ), never
+silently picked.
+
+Verification: a ~20-test Dart gate over the grahan shastra receipts
+corpus (six lunar events 2026–2028 banded against the timeanddate
+Kathmandu stage tables) and the NASA solar catalog 2026–2030; in
+CI, two Swiss Ephemeris local-circumstances channels (`solar_local`,
+`lunar_local` — provisional 300/120 s bands) re-solve every event,
+including the grastodit greatest, which Swiss’s local channel clamps
+to the moonrise instant. The display layer maps sutak windows onto
+Nepali civil days (a 12-hour solar sutak can begin the previous
+evening) by querying the day before, the day itself and the day
+after.

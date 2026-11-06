@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — grahan (eclipse) display layer (HYA-421)
+
+- `api/v1/today.json` gains a `grahan` block: the grahan event touching today’s Nepali civil day (visible, sutak or eclipse span), whether sutak is active at build time, and the next grahan — every event carrying its Nepali name (roman + Devanagari), global class, local visibility flags, sutak window, moksha, magnitude and the engine evidence tier.
+- New `grahan.html`: today’s sutak state, the next grahan, the upcoming eclipses at Kathmandu (two-year table), the full sutak-rule and convention-collision table (C1–C6), the exemptions note and the receipts pointers. `panchang.html` gains an always-present sutak line.
+- Site contract: `grahan.html` and today.json grahan markers enforced pre-merge and post-deploy; the pages.yml smoke fetches the new page; nav, sitemap and llms.txt wired. No engine or fixture changes — the display layer renders the shipped grahan module only.
+
 ## [Unreleased] — moonrise solver + festival shastra layer (HYA-417)
 
 - Added `packages/nepali_panchang/lib/src/moonrise.dart`: the first moonrise within an NPT civil day at the Kathmandu anchor — Meeus eq. 15.1 target (0.7276·π − 34′, live parallax) on the same 60-term Ch.47 ephemeris the lunar engine uses. Golden receipts from JPL Horizons topocentric samples pin six 2026 festival dates to a provisional ±12 min band (`test/moonrise_test.dart`).
