@@ -107,8 +107,9 @@ class FestivalRule {
   /// Rasi index (1..12, Mesha..Meena ingress order) whose sidereal
   /// sankranti must fall inside the amanta lunar month of this rule's
   /// tithi run - the month that OWNS the festival. Dashain and the
-  /// Tihar cluster both ride the month containing the Tula ingress
-  /// (amanta Ashwin); Chhath rides the next month (Vrischik, amanta
+  /// Tihar Krishna-paksha rules (Dhanteras through Gai Puja) ride the
+  /// month containing the Tula ingress (amanta Ashwin); Mha Puja,
+  /// Bhai Tika and Chhath ride the next month (Vrischik, amanta
   /// Kartik); Maha Shivaratri the Kumbha-ingress month (amanta Magh -
   /// Nepal's 'Falgun Krishna Chaturdashi' is the purnimanta name of the
   /// same paksha); Fagu Purnima the Meena-ingress month (amanta
@@ -277,7 +278,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Amavasya at udaya.'),
   FestivalRule(
       id: 'mhaPuja',
-      anchorSankrantiRasi: 7,
+      anchorSankrantiRasi: 8,
       nameEn: 'Mha Puja / Govardhan Puja',
       nameNp: 'म्हःपूजा',
       tithiIndex: 0,
@@ -287,7 +288,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Pratipada at udaya; Nepal Sambat new year.'),
   FestivalRule(
       id: 'bhaiTika',
-      anchorSankrantiRasi: 7,
+      anchorSankrantiRasi: 8,
       nameEn: 'Bhai Tika',
       nameNp: 'भाइटीका',
       tithiIndex: 1,
