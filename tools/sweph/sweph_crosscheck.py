@@ -39,6 +39,17 @@ resolved empirically per event by candidate-slot scoring (the recorded
 lun_eclipse_when layout gotcha), the winning candidate named in the
 receipts JSON.
 
+HYA-369 close-out adds the sunrise parity channel: the Dart
+sunriseJdUt is the USNO low-accuracy closed form targeting geometric
+center altitude -0.8333 deg (zenith 90.8333); the harness bisects the
+SAME target on Swiss apparent geocentric RA/dec, so the sunrise delta
+is the full reconstruction gap (ephemeris + algorithm, no rise/set
+convention gap). The scoreboard is additionally emitted as GitHub
+notice annotations and a markdown summary (--summary, appended to
+GITHUB_STEP_SUMMARY by ci.yml), because the CI log is sign-in gated
+while the run page's annotation and summary surfaces render
+server-side - the measured numbers stay readable without log access.
+
 Ephemeris mode: FLG_MOSEPH (Moshier) - file-free, deterministic in CI,
 sub-arcsecond on the Moon. Sidereal mode: Swiss Lahiri (SIDM_LAHIRI); the
 engine's fitted base ayanamsa is deliberately NOT substituted, so the
@@ -78,6 +89,15 @@ MEAN_BAND_S = {"tithi": 150, "karana": 150, "nakshatra": 300, "yoga": 300}
 # so this is pure ephemeris + algorithm parity like tithi.
 MOONRISE_HARD_BAND_S = 300
 MOONRISE_MEAN_BAND_S = 150
+# Sunrise parity band (HYA-369 close-out): the Dart sunriseJdUt is the
+# USNO low-accuracy closed form targeting geometric center altitude
+# -0.8333 deg; the Swiss mirror bisects the SAME target on Swiss
+# apparent geocentric RA/dec, so the delta is the full reconstruction
+# gap (ephemeris + algorithm, no convention gap). Deliberately
+# generous 600/300 until the first CI run records the actual deltas;
+# tightened with every other band in the close-out pass.
+SUNRISE_HARD_BAND_S = 600
+SUNRISE_MEAN_BAND_S = 300
 # Lunar eclipse receipts band (HYA-421): Swiss Moshier vs the NASA
 # bulletin values, both on the Danjon 1/85 shadow convention. Provisional
 # 300/120 until the first CI run records the actual deltas; then tighten
@@ -166,6 +186,20 @@ def annotate_error(msg):
     print("::error::" + one_line.replace("%", "%25"))
 
 
+def annotate_notice(msg):
+    """Emit a GitHub Actions notice annotation. Notices render in the
+    run page's server-side Annotations table WITHOUT failing the run -
+    so the Swiss scoreboard stays readable without sign-in log access
+    (the proven HYA-421 diagnostics channel, applied to the passing
+    case). No-op outside Actions."""
+    if os.environ.get("GITHUB_ACTIONS") != "true":
+        return
+    one_line = " ".join(str(msg).split())
+    if len(one_line) > 900:
+        one_line = one_line[:900] + "... (truncated)"
+    print("::notice::" + one_line.replace("%", "%25"))
+
+
 class Sweph:
     """Thin deterministic wrapper: Moshier ephemeris, Lahiri sidereal."""
 
@@ -211,6 +245,24 @@ class Sweph:
             math.cos(lat) * math.cos(dec_r) * math.cos(hour_angle)))
         return alt - target
 
+    def sun_margin(self, jd_ut):
+        """Geocentric center altitude of the sun minus the USNO rise
+        target (-0.8333 deg: standard refraction + solar semidiameter,
+        zenith 90.8333) - the exact quantity the Dart sunrise
+        algorithm targets. Apparent geocentric RA/dec; the target
+        constant already accounts for refraction and semidiameter, so
+        no rise/set convention gap enters."""
+        xx, _ = swe.calc_ut(jd_ut, swe.SUN, self.eq_flags)
+        ra, dec = xx[0], xx[1]
+        gmst_deg = swe.sidtime(jd_ut) * 15.0
+        hour_angle = math.radians(norm360(gmst_deg + KATHMANDU_LON - ra))
+        lat = math.radians(KATHMANDU_LAT)
+        dec_r = math.radians(dec)
+        alt = math.degrees(math.asin(
+            math.sin(lat) * math.sin(dec_r) +
+            math.cos(lat) * math.cos(dec_r) * math.cos(hour_angle)))
+        return alt + 0.8333
+
 
 ANGLE_FNS = {
     "tithi": lambda s: s.elongation,
@@ -254,6 +306,32 @@ def sw_moonrise(sw, jd_ut_ref):
             for _ in range(45):
                 mid = (lo + hi) / 2.0
                 if sw.moon_margin(mid) < 0.0:
+                    lo = mid
+                else:
+                    hi = mid
+            return hi
+        prev, prev_f = t, f
+    return None
+
+
+def sw_sunrise(sw, jd_ut_ref):
+    """Upward crossing of the USNO rise target around the engine's
+    sunrise instant - scan-then-bisect on Swiss ephemeris, mirroring
+    the moonrise channel. The Dart sunrise is a closed-form
+    approximation (not a bisection), so the scored delta carries the
+    full ephemeris + algorithm gap at the same target."""
+    t0 = jd_ut_ref - 0.03
+    step = 1.0 / 48.0  # 30 minutes, same grid as the moonrise scan
+    prev = t0
+    prev_f = sw.sun_margin(t0)
+    for i in range(1, 97):
+        t = t0 + i * step
+        f = sw.sun_margin(t)
+        if prev_f < 0.0 <= f:
+            lo, hi = prev, t
+            for _ in range(45):
+                mid = (lo + hi) / 2.0
+                if sw.sun_margin(mid) < 0.0:
                     lo = mid
                 else:
                     hi = mid
@@ -722,6 +800,10 @@ def main():
                    help="limb_instants.json from dump_limb_instants")
     ap.add_argument("--receipts", default=None,
                    help="output receipts JSON path")
+    ap.add_argument("--summary", default=None,
+                    help="markdown scoreboard path; ci.yml appends it to "
+                         "GITHUB_STEP_SUMMARY so the run page renders the "
+                         "scoreboard without sign-in log access")
     ap.add_argument("--trim-days", type=float, default=1.0,
                    help="interior trim: skip boundaries this close to the "
                         "window edges (solver warm-up)")
@@ -872,6 +954,61 @@ def main():
                  "PASS" if ok else "FAIL"))
         all_rows.extend(rows_out)
 
+    # HYA-369 close-out: sunrise parity - the Dart sunriseJdUt is the
+    # USNO low-accuracy closed form targeting geometric center
+    # altitude -0.8333 deg; the Swiss mirror bisects the SAME target
+    # on Swiss apparent geocentric RA/dec, so the scored delta is the
+    # full reconstruction gap (ephemeris + algorithm, no convention
+    # gap).
+    sunrise_rows_dump = dump.get("sunrises", [])
+    sunrise_out = None
+    if not sunrise_rows_dump:
+        failures.append("no sunrises in dump")
+    else:
+        deltas = []
+        rows_out = []
+        for r in sunrise_rows_dump:
+            jd_ut = r["jd_ut"]
+            if jd_ut < lo_limit or jd_ut > hi_limit:
+                continue
+            sw_jd = sw_sunrise(sw, jd_ut)
+            if sw_jd is None:
+                failures.append(
+                    "sunrise on %s: Swiss mirror found no rise" % r["date"])
+                continue
+            delta_s = (sw_jd - jd_ut) * 86400.0
+            deltas.append(delta_s)
+            rows_out.append({
+                "date": r["date"],
+                "utc": r["utc"],
+                "jd_ut": jd_ut,
+                "swiss_jd_ut": sw_jd,
+                "delta_s": round(delta_s, 2),
+            })
+        st = stats([abs(d) for d in deltas])
+        signed = sum(deltas) / len(deltas) if deltas else 0.0
+        ok = st["max_s"] <= SUNRISE_HARD_BAND_S and \
+            st["mean_s"] <= SUNRISE_MEAN_BAND_S
+        if not ok:
+            failures.append(
+                "sunrise: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+                % (st["max_s"], SUNRISE_HARD_BAND_S,
+                   st["mean_s"], SUNRISE_MEAN_BAND_S))
+        sunrise_out = {
+            **st,
+            "signed_mean_s": round(signed, 2),
+            "hard_band_s": SUNRISE_HARD_BAND_S,
+            "mean_band_s": SUNRISE_MEAN_BAND_S,
+            "pass": ok,
+        }
+        print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+              "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+              "band %d/%d %s"
+              % ("sunrise", st["n"], st["mean_s"], st["max_s"], signed,
+                 SUNRISE_HARD_BAND_S, SUNRISE_MEAN_BAND_S,
+                 "PASS" if ok else "FAIL"))
+        all_rows.extend(rows_out)
+
     # HYA-421: NASA lunar eclipse receipts vs Swiss Ephemeris - the same
     # fixture the Dart CI gate pins eclipse_lunar.dart against, validated
     # here by an independent ephemeris.
@@ -933,6 +1070,7 @@ def main():
             "knife_edge_def_min": KNIFE_EDGE_MIN,
             "limbs": per_limb,
             "moonrise": moonrise_out,
+            "sunrise": sunrise_out,
             "lunar_eclipses": eclipse_out,
             "solar_local": solar_local_out,
             "lunar_local": lunar_local_out,
@@ -946,6 +1084,71 @@ def main():
         with open(args.receipts, "w") as f:
             json.dump(receipts, f, indent=2)
         print("receipts written: %s" % args.receipts)
+
+    # The scoreboard lives in the sign-in-gated log. Surface every
+    # channel as a notice annotation AND a markdown summary: notices
+    # render in the run page's server-side Annotations table without
+    # failing the run, and ci.yml appends the summary file to
+    # GITHUB_STEP_SUMMARY, which GitHub renders on the run's Summary
+    # tab. These are the numbers the band-tightening pass reads.
+    summary_channels = [
+        ("tithi", per_limb.get("tithi")),
+        ("karana", per_limb.get("karana")),
+        ("nakshatra", per_limb.get("nakshatra")),
+        ("yoga", per_limb.get("yoga")),
+        ("moonrise", moonrise_out),
+        ("sunrise", sunrise_out),
+        ("lunar_ecl", eclipse_out),
+        ("solar_loc", solar_local_out),
+        ("lunar_loc", lunar_local_out),
+    ]
+    for name, out in summary_channels:
+        if not out:
+            continue
+        annotate_notice(
+            "SWEPH %s: n=%d mean|d|=%.1fs max=%.0fs signed=%+.1fs "
+            "band %d/%d %s"
+            % (name, out["n"], out["mean_s"] or 0.0,
+               out["max_s"] or 0.0, out["signed_mean_s"],
+               out["hard_band_s"], out["mean_band_s"],
+               "PASS" if out["pass"] else "FAIL"))
+    annotate_notice(
+        "SWEPH deltaT residual (Swiss - Espenak-Meeus): mean=%+.2fs "
+        "max|d|=%.2fs (n=%d); knife-edge boundaries: %d"
+        % (dt_signed, dt_st["max_s"] or 0.0, dt_st["n"],
+           len(knife_edges)))
+
+    if args.summary:
+        lines = [
+            "## Swiss-truth cross-check scoreboard (HYA-369)",
+            "",
+            "Window %s .. %s, Moshier mode, Lahiri sidereal; deltas are "
+            "Swiss minus engine, in seconds."
+            % (window["start"], window["end"]),
+            "",
+            "| channel | n | mean abs | max abs | signed mean | "
+            "band hard/mean | pass |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for name, out in summary_channels:
+            if not out:
+                continue
+            lines.append("| %s | %d | %s | %s | %+.1f | %d/%d | %s |"
+                         % (name, out["n"], out["mean_s"], out["max_s"],
+                            out["signed_mean_s"], out["hard_band_s"],
+                            out["mean_band_s"],
+                            "PASS" if out["pass"] else "FAIL"))
+        lines.append("| deltaT residual | %d | %s | %s | %+.2f | n/a | "
+                     "n/a |" % (dt_st["n"], dt_st["mean_s"],
+                                dt_st["max_s"], dt_signed))
+        lines.append("")
+        lines.append("- knife-edge boundaries (<= %.0f min from a "
+                     "sunrise): %d" % (KNIFE_EDGE_MIN, len(knife_edges)))
+        lines.append("- failures: %s" % (", ".join(failures)
+                                         if failures else "none"))
+        with open(args.summary, "w") as f:
+            f.write("\n".join(lines) + "\n")
+        print("summary written: %s" % args.summary)
 
     if failures:
         for i, msg in enumerate(failures):

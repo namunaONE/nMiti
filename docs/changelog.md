@@ -2,6 +2,11 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Swiss sunrise parity channel + readable scoreboard (HYA-369)
+
+- `tools/sweph/sweph_crosscheck.py` gains a **sunrise parity channel**: the Swiss mirror bisects the same USNO −0.8333° geometric center-altitude target the Dart `sunriseJdUt` solves, on Swiss apparent geocentric RA/dec — the same target on both sides, so the scored delta is the full ephemeris + low-accuracy-algorithm reconstruction gap of the served sunrise (no rise/set convention gap). Provisional band 600/300 s until the first CI run records the actual deltas.
+- The Swiss scoreboard is now readable **without sign-in log access**: every channel is emitted as a notice annotation (rendered in the run page's server-side Annotations table) and as a markdown summary appended to the GitHub run Summary (`--summary`, wired in ci.yml with `if: always()` so a banded failure still shows the measured deltas). These are the numbers the band-tightening pass reads.
+
 ## [Unreleased] — grahan (eclipse) display layer (HYA-421)
 
 - `api/v1/today.json` gains a `grahan` block: the grahan event touching today’s Nepali civil day (visible, sutak or eclipse span), whether sutak is active at build time, and the next grahan — every event carrying its Nepali name (roman + Devanagari), global class, local visibility flags, sutak window, moksha, magnitude and the engine evidence tier.

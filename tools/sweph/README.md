@@ -15,7 +15,12 @@ the engine's verification ladder:
 
     dart run nmiti_cli:dump_limb_instants --start 2026-10-16 --end 2026-12-02 --out build/limb_instants.json
     python3 -m pip install pyswisseph
-    python3 tools/sweph/sweph_crosscheck.py --instants build/limb_instants.json --receipts build/sweph_receipts.json
+    python3 tools/sweph/sweph_crosscheck.py --instants build/limb_instants.json --receipts build/sweph_receipts.json --summary build/sweph_summary.md
+
+The `--summary` markdown is appended to `GITHUB_STEP_SUMMARY` by ci.yml,
+so the full scoreboard renders on the run's Summary tab without
+sign-in log access; every channel line is also emitted as a notice
+annotation on the run page.
 
 The Dart command (MIT, engine-side) dumps every tithi, karana, nakshatra
 and yoga boundary plus every Kathmandu sunrise in the window, with the
@@ -25,7 +30,9 @@ boundary by bisection (mirroring the engine's wrap-safe sector solver),
 and scores signed and absolute deltas.
 
 Provisional bands (seconds, max/mean): tithi 300/150, karana 300/150,
-nakshatra 600/300, yoga 600/300. Nakshatra/yoga bands are wider because
+nakshatra 600/300, yoga 600/300, moonrise 300/150, sunrise 600/300
+(the sunrise band stays generous until the first CI run records the
+actual deltas). Nakshatra/yoga bands are wider because
 they include the ayanamsa convention gap (our fitted base vs Swiss
 Lahiri); tithi/karana are pure ephemeris parity. Bands tighten as receipts
 accumulate, exactly like the publisher corpus bands before them.
@@ -115,10 +122,12 @@ data (CC0), the generating harness stays in `tools/`, and nothing links.
   CI. If stronger parity is ever needed, drop .se1 files into an
   ephemeris path and switch FLG_MOSEPH to FLG_SWIEPH; the receipts should
   tighten, not change conclusions (Moshier is sub-arcsecond on the Moon).
-- Sunrise is not yet re-solved with swe.rise_trans here - the publisher
-  corpus already pins our sunrise (band +/- 1 min) and a rise-time
-  harness needs careful refraction/pressure conventions. It is the next
-  receipt batch, not a blocker.
+- Sunrise parity SHIPPED (HYA-369 close-out): the harness bisects the
+  same USNO -0.8333 deg geometric center-altitude target the Dart
+  sunriseJdUt solves, on Swiss apparent geocentric RA/dec - the same
+  target on both sides, so no refraction/pressure convention gap
+  enters; the scored delta is the full low-accuracy-algorithm +
+  ephemeris reconstruction gap of the served sunrise.
 - JPL Horizons stays a manual spot-audit channel: compare a handful of
   boundaries per quarter via the Horizons API against the receipts file.
 
