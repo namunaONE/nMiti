@@ -67,7 +67,7 @@ MARKERS = {
     ],
     "sankranti.html": ['id="sankranti-now"', "pre_2036_exception", "projection_defect"],
     "panchang.html": ['id="panchang-tithi"', 'id="panchang-sunrise"', 'id="panchang-meta"', "udaya", "madhyahna"],
-    "grahan.html": ['id="grahan-next"', 'id="grahan-upcoming"', 'id="grahan-conventions"', "sutak", "grastodit"],
+    "grahan.html": ['id="grahan-next"', 'id="grahan-upcoming"', 'id="grahan-conventions"', "sutak", "Grastodit (rises eclipsed)"],
     "api/v1/today.json": [
         '"panchang"',
         '"udaya"',
