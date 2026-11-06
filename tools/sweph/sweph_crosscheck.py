@@ -79,31 +79,36 @@ except ImportError:
           file=sys.stderr)
     raise
 
-# Provisional bands (seconds), tightened as receipts accumulate - exactly
-# like the publisher corpus bands and the tithi_engine oracle bands before
-# them. Tithi/karana are pure ephemeris parity (no ayanamsa); nakshatra/
-# yoga are wider because they include the ayanamsa convention gap.
-HARD_BAND_S = {"tithi": 300, "karana": 300, "nakshatra": 600, "yoga": 600}
-MEAN_BAND_S = {"tithi": 150, "karana": 150, "nakshatra": 300, "yoga": 300}
+# Bands (seconds), tightened to the first CI scoreboard (2026-11-06,
+# run 42139287853) measured maxima + margin - exactly like the publisher
+# corpus bands and the tithi_engine oracle bands before them. Measured
+# Swiss - engine (mean|max s): tithi 7.9|19 and karana 7.9|19 (pure
+# ephemeris parity, no ayanamsa) -> 60/30; nakshatra 59.8|71 and yoga
+# 104.3|119 (near-constant ayanamsa convention gap included) ->
+# 180/120 and 300/180. A regression now trips the band within ~3x of
+# the recorded maxima.
+HARD_BAND_S = {"tithi": 60, "karana": 60, "nakshatra": 180, "yoga": 300}
+MEAN_BAND_S = {"tithi": 30, "karana": 30, "nakshatra": 120, "yoga": 180}
 # Moonrise parity band (HYA-417): same target convention on both sides,
-# so this is pure ephemeris + algorithm parity like tithi.
-MOONRISE_HARD_BAND_S = 300
-MOONRISE_MEAN_BAND_S = 150
+# so this is pure ephemeris + algorithm parity like tithi. Measured
+# 0.3|1 s (n=44, first CI scoreboard) - near-exact parity; 60/15 keeps
+# generous margin over sub-second maxima.
+MOONRISE_HARD_BAND_S = 60
+MOONRISE_MEAN_BAND_S = 15
 # Sunrise parity band (HYA-369 close-out): the Dart sunriseJdUt is the
 # USNO low-accuracy closed form targeting geometric center altitude
 # -0.8333 deg; the Swiss mirror bisects the SAME target on Swiss
 # apparent geocentric RA/dec, so the delta is the full reconstruction
-# gap (ephemeris + algorithm, no convention gap). Deliberately
-# generous 600/300 until the first CI run records the actual deltas;
-# tightened with every other band in the close-out pass.
-SUNRISE_HARD_BAND_S = 600
-SUNRISE_MEAN_BAND_S = 300
+# gap (ephemeris + algorithm, no convention gap). Measured +11.3|12 s
+# (n=45, first CI scoreboard) - the closed form tracks the Swiss
+# crossing to ~11 s; tightened to 60/30.
+SUNRISE_HARD_BAND_S = 60
+SUNRISE_MEAN_BAND_S = 30
 # Lunar eclipse receipts band (HYA-421): Swiss Moshier vs the NASA
-# bulletin values, both on the Danjon 1/85 shadow convention. Provisional
-# 300/120 until the first CI run records the actual deltas; then tighten
-# like every band before it.
-LUNAR_ECLIPSE_HARD_BAND_S = 300
-LUNAR_ECLIPSE_MEAN_BAND_S = 120
+# bulletin values, both on the Danjon 1/85 shadow convention. Measured
+# 12.0|35 s (n=12, first CI scoreboard); tightened to 120/60.
+LUNAR_ECLIPSE_HARD_BAND_S = 120
+LUNAR_ECLIPSE_MEAN_BAND_S = 60
 # pyswisseph lun_eclipse_when tret layout (per its docstring: "indices
 # consistent with solar eclipses"). The first CI run (2026-11-05) shipped
 # the pre-2.x Swiss layout and the failure annotations recorded the exact
@@ -135,13 +140,15 @@ DEFAULT_SOLAR_FIXTURE = (
 DEFAULT_GRAHAN_FIXTURE = (
     "packages/nepali_panchang/test/fixtures/"
     "grahan_shastra_receipts.json")
-# Nepal-local circumstances bands (HYA-421 step 4): provisional 300/120
-# until the first CI run records the actual deltas, like every band
-# before them. Contacts are pure ephemeris parity, but the receipts are
-# tAD's NPT wall clock and Swiss re-solves with its own Delta-T, so
-# the band carries both contributors.
-SOLAR_LOC_HARD_BAND_S = 300
-SOLAR_LOC_MEAN_BAND_S = 120
+# Nepal-local circumstances bands (HYA-421 step 4), tightened to the
+# first CI scoreboard (2026-11-06): solar_loc measured 5.0|6 s (n=3)
+# -> 60/30; lunar_loc measured 38.8|180 s (n=15, rise/set clamp
+# variance on the tAD stage tables) -> 300/120 held. Contacts are pure
+# ephemeris parity, but the receipts are tAD's NPT wall clock and
+# Swiss re-solves with its own Delta-T, so the band carries both
+# contributors.
+SOLAR_LOC_HARD_BAND_S = 60
+SOLAR_LOC_MEAN_BAND_S = 30
 LUNAR_LOC_HARD_BAND_S = 300
 LUNAR_LOC_MEAN_BAND_S = 120
 SOLAR_LOC_MAG_BAND = 0.02
@@ -856,7 +863,11 @@ def main():
             delta_s = (sw_jd - jd_ut) * 86400.0
             deltas.append(delta_s)
             # Delta-T residual: Swiss internal model vs our polynomial.
-            sw_dt = swe.deltat(jd_ut)
+# swe.deltat returns Delta-T in DAYS (the C API contract): the
+# first CI run read it as seconds, producing a constant -75.60 s
+# "residual" that masked the true Swiss-vs-Espenak-Meeus gap.
+# Convert here; the corrected residual feeds the IERS adjudication.
+            sw_dt = swe.deltat(jd_ut) * 86400.0
             dt_residuals.append(sw_dt - r["delta_t_s"])
             # Knife-edge: distance to the nearest sunrise.
             knife_min = None

@@ -29,20 +29,23 @@ the Swiss solver ~72 minutes before each of our instants, re-solves the
 boundary by bisection (mirroring the engine's wrap-safe sector solver),
 and scores signed and absolute deltas.
 
-Provisional bands (seconds, max/mean): tithi 300/150, karana 300/150,
-nakshatra 600/300, yoga 600/300, moonrise 300/150, sunrise 600/300
-(the sunrise band stays generous until the first CI run records the
-actual deltas). Nakshatra/yoga bands are wider because
-they include the ayanamsa convention gap (our fitted base vs Swiss
-Lahiri); tithi/karana are pure ephemeris parity. Bands tighten as receipts
-accumulate, exactly like the publisher corpus bands before them.
+Bands tightened to the first CI scoreboard (2026-11-06), measured
+maxima + margin (seconds, band hard/mean): tithi 60/30 and karana
+60/30 (measured 7.9|19), nakshatra 180/120 (59.8|71) and yoga 300/180
+(104.3|119 - wider because they include the ayanamsa convention gap,
+our fitted base vs Swiss Lahiri), moonrise 60/15 (0.3|1 - near-exact
+parity), sunrise 60/30 (11.3|12). A regression now trips a band
+within ~3x of the recorded maxima.
 
 The harness also reports:
 
 - **Delta-T residual** - Swiss internal Delta-T model minus our
   Espenak-Meeus polynomial at every boundary (the named systematic
-  contributor in the published error bars; expected order ~5-10 s near
-  2026).
+  contributor in the published error bars). First-run gotcha, fixed
+  2026-11-06: swe.deltat returns Delta-T in DAYS - read as seconds it
+  produced a constant -75.60 s "residual" masking the true ~-6.6 s
+  gap; the harness now converts (x86400). The corrected residual is
+  the input to the IERS Delta-T adjudication (HYA-406).
 - **Knife-edge flags** - every boundary within 30 minutes of a sunrise:
   the days two honest panchangs can print different limbs. This list is
   the input the festival layer (R6b) consumes for per-source attribution.
@@ -60,8 +63,8 @@ ephemerides, and the engine-vs-NASA deltas measured in the Dart gate are
 attributed to the engine, not to the receipts.
 
 Contact times only: the global search does not return magnitudes, which
-stay pinned by the Dart gate. Provisional band 300/120 s (max/mean),
-tightened once the first runs record the actual Swiss-vs-NASA deltas.
+stay pinned by the Dart gate. Band tightened to the first scoreboard
+(2026-11-06, measured 12.0|35 s, n=12): 120/60 s (max/mean).
 
 ## Nepal-local circumstances channels (HYA-421 step 4)
 
@@ -93,8 +96,10 @@ solvers, so the harness cross-checks those channels too:
   candidate-slot scoring (the recorded `lun_eclipse_when` layout
   gotcha), the winning candidate named in the receipts JSON.
 
-Provisional bands 300/120 s (max/mean) on both contact channels,
-tightened once the first CI run records the actual deltas.
+Bands tightened to the first CI scoreboard (2026-11-06): solar_local
+60/30 s (max/mean; measured 5.0|6 s, n=3), lunar_local 300/120 s held
+(measured 38.8|180 s, n=15 - rise/set clamp variance on the tAD stage
+tables).
 
 ## License boundary (AGPL facts-out) - read this before touching
 

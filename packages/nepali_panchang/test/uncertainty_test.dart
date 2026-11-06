@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 void main() {
   test('published error bars cover every served limb', () {
     final limbs = publishedErrorBars.map((b) => b.limb).toSet();
-    expect(limbs, {'tithi', 'nakshatra', 'yoga', 'karana', 'sunrise'});
+    expect(limbs, {'tithi', 'nakshatra', 'yoga', 'karana', 'sunrise', 'moonrise'});
   });
 
   test('bands are honest ceilings from the recorded scoreboards', () {
@@ -21,6 +21,11 @@ void main() {
     // Sunrise band is the geometric parity claim, stated separately from
     // the publisher convention offset.
     expect(byLimb['sunrise']!.plusMinusMinutes, 1.0);
+    // Moonrise: JPL topocentric receipts observed max ~12 min (a
+    // provisional rise-convention gap); the Swiss-truth scoreboard at
+    // the identical Meeus 15.1 target reads 0.3 s mean, 1 s max (PR #42)
+    // - the band is all receipts-side convention, not ephemeris error.
+    expect(byLimb['moonrise']!.plusMinusMinutes, greaterThanOrEqualTo(12.0));
     // Every band must state its basis.
     for (final b in publishedErrorBars) {
       expect(b.basis.length, greaterThan(40), reason: b.limb);
