@@ -79,6 +79,11 @@ class MasaInfo {
   /// for kshaya months.
   final List<DateTime> sankrantiMomentsNpt;
 
+  /// The rasi index (1..12, Mesha..Meena ingress order) of each sidereal
+  /// ingress inside this month, parallel to [sankrantiMomentsNpt].
+  /// Empty for adhika months, two entries for kshaya months.
+  final List<int> sankrantiRasis;
+
   /// Engine and convention provenance (public truth-data policy).
   final String provenance;
 
@@ -92,6 +97,7 @@ class MasaInfo {
     required this.isAdhika,
     required this.isKshaya,
     required this.sankrantiMomentsNpt,
+    required this.sankrantiRasis,
     required this.provenance,
     required this.evidenceTier,
   });
@@ -229,11 +235,14 @@ List<MasaInfo> masaList({
   final kshaya = List<bool>.filled(count, false);
   final sankrantiTt = List<List<double>>.generate(
       count, (_) => <double>[], growable: false);
+  final rasisPerMonth =
+      List<List<int>>.generate(count, (_) => <int>[], growable: false);
   for (var i = 0; i < count; i++) {
     final lo = newMoonsTt[i];
     final hi = newMoonsTt[i + 1];
     if (hi <= winLoTt || lo >= winHiTt + 33.0) continue;
     final rasis = _sankrantiRasis(lo, hi, sourceDelta);
+    rasisPerMonth[i].addAll(rasis);
     for (final r in rasis) {
       sankrantiTt[i].add(_ingressJdTt(30.0 * (r - 1), lo, hi, sourceDelta));
     }
@@ -272,6 +281,7 @@ List<MasaInfo> masaList({
       isKshaya: kshaya[i],
       sankrantiMomentsNpt:
           [for (final jd in sankrantiTt[i]) _nptWall(jd)],
+      sankrantiRasis: rasisPerMonth[i],
       provenance: 'nMiti nepali_panchang masa layer: new moons via the '
           'wrap-safe tithi solver, sankrantis via the VSOP87D apparent sun '
           'minus the ayanamsa profile (delta '

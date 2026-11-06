@@ -56,11 +56,33 @@ void main() {
     }
   });
 
-  test('scan covers the whole battery in the window', () {
+  test('scan covers exactly the autumn battery in the window (R6d gate)',
+      () {
     final ids = observances.map((o) => o.rule.id).toSet();
-    for (final rule in festivalBattery) {
-      expect(ids.contains(rule.id), isTrue,
-          reason: 'no occasion for ${rule.id} in the window');
+    // The window spans the Tula-ingress month (Dashain + the Tihar
+    // Krishna-paksha rules) and the head of the Vrischik-ingress month
+    // (Mha Puja, Bhai Tika, Chhath). The R6d lunar-month gate keeps
+    // the four spring/summer rules OUT: their anchor months (Kumbha,
+    // Meena, Simha, Kanya) fall elsewhere in the year. Under the
+    // ungated scan Maha Shivaratri matched the Tihar Chaturdashi and
+    // this test asserted that false hit as coverage (the R6c lesson).
+    const autumn = [
+      'ghatasthapana', 'fulpati', 'mahaAshtami', 'mahaNavami',
+      'vijayaDashami', 'kojagratPurnima', 'dhanteras', 'kagTihar',
+      'laxmiPuja', 'kukurTihar', 'gaiPuja', 'mhaPuja', 'bhaiTika',
+      'chhath',
+    ];
+    const elsewhere = [
+      'mahaShivaratri', 'faguPurnima', 'janaiPurnima', 'teej',
+    ];
+    expect(ids, unorderedEquals(autumn),
+        reason: 'the autumn window must fire exactly the 14 autumn '
+            'battery rules under the lunar-month gate');
+    for (final id in elsewhere) {
+      expect(ids.contains(id), isFalse,
+          reason: '$id fired outside its anchor month - the '
+              'lunar-month gate must keep spring/summer rules out of '
+              'the autumn window');
     }
   });
 
