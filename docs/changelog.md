@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — NPNS full-year daily-tithi audit corpus (HYA-369)
+
+- New permanent CI corpus `packages/nepali_panchang/test/fixtures/npns_daily_tithi_2082_2083.json`: every day of BS 2082 + BS 2083 — 730 live receipts crawled from the Hamro Patro portal (the NPNS-aligned publisher) on 2026-11-06 — the per-day tithi label and paksha exactly as displayed, plus the portal-rendered AD date parsed to ISO. Structural gates: 365 days per year, month lengths match the portal month ends, and the AD chain is strictly consecutive (2025-04-14 → 2027-04-13, no gaps, no repeats) — an independent cross-check of the portal BS↔AD mapping.
+- Chain sanity gate: the decoded portal labels walk the tithi cycle with only legal udaya steps — 689 normal, 26 kshaya (a tithi skipped between udayas), 14 vriddhi (the same tithi at consecutive udayas), nothing else across the two years. Vriddhi/kshaya days carry the portal’s own merged-window mark; nothing in the fixture is transcribed by hand.
+- Engine agreement gate (`packages/nepali_panchang/test/npns_daily_tithi_audit_test.dart`): the runtime engine’s tithi at udaya (the Hamro Patro display convention) must equal the portal label on every day except knife-edge days — a tithi boundary within half an hour of sunrise, or a vriddhi/kshaya day — with a ≥97% floor and a full mismatch scoreboard printed to the CI log. First-run scoreboard to be recorded in a follow-up commit.
+
 ## [Unreleased] — ΔT adjudication: keep Espenak–Meeus, document the systematic (HYA-406)
 
 - Docs-only close-out. The ΔT source gap (our Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) is confirmed from three independent directions: the corrected Swiss residual (mean −6.79 s, max 6.81 s, n=233 → Swiss internal ΔT ≈68.8 s), the USNO/IERS long-term predictions table (69.05 ± 0.19 s at 2026.0), and community practice (e.g. AstronomyKit’s default switch to interpolated IERS values).
