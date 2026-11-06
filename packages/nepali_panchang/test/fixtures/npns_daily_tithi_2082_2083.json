@@ -1,0 +1,6626 @@
+{
+  "source": "Hamro Patro public daily calendar portal (hamropatro.com) - the NPNS-aligned publisher",
+  "crawl": {
+    "date_utc": "2026-11-06",
+    "method": "Live per-day page crawl of https://www.hamropatro.com/date/<bs-year>-<bs-month>-<bs-day> for every day of BS 2082 and BS 2083 (730 pages). The tithi label and paksha are captured exactly as the portal displays them; the portal-rendered Gregorian date string is captured raw (ad_raw) and parsed to ISO (ad).",
+    "fields": [
+      "bs",
+      "ad",
+      "tithi",
+      "paksha",
+      "vriddhi_kshaya_mark",
+      "ad_raw",
+      "url"
+    ],
+    "note": "vriddhi_kshaya_mark is true when the portal itself renders a merged vriddhi/kshaya paksha window (paksha containing \"वृद्धि/क्षय\") OR when the portal's own decoded tithi chain shows a vriddhi (same tithi at consecutive udayas) or kshaya (a tithi skipped between udayas) on that day. Both signals are re-derivable from the raw tithi/paksha fields preserved in every receipt. Portal spelling is preserved verbatim (e.g. \"तृतिया\" for Tritya)."
+  },
+  "provenance": "Every receipt was fetched live from its public URL on 2026-11-06; nothing in this fixture is transcribed by hand. The full corpus re-crawled after a workspace loss reproduced the first crawl byte-for-byte on every structural metric: 730 receipts, month lengths, AD chain 2025-04-14 through 2027-04-13 with no gaps or repeats, tithi chain deltas (689 normal, 26 kshaya, 14 vriddhi).",
+  "years": {
+    "2082": {
+      "days": 365,
+      "month_ends": [
+        31,
+        31,
+        32,
+        31,
+        31,
+        31,
+        30,
+        29,
+        30,
+        29,
+        30,
+        30
+      ]
+    },
+    "2083": {
+      "days": 365,
+      "month_ends": [
+        31,
+        31,
+        32,
+        31,
+        31,
+        31,
+        30,
+        29,
+        30,
+        29,
+        30,
+        30
+      ]
+    }
+  },
+  "receipts": [
+    {
+      "bs": "2082-01-01",
+      "ad": "2025-04-14",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-01"
+    },
+    {
+      "bs": "2082-01-02",
+      "ad": "2025-04-15",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-02"
+    },
+    {
+      "bs": "2082-01-03",
+      "ad": "2025-04-16",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-03"
+    },
+    {
+      "bs": "2082-01-04",
+      "ad": "2025-04-17",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-04"
+    },
+    {
+      "bs": "2082-01-05",
+      "ad": "2025-04-18",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-05"
+    },
+    {
+      "bs": "2082-01-06",
+      "ad": "2025-04-19",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-06"
+    },
+    {
+      "bs": "2082-01-07",
+      "ad": "2025-04-20",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-07"
+    },
+    {
+      "bs": "2082-01-08",
+      "ad": "2025-04-21",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-08"
+    },
+    {
+      "bs": "2082-01-09",
+      "ad": "2025-04-22",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-09"
+    },
+    {
+      "bs": "2082-01-10",
+      "ad": "2025-04-23",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-10"
+    },
+    {
+      "bs": "2082-01-11",
+      "ad": "2025-04-24",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-11"
+    },
+    {
+      "bs": "2082-01-12",
+      "ad": "2025-04-25",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-12"
+    },
+    {
+      "bs": "2082-01-13",
+      "ad": "2025-04-26",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-13"
+    },
+    {
+      "bs": "2082-01-14",
+      "ad": "2025-04-27",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Apr २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-14"
+    },
+    {
+      "bs": "2082-01-15",
+      "ad": "2025-04-28",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-15"
+    },
+    {
+      "bs": "2082-01-16",
+      "ad": "2025-04-29",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-16"
+    },
+    {
+      "bs": "2082-01-17",
+      "ad": "2025-04-30",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-17"
+    },
+    {
+      "bs": "2082-01-18",
+      "ad": "2025-05-01",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-18"
+    },
+    {
+      "bs": "2082-01-19",
+      "ad": "2025-05-02",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-19"
+    },
+    {
+      "bs": "2082-01-20",
+      "ad": "2025-05-03",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-20"
+    },
+    {
+      "bs": "2082-01-21",
+      "ad": "2025-05-04",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-21"
+    },
+    {
+      "bs": "2082-01-22",
+      "ad": "2025-05-05",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-22"
+    },
+    {
+      "bs": "2082-01-23",
+      "ad": "2025-05-06",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-23"
+    },
+    {
+      "bs": "2082-01-24",
+      "ad": "2025-05-07",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-24"
+    },
+    {
+      "bs": "2082-01-25",
+      "ad": "2025-05-08",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-25"
+    },
+    {
+      "bs": "2082-01-26",
+      "ad": "2025-05-09",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-26"
+    },
+    {
+      "bs": "2082-01-27",
+      "ad": "2025-05-10",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-27"
+    },
+    {
+      "bs": "2082-01-28",
+      "ad": "2025-05-11",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-28"
+    },
+    {
+      "bs": "2082-01-29",
+      "ad": "2025-05-12",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-29"
+    },
+    {
+      "bs": "2082-01-30",
+      "ad": "2025-05-13",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-30"
+    },
+    {
+      "bs": "2082-01-31",
+      "ad": "2025-05-14",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-01-31"
+    },
+    {
+      "bs": "2082-02-01",
+      "ad": "2025-05-15",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-01"
+    },
+    {
+      "bs": "2082-02-02",
+      "ad": "2025-05-16",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-02"
+    },
+    {
+      "bs": "2082-02-03",
+      "ad": "2025-05-17",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, May १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-03"
+    },
+    {
+      "bs": "2082-02-04",
+      "ad": "2025-05-18",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, May १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-04"
+    },
+    {
+      "bs": "2082-02-05",
+      "ad": "2025-05-19",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, May १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-05"
+    },
+    {
+      "bs": "2082-02-06",
+      "ad": "2025-05-20",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, May २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-06"
+    },
+    {
+      "bs": "2082-02-07",
+      "ad": "2025-05-21",
+      "tithi": "नवमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, May २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-07"
+    },
+    {
+      "bs": "2082-02-08",
+      "ad": "2025-05-22",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-08"
+    },
+    {
+      "bs": "2082-02-09",
+      "ad": "2025-05-23",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-09"
+    },
+    {
+      "bs": "2082-02-10",
+      "ad": "2025-05-24",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-10"
+    },
+    {
+      "bs": "2082-02-11",
+      "ad": "2025-05-25",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-11"
+    },
+    {
+      "bs": "2082-02-12",
+      "ad": "2025-05-26",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-12"
+    },
+    {
+      "bs": "2082-02-13",
+      "ad": "2025-05-27",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-13"
+    },
+    {
+      "bs": "2082-02-14",
+      "ad": "2025-05-28",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-14"
+    },
+    {
+      "bs": "2082-02-15",
+      "ad": "2025-05-29",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, May २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-15"
+    },
+    {
+      "bs": "2082-02-16",
+      "ad": "2025-05-30",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-16"
+    },
+    {
+      "bs": "2082-02-17",
+      "ad": "2025-05-31",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May ३१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-17"
+    },
+    {
+      "bs": "2082-02-18",
+      "ad": "2025-06-01",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-18"
+    },
+    {
+      "bs": "2082-02-19",
+      "ad": "2025-06-02",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-19"
+    },
+    {
+      "bs": "2082-02-20",
+      "ad": "2025-06-03",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-20"
+    },
+    {
+      "bs": "2082-02-21",
+      "ad": "2025-06-04",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-21"
+    },
+    {
+      "bs": "2082-02-22",
+      "ad": "2025-06-05",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-22"
+    },
+    {
+      "bs": "2082-02-23",
+      "ad": "2025-06-06",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-23"
+    },
+    {
+      "bs": "2082-02-24",
+      "ad": "2025-06-07",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Jun ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-24"
+    },
+    {
+      "bs": "2082-02-25",
+      "ad": "2025-06-08",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-25"
+    },
+    {
+      "bs": "2082-02-26",
+      "ad": "2025-06-09",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-26"
+    },
+    {
+      "bs": "2082-02-27",
+      "ad": "2025-06-10",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-27"
+    },
+    {
+      "bs": "2082-02-28",
+      "ad": "2025-06-11",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-28"
+    },
+    {
+      "bs": "2082-02-29",
+      "ad": "2025-06-12",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-29"
+    },
+    {
+      "bs": "2082-02-30",
+      "ad": "2025-06-13",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-30"
+    },
+    {
+      "bs": "2082-02-31",
+      "ad": "2025-06-14",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-02-31"
+    },
+    {
+      "bs": "2082-03-01",
+      "ad": "2025-06-15",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-01"
+    },
+    {
+      "bs": "2082-03-02",
+      "ad": "2025-06-16",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-02"
+    },
+    {
+      "bs": "2082-03-03",
+      "ad": "2025-06-17",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-03"
+    },
+    {
+      "bs": "2082-03-04",
+      "ad": "2025-06-18",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-04"
+    },
+    {
+      "bs": "2082-03-05",
+      "ad": "2025-06-19",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-05"
+    },
+    {
+      "bs": "2082-03-06",
+      "ad": "2025-06-20",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-06"
+    },
+    {
+      "bs": "2082-03-07",
+      "ad": "2025-06-21",
+      "tithi": "एकादशी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Jun २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-07"
+    },
+    {
+      "bs": "2082-03-08",
+      "ad": "2025-06-22",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-08"
+    },
+    {
+      "bs": "2082-03-09",
+      "ad": "2025-06-23",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-09"
+    },
+    {
+      "bs": "2082-03-10",
+      "ad": "2025-06-24",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-10"
+    },
+    {
+      "bs": "2082-03-11",
+      "ad": "2025-06-25",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-11"
+    },
+    {
+      "bs": "2082-03-12",
+      "ad": "2025-06-26",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-12"
+    },
+    {
+      "bs": "2082-03-13",
+      "ad": "2025-06-27",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-13"
+    },
+    {
+      "bs": "2082-03-14",
+      "ad": "2025-06-28",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-14"
+    },
+    {
+      "bs": "2082-03-15",
+      "ad": "2025-06-29",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-15"
+    },
+    {
+      "bs": "2082-03-16",
+      "ad": "2025-06-30",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-16"
+    },
+    {
+      "bs": "2082-03-17",
+      "ad": "2025-07-01",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-17"
+    },
+    {
+      "bs": "2082-03-18",
+      "ad": "2025-07-02",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-18"
+    },
+    {
+      "bs": "2082-03-19",
+      "ad": "2025-07-03",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-19"
+    },
+    {
+      "bs": "2082-03-20",
+      "ad": "2025-07-04",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-20"
+    },
+    {
+      "bs": "2082-03-21",
+      "ad": "2025-07-05",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-21"
+    },
+    {
+      "bs": "2082-03-22",
+      "ad": "2025-07-06",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-22"
+    },
+    {
+      "bs": "2082-03-23",
+      "ad": "2025-07-07",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-23"
+    },
+    {
+      "bs": "2082-03-24",
+      "ad": "2025-07-08",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-24"
+    },
+    {
+      "bs": "2082-03-25",
+      "ad": "2025-07-09",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-25"
+    },
+    {
+      "bs": "2082-03-26",
+      "ad": "2025-07-10",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-26"
+    },
+    {
+      "bs": "2082-03-27",
+      "ad": "2025-07-11",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-27"
+    },
+    {
+      "bs": "2082-03-28",
+      "ad": "2025-07-12",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-28"
+    },
+    {
+      "bs": "2082-03-29",
+      "ad": "2025-07-13",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-29"
+    },
+    {
+      "bs": "2082-03-30",
+      "ad": "2025-07-14",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-30"
+    },
+    {
+      "bs": "2082-03-31",
+      "ad": "2025-07-15",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-31"
+    },
+    {
+      "bs": "2082-03-32",
+      "ad": "2025-07-16",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-03-32"
+    },
+    {
+      "bs": "2082-04-01",
+      "ad": "2025-07-17",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-01"
+    },
+    {
+      "bs": "2082-04-02",
+      "ad": "2025-07-18",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-02"
+    },
+    {
+      "bs": "2082-04-03",
+      "ad": "2025-07-19",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-03"
+    },
+    {
+      "bs": "2082-04-04",
+      "ad": "2025-07-20",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-04"
+    },
+    {
+      "bs": "2082-04-05",
+      "ad": "2025-07-21",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-05"
+    },
+    {
+      "bs": "2082-04-06",
+      "ad": "2025-07-22",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-06"
+    },
+    {
+      "bs": "2082-04-07",
+      "ad": "2025-07-23",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Jul २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-07"
+    },
+    {
+      "bs": "2082-04-08",
+      "ad": "2025-07-24",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-08"
+    },
+    {
+      "bs": "2082-04-09",
+      "ad": "2025-07-25",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-09"
+    },
+    {
+      "bs": "2082-04-10",
+      "ad": "2025-07-26",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-10"
+    },
+    {
+      "bs": "2082-04-11",
+      "ad": "2025-07-27",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-11"
+    },
+    {
+      "bs": "2082-04-12",
+      "ad": "2025-07-28",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-12"
+    },
+    {
+      "bs": "2082-04-13",
+      "ad": "2025-07-29",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-13"
+    },
+    {
+      "bs": "2082-04-14",
+      "ad": "2025-07-30",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-14"
+    },
+    {
+      "bs": "2082-04-15",
+      "ad": "2025-07-31",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul ३१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-15"
+    },
+    {
+      "bs": "2082-04-16",
+      "ad": "2025-08-01",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-16"
+    },
+    {
+      "bs": "2082-04-17",
+      "ad": "2025-08-02",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Aug २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-17"
+    },
+    {
+      "bs": "2082-04-18",
+      "ad": "2025-08-03",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-18"
+    },
+    {
+      "bs": "2082-04-19",
+      "ad": "2025-08-04",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-19"
+    },
+    {
+      "bs": "2082-04-20",
+      "ad": "2025-08-05",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-20"
+    },
+    {
+      "bs": "2082-04-21",
+      "ad": "2025-08-06",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-21"
+    },
+    {
+      "bs": "2082-04-22",
+      "ad": "2025-08-07",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-22"
+    },
+    {
+      "bs": "2082-04-23",
+      "ad": "2025-08-08",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-23"
+    },
+    {
+      "bs": "2082-04-24",
+      "ad": "2025-08-09",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-24"
+    },
+    {
+      "bs": "2082-04-25",
+      "ad": "2025-08-10",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-25"
+    },
+    {
+      "bs": "2082-04-26",
+      "ad": "2025-08-11",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-26"
+    },
+    {
+      "bs": "2082-04-27",
+      "ad": "2025-08-12",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-27"
+    },
+    {
+      "bs": "2082-04-28",
+      "ad": "2025-08-13",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-28"
+    },
+    {
+      "bs": "2082-04-29",
+      "ad": "2025-08-14",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Aug १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-29"
+    },
+    {
+      "bs": "2082-04-30",
+      "ad": "2025-08-15",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Aug १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-30"
+    },
+    {
+      "bs": "2082-04-31",
+      "ad": "2025-08-16",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-04-31"
+    },
+    {
+      "bs": "2082-05-01",
+      "ad": "2025-08-17",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-01"
+    },
+    {
+      "bs": "2082-05-02",
+      "ad": "2025-08-18",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-02"
+    },
+    {
+      "bs": "2082-05-03",
+      "ad": "2025-08-19",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-03"
+    },
+    {
+      "bs": "2082-05-04",
+      "ad": "2025-08-20",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-04"
+    },
+    {
+      "bs": "2082-05-05",
+      "ad": "2025-08-21",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-05"
+    },
+    {
+      "bs": "2082-05-06",
+      "ad": "2025-08-22",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-06"
+    },
+    {
+      "bs": "2082-05-07",
+      "ad": "2025-08-23",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-07"
+    },
+    {
+      "bs": "2082-05-08",
+      "ad": "2025-08-24",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-08"
+    },
+    {
+      "bs": "2082-05-09",
+      "ad": "2025-08-25",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-09"
+    },
+    {
+      "bs": "2082-05-10",
+      "ad": "2025-08-26",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-10"
+    },
+    {
+      "bs": "2082-05-11",
+      "ad": "2025-08-27",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-11"
+    },
+    {
+      "bs": "2082-05-12",
+      "ad": "2025-08-28",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-12"
+    },
+    {
+      "bs": "2082-05-13",
+      "ad": "2025-08-29",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-13"
+    },
+    {
+      "bs": "2082-05-14",
+      "ad": "2025-08-30",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-14"
+    },
+    {
+      "bs": "2082-05-15",
+      "ad": "2025-08-31",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug ३१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-15"
+    },
+    {
+      "bs": "2082-05-16",
+      "ad": "2025-09-01",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-16"
+    },
+    {
+      "bs": "2082-05-17",
+      "ad": "2025-09-02",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-17"
+    },
+    {
+      "bs": "2082-05-18",
+      "ad": "2025-09-03",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-18"
+    },
+    {
+      "bs": "2082-05-19",
+      "ad": "2025-09-04",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-19"
+    },
+    {
+      "bs": "2082-05-20",
+      "ad": "2025-09-05",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-20"
+    },
+    {
+      "bs": "2082-05-21",
+      "ad": "2025-09-06",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-21"
+    },
+    {
+      "bs": "2082-05-22",
+      "ad": "2025-09-07",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-22"
+    },
+    {
+      "bs": "2082-05-23",
+      "ad": "2025-09-08",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-23"
+    },
+    {
+      "bs": "2082-05-24",
+      "ad": "2025-09-09",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-24"
+    },
+    {
+      "bs": "2082-05-25",
+      "ad": "2025-09-10",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-25"
+    },
+    {
+      "bs": "2082-05-26",
+      "ad": "2025-09-11",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-26"
+    },
+    {
+      "bs": "2082-05-27",
+      "ad": "2025-09-12",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-27"
+    },
+    {
+      "bs": "2082-05-28",
+      "ad": "2025-09-13",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-28"
+    },
+    {
+      "bs": "2082-05-29",
+      "ad": "2025-09-14",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Sep १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-29"
+    },
+    {
+      "bs": "2082-05-30",
+      "ad": "2025-09-15",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Sep १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-30"
+    },
+    {
+      "bs": "2082-05-31",
+      "ad": "2025-09-16",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Sep १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-05-31"
+    },
+    {
+      "bs": "2082-06-01",
+      "ad": "2025-09-17",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-01"
+    },
+    {
+      "bs": "2082-06-02",
+      "ad": "2025-09-18",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-02"
+    },
+    {
+      "bs": "2082-06-03",
+      "ad": "2025-09-19",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-03"
+    },
+    {
+      "bs": "2082-06-04",
+      "ad": "2025-09-20",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-04"
+    },
+    {
+      "bs": "2082-06-05",
+      "ad": "2025-09-21",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-05"
+    },
+    {
+      "bs": "2082-06-06",
+      "ad": "2025-09-22",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-06"
+    },
+    {
+      "bs": "2082-06-07",
+      "ad": "2025-09-23",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-07"
+    },
+    {
+      "bs": "2082-06-08",
+      "ad": "2025-09-24",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-08"
+    },
+    {
+      "bs": "2082-06-09",
+      "ad": "2025-09-25",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Sep २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-09"
+    },
+    {
+      "bs": "2082-06-10",
+      "ad": "2025-09-26",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Sep २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-10"
+    },
+    {
+      "bs": "2082-06-11",
+      "ad": "2025-09-27",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-11"
+    },
+    {
+      "bs": "2082-06-12",
+      "ad": "2025-09-28",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-12"
+    },
+    {
+      "bs": "2082-06-13",
+      "ad": "2025-09-29",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-13"
+    },
+    {
+      "bs": "2082-06-14",
+      "ad": "2025-09-30",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-14"
+    },
+    {
+      "bs": "2082-06-15",
+      "ad": "2025-10-01",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-15"
+    },
+    {
+      "bs": "2082-06-16",
+      "ad": "2025-10-02",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-16"
+    },
+    {
+      "bs": "2082-06-17",
+      "ad": "2025-10-03",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-17"
+    },
+    {
+      "bs": "2082-06-18",
+      "ad": "2025-10-04",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-18"
+    },
+    {
+      "bs": "2082-06-19",
+      "ad": "2025-10-05",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-19"
+    },
+    {
+      "bs": "2082-06-20",
+      "ad": "2025-10-06",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Oct ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-20"
+    },
+    {
+      "bs": "2082-06-21",
+      "ad": "2025-10-07",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-21"
+    },
+    {
+      "bs": "2082-06-22",
+      "ad": "2025-10-08",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-22"
+    },
+    {
+      "bs": "2082-06-23",
+      "ad": "2025-10-09",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Oct ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-23"
+    },
+    {
+      "bs": "2082-06-24",
+      "ad": "2025-10-10",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-24"
+    },
+    {
+      "bs": "2082-06-25",
+      "ad": "2025-10-11",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-25"
+    },
+    {
+      "bs": "2082-06-26",
+      "ad": "2025-10-12",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-26"
+    },
+    {
+      "bs": "2082-06-27",
+      "ad": "2025-10-13",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Oct १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-27"
+    },
+    {
+      "bs": "2082-06-28",
+      "ad": "2025-10-14",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-28"
+    },
+    {
+      "bs": "2082-06-29",
+      "ad": "2025-10-15",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-29"
+    },
+    {
+      "bs": "2082-06-30",
+      "ad": "2025-10-16",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-30"
+    },
+    {
+      "bs": "2082-06-31",
+      "ad": "2025-10-17",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-06-31"
+    },
+    {
+      "bs": "2082-07-01",
+      "ad": "2025-10-18",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-01"
+    },
+    {
+      "bs": "2082-07-02",
+      "ad": "2025-10-19",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-02"
+    },
+    {
+      "bs": "2082-07-03",
+      "ad": "2025-10-20",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Oct २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-03"
+    },
+    {
+      "bs": "2082-07-04",
+      "ad": "2025-10-21",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-04"
+    },
+    {
+      "bs": "2082-07-05",
+      "ad": "2025-10-22",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-05"
+    },
+    {
+      "bs": "2082-07-06",
+      "ad": "2025-10-23",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-06"
+    },
+    {
+      "bs": "2082-07-07",
+      "ad": "2025-10-24",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-07"
+    },
+    {
+      "bs": "2082-07-08",
+      "ad": "2025-10-25",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-08"
+    },
+    {
+      "bs": "2082-07-09",
+      "ad": "2025-10-26",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-09"
+    },
+    {
+      "bs": "2082-07-10",
+      "ad": "2025-10-27",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Oct २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-10"
+    },
+    {
+      "bs": "2082-07-11",
+      "ad": "2025-10-28",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Oct २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-11"
+    },
+    {
+      "bs": "2082-07-12",
+      "ad": "2025-10-29",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Oct २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-12"
+    },
+    {
+      "bs": "2082-07-13",
+      "ad": "2025-10-30",
+      "tithi": "नवमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Oct ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-13"
+    },
+    {
+      "bs": "2082-07-14",
+      "ad": "2025-10-31",
+      "tithi": "दशमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Oct ३१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-14"
+    },
+    {
+      "bs": "2082-07-15",
+      "ad": "2025-11-01",
+      "tithi": "एकादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Nov १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-15"
+    },
+    {
+      "bs": "2082-07-16",
+      "ad": "2025-11-02",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Nov २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-16"
+    },
+    {
+      "bs": "2082-07-17",
+      "ad": "2025-11-03",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-17"
+    },
+    {
+      "bs": "2082-07-18",
+      "ad": "2025-11-04",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-18"
+    },
+    {
+      "bs": "2082-07-19",
+      "ad": "2025-11-05",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-19"
+    },
+    {
+      "bs": "2082-07-20",
+      "ad": "2025-11-06",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-20"
+    },
+    {
+      "bs": "2082-07-21",
+      "ad": "2025-11-07",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-21"
+    },
+    {
+      "bs": "2082-07-22",
+      "ad": "2025-11-08",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-22"
+    },
+    {
+      "bs": "2082-07-23",
+      "ad": "2025-11-09",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Nov ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-23"
+    },
+    {
+      "bs": "2082-07-24",
+      "ad": "2025-11-10",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Nov १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-24"
+    },
+    {
+      "bs": "2082-07-25",
+      "ad": "2025-11-11",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Nov ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-25"
+    },
+    {
+      "bs": "2082-07-26",
+      "ad": "2025-11-12",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Nov १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-26"
+    },
+    {
+      "bs": "2082-07-27",
+      "ad": "2025-11-13",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-27"
+    },
+    {
+      "bs": "2082-07-28",
+      "ad": "2025-11-14",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-28"
+    },
+    {
+      "bs": "2082-07-29",
+      "ad": "2025-11-15",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-29"
+    },
+    {
+      "bs": "2082-07-30",
+      "ad": "2025-11-16",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-07-30"
+    },
+    {
+      "bs": "2082-08-01",
+      "ad": "2025-11-17",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-01"
+    },
+    {
+      "bs": "2082-08-02",
+      "ad": "2025-11-18",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Nov १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-02"
+    },
+    {
+      "bs": "2082-08-03",
+      "ad": "2025-11-19",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-03"
+    },
+    {
+      "bs": "2082-08-04",
+      "ad": "2025-11-20",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-04"
+    },
+    {
+      "bs": "2082-08-05",
+      "ad": "2025-11-21",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-05"
+    },
+    {
+      "bs": "2082-08-06",
+      "ad": "2025-11-22",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-06"
+    },
+    {
+      "bs": "2082-08-07",
+      "ad": "2025-11-23",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-07"
+    },
+    {
+      "bs": "2082-08-08",
+      "ad": "2025-11-24",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-08"
+    },
+    {
+      "bs": "2082-08-09",
+      "ad": "2025-11-25",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-09"
+    },
+    {
+      "bs": "2082-08-10",
+      "ad": "2025-11-26",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-10"
+    },
+    {
+      "bs": "2082-08-11",
+      "ad": "2025-11-27",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-11"
+    },
+    {
+      "bs": "2082-08-12",
+      "ad": "2025-11-28",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-12"
+    },
+    {
+      "bs": "2082-08-13",
+      "ad": "2025-11-29",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-13"
+    },
+    {
+      "bs": "2082-08-14",
+      "ad": "2025-11-30",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-14"
+    },
+    {
+      "bs": "2082-08-15",
+      "ad": "2025-12-01",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec १ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-15"
+    },
+    {
+      "bs": "2082-08-16",
+      "ad": "2025-12-02",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec २ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-16"
+    },
+    {
+      "bs": "2082-08-17",
+      "ad": "2025-12-03",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec ३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-17"
+    },
+    {
+      "bs": "2082-08-18",
+      "ad": "2025-12-04",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec ४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-18"
+    },
+    {
+      "bs": "2082-08-19",
+      "ad": "2025-12-05",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Dec ५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-19"
+    },
+    {
+      "bs": "2082-08-20",
+      "ad": "2025-12-06",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec ६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-20"
+    },
+    {
+      "bs": "2082-08-21",
+      "ad": "2025-12-07",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec ७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-21"
+    },
+    {
+      "bs": "2082-08-22",
+      "ad": "2025-12-08",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec ८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-22"
+    },
+    {
+      "bs": "2082-08-23",
+      "ad": "2025-12-09",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec ९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-23"
+    },
+    {
+      "bs": "2082-08-24",
+      "ad": "2025-12-10",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec १० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-24"
+    },
+    {
+      "bs": "2082-08-25",
+      "ad": "2025-12-11",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec ११ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-25"
+    },
+    {
+      "bs": "2082-08-26",
+      "ad": "2025-12-12",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec १२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-26"
+    },
+    {
+      "bs": "2082-08-27",
+      "ad": "2025-12-13",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec १३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-27"
+    },
+    {
+      "bs": "2082-08-28",
+      "ad": "2025-12-14",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec १४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-28"
+    },
+    {
+      "bs": "2082-08-29",
+      "ad": "2025-12-15",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec १५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-08-29"
+    },
+    {
+      "bs": "2082-09-01",
+      "ad": "2025-12-16",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec १६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-01"
+    },
+    {
+      "bs": "2082-09-02",
+      "ad": "2025-12-17",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec १७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-02"
+    },
+    {
+      "bs": "2082-09-03",
+      "ad": "2025-12-18",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec १८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-03"
+    },
+    {
+      "bs": "2082-09-04",
+      "ad": "2025-12-19",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec १९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-04"
+    },
+    {
+      "bs": "2082-09-05",
+      "ad": "2025-12-20",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Dec २० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-05"
+    },
+    {
+      "bs": "2082-09-06",
+      "ad": "2025-12-21",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Dec २१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-06"
+    },
+    {
+      "bs": "2082-09-07",
+      "ad": "2025-12-22",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec २२ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-07"
+    },
+    {
+      "bs": "2082-09-08",
+      "ad": "2025-12-23",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec २३ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-08"
+    },
+    {
+      "bs": "2082-09-09",
+      "ad": "2025-12-24",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec २४ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-09"
+    },
+    {
+      "bs": "2082-09-10",
+      "ad": "2025-12-25",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec २५ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-10"
+    },
+    {
+      "bs": "2082-09-11",
+      "ad": "2025-12-26",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec २६ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-11"
+    },
+    {
+      "bs": "2082-09-12",
+      "ad": "2025-12-27",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec २७ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-12"
+    },
+    {
+      "bs": "2082-09-13",
+      "ad": "2025-12-28",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec २८ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-13"
+    },
+    {
+      "bs": "2082-09-14",
+      "ad": "2025-12-29",
+      "tithi": "दशमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Dec २९ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-14"
+    },
+    {
+      "bs": "2082-09-15",
+      "ad": "2025-12-30",
+      "tithi": "एकादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Dec ३० २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-15"
+    },
+    {
+      "bs": "2082-09-16",
+      "ad": "2025-12-31",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec ३१ २०२५",
+      "url": "https://www.hamropatro.com/date/2082-09-16"
+    },
+    {
+      "bs": "2082-09-17",
+      "ad": "2026-01-01",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan १ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-17"
+    },
+    {
+      "bs": "2082-09-18",
+      "ad": "2026-01-02",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan २ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-18"
+    },
+    {
+      "bs": "2082-09-19",
+      "ad": "2026-01-03",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-19"
+    },
+    {
+      "bs": "2082-09-20",
+      "ad": "2026-01-04",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-20"
+    },
+    {
+      "bs": "2082-09-21",
+      "ad": "2026-01-05",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-21"
+    },
+    {
+      "bs": "2082-09-22",
+      "ad": "2026-01-06",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-22"
+    },
+    {
+      "bs": "2082-09-23",
+      "ad": "2026-01-07",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-23"
+    },
+    {
+      "bs": "2082-09-24",
+      "ad": "2026-01-08",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Jan ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-24"
+    },
+    {
+      "bs": "2082-09-25",
+      "ad": "2026-01-09",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-25"
+    },
+    {
+      "bs": "2082-09-26",
+      "ad": "2026-01-10",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan १० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-26"
+    },
+    {
+      "bs": "2082-09-27",
+      "ad": "2026-01-11",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-27"
+    },
+    {
+      "bs": "2082-09-28",
+      "ad": "2026-01-12",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-28"
+    },
+    {
+      "bs": "2082-09-29",
+      "ad": "2026-01-13",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-29"
+    },
+    {
+      "bs": "2082-09-30",
+      "ad": "2026-01-14",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-09-30"
+    },
+    {
+      "bs": "2082-10-01",
+      "ad": "2026-01-15",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-01"
+    },
+    {
+      "bs": "2082-10-02",
+      "ad": "2026-01-16",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-02"
+    },
+    {
+      "bs": "2082-10-03",
+      "ad": "2026-01-17",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-03"
+    },
+    {
+      "bs": "2082-10-04",
+      "ad": "2026-01-18",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-04"
+    },
+    {
+      "bs": "2082-10-05",
+      "ad": "2026-01-19",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-05"
+    },
+    {
+      "bs": "2082-10-06",
+      "ad": "2026-01-20",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan २० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-06"
+    },
+    {
+      "bs": "2082-10-07",
+      "ad": "2026-01-21",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-07"
+    },
+    {
+      "bs": "2082-10-08",
+      "ad": "2026-01-22",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-08"
+    },
+    {
+      "bs": "2082-10-09",
+      "ad": "2026-01-23",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-09"
+    },
+    {
+      "bs": "2082-10-10",
+      "ad": "2026-01-24",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-10"
+    },
+    {
+      "bs": "2082-10-11",
+      "ad": "2026-01-25",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-11"
+    },
+    {
+      "bs": "2082-10-12",
+      "ad": "2026-01-26",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-12"
+    },
+    {
+      "bs": "2082-10-13",
+      "ad": "2026-01-27",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-13"
+    },
+    {
+      "bs": "2082-10-14",
+      "ad": "2026-01-28",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-14"
+    },
+    {
+      "bs": "2082-10-15",
+      "ad": "2026-01-29",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-15"
+    },
+    {
+      "bs": "2082-10-16",
+      "ad": "2026-01-30",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-16"
+    },
+    {
+      "bs": "2082-10-17",
+      "ad": "2026-01-31",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-17"
+    },
+    {
+      "bs": "2082-10-18",
+      "ad": "2026-02-01",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Feb १ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-18"
+    },
+    {
+      "bs": "2082-10-19",
+      "ad": "2026-02-02",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb २ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-19"
+    },
+    {
+      "bs": "2082-10-20",
+      "ad": "2026-02-03",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-20"
+    },
+    {
+      "bs": "2082-10-21",
+      "ad": "2026-02-04",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-21"
+    },
+    {
+      "bs": "2082-10-22",
+      "ad": "2026-02-05",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-22"
+    },
+    {
+      "bs": "2082-10-23",
+      "ad": "2026-02-06",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-23"
+    },
+    {
+      "bs": "2082-10-24",
+      "ad": "2026-02-07",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-24"
+    },
+    {
+      "bs": "2082-10-25",
+      "ad": "2026-02-08",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-25"
+    },
+    {
+      "bs": "2082-10-26",
+      "ad": "2026-02-09",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-26"
+    },
+    {
+      "bs": "2082-10-27",
+      "ad": "2026-02-10",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Feb १० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-27"
+    },
+    {
+      "bs": "2082-10-28",
+      "ad": "2026-02-11",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-28"
+    },
+    {
+      "bs": "2082-10-29",
+      "ad": "2026-02-12",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-10-29"
+    },
+    {
+      "bs": "2082-11-01",
+      "ad": "2026-02-13",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-01"
+    },
+    {
+      "bs": "2082-11-02",
+      "ad": "2026-02-14",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-02"
+    },
+    {
+      "bs": "2082-11-03",
+      "ad": "2026-02-15",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-03"
+    },
+    {
+      "bs": "2082-11-04",
+      "ad": "2026-02-16",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-04"
+    },
+    {
+      "bs": "2082-11-05",
+      "ad": "2026-02-17",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-05"
+    },
+    {
+      "bs": "2082-11-06",
+      "ad": "2026-02-18",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-06"
+    },
+    {
+      "bs": "2082-11-07",
+      "ad": "2026-02-19",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-07"
+    },
+    {
+      "bs": "2082-11-08",
+      "ad": "2026-02-20",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb २० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-08"
+    },
+    {
+      "bs": "2082-11-09",
+      "ad": "2026-02-21",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-09"
+    },
+    {
+      "bs": "2082-11-10",
+      "ad": "2026-02-22",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-10"
+    },
+    {
+      "bs": "2082-11-11",
+      "ad": "2026-02-23",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-11"
+    },
+    {
+      "bs": "2082-11-12",
+      "ad": "2026-02-24",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-12"
+    },
+    {
+      "bs": "2082-11-13",
+      "ad": "2026-02-25",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Feb २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-13"
+    },
+    {
+      "bs": "2082-11-14",
+      "ad": "2026-02-26",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-14"
+    },
+    {
+      "bs": "2082-11-15",
+      "ad": "2026-02-27",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-15"
+    },
+    {
+      "bs": "2082-11-16",
+      "ad": "2026-02-28",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-16"
+    },
+    {
+      "bs": "2082-11-17",
+      "ad": "2026-03-01",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar १ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-17"
+    },
+    {
+      "bs": "2082-11-18",
+      "ad": "2026-03-02",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar २ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-18"
+    },
+    {
+      "bs": "2082-11-19",
+      "ad": "2026-03-03",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-19"
+    },
+    {
+      "bs": "2082-11-20",
+      "ad": "2026-03-04",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-20"
+    },
+    {
+      "bs": "2082-11-21",
+      "ad": "2026-03-05",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-21"
+    },
+    {
+      "bs": "2082-11-22",
+      "ad": "2026-03-06",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-22"
+    },
+    {
+      "bs": "2082-11-23",
+      "ad": "2026-03-07",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-23"
+    },
+    {
+      "bs": "2082-11-24",
+      "ad": "2026-03-08",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-24"
+    },
+    {
+      "bs": "2082-11-25",
+      "ad": "2026-03-09",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-25"
+    },
+    {
+      "bs": "2082-11-26",
+      "ad": "2026-03-10",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar १० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-26"
+    },
+    {
+      "bs": "2082-11-27",
+      "ad": "2026-03-11",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-27"
+    },
+    {
+      "bs": "2082-11-28",
+      "ad": "2026-03-12",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-28"
+    },
+    {
+      "bs": "2082-11-29",
+      "ad": "2026-03-13",
+      "tithi": "दशमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Mar १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-29"
+    },
+    {
+      "bs": "2082-11-30",
+      "ad": "2026-03-14",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Mar १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-11-30"
+    },
+    {
+      "bs": "2082-12-01",
+      "ad": "2026-03-15",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-01"
+    },
+    {
+      "bs": "2082-12-02",
+      "ad": "2026-03-16",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-02"
+    },
+    {
+      "bs": "2082-12-03",
+      "ad": "2026-03-17",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-03"
+    },
+    {
+      "bs": "2082-12-04",
+      "ad": "2026-03-18",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-04"
+    },
+    {
+      "bs": "2082-12-05",
+      "ad": "2026-03-19",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-05"
+    },
+    {
+      "bs": "2082-12-06",
+      "ad": "2026-03-20",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Mar २० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-06"
+    },
+    {
+      "bs": "2082-12-07",
+      "ad": "2026-03-21",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-07"
+    },
+    {
+      "bs": "2082-12-08",
+      "ad": "2026-03-22",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-08"
+    },
+    {
+      "bs": "2082-12-09",
+      "ad": "2026-03-23",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-09"
+    },
+    {
+      "bs": "2082-12-10",
+      "ad": "2026-03-24",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-10"
+    },
+    {
+      "bs": "2082-12-11",
+      "ad": "2026-03-25",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-11"
+    },
+    {
+      "bs": "2082-12-12",
+      "ad": "2026-03-26",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-12"
+    },
+    {
+      "bs": "2082-12-13",
+      "ad": "2026-03-27",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-13"
+    },
+    {
+      "bs": "2082-12-14",
+      "ad": "2026-03-28",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-14"
+    },
+    {
+      "bs": "2082-12-15",
+      "ad": "2026-03-29",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-15"
+    },
+    {
+      "bs": "2082-12-16",
+      "ad": "2026-03-30",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-16"
+    },
+    {
+      "bs": "2082-12-17",
+      "ad": "2026-03-31",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-17"
+    },
+    {
+      "bs": "2082-12-18",
+      "ad": "2026-04-01",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr १ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-18"
+    },
+    {
+      "bs": "2082-12-19",
+      "ad": "2026-04-02",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr २ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-19"
+    },
+    {
+      "bs": "2082-12-20",
+      "ad": "2026-04-03",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-20"
+    },
+    {
+      "bs": "2082-12-21",
+      "ad": "2026-04-04",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-21"
+    },
+    {
+      "bs": "2082-12-22",
+      "ad": "2026-04-05",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-22"
+    },
+    {
+      "bs": "2082-12-23",
+      "ad": "2026-04-06",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-23"
+    },
+    {
+      "bs": "2082-12-24",
+      "ad": "2026-04-07",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-24"
+    },
+    {
+      "bs": "2082-12-25",
+      "ad": "2026-04-08",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-25"
+    },
+    {
+      "bs": "2082-12-26",
+      "ad": "2026-04-09",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-26"
+    },
+    {
+      "bs": "2082-12-27",
+      "ad": "2026-04-10",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr १० २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-27"
+    },
+    {
+      "bs": "2082-12-28",
+      "ad": "2026-04-11",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-28"
+    },
+    {
+      "bs": "2082-12-29",
+      "ad": "2026-04-12",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-29"
+    },
+    {
+      "bs": "2082-12-30",
+      "ad": "2026-04-13",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2082-12-30"
+    },
+    {
+      "bs": "2083-01-01",
+      "ad": "2026-04-14",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-01"
+    },
+    {
+      "bs": "2083-01-02",
+      "ad": "2026-04-15",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-02"
+    },
+    {
+      "bs": "2083-01-03",
+      "ad": "2026-04-16",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-03"
+    },
+    {
+      "bs": "2083-01-04",
+      "ad": "2026-04-17",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-04"
+    },
+    {
+      "bs": "2083-01-05",
+      "ad": "2026-04-18",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-05"
+    },
+    {
+      "bs": "2083-01-06",
+      "ad": "2026-04-19",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-06"
+    },
+    {
+      "bs": "2083-01-07",
+      "ad": "2026-04-20",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-07"
+    },
+    {
+      "bs": "2083-01-08",
+      "ad": "2026-04-21",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Apr २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-08"
+    },
+    {
+      "bs": "2083-01-09",
+      "ad": "2026-04-22",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Apr २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-09"
+    },
+    {
+      "bs": "2083-01-10",
+      "ad": "2026-04-23",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Apr २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-10"
+    },
+    {
+      "bs": "2083-01-11",
+      "ad": "2026-04-24",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-11"
+    },
+    {
+      "bs": "2083-01-12",
+      "ad": "2026-04-25",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-12"
+    },
+    {
+      "bs": "2083-01-13",
+      "ad": "2026-04-26",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-13"
+    },
+    {
+      "bs": "2083-01-14",
+      "ad": "2026-04-27",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-14"
+    },
+    {
+      "bs": "2083-01-15",
+      "ad": "2026-04-28",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-15"
+    },
+    {
+      "bs": "2083-01-16",
+      "ad": "2026-04-29",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-16"
+    },
+    {
+      "bs": "2083-01-17",
+      "ad": "2026-04-30",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-17"
+    },
+    {
+      "bs": "2083-01-18",
+      "ad": "2026-05-01",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-18"
+    },
+    {
+      "bs": "2083-01-19",
+      "ad": "2026-05-02",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-19"
+    },
+    {
+      "bs": "2083-01-20",
+      "ad": "2026-05-03",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-20"
+    },
+    {
+      "bs": "2083-01-21",
+      "ad": "2026-05-04",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-21"
+    },
+    {
+      "bs": "2083-01-22",
+      "ad": "2026-05-05",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, May ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-22"
+    },
+    {
+      "bs": "2083-01-23",
+      "ad": "2026-05-06",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, May ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-23"
+    },
+    {
+      "bs": "2083-01-24",
+      "ad": "2026-05-07",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-24"
+    },
+    {
+      "bs": "2083-01-25",
+      "ad": "2026-05-08",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-25"
+    },
+    {
+      "bs": "2083-01-26",
+      "ad": "2026-05-09",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-26"
+    },
+    {
+      "bs": "2083-01-27",
+      "ad": "2026-05-10",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-27"
+    },
+    {
+      "bs": "2083-01-28",
+      "ad": "2026-05-11",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-28"
+    },
+    {
+      "bs": "2083-01-29",
+      "ad": "2026-05-12",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-29"
+    },
+    {
+      "bs": "2083-01-30",
+      "ad": "2026-05-13",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-30"
+    },
+    {
+      "bs": "2083-01-31",
+      "ad": "2026-05-14",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-01-31"
+    },
+    {
+      "bs": "2083-02-01",
+      "ad": "2026-05-15",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-01"
+    },
+    {
+      "bs": "2083-02-02",
+      "ad": "2026-05-16",
+      "tithi": "औंसी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, May १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-02"
+    },
+    {
+      "bs": "2083-02-03",
+      "ad": "2026-05-17",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-03"
+    },
+    {
+      "bs": "2083-02-04",
+      "ad": "2026-05-18",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, May १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-04"
+    },
+    {
+      "bs": "2083-02-05",
+      "ad": "2026-05-19",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-05"
+    },
+    {
+      "bs": "2083-02-06",
+      "ad": "2026-05-20",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-06"
+    },
+    {
+      "bs": "2083-02-07",
+      "ad": "2026-05-21",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-07"
+    },
+    {
+      "bs": "2083-02-08",
+      "ad": "2026-05-22",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-08"
+    },
+    {
+      "bs": "2083-02-09",
+      "ad": "2026-05-23",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-09"
+    },
+    {
+      "bs": "2083-02-10",
+      "ad": "2026-05-24",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, May २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-10"
+    },
+    {
+      "bs": "2083-02-11",
+      "ad": "2026-05-25",
+      "tithi": "नवमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, May २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-11"
+    },
+    {
+      "bs": "2083-02-12",
+      "ad": "2026-05-26",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, May २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-12"
+    },
+    {
+      "bs": "2083-02-13",
+      "ad": "2026-05-27",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, May २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-13"
+    },
+    {
+      "bs": "2083-02-14",
+      "ad": "2026-05-28",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, May २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-14"
+    },
+    {
+      "bs": "2083-02-15",
+      "ad": "2026-05-29",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, May २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-15"
+    },
+    {
+      "bs": "2083-02-16",
+      "ad": "2026-05-30",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, May ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-16"
+    },
+    {
+      "bs": "2083-02-17",
+      "ad": "2026-05-31",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, May ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-17"
+    },
+    {
+      "bs": "2083-02-18",
+      "ad": "2026-06-01",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-18"
+    },
+    {
+      "bs": "2083-02-19",
+      "ad": "2026-06-02",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-19"
+    },
+    {
+      "bs": "2083-02-20",
+      "ad": "2026-06-03",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-20"
+    },
+    {
+      "bs": "2083-02-21",
+      "ad": "2026-06-04",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-21"
+    },
+    {
+      "bs": "2083-02-22",
+      "ad": "2026-06-05",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-22"
+    },
+    {
+      "bs": "2083-02-23",
+      "ad": "2026-06-06",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-23"
+    },
+    {
+      "bs": "2083-02-24",
+      "ad": "2026-06-07",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-24"
+    },
+    {
+      "bs": "2083-02-25",
+      "ad": "2026-06-08",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-25"
+    },
+    {
+      "bs": "2083-02-26",
+      "ad": "2026-06-09",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-26"
+    },
+    {
+      "bs": "2083-02-27",
+      "ad": "2026-06-10",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-27"
+    },
+    {
+      "bs": "2083-02-28",
+      "ad": "2026-06-11",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-28"
+    },
+    {
+      "bs": "2083-02-29",
+      "ad": "2026-06-12",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-29"
+    },
+    {
+      "bs": "2083-02-30",
+      "ad": "2026-06-13",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-30"
+    },
+    {
+      "bs": "2083-02-31",
+      "ad": "2026-06-14",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-02-31"
+    },
+    {
+      "bs": "2083-03-01",
+      "ad": "2026-06-15",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-01"
+    },
+    {
+      "bs": "2083-03-02",
+      "ad": "2026-06-16",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Jun १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-02"
+    },
+    {
+      "bs": "2083-03-03",
+      "ad": "2026-06-17",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Jun १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-03"
+    },
+    {
+      "bs": "2083-03-04",
+      "ad": "2026-06-18",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-04"
+    },
+    {
+      "bs": "2083-03-05",
+      "ad": "2026-06-19",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-05"
+    },
+    {
+      "bs": "2083-03-06",
+      "ad": "2026-06-20",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-06"
+    },
+    {
+      "bs": "2083-03-07",
+      "ad": "2026-06-21",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-07"
+    },
+    {
+      "bs": "2083-03-08",
+      "ad": "2026-06-22",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-08"
+    },
+    {
+      "bs": "2083-03-09",
+      "ad": "2026-06-23",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jun २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-09"
+    },
+    {
+      "bs": "2083-03-10",
+      "ad": "2026-06-24",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jun २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-10"
+    },
+    {
+      "bs": "2083-03-11",
+      "ad": "2026-06-25",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jun २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-11"
+    },
+    {
+      "bs": "2083-03-12",
+      "ad": "2026-06-26",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jun २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-12"
+    },
+    {
+      "bs": "2083-03-13",
+      "ad": "2026-06-27",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jun २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-13"
+    },
+    {
+      "bs": "2083-03-14",
+      "ad": "2026-06-28",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jun २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-14"
+    },
+    {
+      "bs": "2083-03-15",
+      "ad": "2026-06-29",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jun २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-15"
+    },
+    {
+      "bs": "2083-03-16",
+      "ad": "2026-06-30",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Jun ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-16"
+    },
+    {
+      "bs": "2083-03-17",
+      "ad": "2026-07-01",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Jul १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-17"
+    },
+    {
+      "bs": "2083-03-18",
+      "ad": "2026-07-02",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-18"
+    },
+    {
+      "bs": "2083-03-19",
+      "ad": "2026-07-03",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-19"
+    },
+    {
+      "bs": "2083-03-20",
+      "ad": "2026-07-04",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-20"
+    },
+    {
+      "bs": "2083-03-21",
+      "ad": "2026-07-05",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-21"
+    },
+    {
+      "bs": "2083-03-22",
+      "ad": "2026-07-06",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-22"
+    },
+    {
+      "bs": "2083-03-23",
+      "ad": "2026-07-07",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-23"
+    },
+    {
+      "bs": "2083-03-24",
+      "ad": "2026-07-08",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-24"
+    },
+    {
+      "bs": "2083-03-25",
+      "ad": "2026-07-09",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-25"
+    },
+    {
+      "bs": "2083-03-26",
+      "ad": "2026-07-10",
+      "tithi": "एकादशी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Jul १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-26"
+    },
+    {
+      "bs": "2083-03-27",
+      "ad": "2026-07-11",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Jul ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-27"
+    },
+    {
+      "bs": "2083-03-28",
+      "ad": "2026-07-12",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-28"
+    },
+    {
+      "bs": "2083-03-29",
+      "ad": "2026-07-13",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-29"
+    },
+    {
+      "bs": "2083-03-30",
+      "ad": "2026-07-14",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-30"
+    },
+    {
+      "bs": "2083-03-31",
+      "ad": "2026-07-15",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-31"
+    },
+    {
+      "bs": "2083-03-32",
+      "ad": "2026-07-16",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-03-32"
+    },
+    {
+      "bs": "2083-04-01",
+      "ad": "2026-07-17",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-01"
+    },
+    {
+      "bs": "2083-04-02",
+      "ad": "2026-07-18",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Jul १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-02"
+    },
+    {
+      "bs": "2083-04-03",
+      "ad": "2026-07-19",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Jul १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-03"
+    },
+    {
+      "bs": "2083-04-04",
+      "ad": "2026-07-20",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Jul २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-04"
+    },
+    {
+      "bs": "2083-04-05",
+      "ad": "2026-07-21",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Jul २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-05"
+    },
+    {
+      "bs": "2083-04-06",
+      "ad": "2026-07-22",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-06"
+    },
+    {
+      "bs": "2083-04-07",
+      "ad": "2026-07-23",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-07"
+    },
+    {
+      "bs": "2083-04-08",
+      "ad": "2026-07-24",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-08"
+    },
+    {
+      "bs": "2083-04-09",
+      "ad": "2026-07-25",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jul २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-09"
+    },
+    {
+      "bs": "2083-04-10",
+      "ad": "2026-07-26",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jul २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-10"
+    },
+    {
+      "bs": "2083-04-11",
+      "ad": "2026-07-27",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jul २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-11"
+    },
+    {
+      "bs": "2083-04-12",
+      "ad": "2026-07-28",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jul २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-12"
+    },
+    {
+      "bs": "2083-04-13",
+      "ad": "2026-07-29",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jul २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-13"
+    },
+    {
+      "bs": "2083-04-14",
+      "ad": "2026-07-30",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jul ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-14"
+    },
+    {
+      "bs": "2083-04-15",
+      "ad": "2026-07-31",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jul ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-15"
+    },
+    {
+      "bs": "2083-04-16",
+      "ad": "2026-08-01",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-16"
+    },
+    {
+      "bs": "2083-04-17",
+      "ad": "2026-08-02",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-17"
+    },
+    {
+      "bs": "2083-04-18",
+      "ad": "2026-08-03",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-18"
+    },
+    {
+      "bs": "2083-04-19",
+      "ad": "2026-08-04",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-19"
+    },
+    {
+      "bs": "2083-04-20",
+      "ad": "2026-08-05",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-20"
+    },
+    {
+      "bs": "2083-04-21",
+      "ad": "2026-08-06",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-21"
+    },
+    {
+      "bs": "2083-04-22",
+      "ad": "2026-08-07",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-22"
+    },
+    {
+      "bs": "2083-04-23",
+      "ad": "2026-08-08",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-23"
+    },
+    {
+      "bs": "2083-04-24",
+      "ad": "2026-08-09",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-24"
+    },
+    {
+      "bs": "2083-04-25",
+      "ad": "2026-08-10",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-25"
+    },
+    {
+      "bs": "2083-04-26",
+      "ad": "2026-08-11",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Aug ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-26"
+    },
+    {
+      "bs": "2083-04-27",
+      "ad": "2026-08-12",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-27"
+    },
+    {
+      "bs": "2083-04-28",
+      "ad": "2026-08-13",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-28"
+    },
+    {
+      "bs": "2083-04-29",
+      "ad": "2026-08-14",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-29"
+    },
+    {
+      "bs": "2083-04-30",
+      "ad": "2026-08-15",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-30"
+    },
+    {
+      "bs": "2083-04-31",
+      "ad": "2026-08-16",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-04-31"
+    },
+    {
+      "bs": "2083-05-01",
+      "ad": "2026-08-17",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-01"
+    },
+    {
+      "bs": "2083-05-02",
+      "ad": "2026-08-18",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Aug १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-02"
+    },
+    {
+      "bs": "2083-05-03",
+      "ad": "2026-08-19",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-03"
+    },
+    {
+      "bs": "2083-05-04",
+      "ad": "2026-08-20",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-04"
+    },
+    {
+      "bs": "2083-05-05",
+      "ad": "2026-08-21",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-05"
+    },
+    {
+      "bs": "2083-05-06",
+      "ad": "2026-08-22",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-06"
+    },
+    {
+      "bs": "2083-05-07",
+      "ad": "2026-08-23",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-07"
+    },
+    {
+      "bs": "2083-05-08",
+      "ad": "2026-08-24",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-08"
+    },
+    {
+      "bs": "2083-05-09",
+      "ad": "2026-08-25",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Aug २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-09"
+    },
+    {
+      "bs": "2083-05-10",
+      "ad": "2026-08-26",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Aug २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-10"
+    },
+    {
+      "bs": "2083-05-11",
+      "ad": "2026-08-27",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Aug २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-11"
+    },
+    {
+      "bs": "2083-05-12",
+      "ad": "2026-08-28",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Aug २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-12"
+    },
+    {
+      "bs": "2083-05-13",
+      "ad": "2026-08-29",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Aug २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-13"
+    },
+    {
+      "bs": "2083-05-14",
+      "ad": "2026-08-30",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Aug ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-14"
+    },
+    {
+      "bs": "2083-05-15",
+      "ad": "2026-08-31",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Aug ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-15"
+    },
+    {
+      "bs": "2083-05-16",
+      "ad": "2026-09-01",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-16"
+    },
+    {
+      "bs": "2083-05-17",
+      "ad": "2026-09-02",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Sep २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-17"
+    },
+    {
+      "bs": "2083-05-18",
+      "ad": "2026-09-03",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-18"
+    },
+    {
+      "bs": "2083-05-19",
+      "ad": "2026-09-04",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-19"
+    },
+    {
+      "bs": "2083-05-20",
+      "ad": "2026-09-05",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-20"
+    },
+    {
+      "bs": "2083-05-21",
+      "ad": "2026-09-06",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-21"
+    },
+    {
+      "bs": "2083-05-22",
+      "ad": "2026-09-07",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-22"
+    },
+    {
+      "bs": "2083-05-23",
+      "ad": "2026-09-08",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-23"
+    },
+    {
+      "bs": "2083-05-24",
+      "ad": "2026-09-09",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-24"
+    },
+    {
+      "bs": "2083-05-25",
+      "ad": "2026-09-10",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-25"
+    },
+    {
+      "bs": "2083-05-26",
+      "ad": "2026-09-11",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-26"
+    },
+    {
+      "bs": "2083-05-27",
+      "ad": "2026-09-12",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-27"
+    },
+    {
+      "bs": "2083-05-28",
+      "ad": "2026-09-13",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-28"
+    },
+    {
+      "bs": "2083-05-29",
+      "ad": "2026-09-14",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-29"
+    },
+    {
+      "bs": "2083-05-30",
+      "ad": "2026-09-15",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-30"
+    },
+    {
+      "bs": "2083-05-31",
+      "ad": "2026-09-16",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-05-31"
+    },
+    {
+      "bs": "2083-06-01",
+      "ad": "2026-09-17",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-01"
+    },
+    {
+      "bs": "2083-06-02",
+      "ad": "2026-09-18",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-02"
+    },
+    {
+      "bs": "2083-06-03",
+      "ad": "2026-09-19",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-03"
+    },
+    {
+      "bs": "2083-06-04",
+      "ad": "2026-09-20",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-04"
+    },
+    {
+      "bs": "2083-06-05",
+      "ad": "2026-09-21",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-05"
+    },
+    {
+      "bs": "2083-06-06",
+      "ad": "2026-09-22",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-06"
+    },
+    {
+      "bs": "2083-06-07",
+      "ad": "2026-09-23",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-07"
+    },
+    {
+      "bs": "2083-06-08",
+      "ad": "2026-09-24",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Sep २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-08"
+    },
+    {
+      "bs": "2083-06-09",
+      "ad": "2026-09-25",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Sep २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-09"
+    },
+    {
+      "bs": "2083-06-10",
+      "ad": "2026-09-26",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Sep २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-10"
+    },
+    {
+      "bs": "2083-06-11",
+      "ad": "2026-09-27",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Sep २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-11"
+    },
+    {
+      "bs": "2083-06-12",
+      "ad": "2026-09-28",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Sep २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-12"
+    },
+    {
+      "bs": "2083-06-13",
+      "ad": "2026-09-29",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Sep २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-13"
+    },
+    {
+      "bs": "2083-06-14",
+      "ad": "2026-09-30",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Sep ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-14"
+    },
+    {
+      "bs": "2083-06-15",
+      "ad": "2026-10-01",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-15"
+    },
+    {
+      "bs": "2083-06-16",
+      "ad": "2026-10-02",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-16"
+    },
+    {
+      "bs": "2083-06-17",
+      "ad": "2026-10-03",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-17"
+    },
+    {
+      "bs": "2083-06-18",
+      "ad": "2026-10-04",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-18"
+    },
+    {
+      "bs": "2083-06-19",
+      "ad": "2026-10-05",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Oct ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-19"
+    },
+    {
+      "bs": "2083-06-20",
+      "ad": "2026-10-06",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-20"
+    },
+    {
+      "bs": "2083-06-21",
+      "ad": "2026-10-07",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-21"
+    },
+    {
+      "bs": "2083-06-22",
+      "ad": "2026-10-08",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-22"
+    },
+    {
+      "bs": "2083-06-23",
+      "ad": "2026-10-09",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-23"
+    },
+    {
+      "bs": "2083-06-24",
+      "ad": "2026-10-10",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-24"
+    },
+    {
+      "bs": "2083-06-25",
+      "ad": "2026-10-11",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-25"
+    },
+    {
+      "bs": "2083-06-26",
+      "ad": "2026-10-12",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Oct १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-26"
+    },
+    {
+      "bs": "2083-06-27",
+      "ad": "2026-10-13",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-27"
+    },
+    {
+      "bs": "2083-06-28",
+      "ad": "2026-10-14",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-28"
+    },
+    {
+      "bs": "2083-06-29",
+      "ad": "2026-10-15",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-29"
+    },
+    {
+      "bs": "2083-06-30",
+      "ad": "2026-10-16",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-30"
+    },
+    {
+      "bs": "2083-06-31",
+      "ad": "2026-10-17",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Oct १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-06-31"
+    },
+    {
+      "bs": "2083-07-01",
+      "ad": "2026-10-18",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Oct १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-01"
+    },
+    {
+      "bs": "2083-07-02",
+      "ad": "2026-10-19",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Oct १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-02"
+    },
+    {
+      "bs": "2083-07-03",
+      "ad": "2026-10-20",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-03"
+    },
+    {
+      "bs": "2083-07-04",
+      "ad": "2026-10-21",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Oct २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-04"
+    },
+    {
+      "bs": "2083-07-05",
+      "ad": "2026-10-22",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Oct २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-05"
+    },
+    {
+      "bs": "2083-07-06",
+      "ad": "2026-10-23",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-06"
+    },
+    {
+      "bs": "2083-07-07",
+      "ad": "2026-10-24",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-07"
+    },
+    {
+      "bs": "2083-07-08",
+      "ad": "2026-10-25",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Oct २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-08"
+    },
+    {
+      "bs": "2083-07-09",
+      "ad": "2026-10-26",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Oct २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-09"
+    },
+    {
+      "bs": "2083-07-10",
+      "ad": "2026-10-27",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Oct २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-10"
+    },
+    {
+      "bs": "2083-07-11",
+      "ad": "2026-10-28",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Oct २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-11"
+    },
+    {
+      "bs": "2083-07-12",
+      "ad": "2026-10-29",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Oct २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-12"
+    },
+    {
+      "bs": "2083-07-13",
+      "ad": "2026-10-30",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Oct ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-13"
+    },
+    {
+      "bs": "2083-07-14",
+      "ad": "2026-10-31",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Oct ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-14"
+    },
+    {
+      "bs": "2083-07-15",
+      "ad": "2026-11-01",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-15"
+    },
+    {
+      "bs": "2083-07-16",
+      "ad": "2026-11-02",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-16"
+    },
+    {
+      "bs": "2083-07-17",
+      "ad": "2026-11-03",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-17"
+    },
+    {
+      "bs": "2083-07-18",
+      "ad": "2026-11-04",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-18"
+    },
+    {
+      "bs": "2083-07-19",
+      "ad": "2026-11-05",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-19"
+    },
+    {
+      "bs": "2083-07-20",
+      "ad": "2026-11-06",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-20"
+    },
+    {
+      "bs": "2083-07-21",
+      "ad": "2026-11-07",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-21"
+    },
+    {
+      "bs": "2083-07-22",
+      "ad": "2026-11-08",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-22"
+    },
+    {
+      "bs": "2083-07-23",
+      "ad": "2026-11-09",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-23"
+    },
+    {
+      "bs": "2083-07-24",
+      "ad": "2026-11-10",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-24"
+    },
+    {
+      "bs": "2083-07-25",
+      "ad": "2026-11-11",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-25"
+    },
+    {
+      "bs": "2083-07-26",
+      "ad": "2026-11-12",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-26"
+    },
+    {
+      "bs": "2083-07-27",
+      "ad": "2026-11-13",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-27"
+    },
+    {
+      "bs": "2083-07-28",
+      "ad": "2026-11-14",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-28"
+    },
+    {
+      "bs": "2083-07-29",
+      "ad": "2026-11-15",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-29"
+    },
+    {
+      "bs": "2083-07-30",
+      "ad": "2026-11-16",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-07-30"
+    },
+    {
+      "bs": "2083-08-01",
+      "ad": "2026-11-17",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-01"
+    },
+    {
+      "bs": "2083-08-02",
+      "ad": "2026-11-18",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-02"
+    },
+    {
+      "bs": "2083-08-03",
+      "ad": "2026-11-19",
+      "tithi": "दशमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Nov १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-03"
+    },
+    {
+      "bs": "2083-08-04",
+      "ad": "2026-11-20",
+      "tithi": "एकादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Nov २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-04"
+    },
+    {
+      "bs": "2083-08-05",
+      "ad": "2026-11-21",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Nov २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-05"
+    },
+    {
+      "bs": "2083-08-06",
+      "ad": "2026-11-22",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Nov २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-06"
+    },
+    {
+      "bs": "2083-08-07",
+      "ad": "2026-11-23",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Nov २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-07"
+    },
+    {
+      "bs": "2083-08-08",
+      "ad": "2026-11-24",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Nov २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-08"
+    },
+    {
+      "bs": "2083-08-09",
+      "ad": "2026-11-25",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Nov २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-09"
+    },
+    {
+      "bs": "2083-08-10",
+      "ad": "2026-11-26",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Nov २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-10"
+    },
+    {
+      "bs": "2083-08-11",
+      "ad": "2026-11-27",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Nov २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-11"
+    },
+    {
+      "bs": "2083-08-12",
+      "ad": "2026-11-28",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Nov २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-12"
+    },
+    {
+      "bs": "2083-08-13",
+      "ad": "2026-11-29",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Nov २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-13"
+    },
+    {
+      "bs": "2083-08-14",
+      "ad": "2026-11-30",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Nov ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-14"
+    },
+    {
+      "bs": "2083-08-15",
+      "ad": "2026-12-01",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Dec १ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-15"
+    },
+    {
+      "bs": "2083-08-16",
+      "ad": "2026-12-02",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec २ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-16"
+    },
+    {
+      "bs": "2083-08-17",
+      "ad": "2026-12-03",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec ३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-17"
+    },
+    {
+      "bs": "2083-08-18",
+      "ad": "2026-12-04",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec ४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-18"
+    },
+    {
+      "bs": "2083-08-19",
+      "ad": "2026-12-05",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec ५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-19"
+    },
+    {
+      "bs": "2083-08-20",
+      "ad": "2026-12-06",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec ६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-20"
+    },
+    {
+      "bs": "2083-08-21",
+      "ad": "2026-12-07",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec ७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-21"
+    },
+    {
+      "bs": "2083-08-22",
+      "ad": "2026-12-08",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec ८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-22"
+    },
+    {
+      "bs": "2083-08-23",
+      "ad": "2026-12-09",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec ९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-23"
+    },
+    {
+      "bs": "2083-08-24",
+      "ad": "2026-12-10",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Dec १० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-24"
+    },
+    {
+      "bs": "2083-08-25",
+      "ad": "2026-12-11",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec ११ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-25"
+    },
+    {
+      "bs": "2083-08-26",
+      "ad": "2026-12-12",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec १२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-26"
+    },
+    {
+      "bs": "2083-08-27",
+      "ad": "2026-12-13",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec १३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-27"
+    },
+    {
+      "bs": "2083-08-28",
+      "ad": "2026-12-14",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec १४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-28"
+    },
+    {
+      "bs": "2083-08-29",
+      "ad": "2026-12-15",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec १५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-08-29"
+    },
+    {
+      "bs": "2083-09-01",
+      "ad": "2026-12-16",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec १६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-01"
+    },
+    {
+      "bs": "2083-09-02",
+      "ad": "2026-12-17",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec १७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-02"
+    },
+    {
+      "bs": "2083-09-03",
+      "ad": "2026-12-18",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Dec १८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-03"
+    },
+    {
+      "bs": "2083-09-04",
+      "ad": "2026-12-19",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec १९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-04"
+    },
+    {
+      "bs": "2083-09-05",
+      "ad": "2026-12-20",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec २० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-05"
+    },
+    {
+      "bs": "2083-09-06",
+      "ad": "2026-12-21",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec २१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-06"
+    },
+    {
+      "bs": "2083-09-07",
+      "ad": "2026-12-22",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec २२ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-07"
+    },
+    {
+      "bs": "2083-09-08",
+      "ad": "2026-12-23",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec २३ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-08"
+    },
+    {
+      "bs": "2083-09-09",
+      "ad": "2026-12-24",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec २४ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-09"
+    },
+    {
+      "bs": "2083-09-10",
+      "ad": "2026-12-25",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Dec २५ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-10"
+    },
+    {
+      "bs": "2083-09-11",
+      "ad": "2026-12-26",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Dec २६ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-11"
+    },
+    {
+      "bs": "2083-09-12",
+      "ad": "2026-12-27",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Dec २७ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-12"
+    },
+    {
+      "bs": "2083-09-13",
+      "ad": "2026-12-28",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Dec २८ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-13"
+    },
+    {
+      "bs": "2083-09-14",
+      "ad": "2026-12-29",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Dec २९ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-14"
+    },
+    {
+      "bs": "2083-09-15",
+      "ad": "2026-12-30",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Dec ३० २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-15"
+    },
+    {
+      "bs": "2083-09-16",
+      "ad": "2026-12-31",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Dec ३१ २०२६",
+      "url": "https://www.hamropatro.com/date/2083-09-16"
+    },
+    {
+      "bs": "2083-09-17",
+      "ad": "2027-01-01",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan १ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-17"
+    },
+    {
+      "bs": "2083-09-18",
+      "ad": "2027-01-02",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan २ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-18"
+    },
+    {
+      "bs": "2083-09-19",
+      "ad": "2027-01-03",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan ३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-19"
+    },
+    {
+      "bs": "2083-09-20",
+      "ad": "2027-01-04",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan ४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-20"
+    },
+    {
+      "bs": "2083-09-21",
+      "ad": "2027-01-05",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan ५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-21"
+    },
+    {
+      "bs": "2083-09-22",
+      "ad": "2027-01-06",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan ६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-22"
+    },
+    {
+      "bs": "2083-09-23",
+      "ad": "2027-01-07",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan ७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-23"
+    },
+    {
+      "bs": "2083-09-24",
+      "ad": "2027-01-08",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan ८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-24"
+    },
+    {
+      "bs": "2083-09-25",
+      "ad": "2027-01-09",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan ९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-25"
+    },
+    {
+      "bs": "2083-09-26",
+      "ad": "2027-01-10",
+      "tithi": "तृतिया",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Jan १० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-26"
+    },
+    {
+      "bs": "2083-09-27",
+      "ad": "2027-01-11",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Jan ११ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-27"
+    },
+    {
+      "bs": "2083-09-28",
+      "ad": "2027-01-12",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Jan १२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-28"
+    },
+    {
+      "bs": "2083-09-29",
+      "ad": "2027-01-13",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan १३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-29"
+    },
+    {
+      "bs": "2083-09-30",
+      "ad": "2027-01-14",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan १४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-09-30"
+    },
+    {
+      "bs": "2083-10-01",
+      "ad": "2027-01-15",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan १५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-01"
+    },
+    {
+      "bs": "2083-10-02",
+      "ad": "2027-01-16",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan १६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-02"
+    },
+    {
+      "bs": "2083-10-03",
+      "ad": "2027-01-17",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan १७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-03"
+    },
+    {
+      "bs": "2083-10-04",
+      "ad": "2027-01-18",
+      "tithi": "एकादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Mon, Jan १८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-04"
+    },
+    {
+      "bs": "2083-10-05",
+      "ad": "2027-01-19",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Jan १९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-05"
+    },
+    {
+      "bs": "2083-10-06",
+      "ad": "2027-01-20",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Jan २० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-06"
+    },
+    {
+      "bs": "2083-10-07",
+      "ad": "2027-01-21",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Jan २१ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-07"
+    },
+    {
+      "bs": "2083-10-08",
+      "ad": "2027-01-22",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Jan २२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-08"
+    },
+    {
+      "bs": "2083-10-09",
+      "ad": "2027-01-23",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Jan २३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-09"
+    },
+    {
+      "bs": "2083-10-10",
+      "ad": "2027-01-24",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Jan २४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-10"
+    },
+    {
+      "bs": "2083-10-11",
+      "ad": "2027-01-25",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Jan २५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-11"
+    },
+    {
+      "bs": "2083-10-12",
+      "ad": "2027-01-26",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Jan २६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-12"
+    },
+    {
+      "bs": "2083-10-13",
+      "ad": "2027-01-27",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Jan २७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-13"
+    },
+    {
+      "bs": "2083-10-14",
+      "ad": "2027-01-28",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Jan २८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-14"
+    },
+    {
+      "bs": "2083-10-15",
+      "ad": "2027-01-29",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Fri, Jan २९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-15"
+    },
+    {
+      "bs": "2083-10-16",
+      "ad": "2027-01-30",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sat, Jan ३० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-16"
+    },
+    {
+      "bs": "2083-10-17",
+      "ad": "2027-01-31",
+      "tithi": "नवमी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Jan ३१ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-17"
+    },
+    {
+      "bs": "2083-10-18",
+      "ad": "2027-02-01",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb १ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-18"
+    },
+    {
+      "bs": "2083-10-19",
+      "ad": "2027-02-02",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb २ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-19"
+    },
+    {
+      "bs": "2083-10-20",
+      "ad": "2027-02-03",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb ३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-20"
+    },
+    {
+      "bs": "2083-10-21",
+      "ad": "2027-02-04",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb ४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-21"
+    },
+    {
+      "bs": "2083-10-22",
+      "ad": "2027-02-05",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb ५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-22"
+    },
+    {
+      "bs": "2083-10-23",
+      "ad": "2027-02-06",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb ६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-23"
+    },
+    {
+      "bs": "2083-10-24",
+      "ad": "2027-02-07",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb ७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-24"
+    },
+    {
+      "bs": "2083-10-25",
+      "ad": "2027-02-08",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb ८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-25"
+    },
+    {
+      "bs": "2083-10-26",
+      "ad": "2027-02-09",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb ९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-26"
+    },
+    {
+      "bs": "2083-10-27",
+      "ad": "2027-02-10",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb १० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-27"
+    },
+    {
+      "bs": "2083-10-28",
+      "ad": "2027-02-11",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb ११ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-28"
+    },
+    {
+      "bs": "2083-10-29",
+      "ad": "2027-02-12",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb १२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-10-29"
+    },
+    {
+      "bs": "2083-11-01",
+      "ad": "2027-02-13",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb १३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-01"
+    },
+    {
+      "bs": "2083-11-02",
+      "ad": "2027-02-14",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb १४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-02"
+    },
+    {
+      "bs": "2083-11-03",
+      "ad": "2027-02-15",
+      "tithi": "नवमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb १५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-03"
+    },
+    {
+      "bs": "2083-11-04",
+      "ad": "2027-02-16",
+      "tithi": "दशमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb १६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-04"
+    },
+    {
+      "bs": "2083-11-05",
+      "ad": "2027-02-17",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb १७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-05"
+    },
+    {
+      "bs": "2083-11-06",
+      "ad": "2027-02-18",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb १८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-06"
+    },
+    {
+      "bs": "2083-11-07",
+      "ad": "2027-02-19",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb १९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-07"
+    },
+    {
+      "bs": "2083-11-08",
+      "ad": "2027-02-20",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb २० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-08"
+    },
+    {
+      "bs": "2083-11-09",
+      "ad": "2027-02-21",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Sun, Feb २१ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-09"
+    },
+    {
+      "bs": "2083-11-10",
+      "ad": "2027-02-22",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Feb २२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-10"
+    },
+    {
+      "bs": "2083-11-11",
+      "ad": "2027-02-23",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Feb २३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-11"
+    },
+    {
+      "bs": "2083-11-12",
+      "ad": "2027-02-24",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Feb २४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-12"
+    },
+    {
+      "bs": "2083-11-13",
+      "ad": "2027-02-25",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Feb २५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-13"
+    },
+    {
+      "bs": "2083-11-14",
+      "ad": "2027-02-26",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Feb २६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-14"
+    },
+    {
+      "bs": "2083-11-15",
+      "ad": "2027-02-27",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Feb २७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-15"
+    },
+    {
+      "bs": "2083-11-16",
+      "ad": "2027-02-28",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Feb २८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-16"
+    },
+    {
+      "bs": "2083-11-17",
+      "ad": "2027-03-01",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar १ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-17"
+    },
+    {
+      "bs": "2083-11-18",
+      "ad": "2027-03-02",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar २ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-18"
+    },
+    {
+      "bs": "2083-11-19",
+      "ad": "2027-03-03",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar ३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-19"
+    },
+    {
+      "bs": "2083-11-20",
+      "ad": "2027-03-04",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Thu, Mar ४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-20"
+    },
+    {
+      "bs": "2083-11-21",
+      "ad": "2027-03-05",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar ५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-21"
+    },
+    {
+      "bs": "2083-11-22",
+      "ad": "2027-03-06",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar ६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-22"
+    },
+    {
+      "bs": "2083-11-23",
+      "ad": "2027-03-07",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar ७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-23"
+    },
+    {
+      "bs": "2083-11-24",
+      "ad": "2027-03-08",
+      "tithi": "औंसी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar ८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-24"
+    },
+    {
+      "bs": "2083-11-25",
+      "ad": "2027-03-09",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar ९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-25"
+    },
+    {
+      "bs": "2083-11-26",
+      "ad": "2027-03-10",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar १० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-26"
+    },
+    {
+      "bs": "2083-11-27",
+      "ad": "2027-03-11",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar ११ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-27"
+    },
+    {
+      "bs": "2083-11-28",
+      "ad": "2027-03-12",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar १२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-28"
+    },
+    {
+      "bs": "2083-11-29",
+      "ad": "2027-03-13",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar १३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-29"
+    },
+    {
+      "bs": "2083-11-30",
+      "ad": "2027-03-14",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar १४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-11-30"
+    },
+    {
+      "bs": "2083-12-01",
+      "ad": "2027-03-15",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar १५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-01"
+    },
+    {
+      "bs": "2083-12-02",
+      "ad": "2027-03-16",
+      "tithi": "अष्टमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar १६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-02"
+    },
+    {
+      "bs": "2083-12-03",
+      "ad": "2027-03-17",
+      "tithi": "दशमी",
+      "paksha": "शुक्लवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Wed, Mar १७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-03"
+    },
+    {
+      "bs": "2083-12-04",
+      "ad": "2027-03-18",
+      "tithi": "एकादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar १८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-04"
+    },
+    {
+      "bs": "2083-12-05",
+      "ad": "2027-03-19",
+      "tithi": "द्वादशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar १९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-05"
+    },
+    {
+      "bs": "2083-12-06",
+      "ad": "2027-03-20",
+      "tithi": "त्रयोदशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar २० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-06"
+    },
+    {
+      "bs": "2083-12-07",
+      "ad": "2027-03-21",
+      "tithi": "चतुर्दशी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar २१ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-07"
+    },
+    {
+      "bs": "2083-12-08",
+      "ad": "2027-03-22",
+      "tithi": "पूर्णिमा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar २२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-08"
+    },
+    {
+      "bs": "2083-12-09",
+      "ad": "2027-03-23",
+      "tithi": "प्रतिपदा",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar २३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-09"
+    },
+    {
+      "bs": "2083-12-10",
+      "ad": "2027-03-24",
+      "tithi": "द्वितीया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar २४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-10"
+    },
+    {
+      "bs": "2083-12-11",
+      "ad": "2027-03-25",
+      "tithi": "तृतिया",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Mar २५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-11"
+    },
+    {
+      "bs": "2083-12-12",
+      "ad": "2027-03-26",
+      "tithi": "चतुर्थी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Mar २६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-12"
+    },
+    {
+      "bs": "2083-12-13",
+      "ad": "2027-03-27",
+      "tithi": "पञ्चमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Mar २७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-13"
+    },
+    {
+      "bs": "2083-12-14",
+      "ad": "2027-03-28",
+      "tithi": "षष्ठी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Mar २८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-14"
+    },
+    {
+      "bs": "2083-12-15",
+      "ad": "2027-03-29",
+      "tithi": "सप्तमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Mar २९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-15"
+    },
+    {
+      "bs": "2083-12-16",
+      "ad": "2027-03-30",
+      "tithi": "अष्टमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Mar ३० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-16"
+    },
+    {
+      "bs": "2083-12-17",
+      "ad": "2027-03-31",
+      "tithi": "नवमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Mar ३१ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-17"
+    },
+    {
+      "bs": "2083-12-18",
+      "ad": "2027-04-01",
+      "tithi": "दशमी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr १ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-18"
+    },
+    {
+      "bs": "2083-12-19",
+      "ad": "2027-04-02",
+      "tithi": "एकादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr २ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-19"
+    },
+    {
+      "bs": "2083-12-20",
+      "ad": "2027-04-03",
+      "tithi": "द्वादशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr ३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-20"
+    },
+    {
+      "bs": "2083-12-21",
+      "ad": "2027-04-04",
+      "tithi": "त्रयोदशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr ४ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-21"
+    },
+    {
+      "bs": "2083-12-22",
+      "ad": "2027-04-05",
+      "tithi": "चतुर्दशी",
+      "paksha": "कृष्ण",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr ५ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-22"
+    },
+    {
+      "bs": "2083-12-23",
+      "ad": "2027-04-06",
+      "tithi": "औंसी",
+      "paksha": "कृष्णवृद्धि/क्षय",
+      "vriddhi_kshaya_mark": true,
+      "ad_raw": "Tue, Apr ६ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-23"
+    },
+    {
+      "bs": "2083-12-24",
+      "ad": "2027-04-07",
+      "tithi": "प्रतिपदा",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Wed, Apr ७ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-24"
+    },
+    {
+      "bs": "2083-12-25",
+      "ad": "2027-04-08",
+      "tithi": "द्वितीया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Thu, Apr ८ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-25"
+    },
+    {
+      "bs": "2083-12-26",
+      "ad": "2027-04-09",
+      "tithi": "तृतिया",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Fri, Apr ९ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-26"
+    },
+    {
+      "bs": "2083-12-27",
+      "ad": "2027-04-10",
+      "tithi": "चतुर्थी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sat, Apr १० २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-27"
+    },
+    {
+      "bs": "2083-12-28",
+      "ad": "2027-04-11",
+      "tithi": "पञ्चमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Sun, Apr ११ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-28"
+    },
+    {
+      "bs": "2083-12-29",
+      "ad": "2027-04-12",
+      "tithi": "षष्ठी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Mon, Apr १२ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-29"
+    },
+    {
+      "bs": "2083-12-30",
+      "ad": "2027-04-13",
+      "tithi": "सप्तमी",
+      "paksha": "शुक्ल",
+      "vriddhi_kshaya_mark": false,
+      "ad_raw": "Tue, Apr १३ २०२७",
+      "url": "https://www.hamropatro.com/date/2083-12-30"
+    }
+  ]
+}
