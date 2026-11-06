@@ -1,0 +1,97 @@
+{
+  "schema": "nmiti-festival-receipts/1",
+  "corpus": "Festival receipts 2027 season (R6b-2): Maha Shivaratri (BS 2083 Falgun 22) and Fagu Purnima (Chaitra 7 hills / Chaitra 8 Terai), plus the Magha Purnima kshaya and Krishna Ekadashi vriddhi convention-stress observations",
+  "crawled_utc": "2026-11-06",
+  "method": "Publisher day-labels and udaya-tithi labels pinned from the Hamro Patro BS 2083 date pages, which are fully populated server-side for the whole BS 2083 season; tithi end instants from the HP samapti fields (Devanagari numerals decoded to ASCII at crawl-parse time; all times NPT). BhaktiBharat 2027 pages were verified to be empty ~1.1KB templates (its rolling ~2-3 month window does not reach Feb-Mar 2027), so no BhaktiBharat timing receipts could be pinned. Nothing transcribed by hand: every value below is parsed from the fetched pages.",
+  "bs_ad_anchor": "Falgun 1 2083 = 2027-02-13 (Saturday); Falgun 22 = 2027-03-06; Chaitra 1 = 2027-03-15; Chaitra 7 = 2027-03-21 (Sunday); Chaitra 8 = 2027-03-22 (Monday). Anchored by the repo BS-AD data and cross-checked against the weekday printed on every crawled page.",
+  "sources": {
+    "hamro_patro": "https://www.hamropatro.com/date/<bs-year-month-day>",
+    "hamro_patro_pages_fetched": [
+      "https://www.hamropatro.com/date/2083-11-07",
+      "https://www.hamropatro.com/date/2083-11-08",
+      "https://www.hamropatro.com/date/2083-11-09",
+      "https://www.hamropatro.com/date/2083-11-19",
+      "https://www.hamropatro.com/date/2083-11-20",
+      "https://www.hamropatro.com/date/2083-11-21",
+      "https://www.hamropatro.com/date/2083-11-22",
+      "https://www.hamropatro.com/date/2083-11-23",
+      "https://www.hamropatro.com/date/2083-12-07",
+      "https://www.hamropatro.com/date/2083-12-08"
+    ],
+    "bhakti_bharat_2027_pages": "verified empty templates on 2026-11-06 - rolling-window limitation, no receipts pinned from them",
+    "publisher_caveat": "The Nepal Panchang Nirnayak Samiti 2083-patro alignment was checked during the 2026-11-06 adjudication, but the news pages carrying it render their article body client-side and cannot be re-cited from a fresh fetch today; the gated receipts therefore rest on Hamro Patro alone."
+  },
+  "receipts": [
+    {
+      "id": "mahaShivaratri",
+      "bs_year": "2083",
+      "bs_date": "Falgun 22",
+      "ad_date": "2027-03-06",
+      "weekday": "Saturday",
+      "convention": "nishita",
+      "publisher": "Hamro Patro",
+      "source_url": "https://www.hamropatro.com/date/2083-11-22",
+      "udaya_tithi": "Krishna Trayodashi",
+      "samapti_npt": "2027-03-06 12:20 (udaya Trayodashi ends - the moment Chaturdashi begins)",
+      "chain": "Falgun 22 (Sat Mar 6) prints udaya Krishna Trayodashi with samapti 12:20; Falgun 23 (Sun Mar 7) prints udaya Krishna Chaturdashi with samapti 14:04. Chaturdashi therefore runs Mar 6 12:20 to Mar 7 14:04 NPT and spans the midnight ending Mar 6.",
+      "receipt": "HP marks महाशिवरात्रि on Falgun 22 = Sat Mar 6 2027 with udaya tithi Krishna Trayodashi: Chaturdashi began 12:20 that day and ran through the midnight ending Mar 6 - the nishita-vyapini rule class (Dharma Sindhu ch. 5). The udaya convention gives Mar 7; HP took Mar 6. Same divergence class as the 2082 receipt (Falgun 3 = Feb 15 2026)."
+    },
+    {
+      "id": "faguPurnima",
+      "bs_year": "2083",
+      "bs_date": "Chaitra 7 (hills) / Chaitra 8 (Terai)",
+      "ad_date": "2027-03-21",
+      "terai_ad_date": "2027-03-22",
+      "weekday": "Sunday (hills) / Monday (Terai)",
+      "convention": "firstDay",
+      "publisher": "Hamro Patro (hills + Terai)",
+      "source_url": "https://www.hamropatro.com/date/2083-12-07",
+      "udaya_tithi": "Shukla Chaturdashi (Mar 21) / Shukla Purnima (Mar 22)",
+      "samapti_npt": "2027-03-21 18:35 (hills page: udaya Chaturdashi ends - Purnima begins); 2027-03-22 16:25 (Terai page: udaya Purnima ends)",
+      "chain": "Chaitra 7 (Sun Mar 21) prints फागु पुर्णिमा (पहाडी जिल्ला) with udaya Shukla Chaturdashi, samapti 18:35; Chaitra 8 (Mon Mar 22) prints फागु पुर्णिमा (तराइ होली) with udaya Shukla Purnima, samapti 16:25. Purnima therefore runs Mar 21 18:35 to Mar 22 16:25 NPT.",
+      "receipt": "HP marks Fagu Purnima (pahadi) on Chaitra 7 = Sun Mar 21 2027 with udaya tithi Shukla Chaturdashi: Purnima began 18:35 that evening, so the hills convention is first-overlap (purva-tithi-viddha). Terai Holi is the next udaya day, Chaitra 8 = Mon Mar 22, udaya Purnima. Same two-convention receipt class as 2082 (Falgun 18/19)."
+    }
+  ],
+  "observations": [
+    {
+      "id": "maghaPurnimaKshaya",
+      "kind": "kshaya observation - gates the tithi scanner, deliberately outside the battery",
+      "bs_year": "2083",
+      "bs_date": "Falgun 8",
+      "ad_date": "2027-02-20",
+      "weekday": "Saturday",
+      "festival": "माघ स्नान समाप्ती / श्री स्वस्थानी व्रत समाप्ती / पशुपतिनाथको छाया दर्शन (Magh Snan Samapti / Swasthani Vrata Samapti / Pashupatinath Chhaya Darshan)",
+      "publisher": "Hamro Patro",
+      "source_url": "https://www.hamropatro.com/date/2083-11-08",
+      "samapti_npt": "2027-02-20 08:12 (udaya Chaturdashi ends - the moment Purnima begins)",
+      "chain": "Falgun 7 (Fri Feb 19): udaya Shukla Trayodashi, samapti 11:27. Falgun 8 (Sat Feb 20): udaya Shukla Chaturdashi, samapti 08:12. Falgun 9 (Sun Feb 21): udaya Krishna Pratipada, samapti 02:17 at night (= Feb 22 02:17). Purnima therefore began 08:12 on Feb 20, and because Falgun 9 udaya already shows Pratipada, Purnima must have ended before the Feb 21 sunrise.",
+      "receipt": "Purnima (tithi index 14) ran Feb 20 08:12 to before the Feb 21 sunrise - entirely between two sunrises - so NO udaya day shows Purnima: a kshaya in the udaya chain. HP keeps the Magha-Purnima observances on Falgun 8 = Feb 20, the FIRST day the tithi overlaps, even though the displayed udaya tithi that day is Chaturdashi. Observation receipt for the kshaya-day display rule: the festival lands on the first overlap day; the engine must expose exactly this via skippedInUdayaChain + overlapDays."
+    },
+    {
+      "id": "bijayaEkadashiVriddhi",
+      "kind": "vriddhi observation - gates the tithi scanner, deliberately outside the battery",
+      "bs_year": "2083",
+      "bs_date": "Falgun 20 (vrat); udaya Ekadashi on both Falgun 19 and Falgun 20",
+      "ad_date": "2027-03-04",
+      "weekday": "Thursday",
+      "festival": "विजया एकादशी व्रत (Vijaya Ekadashi Vrat)",
+      "publisher": "Hamro Patro",
+      "source_url": "https://www.hamropatro.com/date/2083-11-20",
+      "samapti_npt": "2027-03-04 07:37 (the same instant printed on both vriddhi days - the portal merged-window mark)",
+      "chain": "Falgun 19 (Wed Mar 3): udaya Krishna Ekadashi, samapti 07:37. Falgun 20 (Thu Mar 4): udaya Krishna Ekadashi again, samapti 07:37 - the same instant on both days. Falgun 21 (Fri Mar 5): udaya Krishna Dwadashi, samapti 10:09. Ekadashi therefore ended Mar 4 07:37 NPT, and since Falgun 20 udaya still shows Ekadashi, the tithi spanned both udaya days (~26.7 h).",
+      "receipt": "Krishna Ekadashi (tithi index 25) was at udaya on BOTH Mar 3 and Mar 4 - a vriddhi in the udaya chain. HP prints the विजया एकादशी व्रत label on Falgun 20 = Mar 4, the SECOND of the two udaya days. Observation receipt: the engine must report udayaDays == [Mar 3, Mar 4] with spansMultipleDays, and the vrat day must lie within the udaya set."
+    }
+  ],
+  "pending_2084": [
+    {
+      "id": "janaiPurnima",
+      "expected_ad_date": "2027-08-17",
+      "status": "NOT GATED - pending publisher receipts. The engine udaya adjudication gives Bhadra 1 2084 = Aug 17 2027 (Purnima at udaya), but Hamro Patro BS 2084 pages are unpopulated shells as of 2026-11-06 and BhaktiBharat rolling window does not reach Aug 2027. Re-crawl when the 2084 season populates (or the official 2084 patro publishes, expected spring 2027) and promote to a gated receipt then."
+    },
+    {
+      "id": "teej",
+      "expected_ad_date": "2027-09-03",
+      "status": "NOT GATED - pending publisher receipts. The engine udaya adjudication gives Sep 3 2027, but no publisher day-label is crawlable today for the same reason. Re-crawl with the 2084 season."
+    }
+  ]
+}
