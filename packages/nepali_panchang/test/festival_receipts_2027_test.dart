@@ -175,7 +175,7 @@ void main() {
   test('chain instants: Trayodashi Feb 19 11:27, Pratipada Feb 22 '
       '02:17, Dwadashi Mar 5 10:09', () {
     final tray = tithiOccasions(
-        tithiIndex: 13,
+        tithiIndex: 12,
         start: DateTime.utc(2027, 2, 15),
         end: DateTime.utc(2027, 2, 22));
     expect(tray, hasLength(1));
