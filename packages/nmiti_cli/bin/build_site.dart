@@ -95,6 +95,8 @@ void main(List<String> args) {
       _masaPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/muhurta.html'),
       _muhurtaPageHtml(todayAd, urlBase, commitSha));
+  _write(File('${out.path}/ayanamsa.html'),
+      _ayanamsaPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -303,7 +305,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="masa.html">Masa</a> · <a href="panchang.html">Panchang</a> · <a href="muhurta.html">Muhurta</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="ayanamsa.html">Ayanamsa</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="masa.html">Masa</a> · <a href="panchang.html">Panchang</a> · <a href="muhurta.html">Muhurta</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -521,7 +523,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}masa.html">Masa</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}muhurta.html">Muhurta</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}festivals.html">Festivals</a> · <a href="${urlBase}docs.html">Docs</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}ayanamsa.html">Ayanamsa</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}masa.html">Masa</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}muhurta.html">Muhurta</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}festivals.html">Festivals</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -1967,6 +1969,107 @@ $rows
       shortSha);
 }
 
+/// The /ayanamsa page (R6g, HYA-437): the sidereal reference - what
+/// ayanamsa is, the engine's fitted model and per-source profiles,
+/// today's computed values, what the choice shifts per limb, and the
+/// Nepal divergence record with the evidence tier of every claim.
+/// Stated, never absorbed.
+String _ayanamsaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final noonUtc = DateTime.utc(todayAd.year, todayAd.month, todayAd.day, 12);
+  final jdTt = jdTtFromJdUt(jdFromDateTimeUtc(noonUtc));
+  final base = ayanamsaBase(jdTt);
+  final bb = ayanamsaTotal(jdTt, ayanamsaDeltaBhaktiBharat);
+  final hp = ayanamsaTotal(jdTt, ayanamsaDeltaHamroPatro);
+  final tropical = sunApparentLongitude(jdTt);
+  final sidereal = ((tropical - base) % 360.0 + 360.0) % 360.0;
+  final rasi = (sidereal / 30.0).truncate() + 1;
+  final rasiNames = [
+    'Mesha', 'Vrishabha', 'Mithuna', 'Karka', 'Simha', 'Kanya',
+    'Tula', 'Vrishchika', 'Dhanu', 'Makara', 'Kumbha', 'Meena',
+  ];
+  final rasiName = rasiNames[rasi - 1];
+  final nextEdgeDeg = 30 * rasi;
+  final toNextEdge = nextEdgeDeg.toDouble() - sidereal;
+  String dms(double deg) {
+    final d = deg.floor();
+    final mFull = (deg - d) * 60.0;
+    final m = mFull.floor();
+    final s = ((mFull - m) * 60.0).round();
+    return d.toString() + '° ' + m.toString().padLeft(2, '0') + '′ ' + s.toString().padLeft(2, '0') + '″';
+  }
+  final body = '''
+<h1>Ayanamsa · <span lang="ne">अयनांश</span> — the sidereal reference</h1>
+<p>Every Nepali panchang is sidereal: tithi, nakshatra, yoga and sankranti are measured against the fixed stars, not the moving equinox. Ayanamsa is the single number that converts between the two frames — and every honest panchang has to say which one it uses. This page states ours exactly, shows what the choice shifts, and documents where Nepal's own traditions diverge, with the evidence tier of every claim.</p>
+
+<h2 id="ayanamsa-what">अयनांश के हो? · What ayanamsa is</h2>
+<p>Earth's axis precesses: the equinox drifts roughly 50.3 arc-seconds per year along the ecliptic, so <em>sayana</em> (tropical, equinox-anchored) and <em>nirayana</em> (sidereal, star-anchored) longitudes drift apart about one degree every 72 years. <strong>Ayanamsa = sayana longitude − nirayana longitude</strong> at a given instant. Modern ephemerides work in tropical coordinates; subtracting the ayanamsa yields the sidereal positions a panchang needs. The Bikram Sambat solar months are sidereal by definition: a masa begins at the sankranti, the Sun's ingress into a sidereal rashi — and where that ingress falls depends entirely on which ayanamsa anchors the rashi circle.</p>
+
+<h2 id="ayanamsa-ours">हाम्रो आधार · Our reference, exactly</h2>
+<p>The nMiti engine uses a fitted linear model in Terrestrial Time:</p>
+<p><code>ayanamsa(JD_TT) = 23.87508° + 1.36062° × (JD_TT − 2451545.0) / 36525</code></p>
+<p>It was fitted to the verified Commons Layer 1 sankranti artifact and calibrated on 48 drikpanchang ingress moments AD 2025–2028: <strong>mean error 3.7 minutes, max 8.6 minutes, 48/48 correct NPT dates</strong>. The same VSOP87D apparent sun on the same constants also drives the <a href="${urlBase}masa.html">masa layer</a> and the <a href="${urlBase}sankranti.html">sankranti tables</a> — one sidereal reference everywhere, no per-page re-tuning.</p>
+<p>The locked receipt corpus proved a single universal value cannot reproduce both publishers, so the engine keeps per-source <strong>profiles</strong> — small fitted offsets on the base:</p>
+<table>
+<tr><th>Profile</th><th>Delta (deg)</th><th>Meaning</th><th>Evidence</th></tr>
+<tr><td>base</td><td>0</td><td>the calibrated reference itself — sankranti, masa and this page</td><td>48-ingress calibration, CI-pinned (R5)</td></tr>
+<tr><td>BhaktiBharat</td><td>−0.0795</td><td>reconciles the BhaktiBharat sidereal limb convention</td><td>corpus fit, Oct–Nov 2026 receipts</td></tr>
+<tr><td>Hamro Patro</td><td>−0.0117</td><td>reconciles the Hamro Patro sidereal limb convention</td><td>corpus fit, Nov 2026 receipts</td></tr>
+</table>
+
+<h2 id="ayanamsa-value">आजको मान · Today's computed values</h2>
+<p>Computed by the engine at build time, NPT noon of ${_iso(todayAd)}:</p>
+<ul>
+<li><strong>Base ayanamsa:</strong> ${base.toStringAsFixed(5)}° (${dms(base)})</li>
+<li><strong>BhaktiBharat profile:</strong> ${bb.toStringAsFixed(5)}°</li>
+<li><strong>Hamro Patro profile:</strong> ${hp.toStringAsFixed(5)}°</li>
+<li><strong>The Sun right now:</strong> sayana ${tropical.toStringAsFixed(3)}° → nirayana ${sidereal.toStringAsFixed(3)}° — rashi ${rasi} of 12 (${rasiName}), ${toNextEdge.toStringAsFixed(2)}° short of the next 30° ingress edge at ${nextEdgeDeg}°</li>
+</ul>
+<p>That edge-crossing is the next sankranti — the arithmetic every BS month boundary runs on.</p>
+
+<h2 id="ayanamsa-limbs">कुन अङ्गमा के फरक? · What the choice shifts, per limb</h2>
+<table>
+<tr><th>Limb</th><th>Ayanamsa sensitivity</th><th>Measured vs Swiss Ephemeris in CI (mean)</th></tr>
+<tr><td>tithi</td><td>none — pure Moon−Sun elongation; the ayanamsa cancels</td><td>7.9 s</td></tr>
+<tr><td>karana</td><td>none — half a tithi, the same cancellation</td><td>7.9 s</td></tr>
+<tr><td>nakshatra</td><td>direct — it shifts the Moon's sidereal longitude</td><td>59.8 s vs Swiss Lahiri — the convention gap</td></tr>
+<tr><td>yoga</td><td>direct — it shifts Moon + Sun together</td><td>104.3 s vs Swiss Lahiri — the convention gap</td></tr>
+<tr><td>sankranti / masa</td><td>defining — the rashi edges ARE the ayanamsa</td><td>3.7 min mean vs the 48 drikpanchang receipts</td></tr>
+</table>
+<p>The near-constant nakshatra/yoga offsets are the fitted-base-versus-Lahiri convention gap, measured by the Swiss-truth scoreboard on every push: <strong>stated, never absorbed</strong> — an informative number, not noise. Full scoreboard and band rationale: <a href="${urlBase}methodology.html">methodology</a>.</p>
+
+<h2 id="ayanamsa-nepal">नेपालको विचलन · The Nepal divergence record</h2>
+<p>Nepal's official panchang is not computed on a modern ephemeris. The Nepal Panchang Nirnayak Samiti (NPNS) — publishing the official patro since 2078 BS — computes the five limbs on the <strong>Surya Siddhanta</strong> panchang khand and the planets on Ketkar's <strong>Ketaki Grahaganitam</strong> (tier: <em>reported</em>, from Samiti statements and Nepali press coverage). In December 2025 the Samiti moved the full computation to the Ketaki system and rolled the move back within weeks after public dates broke — a live demonstration that mixing siddhantas is fragile.</p>
+<ul>
+<li><strong>The printed patros sit ahead of the modern reference:</strong> press investigation of the printed panchangs reports an ayanamsa roughly 21 kala (21 arc-minutes) ahead of the Chitra-pakshiya (Lahiri-class) convention, putting sankranti instants up to 15+ hours away from drik-ganita (ephemeris) computation. Tier: <em>press-reported</em> — the exact per-patro figure awaits print verification against the R8 printed panchangs held in this project.</li>
+<li><strong>Why it usually goes unnoticed:</strong> a constant offset shifts the sankranti clock, not usually the date. It becomes visible when an ingress or a vriddhi tithi lands near midnight — then one observance can split across two printed days.</li>
+<li><strong>The 2083 case is the canonical example:</strong> Maha Ashtami was printed on both Kartik 1 and Kartik 2, 2083 by different patros. The physical cause is a vriddhi (extended) tithi of 26.39 hours, which this engine reproduces independently; which day the observance takes is a convention call the committee adjudicates. We publish the elongation and both sunrises — see <a href="${urlBase}festivals.html">festivals</a> for the divergence table.</li>
+</ul>
+<p>We do not adjudicate; we compute and show receipts. Where the print record exists it wins (the top rung of the <a href="${urlBase}methodology.html">verification ladder</a>) — and where traditions disagree, the disagreement itself is data.</p>
+
+<h2 id="ayanamsa-receipts">प्रमान · Receipts and evidence tiers</h2>
+<table>
+<tr><th>Claim on this page</th><th>Tier</th><th>Where verified</th></tr>
+<tr><td>the model constants and profiles</td><td><em>computed</em> — engine source, CI-pinned</td><td>the ayanamsa module; corpus calibration tests on every push</td></tr>
+<tr><td>today's values</td><td><em>computed</em> at build time</td><td>this page regenerates on every build; the same engine serves the masa block in <a href="${urlBase}api/v1/today.json">today.json</a></td></tr>
+<tr><td>Swiss-truth limb gaps</td><td><em>measured</em> in CI on every push</td><td>the Swiss cross-check scoreboard (HYA-369)</td></tr>
+<tr><td>NPNS method, Ketaki rollback</td><td><em>reported</em></td><td>Samiti statements, Nepali press, 2025–2026</td></tr>
+<tr><td>~21 kala / 15+ h printed-patro offsets</td><td><em>press-reported</em>, print verification pending</td><td>press investigation; R8 print spot-verification queue</td></tr>
+<tr><td>2083 two-day Maha Ashtami / 26.39 h vriddhi</td><td><em>computed + receipt</em></td><td>engine reproduces the vriddhi; festival receipts corpus in CI</td></tr>
+</table>
+<p><strong>Provenance:</strong> nMiti nepali_panchang ayanamsa module — base 23.87508° + 1.36062° per Julian century (TT), per-source fitted profiles; every displayed value computed at build time, no copied tables.</p>
+<p><strong>Evidence tier:</strong> model constants corpus-fit and CI-pinned; today's values runtime-computed; the Nepal divergence record press-reported and labeled as such — stated, never absorbed.</p>
+<p>Related: <a href="${urlBase}sankranti.html">sankranti tables</a> · <a href="${urlBase}masa.html">masa</a> · <a href="${urlBase}panchang.html">today's limbs</a> · <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">methodology</a>.</p>
+''';
+  return _docShell(
+      'Ayanamsa (the sidereal reference)',
+      'The ayanamsa behind nMiti: the fitted sidereal reference, per-source publisher profiles, what the choice shifts per limb, and the Nepal divergence record (NPNS, printed patros, the 2083 two-day Ashtami) with every claim evidence-tiered.',
+      urlBase,
+      'ayanamsa.html',
+      body,
+      shortSha);
+}
+
 /// The /muhurta page (R6f): today's muhurta windows, the choghadiya
 /// and hora tables, and the full convention-collision table with the
 /// receipt corpus. Every window is engine-computed from the engine
@@ -2070,7 +2173,7 @@ $convRows
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'masa.html', 'panchang.html', 'muhurta.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'ayanamsa.html', 'data.html', 'docs.html', 'sankranti.html', 'masa.html', 'panchang.html', 'muhurta.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -2093,6 +2196,7 @@ Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both 
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
+Ayanamsa (the sidereal reference - our fitted model, the per-source publisher profiles, what the choice shifts per limb, and the Nepal divergence record with evidence tiers): ${urlBase}ayanamsa.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
 Documentation pack rendered verbatim (data dictionary, methodology, changelog, errata, provenance manifest): ${urlBase}docs.html
 Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv
