@@ -89,8 +89,6 @@ void main(List<String> args) {
       _panchangPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/grahan.html'),
       _grahanPageHtml(todayAd, urlBase, commitSha));
-  _write(File('${out.path}/festivals.html'),
-      _festivalsPageHtml(full, todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -154,7 +152,7 @@ String _todayJson(BsCalendar full, BsDate today, DateTime todayAd, BsDate tomorr
     "ad": "${_iso(gTomorrow)}"
   },
   "panchang": {
-    "note": "engine-computed at build time; festival observances are served in the festivals block",
+    "note": "engine-computed at build time; festivals are not covered (festival display rules ship separately)",
     "conventions": {
       "udaya": "element running at engine sunrise - the Hamro Patro display convention",
       "madhyahna": "element running at local noon - the BhaktiBharat display convention"
@@ -182,7 +180,6 @@ ${limbJson('      ', p.karanaAtUdaya, p.karanaAtNoon)}
     "details": "${urlBase}panchang.html"
   },
   "grahan": ${_grahanBlock(todayAd, urlBase)},
-  "festivals": ${_festivalsBlock(full, todayAd, urlBase)},
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
   "commit": "$commitSha",
@@ -297,7 +294,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="grahan.html">Grahan</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -515,7 +512,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}festivals.html">Festivals</a> · <a href="${urlBase}docs.html">Docs</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -557,7 +554,7 @@ String _accuracyPageHtml(BsCalendar core, BsCalendar tail, String urlBase,
 <ul>
 <li><strong>BS 2096 has 364 days</strong> in the projection tail. It is a genuine upstream defect. We do not invent a fix - the row stays tagged <code>projection-defect</code> until Nepal publishes the official calendar.</li>
 <li><strong>Corrupted tables are live in the wild.</strong> During verification we found nepalicalendar.online running one day early from Kartik 2083 onward, and KhataIn one day late from Mangsir 2083 (kept as test vectors, never as copy sources). Unaudited copies drift - that is why this dataset exists.</li>
-<li><strong>Festival dates can legitimately differ between panchangs</strong> - a festival's civil day depends on which day-choosing convention is applied (Kojagrat Purnima 2083: printed Oct 25 in one panchang, adjudicated Oct 26 by others). The <a href="festivals.html">festival layer</a> therefore never silently picks: every observance names its convention, and the udaya-convention alternate is shown whenever they diverge - receipt-pinned to the festival corpora in the repository.</li>
+<li><strong>Festivals and tithi are not covered.</strong> nMiti serves the civil solar calendar only. Festival dates can legitimately differ between panchangs (Kojagrat Purnima 2083: printed Oct 25 in one panchang, adjudicated Oct 26 by others). That layer is planned with per-source attribution - we will not guess.</li>
 </ul>
 
 <h2 id="freshness">Freshness, and what happens at midnight</h2>
@@ -597,7 +594,7 @@ String _methodologyPageHtml(String urlBase, String commitSha) {
 </ol>
 
 <h2 id="layers">Calendar layers: why today's date is unambiguous but festivals are not</h2>
-<p>The Bikram Sambat calendar is solar: every month begins at a precise solar ingress (sankranti). The panchang adds a lunar layer - the tithi - which can change <em>during the afternoon</em>, and festival dates depend on rules layered on both. Two correct panchangs can therefore print different festival dates while agreeing perfectly on today's civil date. nMiti Layer 1 serves the civil solar layer - the one every source agrees on - and the lunar layers ship with their conventions exposed: the panchang (every limb at both the udaya and madhyahna references), grahan (eclipses), and festival observances (each rule's day-choosing convention shown, never silently picked; see the festivals page).</p>
+<p>The Bikram Sambat calendar is solar: every month begins at a precise solar ingress (sankranti). The panchang adds a lunar layer - the tithi - which can change <em>during the afternoon</em>, and festival dates depend on rules layered on both. Two correct panchangs can therefore print different festival dates while agreeing perfectly on today's civil date. nMiti Layer 1 serves only the civil solar layer - the one every source agrees on. The tithi and festival layer is deliberately out of scope until it can be served with per-source attribution.</p>
 
 <h2 id="structural">Structural facts, machine-checked</h2>
 <ul>
@@ -674,7 +671,7 @@ $checksumRows
 
 <h2 id="api">JSON API - static, no keys, CC0</h2>
 <ul>
-<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - plus a <code>grahan</code> block: the eclipse or sutak window touching today, whether sutak is active, and the next grahan with its Nepali name and honesty fields, plus a <code>festivals</code> block: today's festival observances, the next festival and the 45-day horizon, each naming its day-choosing convention and any convention divergence. Engine-computed at build time. Stamped with the commit and build run.</li>
+<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - plus a <code>grahan</code> block: the eclipse or sutak window touching today, whether sutak is active, and the next grahan with its Nepali name and honesty fields. Engine-computed at build time. Stamped with the commit and build run.</li>
 <li><code>api/v1/calendar/{bs_year}.json</code> - one BS year: baisakh1, weekday, days, the 12 month lengths, month names, evidence tier (BS 1975-2100). Example: <a href="api/v1/calendar/2083.json">api/v1/calendar/2083.json</a></li>
 <li><code><a href="api/v1/meta.json">api/v1/meta.json</a></code> - dataset metadata: coverage, evidence summary, license.</li>
 </ul>
@@ -1288,7 +1285,7 @@ $flagsHtml
 <li><strong>Engine:</strong> ${d.provenance}</li>
 <li><strong>Evidence:</strong> ${d.evidenceTier}</li>
 <li><strong>Accuracy:</strong> minute-level parity with the locked BhaktiBharat and Hamro Patro golden corpora (226 boundary receipts), enforced by CI on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
-<li><strong>Festivals:</strong> served on the <a href="festivals.html">festivals page</a> and in the <code>festivals</code> block of today.json - every day-choosing convention exposed, never silently picked.</li>
+<li><strong>Festivals are not yet covered.</strong> Festival display rules arrive with the festival-rules layer; until then vriddhi/kshaya facts are shown so borderline days are never silently decided.</li>
 </ul>
 ''';
   return _docShell(
@@ -1550,250 +1547,10 @@ $convRows
       shortSha);
 }
 
-/// The next-festival horizon of the today.json festivals block (days).
-const int _festivalWindowDays = 45;
-
-/// ISO dates of an occasion's udaya-convention days, comma-joined.
-String _udayaList(FestivalObservance o) =>
-    [for (final d in o.occasion.udayaDays) _iso(d)].join(', ');
-
-/// The divergence cell of the year table: exposes the udaya-convention
-/// alternate, including the kshaya case where no udaya day exists.
-String _divCell(FestivalObservance o) {
-  if (!o.conventionDivergence) return 'no';
-  if (o.occasion.udayaDays.isEmpty) {
-    return 'yes - the tithi runs at no sunrise (kshaya); the first-' +
-        'overlap day is taken';
-  }
-  return 'yes - udaya would give ' + _udayaList(o);
-}
-
-/// One festival observance as a JSON object body. Every key is always
-/// emitted so the site-contract markers stay date-stable on festival
-/// days and quiet days alike.
-String _festivalJson(String ind, FestivalObservance o, BsCalendar full) {
-  final rule = o.rule;
-  final occ = o.occasion;
-  String isoNpt(DateTime t) =>
-      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
-  final adDates = [for (final d in o.chosenDays) '"${_iso(d)}"'].join(', ');
-  final udayaDates =
-      [for (final d in occ.udayaDays) '"${_iso(d)}"'].join(', ');
-  final bs = full.fromGregorian(o.chosenDays.first);
-  final bsEn = '${bsMonthNameEn(bs.month)} ${bs.day}, ${bs.year} BS';
-  final bsNp =
-      '${bsMonthNameNp(bs.month)} ${toNepaliDigits(bs.day.toString())}, '
-          '${toNepaliDigits(bs.year.toString())}';
-  return [
-    '$ind"id": "${rule.id}",',
-    '$ind"name_en": "${rule.nameEn}",',
-    '$ind"name_np": "${rule.nameNp}",',
-    '$ind"tithi": "${occ.tithi}",',
-    '$ind"convention": "${rule.convention.name}",',
-    '$ind"shastra_category": "${rule.shastraCategory ?? ''}",',
-    '$ind"ad_date": "${_iso(o.chosenDays.first)}",',
-    '$ind"ad_dates": [$adDates],',
-    '$ind"bs_date": "$bsEn",',
-    '$ind"bs_date_np": "$bsNp",',
-    '$ind"tithi_begins_npt": "${isoNpt(occ.beginsAtNpt)}",',
-    '$ind"tithi_ends_npt": "${isoNpt(occ.endsAtNpt)}",',
-    '$ind"convention_divergence": ${o.conventionDivergence},',
-    '$ind"udaya_days": [$udayaDates],',
-    '$ind"spans_multiple_days": ${occ.spansMultipleDays},',
-    '$ind"skipped_in_udaya_chain": ${occ.skippedInUdayaChain},',
-    '$ind"borderline": ${occ.borderline},',
-    '$ind"note": "${rule.note}"',
-  ].join('\n');
-}
-
-/// A JSON array of festival observance objects ('[]' when empty).
-String _festivalArray(
-    String ind, List<FestivalObservance> list, BsCalendar full) {
-  if (list.isEmpty) return '[]';
-  final items = [
-    for (final o in list)
-      '{\n' + _festivalJson(ind + '  ', o, full) + '\n' + ind + '}'
-  ];
-  return '[\n' + ind + items.join(',\n' + ind) + '\n' + ind + ']';
-}
-
-/// The festivals block of today.json (R6c): today's observances, the
-/// next festival and the 45-day horizon - every entry naming its
-/// day-choosing convention and the udaya alternate when they diverge.
-/// The block keys always serialize, so the contract markers are
-/// date-stable on festival days and quiet days alike.
-String _festivalsBlock(BsCalendar full, DateTime todayAd, String urlBase) {
-  final today = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
-  final horizon = today.add(const Duration(days: _festivalWindowDays));
-  final scanned = scanFestivals(
-      start: today.subtract(const Duration(days: 7)), end: horizon);
-  final withDays =
-      scanned.where((o) => o.chosenDays.isNotEmpty).toList();
-  final todayOnes =
-      withDays.where((o) => o.chosenDays.any((d) => d == today)).toList();
-  final nextOnes =
-      withDays.where((o) => o.chosenDays.first.isAfter(today)).toList();
-  final upcoming = nextOnes
-      .where((o) => !o.chosenDays.first.isAfter(horizon))
-      .toList();
-  final nextJson = nextOnes.isEmpty
-      ? 'null'
-      : '{\n' + _festivalJson('      ', nextOnes.first, full) + '\n    }';
-  final todayJson = _festivalArray('    ', todayOnes, full);
-  final upcomingJson = _festivalArray('    ', upcoming, full);
-  return '{\n' +
-      '    "note": "engine-computed at build time; every entry names its day-choosing convention and the udaya alternate when they diverge",\n' +
-      '    "festival_window_days": $_festivalWindowDays,\n' +
-      '    "today": ' + todayJson + ',\n' +
-      '    "next_festival": ' + nextJson + ',\n' +
-      '    "upcoming": ' + upcomingJson + ',\n' +
-      '    "conventions": {\n' +
-      '      "udaya": "tithi running at sunrise (the Hamro Patro display convention)",\n' +
-      '      "evening": "tithi running at the 18:00 NPT reference (night observances)",\n' +
-      '      "firstDay": "first civil day the tithi overlaps (purva-tithi-viddha)",\n' +
-      '      "allDays": "every civil day the tithi overlaps (two-day observances)",\n' +
-      '      "nishita": "tithi running at the midnight ending the civil day (the Shivaratri class)",\n' +
-      '      "moonrise": "tithi running at the day\'s moonrise (chandrodaya-vyapti)"\n' +
-      '    },\n' +
-      '    "provenance": "nMiti nepali_panchang festival battery on the runtime lunar engine; festivals are data, conventions are code - every rule receipt-pinned",\n' +
-      '    "evidence_tier": "runtime-computed; day choices pinned by the festival receipt corpora (2083, 2026 and 2027 seasons) in the repository test fixtures",\n' +
-      '    "details": "${urlBase}festivals.html"\n' +
-      '  }';
-}
-
-/// The /festivals page (R6c, HYA-367): today's festival observances,
-/// the next festival, the coming year's festival calendar with every
-/// convention divergence exposed, the six day-choosing conventions
-/// with their shastra categories, and the receipt corpora behind
-/// them. Computed at build time by the nepali_panchang festival
-/// battery; zero client JavaScript. Conventions are shown, never
-/// silently picked.
-String _festivalsPageHtml(BsCalendar full, DateTime todayAd, String urlBase,
-    String commitSha) {
-  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
-  final today = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
-  final yearEnd = today.add(const Duration(days: 370));
-  final obs = scanFestivals(
-          start: today.subtract(const Duration(days: 7)), end: yearEnd)
-      .where((o) => o.chosenDays.isNotEmpty)
-      .where((o) => o.chosenDays.any((d) => !d.isBefore(today)))
-      .toList();
-  final todayOnes =
-      obs.where((o) => o.chosenDays.any((d) => d == today)).toList();
-  final nextOnes =
-      obs.where((o) => o.chosenDays.first.isAfter(today)).toList();
-  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
-  String bsLabel(DateTime d) {
-    final bs = full.fromGregorian(d);
-    return '${bsMonthNameEn(bs.month)} ${bs.day} '
-        '(${bsMonthNameNp(bs.month)} ${toNepaliDigits(bs.day.toString())}), ${bs.year} BS';
-  }
-  final todaySection = todayOnes.isEmpty
-      ? '<p>No battery festival falls on ${_adMonthNames[today.month - 1]} ${today.day}, ${today.year} (${bsLabel(today)}). The next one is below.</p>'
-      : [
-          for (final o in todayOnes)
-            '<p><strong>${o.rule.nameEn}</strong> <span lang="ne">${o.rule.nameNp}</span> - ${o.occasion.tithi}, ${o.rule.convention.name} convention: today.' +
-                (o.conventionDivergence
-                    ? ' The udaya convention would give ${_udayaList(o)} - exposed, not hidden.'
-                    : '') +
-                '</p>'
-        ].join('\n');
-  final String nextCard;
-  if (nextOnes.isEmpty) {
-    nextCard = '<p>No battery festival is computed within the next year.</p>';
-  } else {
-    final o = nextOnes.first;
-    final endsNextDay =
-        o.occasion.endsAtNpt.day != o.occasion.beginsAtNpt.day;
-    final tithiLine = '${o.occasion.tithi}, ${hm(o.occasion.beginsAtNpt)} to ${hm(o.occasion.endsAtNpt)} NPT' +
-        (endsNextDay ? ' (ends the next day)' : '');
-    final divLine = o.conventionDivergence
-        ? '<li><strong>मतभेद · Divergence:</strong> the udaya convention would give ${_udayaList(o)}; the chosen day stays exposed, never silently picked.</li>'
-        : '<li><strong>मतभेद · Divergence:</strong> none - the udaya convention agrees.</li>';
-    nextCard = [
-      '<p><strong>${o.rule.nameEn}</strong> <span lang="ne">${o.rule.nameNp}</span></p>',
-      '<ul>',
-      '<li><strong>मिति · Date:</strong> ${_iso(o.chosenDays.first)} - ${bsLabel(o.chosenDays.first)}</li>',
-      '<li><strong>तिथि · Tithi:</strong> ' + tithiLine + '</li>',
-      '<li><strong>नियम · Convention:</strong> ${o.rule.convention.name} - ${o.rule.shastraCategory ?? ''}</li>',
-      divLine,
-      '<li>${o.rule.note}</li>',
-      '</ul>',
-    ].join('\n');
-  }
-  final yearRows = [
-    for (final o in obs)
-      '<tr><td>' +
-          [for (final d in o.chosenDays) _iso(d)].join(', ') +
-          '<br><small>' +
-          bsLabel(o.chosenDays.first) +
-          '</small></td>' +
-          '<td>${o.rule.nameEn}<br><span lang="ne">${o.rule.nameNp}</span></td>' +
-          '<td>${o.occasion.tithi}</td>' +
-          '<td>${o.rule.convention.name}</td>' +
-          '<td>' +
-          _divCell(o) +
-          '</td></tr>'
-  ].join('\n');
-  final body = '''
-<h1>Festivals <span lang="ne">· चाडपर्व</span></h1>
-<p>Nepal's festival dates are lunar: each festival rides a tithi, and the civil day it lands on depends on which day-choosing convention is applied. Different panchangs can legitimately print different days. This page never silently picks: every observance below names its convention, and the sunrise (udaya) convention's day is shown alongside whenever they disagree. Computed at build time by the open <code>nepali_panchang</code> festival battery - every rule pinned by publisher receipts.</p>
-
-<h2 id="festivals-today">आज · Today</h2>
-$todaySection
-
-<h2 id="festivals-next">अर्को चाडपर्व · Next festival</h2>
-$nextCard
-
-<h2 id="festivals-year">आगामी वर्षको पात्रो · The coming year</h2>
-<p>Every battery festival from today through ${_iso(yearEnd)} (${obs.length} observances). Divergent rows expose the udaya-convention alternate.</p>
-<table>
-<tr><th>Date (AD)</th><th>Festival</th><th>Tithi</th><th>Convention</th><th>Divergence</th></tr>
-$yearRows
-</table>
-
-<h2 id="festivals-conventions">दिन छान्ने नियम · The six day-choosing conventions</h2>
-<p>Each rule's day choice rests on a shastra principle - Dharma Sindhu (Kashinatha Upadhyaya, 1790), ch. 5 'Tithi Vrata Nirnayas', read through V.D.N. Rao's condensed English translation (translation-level citation; the shloka-level reference is pending printed-source verification).</p>
-<table>
-<tr><th>Convention</th><th>Principle</th><th>Decides</th></tr>
-<tr><td><code>udaya</code></td><td>udaya-vyapini - tithi prevailing at sunrise</td><td>Ghatasthapana, Maha Navami, Vijaya Dashami, Kag/Kukur/Gai Tihar, Bhai Tika, Chhath, Janai Purnima, Teej - the Hamro Patro display convention</td></tr>
-<tr><td><code>evening</code></td><td>pradosha/ratri-vyapini - tithi prevailing at the 18:00 NPT reference</td><td>night observances: Lakshmi Puja, Kojagrat Purnima, Dhanteras</td></tr>
-<tr><td><code>firstDay</code></td><td>purva-tithi-viddha - first civil day the tithi overlaps</td><td>Fulpati, Fagu Purnima in the hills</td></tr>
-<tr><td><code>allDays</code></td><td>vriddhi - every civil day the tithi overlaps</td><td>two-day observances: Maha Ashtami 2083 (Kartik 1 and 2 - the first two-day Maha Ashtami since 2000 BS)</td></tr>
-<tr><td><code>nishita</code></td><td>nishita-vyapini - tithi prevailing at the midnight ending the civil day</td><td>Maha Shivaratri ('Chaturdashi should be till midnight')</td></tr>
-<tr><td><code>moonrise</code></td><td>chandrodaya-vyapti - tithi prevailing at the day's moonrise</td><td>the Sankata Chaturthi class (battery entry pending receipts)</td></tr>
-</table>
-<p><strong>Kshaya resolution:</strong> when a tithi runs entirely between two sunrises (a kshaya in the udaya chain), no udaya day shows it at all; Nepal's publishers keep the festival on the <em>first day the tithi overlaps</em> (receipt: Magha Purnima 2027, Feb 20 - the day's udaya tithi was Chaturdashi, yet the Magh Snan / Swasthani Samapti labels stayed on the day Purnima began). <strong>Vriddhi:</strong> when one tithi spans two udaya days, the observance lists both (receipt: Krishna Ekadashi Mar 3-4 2027, udaya Ekadashi on both days, the Vijaya Ekadashi Vrat on the second).</p>
-
-<h2 id="festivals-receipts">प्रमाण · Receipts</h2>
-<p>Every rule above is pinned by a crawled publisher receipt, run as a permanent CI gate on every change:</p>
-<ul>
-<li><a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/festival_receipts_2083.json">festival_receipts_2083.json</a> - the Dashain/Tihar/Chhath conventions (including the two-day Maha Ashtami)</li>
-<li><a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/festival_receipts_2026.json">festival_receipts_2026.json</a> - Shivaratri (nishita vs udaya), Fagu Purnima (hills vs Terai), Janai Purnima and Teej 2026</li>
-<li><a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/festival_receipts_2027.json">festival_receipts_2027.json</a> - the 2027 season: Shivaratri (Falgun 22 = Mar 6 2027, nishita; udaya gives Mar 7), Fagu Purnima (Mar 21 hills / Mar 22 Terai), the Magha Purnima kshaya and Krishna Ekadashi vriddhi observations</li>
-</ul>
-
-<h2 id="festivals-meta">How this is computed</h2>
-<ul>
-<li><strong>Engine:</strong> the nMiti nepali_panchang festival battery on the runtime lunar engine (60-term Meeus Ch.47 moon, VSOP87D sun, Espenak-Meeus Delta T); festivals are data, conventions are code.</li>
-<li><strong>Evidence:</strong> day choices pinned by the receipt corpora above; the engine's tithi timing is band-checked against publisher corpora and Swiss Ephemeris in CI.</li>
-<li><strong>Coverage, stated honestly:</strong> the battery holds ${festivalBattery.length} receipt-pinned festivals - it is NOT a complete list of Nepal's festivals. New entries ship only with fresh publisher receipts; nothing is guessed. Janai Purnima and Teej for BS 2084 are recorded as pending in the 2027 fixture until the official 2084 patro publishes (expected spring 2027).</li>
-<li><strong>Machine-readable:</strong> <a href="${urlBase}api/v1/today.json">today.json</a> carries a <code>festivals</code> block (today, next_festival, the 45-day horizon).</li>
-</ul>
-''';
-  return _docShell(
-      'Festivals',
-      'Nepal festival calendar from the nMiti engine: today\'s observances, the next festival, the coming year with every day-choosing convention (udaya, evening, firstDay, allDays, nishita, moonrise) and divergence exposed - receipt-pinned, never guessed.',
-      urlBase,
-      'festivals.html',
-      body,
-      shortSha);
-}
-
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'grahan.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -1812,7 +1569,7 @@ String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) 
 > Verified, evidence-tagged Bikram Sambat dates for Nepal, rebuilt automatically every day at 00:00 Nepal Time (UTC+05:45).
 
 Today's date (bilingual page): $urlBase
-Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan - and a festivals block: today's observances, the next festival and the 45-day horizon, each naming its day-choosing convention): ${urlBase}api/v1/today.json
+Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan): ${urlBase}api/v1/today.json
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
@@ -1824,7 +1581,6 @@ SHA-256 checksums of every served CSV: ${urlBase}data.html#checksums
 Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
 Panchang for today (tithi, nakshatra, yoga, karana, sunrise; engine-computed at build time, both udaya and madhyahna conventions): ${urlBase}panchang.html
 Grahan (eclipses) for Kathmandu - next grahan, today's sutak state, upcoming eclipses, conventions and receipts: ${urlBase}grahan.html
-Festivals (receipt-pinned battery; today's observances, the next festival, the year's calendar with every convention divergence exposed): ${urlBase}festivals.html
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 

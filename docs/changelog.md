@@ -2,13 +2,6 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
-## [Unreleased] — festival display layer (R6c)
-
-- `api/v1/today.json` gains a `festivals` block: today's observances, `next_festival` and the 45-day horizon (`festival_window_days`), every entry carrying its day-choosing convention, the tithi span, the udaya-convention alternate whenever they diverge (`convention_divergence`), vriddhi/kshaya/borderline flags and BS + AD labels. Keys always serialize, so the contract markers are date-stable on festival days and quiet days alike.
-- New `festivals.html`: today's observances, the next festival card, the coming year's festival calendar with a divergence column exposing the udaya alternate (Shivaratri 2027 shows nishita Mar 6 vs udaya Mar 7; Fagu Purnima hills Mar 21 vs Terai/udaya Mar 22), the six day-choosing conventions with their Dharma Sindhu shastra categories, the kshaya (first-overlap resolution) and vriddhi (both days listed) rules, and the three receipt corpora. Zero client JavaScript.
-- Honesty texts updated to match reality: the panchang page's "festivals are not covered" line and today.json's panchang note now point to the festivals layer; the accuracy and methodology pages state the festival layer is served with conventions exposed, never silently picked (the old "festivals and tithi are not covered" bullet is retired).
-- Site contract: `festivals.html` markers (five section ids + the Dharma Sindhu citation anchor) and today.json `festivals` markers appended pre-merge and enforced post-deploy; the pages.yml smoke 200-list gains `festivals.html`. Nav, sitemap and llms.txt wired. No engine or fixture changes — the display layer renders the receipt-gated battery only.
-
 ## [Unreleased] — 2027-season festival receipts corpus (R6b-2)
 
 - New permanent CI corpus `packages/nepali_panchang/test/fixtures/festival_receipts_2027.json`: Maha Shivaratri (Falgun 22 = 2027-03-06) and Fagu Purnima (hills Chaitra 7 = 2027-03-21 / Terai Chaitra 8 = 2027-03-22), crawled 2026-11-06 from the Hamro Patro BS 2083 season pages — the whole season is published server-side, so unlike the 2026 corpus these receipts pin day-labels, udaya-tithi labels AND samapti instants (Devanagari numerals decoded at parse time): Chaturdashi runs Mar 6 12:20 → Mar 7 14:04 NPT (Shivaratri nishita day Mar 6, udaya day Mar 7); Purnima runs Mar 21 18:35 → Mar 22 16:25 NPT (hills first-overlap day Mar 21, Terai udaya day Mar 22).
