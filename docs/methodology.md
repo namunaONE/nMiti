@@ -80,9 +80,9 @@ Three anchors:
 
 Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
 2–13 min on the same boundaries) is a measured fact about Nepali publishing —
-stated, never absorbed into our bands. Named systematic contributors: the
-ΔT source gap (Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) ≈ 6.6 s, and
-Meeus Ch.47 truncation ≈ 20 s of boundary time.
+stated, never absorbed into our bands. Named systematic contributor: Meeus Ch.47 truncation ≈ 20 s of
+boundary time. The former ΔT source gap (≈6.6 s for 2026) was closed by the
+hybrid Delta-T channel (R7a) — see the Delta-T section below.
 
 ## Swiss-truth cross-check (HYA-369)
 
@@ -140,6 +140,40 @@ displayed minutes). Swapping to an observed table would shift every
 boundary time ~6.6 s, force a corpus re-baseline, and buy nothing
 measurable. Stated, never absorbed; revisit only if a band ever tightens
 past the systematic.
+
+**R7a supersession (HYA-438, 2026-11-06):** the engine now serves the
+**hybrid Delta-T channel** — SMH2016/Morrison2021 spline before 1973-02,
+USNO observed monthly through 2026-04, USNO quarterly predictions through
+2033-10, Espenak–Meeus long-range beyond, with the join steps declared, not
+blended — closing the ~6.5 s systematic. Served boundary times shift ~6.5 s
+later (truer); the published bands are ceilings and stay until the
+post-R7a Swiss-truth scoreboard re-measures them.
+
+## Delta T — the hybrid channel (R7a, HYA-438)
+
+Delta T = TT − UT1, the gap between dynamical time (which the ephemerides
+speak) and Earth's rotation (which clocks and calendars speak). Every limb
+boundary the engine solves is a pure TT event; the served wall-clock time
+depends entirely on which Delta T converts it. Since R7a the channel is:
+
+| Segment | Span | Source | Uncertainty |
+| -- | -- | -- | -- |
+| Spline | AD −720 .. 1973-02 | Stephenson, Morrison & Hohenkerk (2016) / Morrison et al. (2021) cubic spline, Table S15 (Royal Society supplement, CC BY 4.0) — published pre-1974 segments only | published error table (15 s at 1600, 0.05 s from 1870) |
+| Observed | 1973-02 .. 2026-04 | USNO deltat.data — monthly observed TT−UT1 | 0.05 s |
+| Predictions | 2026-04 .. 2033-10 | USNO deltat.preds — quarterly, bridged from the last observation; observations shadow predictions inside their span | the file's own error column, interpolated (0.05 .. 1 s) |
+| Long-range | 2033-10 .. 2150 | Espenak–Meeus 2005-2050 / 2050-2150 branches | declared envelope: 1 s at the join, 6 s at 2050, 12 s at 2100, 20 s at 2150 |
+
+Join steps are **declared, never blended**: +0.228 s where the spline hands
+over to the USNO observations (1973-02-01), continuous across the
+observed-to-prediction bridge, and +8.91 s where the USNO stops predicting
+and the polynomial long-range takes over (2033-10-01) — the USNO's own end
+of record, left visible. The vendored values were validated three ways:
+three Wayback snapshots of the USNO files, the independently vendored
+hyper-calendar copy (C04-identity-checked to 0.002 s), and the IERS-derived
+astronomia monthly series. The tables regenerate via
+`tools/refresh_delta_t.dart` (monthly workflow; it refuses to write
+on any anomaly), and the freshness canary asserts the observed table stays
+current (last observed month within ~16 months).
 
 **License boundary (AGPL facts-out):** Swiss Ephemeris is AGPL-3. It is
 invoked only by the CI verification harness; no nMiti package imports or

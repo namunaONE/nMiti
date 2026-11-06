@@ -2,6 +2,14 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — hybrid Delta-T display layer (R7a, HYA-438)
+
+- `api/v1/today.json` panchang block gains a `delta_t` honesty block: the served Delta-T value at local noon with its source segment (`smh2021-spline`, `usno-observed`, `usno-preds` or `espenak-meeus`), uncertainty, source span and the evaluated-at NPT stamp — the R7a engine channel surfaced, never re-derived. The pre-R7a Espenak–Meeus polynomial read 75.62 s for Nov 2026 where the USNO observed value is 69.13 s; every limb boundary now renders ~6.5 s later (truer) in wall clock.
+- The methodology page and the docs-pack methodology gain a Delta-T receipts section: the four segments with spans, sources and uncertainties, and the declared (not blended) join steps — +0.228 s at 1973-02-01 (spline → observed), continuous bridge (observed → predictions), +8.91 s at 2033-10-01 (predictions → Espenak–Meeus long-range) — plus the HYA-406 KEEP adjudication superseded and the three-way data validation (Wayback snapshots × hyper-calendar × astronomia).
+- New monthly workflow `refresh-delta-t.yml` wires the engine PR's `tools/refresh_delta_t.dart`: fetch the USNO files (Wayback fallback), validate, regenerate the vendored tables between markers, open a review PR when they change, and raise an urgent issue on validation failure (the tool refuses to write on any anomaly).
+- The freshness & correctness canary gains a ΔT freshness assertion: the vendored observed table's last month must be within ~16 months of today.
+- Site contract: today.json `delta_t`/`uncertainty_seconds`/`source_span` and methodology `id="delta-t"` + `hybrid Delta-T channel` markers enforced pre-merge and post-deploy. llms.txt and the data.html API description updated. No engine changes — this layer renders the shipped R7a channel only.
+
 ## [Unreleased] — ayanamsa methodology page (R6g, HYA-437)
 
 - New honesty page `ayanamsa.html`: the sidereal reference stated exactly — the fitted model `23.87508° + 1.36062°/Julian century (TT)` calibrated on the 48 drikpanchang ingress receipts (mean 3.7 min, max 8.6 min, 48/48 NPT dates), and the per-source profiles (BhaktiBharat −0.0795°, Hamro Patro −0.0117°) with the corpus finding that forces profiles rather than one universal value.
