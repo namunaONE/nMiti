@@ -2,6 +2,14 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — masa + muhurta display layer (R6f)
+
+- `api/v1/today.json` gains a `masa` block: the amanta lunar month containing today (udaya attribution) — month number and name, begins/ends at the bounding new moons NPT, adhika/kshaya flags, and the sankranti instants inside the month, with provenance and evidence tier. The block note states that amanta lunar months are a separate stream from the sankranti-anchored BS solar months (in 2083, lunar Chaitra ran Mar 19 – Apr 17 2026 while solar Baisakh began Apr 14), so the two month systems can never be conflated silently.
+- `api/v1/today.json` gains a `muhurta` block: Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma (computed night/15 plus the BhaktiBharat fixed 96/48 convention), the 8+8 choghadiya slots and the 24 unequal horas — every window NPT-stamped, with the engine convention-collision map serialized (Dur Muhurtam stated as not served; Varjyam/Amrit Kalam stated as deferred — never silently dropped).
+- New `masa.html`: the lunar month containing today (bilingual card with adhika/kshaya flags and the sankrantis inside), the coming amanta year with adhika/kshaya columns, the naming/adhika/kshaya rule table with receipts (Adhika Jestha 2026; the VS 2083 13-month year; the Ghatasthapana anchor), and the oracle/receipt verification pointers.
+- New `muhurta.html`: today's windows table with the sunrise/sunset line, the day and night choghadiya tables (dates shown — night parts cross midnight), the 24-hour hora table, the full convention-collision table, and the receipt corpus pointers.
+- Site contract: `masa.html` + `muhurta.html` markers and today.json `masa`/`muhurta` markers enforced pre-merge and post-deploy; the pages.yml smoke 200-list gains both pages. Nav (index + doc shell), sitemap, llms.txt and the data.html API description wired. No engine or fixture changes — the display layer renders the shipped HYA-419 masa module and HYA-420 muhurta module only.
+
 ## [Unreleased] — festival display layer (R6e, re-ship on the R6d-gated battery)
 
 - `api/v1/today.json` gains a `festivals` block: today's observances, `next_festival` and the 45-day horizon (`festival_window_days`), every entry carrying its day-choosing convention, the tithi span, the udaya-convention alternate whenever they diverge (`convention_divergence`), vriddhi/kshaya/borderline flags and BS + AD labels. Keys always serialize, so the contract markers are date-stable on festival days and quiet days alike.

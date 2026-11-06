@@ -91,6 +91,10 @@ void main(List<String> args) {
       _grahanPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/festivals.html'),
       _festivalsPageHtml(full, todayAd, urlBase, commitSha));
+  _write(File('${out.path}/masa.html'),
+      _masaPageHtml(todayAd, urlBase, commitSha));
+  _write(File('${out.path}/muhurta.html'),
+      _muhurtaPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -183,6 +187,8 @@ ${limbJson('      ', p.karanaAtUdaya, p.karanaAtNoon)}
   },
   "grahan": ${_grahanBlock(todayAd, urlBase)},
   "festivals": ${_festivalsBlock(full, todayAd, urlBase)},
+  "masa": ${_masaBlock(todayAd, urlBase)},
+  "muhurta": ${_muhurtaBlock(todayAd, urlBase)},
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
   "commit": "$commitSha",
@@ -297,7 +303,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="masa.html">Masa</a> · <a href="panchang.html">Panchang</a> · <a href="muhurta.html">Muhurta</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -515,7 +521,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}festivals.html">Festivals</a> · <a href="${urlBase}docs.html">Docs</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}masa.html">Masa</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}muhurta.html">Muhurta</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}festivals.html">Festivals</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -674,7 +680,7 @@ $checksumRows
 
 <h2 id="api">JSON API - static, no keys, CC0</h2>
 <ul>
-<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - plus a <code>grahan</code> block: the eclipse or sutak window touching today, whether sutak is active, and the next grahan with its Nepali name and honesty fields, plus a <code>festivals</code> block: today's festival observances, the next festival and the 45-day horizon, each naming its day-choosing convention and any convention divergence. Engine-computed at build time. Stamped with the commit and build run.</li>
+<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - plus a <code>grahan</code> block: the eclipse or sutak window touching today, whether sutak is active, and the next grahan with its Nepali name and honesty fields, plus a <code>festivals</code> block: today's festival observances, the next festival and the 45-day horizon, each naming its day-choosing convention and any convention divergence - plus a <code>masa</code> block (the amanta lunar month containing today, with adhika/kshaya flags) and a <code>muhurta</code> block (Rahu Kalam, Yamaganda, Gulika, Abhijit and Brahma muhurta, the choghadiya slots and the 24 horas). Engine-computed at build time. Stamped with the commit and build run.</li>
 <li><code>api/v1/calendar/{bs_year}.json</code> - one BS year: baisakh1, weekday, days, the 12 month lengths, month names, evidence tier (BS 1975-2100). Example: <a href="api/v1/calendar/2083.json">api/v1/calendar/2083.json</a></li>
 <li><code><a href="api/v1/meta.json">api/v1/meta.json</a></code> - dataset metadata: coverage, evidence summary, license.</li>
 </ul>
@@ -1790,10 +1796,281 @@ $yearRows
       shortSha);
 }
 
+/// The masa block of today.json (R6f): the amanta lunar month
+/// containing today by udaya attribution. Lunar months are a separate
+/// stream from the sankranti-anchored BS solar months - the note says
+/// exactly that, so the two month systems can never be conflated.
+String _masaBlock(DateTime todayAd, String urlBase) {
+  final m = masaOf(year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  final sankrantis = [
+    for (var i = 0; i < m.sankrantiMomentsNpt.length; i++)
+      '{"rasi_index": ${m.sankrantiRasis[i]}, '
+      '"instant_npt": "${isoNpt(m.sankrantiMomentsNpt[i])}"}'
+  ].join(', ');
+  return '{\n'
+      '    "note": "amanta lunar month (new moon to new moon) containing '
+      'today by udaya attribution - a separate stream from the '
+      'sankranti-anchored BS solar month",\n'
+      '    "month_number": ${m.monthNumber},\n'
+      '    "month_name": "${m.monthName}",\n'
+      '    "is_adhika": ${m.isAdhika},\n'
+      '    "is_kshaya": ${m.isKshaya},\n'
+      '    "begins_at": "${isoNpt(m.beginsAtNpt)}",\n'
+      '    "ends_at": "${isoNpt(m.endsAtNpt)}",\n'
+      '    "sankrantis": [$sankrantis],\n'
+      '    "provenance": "${m.provenance}",\n'
+      '    "evidence_tier": "${m.evidenceTier}",\n'
+      '    "details": "${urlBase}masa.html"\n'
+      '  }';
+}
+
+/// The muhurta block of today.json (R6f): the daily windows, the
+/// choghadiya and the horas, all computed by the muhurta layer from
+/// the engine sunrise/sunset. Convention collisions serialize as
+/// data - Dur Muhurtam is stated as not served, never silently
+/// dropped.
+String _muhurtaBlock(DateTime todayAd, String urlBase) {
+  final mu = muhurtaFor(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  String windowJson(String key, MuhurtaWindow w) =>
+      '    "$key": {"name": "${w.name}", "begins_at": '
+      '"${isoNpt(w.beginsAtNpt)}", "ends_at": "${isoNpt(w.endsAtNpt)}"}';
+  String slotArray(String key, List<ChoghadiyaSlot> slots) {
+    final items = [
+      for (final s in slots)
+        '{"type": "${s.type}", "lord": "${s.lord}", '
+        '"begins_at": "${isoNpt(s.beginsAtNpt)}", '
+        '"ends_at": "${isoNpt(s.endsAtNpt)}"}'
+    ].join(',\n      ');
+    return '    "$key": [\n      $items\n    ]';
+  }
+  String horaArray(List<HoraSlot> slots) {
+    final items = [
+      for (final s in slots)
+        '{"lord": "${s.lord}", "begins_at": '
+        '"${isoNpt(s.beginsAtNpt)}", "ends_at": '
+        '"${isoNpt(s.endsAtNpt)}", "is_daylight": ${s.isDaylight}}'
+    ].join(',\n      ');
+    return '    "horas": [\n      $items\n    ]';
+  }
+  final conventions = [
+    for (final k in mu.conventions.keys)
+      '      "$k": "${mu.conventions[k]}"'
+  ].join(',\n');
+  return '{\n'
+      '    "note": "engine-computed at build time; window boundaries '
+      'inherit the sunrise convention divergence between publishers",\n'
+      '    "sunrise_npt": "${isoNpt(mu.sunriseNpt)}",\n'
+      '    "sunset_npt": "${isoNpt(mu.sunsetNpt)}",\n'
+      '${windowJson('rahu_kalam', mu.rahuKalam)},\n'
+      '${windowJson('yamaganda', mu.yamaganda)},\n'
+      '${windowJson('gulika', mu.gulika)},\n'
+      '${windowJson('abhijit_muhurta', mu.abhijitMuhurta)},\n'
+      '${windowJson('brahma_muhurta', mu.brahmaMuhurta)},\n'
+      '${windowJson('brahma_muhurta_fixed', mu.brahmaMuhurtaFixed)},\n'
+      '${slotArray('choghadiya_day', mu.choghadiyaDay)},\n'
+      '${slotArray('choghadiya_night', mu.choghadiyaNight)},\n'
+      '${horaArray(mu.horas)},\n'
+      '    "conventions": {\n$conventions\n    },\n'
+      '    "provenance": "${mu.provenance}",\n'
+      '    "evidence_tier": "${mu.evidenceTier}",\n'
+      '    "details": "${urlBase}muhurta.html"\n'
+      '  }';
+}
+
+/// The /masa page (R6f): the amanta lunar month containing today, the
+/// coming amanta year, and the naming/adhika/kshaya conventions with
+/// their receipts. The BS solar months live on sankranti.html; this
+/// page states the distinction instead of conflating the two streams.
+String _masaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final today = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final current =
+      masaOf(year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  final months = masaList(
+      startNpt: today.subtract(const Duration(days: 45)),
+      endNpt: today.add(const Duration(days: 370)));
+  String dt(DateTime t) =>
+      '${_iso(t)} ${_skTwo(t.hour)}:${_skTwo(t.minute)} NPT';
+  final currentSankrantis = current.sankrantiMomentsNpt.isEmpty
+      ? 'none inside this month'
+      : [
+          for (var i = 0; i < current.sankrantiMomentsNpt.length; i++)
+            'ingress into rashi ${current.sankrantiRasis[i]} of 12 '
+            '(Mesha = 1, Meena = 12) at ${dt(current.sankrantiMomentsNpt[i])}'
+        ].join(' and ');
+  final currentCard = [
+    '<p><strong>${current.monthName} '
+    '<span lang="ne">${bsMonthNameNp(current.monthNumber)}</span></strong>'
+        '${current.isAdhika ? ' — <strong>अधिक मास · adhika (intercalated) month</strong>' : ''}'
+        '${current.isKshaya ? ' — <strong>क्षय मास · kshaya (elided) month</strong>' : ''}</p>',
+    '<ul>',
+    '<li><strong>आरम्भ · Begins (new moon):</strong> ${dt(current.beginsAtNpt)}</li>',
+    '<li><strong>अन्त्य · Ends (next new moon):</strong> ${dt(current.endsAtNpt)}</li>',
+    '<li><strong>भित्रका सङ्क्रान्ति · Sankrantis inside:</strong> $currentSankrantis</li>',
+    '</ul>',
+  ].join('\n');
+  final rows = [
+    for (final m in months)
+      '<tr><td>${_iso(m.beginsAtNpt)}</td>'
+      '<td>${m.monthName} <span lang="ne">${bsMonthNameNp(m.monthNumber)}</span></td>'
+      '<td>${m.isAdhika ? 'yes' : '-'}</td>'
+      '<td>${m.isKshaya ? 'yes' : '-'}</td>'
+      '<td>${m.sankrantiMomentsNpt.isEmpty ? '-' : [for (var i = 0; i < m.sankrantiMomentsNpt.length; i++) _iso(m.sankrantiMomentsNpt[i])].join(', ')}</td>'
+      '<td>${_iso(m.endsAtNpt)}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Masa · <span lang="ne">मास</span> — the lunar months</h1>
+<p>The amanta lunar months of the nMiti engine: new moon to new moon, each named after the solar month that ends within it, with adhika (intercalated) and kshaya (elided) months detected at runtime. Computed, not copied — the new moons come from the wrap-safe tithi solver, the sankrantis from the VSOP87D sun on the same calibrated constants as the sankranti pages.</p>
+
+<h2 id="masa-current">आजको मास · The lunar month containing today</h2>
+$currentCard
+<p>Today belongs to this month by udaya attribution — the month whose span contains this sunrise, the same convention the panchang day uses.</p>
+
+<h2 id="masa-year">आगामी मासहरू · The coming amanta year</h2>
+<p>Every lunar month intersecting the next 370 days, starting from the month that contains today. Adhika months carry the name of the month that follows them; kshaya months take the name of their first contained sankranti.</p>
+<table>
+<tr><th>Begins (new moon)</th><th>Month</th><th>Adhika</th><th>Kshaya</th><th>Sankranti(s) inside</th><th>Ends (next new moon)</th></tr>
+$rows
+</table>
+
+<h2 id="masa-conventions">नियम · Naming and detection rules</h2>
+<p>Lunar months and BS solar months are two coexisting streams: the solar months live on <a href="${urlBase}sankranti.html">sankranti.html</a>, anchored to sidereal solar ingress; the amanta lunar months here are anchored to new moons. In BS 2083, lunar Chaitra ran Mar 19 – Apr 17 2026 while solar Baisakh began Apr 14.</p>
+<table>
+<tr><th>Rule</th><th>Definition</th><th>Receipt</th></tr>
+<tr><td>Amanta month</td><td>new moon to new moon; a day belongs to the month whose span contains its sunrise (udaya attribution)</td><td>the same convention the panchang day uses</td></tr>
+<tr><td>Naming</td><td>a lunar month is named after the solar month that ENDS within it: the Mesha sankranti falls in Chaitra (12), Vrishabha in Baisakh (1), ..., Meena in Falgun (11)</td><td>Ghatasthapana Oct 11 2026 = Ashwin Shukla Pratipada, in the lunar month containing the Tula sankranti</td></tr>
+<tr><td>Adhika (intercalated)</td><td>a lunar month containing no sankranti; it takes the name of the month that follows it</td><td>Adhika Jestha 2026: amanta May 17 – Jun 15/16 (Nepal Panchanga Decision Committee via Nepal News; hindutone; hindupad)</td></tr>
+<tr><td>Kshaya (elided)</td><td>a lunar month containing two sankrantis; it takes the name of its first contained sankranti. None occurs in 2026–2029; the naming branch is cross-checked by the tithi_engine oracle in CI and needs a dated publisher receipt before it is served as truth</td><td>honesty rule: no convention ships without a receipt</td></tr>
+</table>
+
+<h2 id="masa-receipts">प्रमाण · Receipts and verification</h2>
+<ul>
+<li>VS 2083 carries 13 amanta lunar months (the Adhika Jestha year) — the engine reproduces both the 13-month year and the adhika window.</li>
+<li>Day-by-day month-name agreement with the Swiss-anchored tithi_engine oracle in CI (<code>masa_oracle_test.dart</code>), dense at the adhika boundaries (May 15–20 and Jun 14–18, 2026).</li>
+<li><code>masa_test.dart</code> pins the new-moon instants and the naming anchors on every change; the new moon of Nov 9 2026, 12:47 NPT is exact against the locked lunar corpus.</li>
+</ul>
+<p><strong>Provenance:</strong> ${current.provenance}</p>
+<p><strong>Evidence tier:</strong> ${current.evidenceTier}</p>
+<p>Machine-readable: the <a href="${urlBase}api/v1/today.json">today.json</a> <code>masa</code> block carries the current month with adhika/kshaya flags and NPT stamps.</p>
+''';
+  return _docShell(
+      'Masa (lunar months)',
+      'Nepal amanta lunar months from the nMiti engine: the month containing today, the coming amanta year, adhika/kshaya detection and every naming rule receipt-anchored.',
+      urlBase,
+      'masa.html',
+      body,
+      shortSha);
+}
+
+/// The /muhurta page (R6f): today's muhurta windows, the choghadiya
+/// and hora tables, and the full convention-collision table with the
+/// receipt corpus. Every window is engine-computed from the engine
+/// sunrise/sunset; collisions are exposed, never silently picked.
+String _muhurtaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final mu = muhurtaFor(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  String dt(DateTime t) =>
+      '${_iso(t)} ${_skTwo(t.hour)}:${_skTwo(t.minute)} NPT';
+  String row(String label, MuhurtaWindow w) =>
+      '<tr><td>$label</td><td>${dt(w.beginsAtNpt)}</td>'
+      '<td>${dt(w.endsAtNpt)}</td></tr>';
+  final windowsRows = [
+    row('Rahu Kalam', mu.rahuKalam),
+    row('Yamaganda', mu.yamaganda),
+    row('Gulika', mu.gulika),
+    row('Abhijit Muhurta', mu.abhijitMuhurta),
+    row('Brahma Muhurta (computed, 14th of the night/15)', mu.brahmaMuhurta),
+    row('Brahma Muhurta (BhaktiBharat fixed 96/48 min)', mu.brahmaMuhurtaFixed),
+  ].join('\n');
+  String chogRows(List<ChoghadiyaSlot> slots) => [
+        for (final s in slots)
+          '<tr><td>${s.type}</td><td>${s.lord}</td>'
+          '<td>${dt(s.beginsAtNpt)}</td><td>${dt(s.endsAtNpt)}</td></tr>'
+      ].join('\n');
+  final horaRows = [
+    for (final s in mu.horas)
+      '<tr><td>${s.isDaylight ? 'day' : 'night'}</td><td>${s.lord}</td>'
+      '<td>${dt(s.beginsAtNpt)}</td><td>${dt(s.endsAtNpt)}</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'rahuYamaGulika': 'Rahu Kalam / Yamaganda / Gulika',
+    'brahma': 'Brahma muhurta',
+    'abhijit': 'Abhijit muhurta',
+    'choghadiya': 'Choghadiya',
+    'hora': 'Hora',
+    'durMuhurta': 'Dur Muhurtam',
+    'varjyamAmrit': 'Varjyam / Amrit Kalam',
+  };
+  final convRows = [
+    for (final k in mu.conventions.keys)
+      '<tr><td><code>$k</code> — ${convLabels[k] ?? k}</td>'
+      '<td>${mu.conventions[k]}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Muhurta · <span lang="ne">मुहूर्त</span> — today's windows</h1>
+<p>Engine-computed from the engine's own USNO sunrise and sunset: Rahu Kalam, Yamaganda and Gulika (weekday parts of daylight/8), Abhijit (the 8th of 15 daylight muhurtas), Brahma muhurta, the day and night choghadiya and the 24 unequal horas. Every rule is receipt-anchored to the BhaktiBharat Kathmandu corpus (Nov 2026, 18 days — Rahu/Yamaganda/Gulika windows reproduce within 0.9 min of the 8-part rule); every convention collision is exposed, never silently picked.</p>
+<p><strong>Sunrise:</strong> ${dt(mu.sunriseNpt)} · <strong>Sunset:</strong> ${dt(mu.sunsetNpt)}</p>
+
+<h2 id="muhurta-today">आजका मुहूर्त · Today's windows</h2>
+<table>
+<tr><th>Window</th><th>Begins</th><th>Ends</th></tr>
+$windowsRows
+</table>
+
+<h2 id="muhurta-choghadiya">चौघडिया · Choghadiya</h2>
+<p>Day parts run sunrise to sunset; night parts run sunset to the next sunrise. Dates are shown because night parts can cross midnight.</p>
+<p><strong>Day</strong></p>
+<table>
+<tr><th>Type</th><th>Lord</th><th>Begins</th><th>Ends</th></tr>
+${chogRows(mu.choghadiyaDay)}
+</table>
+<p><strong>Night</strong></p>
+<table>
+<tr><th>Type</th><th>Lord</th><th>Begins</th><th>Ends</th></tr>
+${chogRows(mu.choghadiyaNight)}
+</table>
+
+<h2 id="muhurta-horas">होरा · Horas</h2>
+<p>The 24 unequal horas (daylight/12 + night/12, sunrise to the next sunrise) — astronomically consistent, served as the primary convention. The temple-tradition fixed 60-minute hora is a documented collision, not served as truth.</p>
+<table>
+<tr><th>Part</th><th>Lord</th><th>Begins</th><th>Ends</th></tr>
+$horaRows
+</table>
+
+<h2 id="muhurta-conventions">नियम · Conventions and collisions</h2>
+<table>
+<tr><th>Rule</th><th>What we compute (and why)</th></tr>
+$convRows
+</table>
+
+<h2 id="muhurta-receipts">प्रमाण · Receipts</h2>
+<ul>
+<li><a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/muhurta_receipts_2026_11.json">muhurta_receipts_2026_11.json</a> — 18 BhaktiBharat Kathmandu days (Nov 5–22 2026) plus a hinducalculator spot day; the weekday part tables, the choghadiya lord cycles and the window arithmetic, all receipt-anchored.</li>
+<li><strong>Engine gates:</strong> <code>muhurta_receipts_test.dart</code> (fixture integrity + rule arithmetic) and <code>muhurta_calibration_test.dart</code> (engine windows banded against the receipts) run on every change.</li>
+</ul>
+<p><strong>Provenance:</strong> ${mu.provenance}</p>
+<p><strong>Evidence tier:</strong> ${mu.evidenceTier}</p>
+<p>Machine-readable: the <a href="${urlBase}api/v1/today.json">today.json</a> <code>muhurta</code> block carries every window and slot with NPT stamps.</p>
+''';
+  return _docShell(
+      'Muhurta (daily windows)',
+      'Nepal muhurta windows from the nMiti engine: Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma muhurta, choghadiya and horas - receipt-anchored, convention collisions exposed, never guessed.',
+      urlBase,
+      'muhurta.html',
+      body,
+      shortSha);
+}
+
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'masa.html', 'panchang.html', 'muhurta.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -1812,7 +2089,7 @@ String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) 
 > Verified, evidence-tagged Bikram Sambat dates for Nepal, rebuilt automatically every day at 00:00 Nepal Time (UTC+05:45).
 
 Today's date (bilingual page): $urlBase
-Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan - and a festivals block: today's observances, the next festival and the 45-day horizon, each naming its day-choosing convention): ${urlBase}api/v1/today.json
+Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan - and a festivals block: today's observances, the next festival and the 45-day horizon, each naming its day-choosing convention - plus a masa block, the amanta lunar month containing today with adhika/kshaya flags, and a muhurta block: Rahu Kalam, Yamaganda, Gulika, Abhijit and Brahma muhurta, the choghadiya slots and the hora windows): ${urlBase}api/v1/today.json
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
@@ -1825,6 +2102,8 @@ Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sank
 Panchang for today (tithi, nakshatra, yoga, karana, sunrise; engine-computed at build time, both udaya and madhyahna conventions): ${urlBase}panchang.html
 Grahan (eclipses) for Kathmandu - next grahan, today's sutak state, upcoming eclipses, conventions and receipts: ${urlBase}grahan.html
 Festivals (receipt-pinned battery; today's observances, the next festival, the year's calendar with every convention divergence exposed): ${urlBase}festivals.html
+Masa (amanta lunar months, new moon to new moon, with adhika/kshaya detection; engine-computed): ${urlBase}masa.html
+Muhurta (Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma, choghadiya, horas; engine-computed): ${urlBase}muhurta.html
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 
