@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — post-R7a Swiss-truth scoreboard receipts (HYA-438)
+
+- Re-measured every Swiss-truth band on the R7a merge (CI #146, `ff8b3ae`): the Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to mean −0.30 s (max 0.31 s, n=233) — the R7a goal, measured, not derived. Every TT limb band shifted by the −6.5 s ΔT wall-clock correction and still passes: tithi/karana 14.3 s mean / 26 s max (the named Meeus Ch.47 truncation, exposed once the pre-R7a ΔT error stopped partially canceling it), nakshatra 66.2 s, yoga 110.8 s.
+- UT1-direct channels did not move — sunrise 11.3 s, moonrise 0.2 s — confirming the ΔT channel change as the sole cause of the shift.
+- Receipts updated everywhere the pre-R7a numbers were published: the `uncertainty.dart` basis strings, docs/methodology.md (three-anchors summary, a post-R7a re-measurement table beside the first scoreboard, ΔT-residual wording), the methodology.html ΔT section, and the ayanamsa.html per-limb sensitivity table. The sweph harness's stale "Espenak-Meeus" ΔT-residual label now reads the engine's hybrid channel. Published band ceilings stay unchanged — all bands pass with margin.
+
 ## [Unreleased] — hybrid Delta-T display layer (R7a, HYA-438)
 
 - `api/v1/today.json` panchang block gains a `delta_t` honesty block: the served Delta-T value at local noon with its source segment (`smh2021-spline`, `usno-observed`, `usno-preds` or `espenak-meeus`), uncertainty, source span and the evaluated-at NPT stamp — the R7a engine channel surfaced, never re-derived. The pre-R7a Espenak–Meeus polynomial read 75.62 s for Nov 2026 where the USNO observed value is 69.13 s; every limb boundary now renders ~6.5 s later (truer) in wall clock.

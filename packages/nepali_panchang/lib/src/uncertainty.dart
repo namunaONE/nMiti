@@ -9,11 +9,16 @@
 ///   observed maxima;
 /// - ephemeris parity: the Swiss-anchored tithi_engine oracle in CI (PR #30)
 ///   - all day-tithi labels agree, transition instants mean < 2 min;
-/// - Swiss-truth scoreboard (HYA-369, PR #42, 2026-11-06): every CI run
-///   re-solves the served window with Swiss Ephemeris (Moshier) - tithi
-///   and karana boundaries mean 7.9 s max 19 s, moonrise mean 0.3 s max
-///   1 s, sunrise mean 11.3 s max 12 s; the nakshatra/yoga deltas (~60/
-///   ~104 s) are the ayanamsa convention gap, stated, not absorbed.
+/// - Swiss-truth scoreboard (HYA-369, PR #42, 2026-11-06; re-measured
+///   post-R7a on merge ff8b3ae, CI #146): every CI run re-solves the
+///   served window with Swiss Ephemeris (Moshier) - tithi and karana
+///   boundaries mean 14.3 s max 26 s (the named Meeus Ch.47 truncation,
+///   exposed once the pre-R7a Delta-T error stopped partially canceling
+///   it), moonrise mean 0.2 s, sunrise mean 11.3 s max 12 s (UT-direct,
+///   unchanged by R7a); the nakshatra/yoga deltas (~66/~111 s) are the
+///   ayanamsa convention gap plus the -6.5 s R7a Delta-T wall-clock
+///   shift, stated, not absorbed. The Swiss-vs-engine Delta-T residual
+///   collapsed from ~6.6 s to mean -0.30 s max 0.31 s (n=233).
 ///
 /// Publisher-vs-publisher divergence (BhaktiBharat and Hamro Patro agree
 /// within 2-13 min on the same boundaries) is a measured fact about Nepali
@@ -29,9 +34,12 @@
 /// SMH2016/Morrison2021 spline before 1973, USNO observed monthly
 /// through 2026-04, USNO quarterly predictions through 2033-10 and
 /// Espenak-Meeus long-range beyond, joins declared not blended - which
-/// closes the ~6.5 s systematic. The published bands above stay as
-/// they are until the post-R7a Swiss-truth scoreboard re-measures them;
-/// they are ceilings and remain honest.
+/// closes the ~6.5 s systematic. Re-measured post-R7a (CI #146, merge
+/// ff8b3ae): the Swiss-vs-engine Delta-T residual is mean -0.30 s max
+/// 0.31 s (n=233); every TT limb band shifted by the -6.5 s Delta-T
+/// wall-clock correction and stays inside its published ceiling -
+/// tithi/karana 14.3 s mean, nakshatra 66.2 s, yoga 110.8 s, sunrise
+/// 11.3 s unchanged. The bands above stay as published.
 
 /// One published uncertainty band.
 class UncertaintyBand {
@@ -64,8 +72,10 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Receipt corpus: |engine - BhaktiBharat| max ~1.0 min (226 '
         'boundaries, Oct-Nov 2026); Swiss-anchored tithi_engine oracle '
         '(PR #30): all day labels agree, transitions mean < 2 min; '
-        'Swiss-truth scoreboard (PR #42): boundary instants mean 7.9 s, '
-        'max 19 s (n=47).',
+        'Swiss-truth scoreboard (PR #42, re-measured post-R7a): boundary '
+        'instants mean 14.3 s, max 26 s (n=47) - the named Meeus Ch.47 '
+        'truncation, exposed once the pre-R7a Delta-T error stopped '
+        'partially canceling it.',
   ),
   UncertaintyBand(
     limb: 'nakshatra',
@@ -73,9 +83,9 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Receipt corpus: typical <= 0.94 min, observed max 1.7 min near '
         'lunar perigee (Nov 2026); BhaktiBharat ayanamsa profile '
         '(delta -0.0795 deg). Published ceiling covers perigee days. '
-        'Swiss-truth cross-check reads a near-constant ~60 s (n=45) - '
-        'the ayanamsa convention gap vs Swiss Lahiri, stated not '
-        'absorbed.',
+        'Swiss-truth cross-check reads a near-constant ~66 s (n=45) - '
+        'the ayanamsa convention gap vs Swiss Lahiri plus the -6.5 s '
+        'R7a Delta-T wall-clock shift, stated not absorbed.',
   ),
   UncertaintyBand(
     limb: 'yoga',
@@ -83,8 +93,9 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Receipt corpus: max ~0.97 min after the ayanamsa fit (both '
         'corpora); Hamro Patro divergence up to ~13 min is publisher data, '
         'not engine error. Swiss-truth cross-check reads a near-constant '
-        '~104 s (n=48) - the ayanamsa convention gap vs Swiss Lahiri, '
-        'stated not absorbed.',
+        '~111 s (n=48) - the ayanamsa convention gap vs Swiss Lahiri '
+        'plus the -6.5 s R7a Delta-T wall-clock shift, stated not '
+        'absorbed.',
   ),
   UncertaintyBand(
     limb: 'karana',
@@ -92,8 +103,10 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Convention-anchored: 76/76 exact identity on the receipt corpus '
         'at the pinned reference moment (BhaktiBharat noon, Hamro Patro '
         'engine-sunrise udaya). The served value stays convention-exact; '
-        'Swiss-truth boundary parity (PR #42): mean 7.9 s, max 19 s '
-        '(n=93).',
+        'Swiss-truth boundary parity (PR #42, re-measured post-R7a): '
+        'mean 14.3 s, max 26 s (n=93) - the named Meeus Ch.47 '
+        'truncation, exposed once the pre-R7a Delta-T error stopped '
+        'partially canceling it.',
   ),
   UncertaintyBand(
     limb: 'sunrise',
@@ -111,7 +124,7 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'PROVISIONAL (HYA-417): JPL Horizons topocentric rise receipts '
         'vs the served Meeus 15.1 geocentric target observed up to '
         '~12 min - a rise-convention gap, not an ephemeris gap: the '
-        'Swiss-truth scoreboard (PR #42) reads mean 0.3 s, max 1 s '
-        '(n=44) at the identical target.',
+        'Swiss-truth scoreboard (PR #42, re-measured post-R7a) reads '
+        'mean 0.2 s, max 0 s (n=44) at the identical target.',
   ),
 ];

@@ -8,7 +8,8 @@ and re-solves every boundary with Swiss Ephemeris via pyswisseph, scoring
 the reconstruction gap per limb (HYA-369 deliverable 1), flagging
 knife-edge boundaries (within 30 minutes of a Kathmandu sunrise - the days
 two honest panchangs can print different tithis), and measuring the Delta-T
-model residual (Swiss internal vs our Espenak-Meeus polynomial). Enforces
+model residual (Swiss internal vs the engine's served Delta-T - the
+hybrid channel since R7a, Espenak-Meeus before). Enforces
 provisional bands and writes a receipts JSON.
 
 HYA-417: the dump also carries the per-day moonrise (first rise within
@@ -87,6 +88,14 @@ except ImportError:
 # 104.3|119 (near-constant ayanamsa convention gap included) ->
 # 180/120 and 300/180. A regression now trips the band within ~3x of
 # the recorded maxima.
+#
+# Post-R7a re-measurement (CI #146, merge ff8b3ae, hybrid Delta-T):
+# tithi/karana 14.3|26, nakshatra 66.2|78, yoga 110.8|125, moonrise
+# 0.2|0, sunrise +11.3|12 (unchanged, UT-direct), Delta-T residual
+# mean -0.30|0.31 s. The pre-R7a Delta-T error had been partially
+# canceling the tithi/karana Meeus Ch.47 truncation gap; with Delta-T
+# corrected the raw gap stands exposed. All bands still hold with
+# margin, so the thresholds stay.
 HARD_BAND_S = {"tithi": 60, "karana": 60, "nakshatra": 180, "yoga": 300}
 MEAN_BAND_S = {"tithi": 30, "karana": 30, "nakshatra": 120, "yoga": 180}
 # Moonrise parity band (HYA-417): same target convention on both sides,
@@ -1054,7 +1063,7 @@ def main():
 
     dt_st = stats([abs(d) for d in dt_residuals])
     dt_signed = sum(dt_residuals) / len(dt_residuals) if dt_residuals else 0.0
-    print("delta T residual (Swiss - Espenak-Meeus): mean=%+.2fs "
+    print("delta T residual (Swiss - engine hybrid): mean=%+.2fs "
           "max|d|=%.2fs (n=%d)"
           % (dt_signed, dt_st["max_s"] or 0.0, dt_st["n"]))
 
@@ -1124,7 +1133,7 @@ def main():
                out["hard_band_s"], out["mean_band_s"],
                "PASS" if out["pass"] else "FAIL"))
     annotate_notice(
-        "SWEPH deltaT residual (Swiss - Espenak-Meeus): mean=%+.2fs "
+        "SWEPH deltaT residual (Swiss - engine hybrid): mean=%+.2fs "
         "max|d|=%.2fs (n=%d); knife-edge boundaries: %d"
         % (dt_signed, dt_st["max_s"] or 0.0, dt_st["n"],
            len(knife_edges)))
