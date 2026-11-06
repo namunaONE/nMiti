@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — ΔT adjudication: keep Espenak–Meeus, document the systematic (HYA-406)
+
+- Docs-only close-out. The ΔT source gap (our Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) is confirmed from three independent directions: the corrected Swiss residual (mean −6.79 s, max 6.81 s, n=233 → Swiss internal ΔT ≈68.8 s), the USNO/IERS long-term predictions table (69.05 ± 0.19 s at 2026.0), and community practice (e.g. AstronomyKit’s default switch to interpolated IERS values).
+- Decision: keep the Espenak–Meeus polynomial — deterministic and maintenance-free; the ~6.6 s systematic is sub-band (all 9 Swiss-truth bands pass with 4–15× headroom) and below the publisher minute floor. A ΔT-source swap would shift every boundary time ~6.6 s and force a corpus re-baseline for no measurable gain.
+- Adjudication text added to `uncertainty.dart` (named-contributors doc block; header corrected to three anchors) and `docs/methodology.md` (Swiss-truth section). No engine, data, band, or site changes.
+
 ## [Unreleased] — Swiss bands tightened to measured + ΔT units fix (HYA-369 A2)
 
 - Every Swiss-truth CI band tightened from provisional to the first-run scoreboard (2026-11-06) measured maxima + margin: tithi/karana 60/30 s (measured 7.9/19 s), nakshatra 180/120 (59.8/71), yoga 300/180 (104.3/119), moonrise 60/15 (0.3/1 — near-exact parity), sunrise 60/30 (11.3/12), lunar_ecl 120/60 (12.0/35), solar_loc 60/30 (5.0/6), lunar_loc 300/120 held (38.8/180). A regression now trips a band within ~3× of the recorded maxima.

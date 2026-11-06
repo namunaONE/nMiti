@@ -127,6 +127,20 @@ attribution. (First-run gotcha, fixed 2026-11-06: `swe.deltat` returns
 "residual" that masked the real ~−6.6 s gap; the corrected measurement is
 the input to the IERS ΔT adjudication, HYA-406.)
 
+**ΔT adjudication (HYA-406, 2026-11-06): keep Espenak–Meeus, document
+the systematic.** The gap is real and now source-confirmed from three
+independent directions: the USNO/IERS long-term predictions table reads
+ΔT = 69.05 ± 0.19 s at 2026.0; the Swiss internal model reads ≈68.8 s
+(corrected residual mean −6.79 s, max 6.81 s, n=233); our
+Espenak–Meeus polynomial gives 75.6 s. Decision: keep the fixed
+polynomial — deterministic, no table maintenance — and keep the ~6.6 s
+systematic stated: it is sub-band (every Swiss-truth band passes with
+4–15× headroom) and below the publisher minute floor (±0.5 min on
+displayed minutes). Swapping to an observed table would shift every
+boundary time ~6.6 s, force a corpus re-baseline, and buy nothing
+measurable. Stated, never absorbed; revisit only if a band ever tightens
+past the systematic.
+
 **License boundary (AGPL facts-out):** Swiss Ephemeris is AGPL-3. It is
 invoked only by the CI verification harness; no nMiti package imports or
 links against it, no ephemeris data ships in the repository or the site,

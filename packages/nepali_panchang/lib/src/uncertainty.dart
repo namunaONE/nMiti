@@ -2,7 +2,7 @@
 /// values (HYA-423). Every number the site and API serve carries an honest
 /// band derived from recorded evidence - never an aspiration.
 ///
-/// Two anchors:
+/// Three anchors:
 /// - publisher parity: the locked receipt corpora (226 limb boundaries +
 ///   76 karana/sunrise receipts, BhaktiBharat + Hamro Patro, Oct-Nov 2026)
 ///   gate CI on every push, and the bands are honest ceilings over the
@@ -22,6 +22,16 @@
 /// Named systematic contributors: the Delta-T source gap (Espenak-Meeus
 /// 75.6 s vs observed ~69 s for 2026 => ~6.6 s of boundary time) and Meeus
 /// Ch.47 truncation (~10 arcsec moon => ~20 s of boundary time).
+///
+/// Adjudication (HYA-406, 2026-11-06): the Delta-T source gap is real and
+/// source-confirmed - USNO/IERS long-term predictions read 69.05 +/- 0.19 s
+/// at 2026.0, the Swiss internal model reads ~68.8 s (residual mean
+/// -6.79 s, max 6.81 s, n=233), our Espenak-Meeus polynomial 75.6 s.
+/// Decision: KEEP Espenak-Meeus - a fixed polynomial is deterministic and
+/// needs no table maintenance, and the ~6.6 s systematic is sub-band
+/// (all 9 Swiss-truth bands pass with 4-15x headroom) and below the BB
+/// publisher minute floor (+/-0.5 min on displayed minutes). Stated here,
+/// never absorbed; revisit only if a band ever tightens past it.
 
 /// One published uncertainty band.
 class UncertaintyBand {
