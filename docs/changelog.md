@@ -2,6 +2,14 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — ayanamsa methodology page (R6g, HYA-437)
+
+- New honesty page `ayanamsa.html`: the sidereal reference stated exactly — the fitted model `23.87508° + 1.36062°/Julian century (TT)` calibrated on the 48 drikpanchang ingress receipts (mean 3.7 min, max 8.6 min, 48/48 NPT dates), and the per-source profiles (BhaktiBharat −0.0795°, Hamro Patro −0.0117°) with the corpus finding that forces profiles rather than one universal value.
+- Build-time computed values on the page: today's base ayanamsa and both publisher profiles, plus the Sun's sayana→nirayana longitude with the rashi it occupies and the degrees to the next 30° ingress edge — the arithmetic behind every sankranti.
+- Per-limb sensitivity table with the Swiss-truth measured gaps: tithi/karana are ayanamsa-free (7.9 s mean), nakshatra 59.8 s and yoga 104.3 s vs Swiss Lahiri — the convention gap, stated, never absorbed.
+- The Nepal divergence record, evidence-tiered: the NPNS method (Surya Siddhanta panchang khand + Ketaki Grahaganitam planets, official patro since 2078 BS, the rolled-back Dec 2025 Ketaki move), the press-reported ~21 kala printed-patro offset vs Chitra-pakshiya with sankranti up to 15+ h off drik (print verification pending, R8 queue), and the 2083 two-day Maha Ashtami / 26.39 h vriddhi case this engine reproduces.
+- Wiring: doc nav, index nav, sitemap, llms.txt; `ayanamsa.html` markers added to the site contract (pre-merge + post-deploy) and the deploy smoke 200-list. No engine, fixture or API changes.
+
 ## [Unreleased] — masa + muhurta display layer (R6f)
 
 - `api/v1/today.json` gains a `masa` block: the amanta lunar month containing today (udaya attribution) — month number and name, begins/ends at the bounding new moons NPT, adhika/kshaya flags, and the sankranti instants inside the month, with provenance and evidence tier. The block note states that amanta lunar months are a separate stream from the sankranti-anchored BS solar months (in 2083, lunar Chaitra ran Mar 19 – Apr 17 2026 while solar Baisakh began Apr 14), so the two month systems can never be conflated silently.
