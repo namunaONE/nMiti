@@ -206,7 +206,7 @@ PanchangDay panchangFor({
     tithiKshaya: kshaya,
     tithiBorderline: borderline,
     provenance: 'nMiti nepali_panchang engine: full 60-term Meeus Ch.47 moon, '
-        'VSOP87D sun, Espenak-Meeus Delta T; ayanamsa profile delta '
+        'VSOP87D sun, hybrid Delta T (SMH2021 spline + USNO tables, Espenak-Meeus long-range); ayanamsa profile delta '
         '${sourceDelta.toStringAsFixed(4)} deg (BhaktiBharat-anchored fit).',
     evidenceTier: 'runtime-computed; calibrated against the locked '
         'BhaktiBharat/Hamro Patro golden corpora (226 boundary receipts, '
