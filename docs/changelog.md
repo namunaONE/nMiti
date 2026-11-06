@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Swiss bands tightened to measured + ΔT units fix (HYA-369 A2)
+
+- Every Swiss-truth CI band tightened from provisional to the first-run scoreboard (2026-11-06) measured maxima + margin: tithi/karana 60/30 s (measured 7.9/19 s), nakshatra 180/120 (59.8/71), yoga 300/180 (104.3/119), moonrise 60/15 (0.3/1 — near-exact parity), sunrise 60/30 (11.3/12), lunar_ecl 120/60 (12.0/35), solar_loc 60/30 (5.0/6), lunar_loc 300/120 held (38.8/180). A regression now trips a band within ~3× of the recorded maxima.
+- **ΔT units bug fixed:** `swe.deltat()` returns ΔT in days; the harness read it as seconds, producing the constant −75.60 s "residual" that masked the true Swiss-vs-Espenak–Meeus gap. Corrected (×86400) — the now-measurable residual (~−6.6 s expected) is the input to the IERS ΔT adjudication (HYA-406).
+- `publishedErrorBars` gains the missing **moonrise** band (±12 min provisional, JPL-receipts basis; the Swiss parity 0.3 s is noted in the basis) and every basis text now carries its measured Swiss-truth scoreboard number. The methodology error-bars anchor list gains the Swiss scoreboard as anchor 3, and the Swiss-truth section carries the full measured table. No engine, data, or site changes.
+
 ## [Unreleased] — Swiss sunrise parity channel + readable scoreboard (HYA-369)
 
 - `tools/sweph/sweph_crosscheck.py` gains a **sunrise parity channel**: the Swiss mirror bisects the same USNO −0.8333° geometric center-altitude target the Dart `sunriseJdUt` solves, on Swiss apparent geocentric RA/dec — the same target on both sides, so the scored delta is the full ephemeris + low-accuracy-algorithm reconstruction gap of the served sunrise (no rise/set convention gap). Provisional band 600/300 s until the first CI run records the actual deltas.

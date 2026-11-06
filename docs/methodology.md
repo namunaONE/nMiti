@@ -54,7 +54,7 @@ Every row states its rung on the ladder:
 
 The lunar engine (`packages/nepali_panchang`) publishes an uncertainty band
 for every served value, derived from recorded evidence — never aspiration.
-Two anchors:
+Three anchors:
 
 1. **Publisher parity** — the locked receipt corpora (226 limb boundaries +
    76 karana/sunrise receipts, BhaktiBharat + Hamro Patro, Oct–Nov 2026)
@@ -63,6 +63,11 @@ Two anchors:
    Apache-2.0, dev-dependency only) cross-checks our tithi in CI: every
    day-tithi label agrees and transition instants sit inside the provisional
    bands.
+3. **Swiss-truth scoreboard** (HYA-369, first CI run 2026-11-06) — the
+   full engine window is re-solved with Swiss Ephemeris in CI:
+   tithi/karana boundaries mean 7.9 s (max 19 s), moonrise 0.3 s
+   (max 1 s), sunrise 11.3 s (max 12 s); the nakshatra/yoga deltas
+   (~60 / ~104 s) are the ayanamsa convention gap, stated, never absorbed.
 
 | Limb | ± minutes | Basis |
 | -- | -- | -- |
@@ -71,6 +76,7 @@ Two anchors:
 | yoga | ±2.0 | max ~0.97 post ayanamsa fit |
 | karana | 0 | convention-anchored: 76/76 exact at the pinned reference moment |
 | sunrise | ±1.0 | vs geometric (NOAA-style) rise; BhaktiBharat's ~+4.5 min is a stated convention offset, not an error |
+| moonrise | ±12 (provisional) | JPL topocentric rise receipts vs the served Meeus 15.1 geocentric target — convention gap; Swiss parity at the identical target is 0.3 s mean |
 
 Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
 2–13 min on the same boundaries) is a measured fact about Nepali publishing —
@@ -88,18 +94,27 @@ independent Python harness (`tools/sweph/sweph_crosscheck.py`) re-solves
 each boundary with Swiss Ephemeris (pyswisseph, Moshier file-free mode,
 Lahiri sidereal mode) and scores the gap.
 
-| Limb | provisional band (max / mean, seconds) |
-| -- | -- |
-| tithi | 300 / 150 |
-| karana | 300 / 150 |
-| nakshatra | 600 / 300 |
-| yoga | 600 / 300 |
+First scoreboard (2026-11-06): measured Swiss − engine per channel, and
+the bands tightened to measured + margin (max / mean, seconds):
 
-Tithi and karana are pure ephemeris parity (no ayanamsa enters). The
-nakshatra and yoga bands are wider because they include the ayanamsa
-convention gap — our fitted base profile vs Swiss Lahiri — which is itself
-an informative number, not noise. Bands are provisional and tighten as
-receipts accumulate, exactly like the publisher corpus bands before them.
+| Channel | n | measured mean abs | measured max | signed mean | band (hard / mean) |
+| -- | -- | -- | -- | -- | -- |
+| tithi | 47 | 7.9 s | 19 s | −7.9 s | 60 / 30 |
+| karana | 93 | 7.9 s | 19 s | −7.8 s | 60 / 30 |
+| nakshatra | 45 | 59.8 s | 71 s | −59.8 s | 180 / 120 |
+| yoga | 48 | 104.3 s | 119 s | −104.3 s | 300 / 180 |
+| moonrise | 44 | 0.3 s | 1 s | −0.2 s | 60 / 15 |
+| sunrise | 45 | 11.3 s | 12 s | +11.3 s | 60 / 30 |
+| lunar_ecl | 12 | 12.0 s | 35 s | +4.4 s | 120 / 60 |
+| solar_loc | 3 | 5.0 s | 6 s | +1.8 s | 60 / 30 |
+| lunar_loc | 15 | 38.8 s | 180 s | +38.7 s | 300 / 120 |
+
+Tithi, karana and moonrise are pure ephemeris/algorithm parity —
+moonrise is near-exact (0.3 s mean) and the USNO low-accuracy sunrise
+closed form tracks the Swiss crossing to ~11 s. The nakshatra and yoga
+deltas are near-constant — the ayanamsa convention gap (our fitted base
+profile vs Swiss Lahiri), itself an informative number, not noise. A
+regression now trips a band within ~3× of the recorded maxima.
 
 The harness also reports the **ΔT residual** (Swiss internal model minus our
 Espenak–Meeus polynomial, at every boundary) — a direct measurement of the
@@ -107,7 +122,10 @@ named systematic contributor in the error bars above — and flags
 **knife-edge boundaries**: any boundary within 30 minutes of a sunrise, the
 days where two honest panchangs can print different limbs. The knife-edge
 list is the input the festival layer (R6b) consumes for per-source
-attribution.
+attribution. (First-run gotcha, fixed 2026-11-06: `swe.deltat` returns
+ΔT in **days** — read as seconds it produced the constant −75.60 s
+"residual" that masked the real ~−6.6 s gap; the corrected measurement is
+the input to the IERS ΔT adjudication, HYA-406.)
 
 **License boundary (AGPL facts-out):** Swiss Ephemeris is AGPL-3. It is
 invoked only by the CI verification harness; no nMiti package imports or
