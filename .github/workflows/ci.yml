@@ -57,4 +57,14 @@ jobs:
       # numeric facts. See tools/sweph/README.md.
       - run: dart run nmiti_cli:dump_limb_instants --start 2026-10-16 --end 2026-12-02 --out build/limb_instants.json
       - run: python3 -m pip install --quiet pyswisseph
-      - run: python3 tools/sweph/sweph_crosscheck.py --instants build/limb_instants.json --receipts build/sweph_receipts.json
+      - run: python3 tools/sweph/sweph_crosscheck.py --instants build/limb_instants.json --receipts build/sweph_receipts.json --summary build/sweph_summary.md
+      # The crosscheck log is sign-in-gated, so the harness also emits
+      # the scoreboard as notice annotations and this markdown summary;
+      # GitHub renders both on the run page without log access.
+      # if: always() so a banded failure still shows the measured deltas.
+      - name: sweph scoreboard to the run summary
+        if: always()
+        run: |
+          if [ -f build/sweph_summary.md ]; then
+            cat build/sweph_summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
