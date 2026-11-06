@@ -46,6 +46,10 @@ The harness also reports:
   produced a constant -75.60 s "residual" masking the true ~-6.6 s
   gap; the harness now converts (x86400). The corrected residual is
   the input to the IERS Delta-T adjudication (HYA-406).
+  Adjudicated 2026-11-06: KEEP Espenak-Meeus - deterministic, no table
+  maintenance, and the ~6.6 s systematic is sub-band and below the
+  publisher minute floor. Stated in the published error bars, never
+  absorbed.
 - **Knife-edge flags** - every boundary within 30 minutes of a sunrise:
   the days two honest panchangs can print different limbs. This list is
   the input the festival layer (R6b) consumes for per-source attribution.
