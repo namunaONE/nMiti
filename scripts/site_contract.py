@@ -68,6 +68,7 @@ MARKERS = {
     "sankranti.html": ['id="sankranti-now"', "pre_2036_exception", "projection_defect"],
     "panchang.html": ['id="panchang-tithi"', 'id="panchang-sunrise"', 'id="panchang-meta"', "udaya", "madhyahna"],
     "grahan.html": ['id="grahan-next"', 'id="grahan-upcoming"', 'id="grahan-conventions"', "sutak", "Grastodit (rises eclipsed)"],
+    "festivals.html": ['id="festivals-today"', 'id="festivals-next"', 'id="festivals-year"', 'id="festivals-conventions"', 'id="festivals-receipts"', "Dharma Sindhu"],
     "api/v1/today.json": [
         '"panchang"',
         '"udaya"',
@@ -80,6 +81,10 @@ MARKERS = {
         '"sutak_active"',
         '"next"',
         'grahan.html',
+        '"festivals"',
+        '"festival_window_days"',
+        '"next_festival"',
+        'festivals.html',
     ],
     "embed/v1/widget.js": ["data-nmiti", "NPT_MS", "attachShadow"],
     "embed/example.html": ["embed/v1/widget.js", 'data-nmiti="today"'],
