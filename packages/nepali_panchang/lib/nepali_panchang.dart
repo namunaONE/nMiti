@@ -6,8 +6,12 @@
 /// with no precomputed data files, covering the entire BS 1975-2100+ range.
 ///
 /// Step 2 shipped the astronomy core: the Meeus Ch.47 moon (example 47.a is
-/// its permanent unit test), the Ch.25 sun (example 25.a) and the
-/// Espenak-Meeus Delta-T polynomials.
+/// its permanent unit test), the Ch.25 sun (example 25.a) and the Delta-T
+/// channel. R7a (HYA-438) replaces the Espenak-Meeus polynomials with the
+/// hybrid channel: the Stephenson-Morrison (2016/2021) spline before
+/// 1973-02, USNO observed monthly values through 2026-04, USNO quarterly
+/// predictions through 2033-10 and the Espenak-Meeus long-range branch
+/// beyond - joins derived from the vendored tables, declared not blended.
 ///
 /// Step 3 ships the limb layer on top of that core: tithi, nakshatra, yoga
 /// and karana angles with canonical name tables, the wrap-safe boundary

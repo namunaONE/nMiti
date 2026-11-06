@@ -19,19 +19,19 @@
 /// within 2-13 min on the same boundaries) is a measured fact about Nepali
 /// publishing, not an engine error: stated, never absorbed.
 ///
-/// Named systematic contributors: the Delta-T source gap (Espenak-Meeus
-/// 75.6 s vs observed ~69 s for 2026 => ~6.6 s of boundary time) and Meeus
-/// Ch.47 truncation (~10 arcsec moon => ~20 s of boundary time).
+/// Named systematic contributor: Meeus Ch.47 truncation (~10 arcsec moon
+/// => ~20 s of boundary time).
 ///
-/// Adjudication (HYA-406, 2026-11-06): the Delta-T source gap is real and
-/// source-confirmed - USNO/IERS long-term predictions read 69.05 +/- 0.19 s
-/// at 2026.0, the Swiss internal model reads ~68.8 s (residual mean
-/// -6.79 s, max 6.81 s, n=233), our Espenak-Meeus polynomial 75.6 s.
-/// Decision: KEEP Espenak-Meeus - a fixed polynomial is deterministic and
-/// needs no table maintenance, and the ~6.6 s systematic is sub-band
-/// (all 9 Swiss-truth bands pass with 4-15x headroom) and below the BB
-/// publisher minute floor (+/-0.5 min on displayed minutes). Stated here,
-/// never absorbed; revisit only if a band ever tightens past it.
+/// Delta-T history: HYA-406 (2026-11-06) first adjudicated the
+/// Espenak-Meeus gap (75.6 s vs observed ~69 s for 2026 => ~6.6 s of
+/// boundary time) as KEEP. R7a (HYA-438) supersedes that adjudication:
+/// the engine now serves the hybrid Delta-T channel - the
+/// SMH2016/Morrison2021 spline before 1973, USNO observed monthly
+/// through 2026-04, USNO quarterly predictions through 2033-10 and
+/// Espenak-Meeus long-range beyond, joins declared not blended - which
+/// closes the ~6.5 s systematic. The published bands above stay as
+/// they are until the post-R7a Swiss-truth scoreboard re-measures them;
+/// they are ceilings and remain honest.
 
 /// One published uncertainty band.
 class UncertaintyBand {

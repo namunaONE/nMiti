@@ -23,17 +23,15 @@ DateTime dateTimeUtcFromJd(double jd) {
   return DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
 }
 
-/// TT Julian Day for a UT Julian Day (adds Delta T at its civil month).
+/// TT Julian Day for a UT Julian Day (adds Delta T at that instant).
 double jdTtFromJdUt(double jdUt) {
-  final utc = dateTimeUtcFromJd(jdUt);
-  return jdUt + deltaTSeconds(utc.year, utc.month) / 86400.0;
+  return jdUt + deltaTAtJdUt(jdUt).seconds / 86400.0;
 }
 
-/// UT Julian Day for a TT Julian Day (subtracts Delta T). Delta T depends
-/// only on the civil year and month, so a single evaluation suffices.
+/// UT Julian Day for a TT Julian Day (subtracts Delta T evaluated at the
+/// resolved UT instant; [deltaTAtJdTt] does the fixed-point iterations).
 double jdUtFromJdTt(double jdTt) {
-  final utc = dateTimeUtcFromJd(jdTt - 0.001);
-  return jdTt - deltaTSeconds(utc.year, utc.month) / 86400.0;
+  return jdTt - deltaTAtJdTt(jdTt).seconds / 86400.0;
 }
 
 /// Parses "yyyy-MM-ddTHH:mm" as a wall-clock DateTime with UTC fields
