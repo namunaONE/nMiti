@@ -1,0 +1,60 @@
+name: Refresh Delta-T tables
+
+# Monthly: regenerate the vendored USNO spans (deltat.data / deltat.preds)
+# in packages/nepali_panchang/lib/src/delta_t_data.dart via
+# tools/refresh_delta_t.dart. The tool validates month continuity, value
+# envelopes and row counts and REFUSES to write on any anomaly, so an
+# upstream corruption can never silently replace the vendored tables.
+# When the tables change, a PR is opened for review; the permanent merge
+# gate applies (CI green + user approval before merge).
+on:
+  schedule:
+    - cron: "0 4 2 * *" # 04:00 UTC on the 2nd (USNO updates monthly)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dart-lang/setup-dart@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+        with:
+          sdk: 3.13.7
+      - name: Run the refresh tool (validates; refuses to write on anomaly)
+        run: dart run tools/refresh_delta_t.dart
+      - name: Open a PR if the tables changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --exit-code; then
+            echo "no Delta-T table changes - nothing to do"
+            exit 0
+          fi
+          branch="auto/refresh-delta-t-$(date -u +%Y%m%d)"
+          git config user.name "nmiti-automation"
+          git config user.email "actions@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add packages/nepali_panchang/lib/src/delta_t_data.dart
+          git commit -m "chore: refresh Delta-T tables (USNO deltat.data/preds)"
+          git push origin "$branch"
+          if gh pr list --state open --json title --jq '.[].title' | grep -qF 'Refresh Delta-T tables'; then
+            echo "a refresh PR is already open - not duplicating"
+          else
+            gh pr create --title "Refresh Delta-T tables (USNO deltat.data/preds)" --body "Automated monthly refresh: tools/refresh_delta_t.dart regenerated the vendored USNO spans. The tool validated month continuity, value envelopes and row counts before writing. Review the diff (the last observed month and prediction rows are visible), then merge with the permanent gate: CI green + user approval." --base main --head "$branch" || true
+          fi
+      - name: Alert on anomaly
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create urgent --color d73a4a --force 2>/dev/null || true
+          if gh issue list --state open --json title --jq '.[].title' | grep -qF 'URGENT: Delta-T refresh failed'; then
+            echo "urgent issue already open - not duplicating"
+          else
+            gh issue create --title "URGENT: Delta-T refresh failed" --body "The refresh-delta-t workflow failed - either the USNO files were unreachable (live and Wayback) or the validation refused the new tables (month gap / value envelope / row count). The vendored tables are unchanged and the site keeps serving the last good values; triage the tool output in the failing run. Failing run: https://github.com/namunaONE/nMiti/actions/runs/${{ github.run_id }}" --label urgent || true
+          fi

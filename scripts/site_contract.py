@@ -43,7 +43,7 @@ import zoneinfo
 MARKERS = {
     "index.html": ['id="ans-en"', 'id="cal-grid"'],
     "accuracy.html": ['id="evidence-tiers"', "2096", "errata"],
-    "methodology.html": ['id="layers"', "anchor chain"],
+    "methodology.html": ['id="layers"', "anchor chain", 'id="delta-t"', "hybrid Delta-T channel"],
     "data.html": [
         'id="data-dictionary"',
         'id="checksums"',
@@ -94,6 +94,9 @@ MARKERS = {
         '"muhurta"',
         '"rahu_kalam"',
         'muhurta.html',
+        '"delta_t"',
+        '"uncertainty_seconds"',
+        '"source_span"',
     ],
     "embed/v1/widget.js": ["data-nmiti", "NPT_MS", "attachShadow"],
     "embed/example.html": ["embed/v1/widget.js", 'data-nmiti="today"'],

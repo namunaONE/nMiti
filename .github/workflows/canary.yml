@@ -27,7 +27,7 @@ jobs:
       - name: Assert the live site is fresh AND carries today's correct BS date
         run: |
           python3 - <<'PY'
-          import datetime, json, os, time, urllib.request, zoneinfo
+          import datetime, json, os, re, time, urllib.request, zoneinfo
 
           def get(u):
               for attempt in range(3):
@@ -87,6 +87,22 @@ jobs:
           print("independent NPT computation: " + str(expected) + "; deployed: " + str(got))
           if got != expected:
               problems.append("WRONG DATE: deployed " + str(got) + " != independently computed " + str(expected) + " (Asia/Kathmandu)")
+
+          # 3. Delta-T freshness: the vendored USNO observed table must stay
+          #    current (USNO publishes deltat.data monthly; the refresh
+          #    workflow runs on the 2nd). SLA: the last observed month is
+          #    at most ~16 months old.
+          src = open("packages/nepali_panchang/lib/src/delta_t_data.dart", encoding="utf-8").read()
+          m = re.search(r"usnoObservedJd = <double>\[(.*?)\];", src, re.S)
+          if not m:
+              problems.append("DELTA-T: vendored usnoObservedJd table not found")
+          else:
+              jds = [float(x) for x in m.group(1).replace("\n", " ").split(",") if x.strip()]
+              last_obs = datetime.date.fromordinal(int(round(jds[-1] - 1721424.5)))
+              age_dt = (today - last_obs).days
+              print("vendored Delta-T observed table ends " + str(last_obs) + " (" + str(age_dt) + " days old)")
+              if age_dt > 490:
+                  problems.append("DELTA-T STALE: observed table ends " + str(last_obs) + " (" + str(age_dt) + " days old, > 490-day SLA) - run tools/refresh_delta_t.dart")
 
           if problems:
               raise SystemExit("CANARY FAIL: " + "; ".join(problems))
