@@ -87,6 +87,8 @@ void main(List<String> args) {
       _sankrantiPageHtml(sankrantiRows, urlBase, commitSha));
   _write(File('${out.path}/panchang.html'),
       _panchangPageHtml(todayAd, urlBase, commitSha));
+  _write(File('${out.path}/grahan.html'),
+      _grahanPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
       _accuracyPageHtml(core, tail, urlBase, commitSha));
   _write(File('${out.path}/methodology.html'),
@@ -177,6 +179,7 @@ ${limbJson('      ', p.karanaAtUdaya, p.karanaAtNoon)}
     "evidence_tier": "${p.evidenceTier}",
     "details": "${urlBase}panchang.html"
   },
+  "grahan": ${_grahanBlock(todayAd, urlBase)},
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
   "commit": "$commitSha",
@@ -291,7 +294,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="panchang.html">Panchang</a> · <a href="grahan.html">Grahan</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
@@ -509,7 +512,7 @@ $_docCss
 </head>
 <body>
 <main>
-<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}docs.html">Docs</a></p>
+<p class="nav"><a href="$urlBase">आजको मिति · Today</a> · <a href="${urlBase}accuracy.html">Accuracy &amp; honesty</a> · <a href="${urlBase}methodology.html">Methodology</a> · <a href="${urlBase}data.html">Data &amp; API</a> · <a href="${urlBase}sankranti.html">Sankranti</a> · <a href="${urlBase}panchang.html">Panchang</a> · <a href="${urlBase}grahan.html">Grahan</a> · <a href="${urlBase}docs.html">Docs</a></p>
 $body
 <p class="foot">nMiti — open Bikram Sambat calendar commons · data CC0-1.0 · code MIT · built $builtAt UTC from $shortSha</p>
 </main>
@@ -668,7 +671,7 @@ $checksumRows
 
 <h2 id="api">JSON API - static, no keys, CC0</h2>
 <ul>
-<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - engine-computed at build time. Stamped with the commit and build run.</li>
+<li><code><a href="api/v1/today.json">api/v1/today.json</a></code> - today in BS and AD, weekday and month names in Nepali and English, the evidence tier, plus a <code>tomorrow</code> object so consumers can self-correct at their own midnight, and a <code>panchang</code> block - tithi, nakshatra, yoga, karana at both udaya (sunrise) and madhyahna (noon) reference moments, sunrise, vriddhi/kshaya/borderline flags, provenance and evidence tier - plus a <code>grahan</code> block: the eclipse or sutak window touching today, whether sutak is active, and the next grahan with its Nepali name and honesty fields. Engine-computed at build time. Stamped with the commit and build run.</li>
 <li><code>api/v1/calendar/{bs_year}.json</code> - one BS year: baisakh1, weekday, days, the 12 month lengths, month names, evidence tier (BS 1975-2100). Example: <a href="api/v1/calendar/2083.json">api/v1/calendar/2083.json</a></li>
 <li><code><a href="api/v1/meta.json">api/v1/meta.json</a></code> - dataset metadata: coverage, evidence summary, license.</li>
 </ul>
@@ -1230,6 +1233,7 @@ String _panchangPageHtml(DateTime todayAd, String urlBase, String commitSha) {
   final d = panchangFor(
       year: todayAd.year, month: todayAd.month, day: todayAd.day);
   String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  final grahanState = _grahanDayState(todayAd);
   String when(DateTime t) {
     final later = t.isAfter(
         DateTime.utc(todayAd.year, todayAd.month, todayAd.day, 23, 59));
@@ -1271,6 +1275,7 @@ ${row('करण', 'Karana', d.karanaAtUdaya, d.karanaAtNoon)}
 </table>
 
 <p id="panchang-sunrise"><strong>सूर्योदय · Sunrise:</strong> ${hm(d.sunriseNpt)} NPT</p>
+<p id="panchang-sutak"><strong>सूतक · Sutak:</strong> ${grahanState.sutakActive ? 'ACTIVE today - see the <a href="grahan.html">grahan page</a> for the window and exemptions.' : 'not active today.'}</p>
 
 <h2>वृद्धि / क्षय · vriddhi, kshaya, borderline</h2>
 $flagsHtml
@@ -1292,10 +1297,260 @@ $flagsHtml
       shortSha);
 }
 
+/// L6 grahan display state (HYA-421 step 5): the grahan events whose
+/// visible, sutak or eclipse span touches the given NPT civil day,
+/// and whether sutak is active at the build instant. A 12-hour solar
+/// sutak can begin the previous evening, so the query unions
+/// grahanNear over the previous, current and next civil day and
+/// deduplicates by greatest instant - mapping sutak windows onto
+/// Nepali civil days is this layer's job per the grahan module doc.
+class _GrahanDayState {
+  final List<GrahanEvent> touching;
+  final bool sutakActive;
+  const _GrahanDayState(this.touching, this.sutakActive);
+}
+
+_GrahanDayState _grahanDayState(DateTime todayAd) {
+  final now = DateTime.now().toUtc();
+  final dayStartUtc = DateTime.utc(todayAd.year, todayAd.month, todayAd.day)
+      .subtract(nepalTimeOffset);
+  final dayEndUtc = dayStartUtc.add(const Duration(days: 1));
+  final seen = <String>{};
+  final touching = <GrahanEvent>[];
+  var sutakActive = false;
+  bool overlaps(DateTime? startUtc, DateTime? endUtc) =>
+      startUtc != null &&
+      endUtc != null &&
+      startUtc.isBefore(dayEndUtc) &&
+      endUtc.isAfter(dayStartUtc);
+  for (final delta in [-1, 0, 1]) {
+    final d = DateTime.utc(todayAd.year, todayAd.month, todayAd.day)
+        .add(Duration(days: delta));
+    final e = grahanNear(d.year, d.month, d.day);
+    if (e == null) continue;
+    if (!seen.add(e.jdUtGreatest.toStringAsFixed(5))) continue;
+    final sutakStartUtc = e.sutakStartNpt?.subtract(nepalTimeOffset);
+    final sutakEndUtc = e.sutakEndNpt?.subtract(nepalTimeOffset);
+    final visibleStartUtc = e.visibleStartNpt?.subtract(nepalTimeOffset);
+    final visibleEndUtc = e.visibleEndNpt?.subtract(nepalTimeOffset);
+    final eclipseStartUtc = e.greatestNpt.subtract(nepalTimeOffset);
+    final eclipseEndUtc = e.mokshaNpt.subtract(nepalTimeOffset);
+    if (overlaps(sutakStartUtc, sutakEndUtc) ||
+        overlaps(visibleStartUtc, visibleEndUtc) ||
+        overlaps(eclipseStartUtc, eclipseEndUtc)) {
+      touching.add(e);
+    }
+    if (sutakStartUtc != null &&
+        sutakEndUtc != null &&
+        !sutakStartUtc.isAfter(now) &&
+        now.isBefore(sutakEndUtc)) {
+      sutakActive = true;
+    }
+  }
+  return _GrahanDayState(touching, sutakActive);
+}
+
+/// The Devanagari rendering of an event's traditional name: the
+/// global class plus the grastodit observation state.
+String _grahanNameNp(GrahanEvent e) {
+  final String base;
+  if (e.kind == GrahanKind.suryaGrahan) {
+    base = e.grahanClass == GrahanClass.khagras
+        ? 'खग्रास सूर्य ग्रहण'
+        : 'खण्डग्रास सूर्य ग्रहण';
+  } else if (e.grahanClass == GrahanClass.khagras) {
+    base = 'खग्रास चन्द्र ग्रहण';
+  } else if (e.grahanClass == GrahanClass.khandagras) {
+    base = 'खण्डग्रास चन्द्र ग्रहण';
+  } else {
+    base = 'उपचय चन्द्र ग्रहण (ग्रहण नगनिने)';
+  }
+  return e.risesEclipsed ? '$base (ग्रस्तोदित)' : base;
+}
+
+/// One grahan event as a JSON object body. Every key is always
+/// emitted (null when the window does not apply) so the site
+/// contract markers stay date-stable; NPT wall stamps are
+/// minute-truncated like the panchang block.
+String _grahanEventJson(String ind, GrahanEvent e) {
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  String q(DateTime? t) => t == null ? 'null' : '"${isoNpt(t)}"';
+  final sutakHours =
+      e.kind == GrahanKind.suryaGrahan ? sutakSolarHours : sutakLunarHours;
+  final sutakStart = e.sutakStartNpt;
+  final sutakEnd = e.sutakEndNpt;
+  final String sutak;
+  if (sutakStart == null || sutakEnd == null) {
+    sutak = 'null';
+  } else {
+    sutak = '{\n'
+        '$ind  "hours": $sutakHours,\n'
+        '$ind  "start_npt": "${isoNpt(sutakStart)}",\n'
+        '$ind  "end_npt": "${isoNpt(sutakEnd)}"\n'
+        '$ind}';
+  }
+  final obscuration = e.obscuration;
+  return [
+    '$ind"date_iso": "${_iso(e.greatestNpt)}",',
+    '$ind"kind": "${e.kind == GrahanKind.suryaGrahan ? 'surya_grahan' : 'chandra_grahan'}",',
+    '$ind"grahan_class": "${e.grahanClass.name}",',
+    '$ind"nepali_name": "${e.nepaliName}",',
+    '$ind"nepali_name_np": "${_grahanNameNp(e)}",',
+    '$ind"kept_as_grahan": ${e.keptAsGrahan},',
+    '$ind"visible_at_location": ${e.visibleAtLocation},',
+    '$ind"rises_eclipsed": ${e.risesEclipsed},',
+    '$ind"sets_eclipsed": ${e.setsEclipsed},',
+    '$ind"greatest_npt": "${isoNpt(e.greatestNpt)}",',
+    '$ind"moksha_npt": "${isoNpt(e.mokshaNpt)}",',
+    '$ind"visible_start_npt": ${q(e.visibleStartNpt)},',
+    '$ind"visible_end_npt": ${q(e.visibleEndNpt)},',
+    '$ind"sutak": $sutak,',
+    '$ind"magnitude": ${e.magnitude},',
+    '$ind"obscuration": ${obscuration ?? 'null'},',
+    '$ind"evidence_tier": "${e.evidenceTier}"',
+  ].join('\n');
+}
+
+/// The grahan block of today.json. The keys - "grahan", "today",
+/// "sutak_active", "next" - always serialize on every build, so
+/// the site contract markers are date-stable on eclipse days and on
+/// quiet days alike.
+String _grahanBlock(DateTime todayAd, String urlBase) {
+  final state = _grahanDayState(todayAd);
+  final next = nextGrahanAfter(todayAd.year, todayAd.month, todayAd.day);
+  final today = state.touching.isEmpty ? null : state.touching.first;
+  final todayJson = today == null
+      ? 'null'
+      : '{\n${_grahanEventJson('      ', today)}\n    }';
+  final nextJson = next == null
+      ? 'null'
+      : '{\n${_grahanEventJson('      ', next)}\n    }';
+  return '{\n'
+      '    "note": "engine-computed at build time; sutak windows are mapped onto Nepali civil days by this layer",\n'
+      '    "today": $todayJson,\n'
+      '    "sutak_active": ${state.sutakActive},\n'
+      '    "next": $nextJson,\n'
+      '    "details": "${urlBase}grahan.html"\n'
+      '  }';
+}
+
+/// The /grahan page (HYA-421 step 5): today's sutak state, the next
+/// grahan, the upcoming eclipses at Kathmandu, and the full sutak
+/// rule and convention-collision table - every rule
+/// receipt-anchored, every collision exposed, never silently
+/// picked, per the public truth-data policy.
+String _grahanPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final state = _grahanDayState(todayAd);
+  final next = nextGrahanAfter(todayAd.year, todayAd.month, todayAd.day);
+  final upcoming = [
+    ...grahanInYear(todayAd.year).where((e) => e.greatestNpt
+        .isAfter(DateTime.utc(todayAd.year, todayAd.month, todayAd.day))),
+    ...grahanInYear(todayAd.year + 1),
+  ];
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  final todaySection = state.touching.isEmpty
+      ? '<p>No grahan, eclipse phase or sutak window touches today.</p>'
+      : [
+          for (final e in state.touching)
+            '<p><strong>${e.nepaliName}</strong> touches today. Sutak active at this build: ${state.sutakActive ? 'yes' : 'no'}. Full details in <a href="${urlBase}api/v1/today.json">today.json</a>.</p>'
+        ].join('\n');
+  final String nextCard;
+  if (next == null) {
+    nextCard = '<p>No grahan is computed within the next twelve years.</p>';
+  } else {
+    final sutakLine = (next.sutakStartNpt == null || next.sutakEndNpt == null)
+        ? '<li><strong>सूतक · Sutak:</strong> none (the eclipse is not kept as a grahan or not visible at Kathmandu)</li>'
+        : '<li><strong>सूतक · Sutak:</strong> ${_iso(next.sutakStartNpt!)} ${hm(next.sutakStartNpt!)} to ${hm(next.sutakEndNpt!)} NPT (${next.kind == GrahanKind.suryaGrahan ? sutakSolarHours : sutakLunarHours} h before the local first visible contact)</li>';
+    nextCard = [
+      '<p><strong>${next.nepaliName}</strong> <span lang="ne">${_grahanNameNp(next)}</span></p>',
+      '<ul>',
+      '<li><strong>मिति · Date of greatest eclipse:</strong> ${_iso(next.greatestNpt)} at ${hm(next.greatestNpt)} NPT</li>',
+      '<li><strong>वर्ग · Class:</strong> ${next.grahanClass.name}${next.keptAsGrahan ? '' : ' - not kept as a grahan (upachhaya, C5)'}</li>',
+      '<li><strong>काठमाडौंमा देखिने? · Visible at Kathmandu:</strong> ${next.visibleAtLocation ? 'yes' : 'no'}${next.risesEclipsed ? ' - grastodit: rises already eclipsed' : ''}${next.setsEclipsed ? ' - sets before moksha' : ''}</li>',
+      sutakLine,
+      '<li><strong>मोक्ष · Moksha:</strong> ${hm(next.mokshaNpt)} NPT</li>',
+      '<li><strong>Magnitude:</strong> ${next.magnitude}${next.obscuration == null ? '' : ' (obscuration ${next.obscuration})'}</li>',
+      '</ul>',
+    ].join('\n');
+  }
+  final upcomingRows = [
+    for (final e in upcoming)
+      '<tr><td>${_iso(e.greatestNpt)}</td>'
+      '<td>${e.nepaliName}<br><span lang="ne">${_grahanNameNp(e)}</span></td>'
+      '<td>${e.grahanClass.name}</td>'
+      '<td>${e.visibleAtLocation ? 'yes' : 'no'}</td>'
+      '<td>${hm(e.greatestNpt)}</td>'
+      '<td>${e.sutakStartNpt == null ? '-' : hm(e.sutakStartNpt!) + ' to ' + hm(e.sutakEndNpt!)}</td>'
+      '<td>${hm(e.mokshaNpt)}</td>'
+      '<td>${e.magnitude}</td></tr>'
+  ].join('\n');
+  final conv = next?.conventions ?? const <String, String>{};
+  final convLabels = <String, String>{
+    'sutakHours': 'Sutak hours',
+    'sutakAnchor': 'Sutak anchor (C4)',
+    'sutakEnd': 'Sutak end',
+    'grastodit': 'Grastodit (rises eclipsed)',
+    'upachhaya': 'Upachhaya (C5)',
+    'naming': 'Naming (C6)',
+    'annularNaming': 'Annular naming',
+    'belowHorizonSolar': 'Below-horizon solar grazes',
+    'publisherDivergence': 'Publisher divergence (C2)',
+    'sutakHoursReversedFaq': 'Reversed-hours FAQ (C3)',
+    'shadowEnlargement': 'Shadow enlargement (C1)',
+    'sutakExemptions': 'Sutak exemptions',
+  };
+  final convRows = [
+    for (final entry in convLabels.entries)
+      '<tr><th>${entry.value}</th><td>${conv[entry.key] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Grahan <span lang="ne">· ग्रहण</span></h1>
+<p>Eclipses (grahan) for the Kathmandu anchor (27.7172 N, 85.324 E), NPT (UTC+05:45), computed at build time by the open <code>nepali_panchang</code> engine and anchored to dated receipts. An eclipse that is NOT visible at Kathmandu is still shown, flagged - never hidden; a penumbral lunar eclipse (upachhaya) is shown but not kept as a grahan.</p>
+
+<h2 id="grahan-today">आज · Today</h2>
+$todaySection
+
+<h2 id="grahan-next">अर्को ग्रहण · Next grahan</h2>
+$nextCard
+
+<h2 id="grahan-upcoming">आउँदै ग्रहणहरू · Upcoming eclipses</h2>
+<p>Every grahan the engine computes for ${todayAd.year} and ${todayAd.year + 1} at Kathmandu, in time order. Sutak windows can cross Nepali civil midnight.</p>
+<table>
+<tr><th>Date</th><th>Name</th><th>Class</th><th>Visible at KTM</th><th>Greatest (NPT)</th><th>Sutak (NPT)</th><th>Moksha (NPT)</th><th>Magnitude</th></tr>
+$upcomingRows
+</table>
+
+<h2 id="grahan-conventions">सूतक नियम र मतभेद · Sutak rules and convention collisions</h2>
+<p>Every rule below is receipt-anchored (BhaktiBharat, PanchangBodh, HinduCalculator, nepalipatro, drik - the grahan shastra corpus). Where Nepal's publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="grahan-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${next?.provenance ?? 'The nepali_panchang grahan module.'}</li>
+<li><strong>Evidence:</strong> ${next?.evidenceTier ?? ''}</li>
+<li><strong>Verification:</strong> the Dart CI gate over the grahan shastra receipts corpus (six lunar events 2026-2028 banded against the timeanddate Kathmandu stage tables) and the NASA solar catalog 2026-2030; Swiss Ephemeris local-circumstances channels (solar_local, lunar_local - provisional 300/120 s bands) re-solve the events in CI. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/grahan_shastra_receipts.json">grahan_shastra_receipts.json</a> · <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/solar_kathmandu_receipts.json">solar_kathmandu_receipts.json</a> · <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/nasa_solar_2026_2030.json">nasa_solar_2026_2030.json</a>.</li>
+<li><strong>Exemptions, noted - never computed:</strong> ${next?.exemptionsNote ?? 'Children, the sick and the elderly traditionally observe one prahar; pregnant women are advised precautions.'}</li>
+</ul>
+''';
+  return _docShell(
+      'Grahan (eclipses)',
+      'Eclipses for Kathmandu: next grahan, sutak windows, upcoming eclipses and every convention collision - engine-computed, receipt-anchored, never copied.',
+      urlBase,
+      'grahan.html',
+      body,
+      shortSha);
+}
+
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'data.html', 'docs.html', 'sankranti.html', 'panchang.html', 'grahan.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -1314,7 +1569,7 @@ String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) 
 > Verified, evidence-tagged Bikram Sambat dates for Nepal, rebuilt automatically every day at 00:00 Nepal Time (UTC+05:45).
 
 Today's date (bilingual page): $urlBase
-Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier): ${urlBase}api/v1/today.json
+Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan): ${urlBase}api/v1/today.json
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
@@ -1325,6 +1580,7 @@ Served sankranti CSV copies: ${urlBase}data/sankranti_moments_1975_2083.csv and 
 SHA-256 checksums of every served CSV: ${urlBase}data.html#checksums
 Sankranti moments (solar ingress, current rashi, next sankranti): ${urlBase}sankranti.html and ${urlBase}api/v1/sankranti.json
 Panchang for today (tithi, nakshatra, yoga, karana, sunrise; engine-computed at build time, both udaya and madhyahna conventions): ${urlBase}panchang.html
+Grahan (eclipses) for Kathmandu - next grahan, today's sutak state, upcoming eclipses, conventions and receipts: ${urlBase}grahan.html
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 
