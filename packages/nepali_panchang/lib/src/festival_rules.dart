@@ -1,5 +1,6 @@
 import 'ayanamsa.dart';
 import 'limbs.dart';
+import 'masa.dart';
 import 'moonrise.dart';
 import 'panchang_day.dart';
 
@@ -61,6 +62,19 @@ import 'panchang_day.dart';
 /// V.D.N. Rao, with the shloka-level reference marked pending until a
 /// printed source is verified.
 
+/// R6d (HYA-367) adds the lunar-month gate: every rule names the rasi
+/// whose sankranti must fall inside the amanta lunar month of its tithi
+/// run ([FestivalRule.anchorSankrantiRasi]), and scanFestivals keeps
+/// only occasions that pass it. Before the gate a rule matched tithi
+/// index + convention alone, so a wide scan fired it every lunar month
+/// (the 2026-11-06 R6c revert: Shivaratri served for Nov 7, ghost
+/// Dashain clusters, ~170 of 188 year-table rows false - the receipt
+/// tests' narrow scan windows had masked it). The gate keys on ingress
+/// containment, not month name, so a kshaya month that swallows two
+/// sankrantis still keeps BOTH its festivals. Structural CI gate:
+/// test/festival_lunar_month_gate_test.dart sweeps a full 19-year
+/// metonic cycle (AD 2026-2044).
+
 /// How a festival's civil day is chosen from its tithi.
 enum FestivalConvention { udaya, evening, firstDay, allDays, nishita, moonrise }
 
@@ -90,6 +104,18 @@ class FestivalRule {
   /// 14 = Purnima, 29 = Amavasya).
   final int tithiIndex;
 
+  /// Rasi index (1..12, Mesha..Meena ingress order) whose sidereal
+  /// sankranti must fall inside the amanta lunar month of this rule's
+  /// tithi run - the month that OWNS the festival. Dashain and the
+  /// Tihar cluster both ride the month containing the Tula ingress
+  /// (amanta Ashwin); Chhath rides the next month (Vrischik, amanta
+  /// Kartik); Maha Shivaratri the Kumbha-ingress month (amanta Magh -
+  /// Nepal's 'Falgun Krishna Chaturdashi' is the purnimanta name of the
+  /// same paksha); Fagu Purnima the Meena-ingress month (amanta
+  /// Falgun); Janai Purnima the Simha-ingress month (amanta Shrawan);
+  /// Teej the Kanya-ingress month (amanta Bhadra).
+  final int anchorSankrantiRasi;
+
   /// Convention that selects the festival's civil day(s).
   final FestivalConvention convention;
 
@@ -110,6 +136,7 @@ class FestivalRule {
     required this.nameEn,
     required this.nameNp,
     required this.tithiIndex,
+    required this.anchorSankrantiRasi,
     required this.convention,
     required this.note,
     this.shastraCategory,
@@ -134,6 +161,7 @@ const String _vriddhiCat =
 const List<FestivalRule> festivalBattery = [
   FestivalRule(
       id: 'ghatasthapana',
+      anchorSankrantiRasi: 7,
       nameEn: 'Ghatasthapana',
       nameNp: 'घटस्थापना',
       tithiIndex: 0,
@@ -143,6 +171,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Pratipada at udaya; opens Dashain (Asoj).'),
   FestivalRule(
       id: 'fulpati',
+      anchorSankrantiRasi: 7,
       nameEn: 'Fulpati',
       nameNp: 'फूलपाती',
       tithiIndex: 6,
@@ -154,6 +183,7 @@ const List<FestivalRule> festivalBattery = [
           'borderline).'),
   FestivalRule(
       id: 'mahaAshtami',
+      anchorSankrantiRasi: 7,
       nameEn: 'Maha Ashtami',
       nameNp: 'महाअष्टमी',
       tithiIndex: 7,
@@ -164,6 +194,7 @@ const List<FestivalRule> festivalBattery = [
           'in 2083 (first two-day Maha Ashtami since 2000 BS).'),
   FestivalRule(
       id: 'mahaNavami',
+      anchorSankrantiRasi: 7,
       nameEn: 'Maha Navami',
       nameNp: 'महानवमी',
       tithiIndex: 8,
@@ -173,6 +204,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Navami at udaya.'),
   FestivalRule(
       id: 'vijayaDashami',
+      anchorSankrantiRasi: 7,
       nameEn: 'Vijaya Dashami',
       nameNp: 'विजया दशमी',
       tithiIndex: 9,
@@ -182,6 +214,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Dashami at udaya; the tika day.'),
   FestivalRule(
       id: 'kojagratPurnima',
+      anchorSankrantiRasi: 7,
       nameEn: 'Kojagrat Purnima',
       nameNp: 'कोजाग्रत पूर्णिमा',
       tithiIndex: 14,
@@ -192,6 +225,7 @@ const List<FestivalRule> festivalBattery = [
           'convention gives the next day.'),
   FestivalRule(
       id: 'dhanteras',
+      anchorSankrantiRasi: 7,
       nameEn: 'Dhanteras',
       nameNp: 'धनतेरस',
       tithiIndex: 27,
@@ -202,6 +236,7 @@ const List<FestivalRule> festivalBattery = [
           'udaya.'),
   FestivalRule(
       id: 'kagTihar',
+      anchorSankrantiRasi: 7,
       nameEn: 'Kag Tihar',
       nameNp: 'काग तिहार',
       tithiIndex: 27,
@@ -211,6 +246,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Krishna Trayodashi at udaya.'),
   FestivalRule(
       id: 'laxmiPuja',
+      anchorSankrantiRasi: 7,
       nameEn: 'Lakshmi Puja',
       nameNp: 'लक्ष्मी पूजा',
       tithiIndex: 29,
@@ -221,6 +257,7 @@ const List<FestivalRule> festivalBattery = [
           '(Gai Puja).'),
   FestivalRule(
       id: 'kukurTihar',
+      anchorSankrantiRasi: 7,
       nameEn: 'Kukur Tihar',
       nameNp: 'कुकुर तिहार',
       tithiIndex: 28,
@@ -230,6 +267,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Krishna Chaturdashi at udaya.'),
   FestivalRule(
       id: 'gaiPuja',
+      anchorSankrantiRasi: 7,
       nameEn: 'Gai Puja',
       nameNp: 'गाई पूजा',
       tithiIndex: 29,
@@ -239,6 +277,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Amavasya at udaya.'),
   FestivalRule(
       id: 'mhaPuja',
+      anchorSankrantiRasi: 7,
       nameEn: 'Mha Puja / Govardhan Puja',
       nameNp: 'म्हःपूजा',
       tithiIndex: 0,
@@ -248,6 +287,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Pratipada at udaya; Nepal Sambat new year.'),
   FestivalRule(
       id: 'bhaiTika',
+      anchorSankrantiRasi: 7,
       nameEn: 'Bhai Tika',
       nameNp: 'भाइटीका',
       tithiIndex: 1,
@@ -257,6 +297,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Dwitiya at udaya.'),
   FestivalRule(
       id: 'chhath',
+      anchorSankrantiRasi: 8,
       nameEn: 'Chhath',
       nameNp: 'छठ पर्व',
       tithiIndex: 5,
@@ -266,6 +307,7 @@ const List<FestivalRule> festivalBattery = [
       note: 'Shukla Shashthi at udaya (evening argha day).'),
   FestivalRule(
       id: 'mahaShivaratri',
+      anchorSankrantiRasi: 11,
       nameEn: 'Maha Shivaratri',
       nameNp: 'महाशिवरात्रि',
       tithiIndex: 28,
@@ -286,6 +328,7 @@ const List<FestivalRule> festivalBattery = [
           'divergence receipt for the nishita class.'),
   FestivalRule(
       id: 'faguPurnima',
+      anchorSankrantiRasi: 12,
       nameEn: 'Fagu Purnima (hills)',
       nameNp: 'फागु पूर्णिमा',
       tithiIndex: 14,
@@ -303,6 +346,7 @@ const List<FestivalRule> festivalBattery = [
           'choice.'),
   FestivalRule(
       id: 'janaiPurnima',
+      anchorSankrantiRasi: 5,
       nameEn: 'Janai Purnima / Raksha Bandhan',
       nameNp: 'जनै पूर्णिमा',
       tithiIndex: 14,
@@ -316,6 +360,7 @@ const List<FestivalRule> festivalBattery = [
           'purva-viddha here, a clean divergence receipt.'),
   FestivalRule(
       id: 'teej',
+      anchorSankrantiRasi: 6,
       nameEn: 'Teej (Hartalika)',
       nameNp: 'तीज',
       tithiIndex: 2,
@@ -601,6 +646,11 @@ List<FestivalObservance> scanFestivals({
 }) {
   final selected = rules?.toList() ?? festivalBattery;
   final days = _scanDays(start, end, sourceDelta);
+  // R6d lunar-month gate: each rule fires only in the amanta month that
+  // contains its anchor sankranti, so a wide scan yields one observance
+  // per rule per year instead of one per lunar month.
+  final months = masaList(
+      startNpt: start, endNpt: end, sourceDelta: sourceDelta);
   final byIndex = <int, List<FestivalRule>>{};
   for (final r in selected) {
     byIndex.putIfAbsent(r.tithiIndex, () => []).add(r);
@@ -608,7 +658,12 @@ List<FestivalObservance> scanFestivals({
   final out = <FestivalObservance>[];
   byIndex.forEach((index, indexRules) {
     for (final occasion in _occasions(days, index, start, end)) {
+      final month = _masaOfOccasion(months, occasion);
+      if (month == null) continue; // outside the classified masa band
       for (final rule in indexRules) {
+        if (!month.sankrantiRasis.contains(rule.anchorSankrantiRasi)) {
+          continue;
+        }
         out.add(_resolve(rule, occasion));
       }
     }
@@ -623,6 +678,21 @@ List<FestivalObservance> scanFestivals({
     return ac.compareTo(bc);
   });
   return out;
+}
+
+/// The amanta lunar month that owns [occasion]'s tithi run, or null
+/// when [months] does not cover it. A tithi run never crosses a new moon
+/// (the new moon IS the Amavasya-to-Pratipada boundary), so the run's
+/// midpoint lies in the one month that contains the whole run.
+MasaInfo? _masaOfOccasion(List<MasaInfo> months, TithiOccasion occasion) {
+  final mid = occasion.beginsAtNpt
+      .add(occasion.endsAtNpt.difference(occasion.beginsAtNpt) ~/ 2);
+  for (final m in months) {
+    if (!mid.isBefore(m.beginsAtNpt) && mid.isBefore(m.endsAtNpt)) {
+      return m;
+    }
+  }
+  return null;
 }
 
 FestivalObservance _resolve(FestivalRule rule, TithiOccasion occasion) {
