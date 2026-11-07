@@ -294,3 +294,55 @@ The lunar engine is now also checked against a full-year publisher corpus, not j
 The engine gate: the runtime tithi at udaya (the Hamro Patro display convention) must equal the portal label on every day, except on knife-edge days — a tithi boundary within half an hour of sunrise, or any vriddhi/kshaya day (engine flags or the portal’s own merged-window mark) — where publishers legitimately diverge. Agreement floor 90%, measured rather than aspirational — the first CI run (2026-11-06) agreed 671/730 days (91.92%): 59 mismatches, every one on a knife-edge day, zero disagreements anywhere else; the hard gate is exact agreement on every non-knife-edge day. Every mismatch prints to the CI log with its knife-edge status. The 40 vriddhi/kshaya days plus a fixed-stride systematic sample (every 25th day of the AD chain, offset 5) form the print spot-verification queue against the printed NPNS panchangs held from R8 — the corpus is portal-truth until print-verified, and says so.
 
 Adjudication of the disagreement days (2026-11-06): all 59 mismatches are off-by-one, every one on a day the portal itself marks vriddhi/kshaya, forming short runs bounded by events the two sources place on different days. Third-party check: on the 30 disagreement days with populated BhaktiBharat pages (its online archive begins ~July 2026; the remaining ~29 pre-July-2026 days are unavailable there), BhaktiBharat's own tithi windows match the engine on 30/30, boundary deltas 0–1 minutes — e.g. Janai Purnima week: on 2026-07-18 BhaktiBharat's Sunrise Tithi is Panchami (the engine; the portal prints Chaturthi, which BhaktiBharat lists as the early-hours tithi that ended 4:58 AM). The disagreement class is therefore the portal's vriddhi/kshaya boundary convention — the publisher-divergence fact already on record (BhaktiBharat ↔ Hamro Patro agree within 2–13 min on the same boundaries) — stated, never absorbed. BhaktiBharat corroboration is not print verification; the R8 print spot-verification queue stands.
+
+## Frame audit — every solver path's reference frame (R10.5 rung B, HYA-445)
+
+Rung B walked every solver path and pinned two questions per path: is the
+input instant converted UT→TT before the ephemeris sees it, and is the
+output frame consistent (nutation and light-time applied symmetrically to
+the bodies)? The per-path verdict:
+
+| Path | ΔT input | Output frame | Verdict |
+| -- | -- | -- | -- |
+| tithi/karana boundaries | TT inside the solver; callers convert | separation frame: both bodies mean-equinox-of-date, own light-time kept, no nutation | FIXED this rung — was: nutated sun vs geometric moon |
+| nakshatra | same | apparent-sidereal moon (nutation applied) − ayanamsa | FIXED this rung — was mean-sidereal |
+| yoga | same | both bodies apparent-sidereal | FIXED this rung — nutation was on the sun side only |
+| sunrise/sunset | UT closed form, ΔT-free by construction | geometric −0.8333° target | clean, documented |
+| moonrise | UT→TT inside the altitude target | mean-equinox geometric + parallax, refraction folded into the target | clean; the rise-convention gap dominates its band |
+| masa bounds | window bounds converted UT→TT | tithi solver + apparent-sidereal sun | clean |
+| lunar eclipse | contact instants TT inside | both bodies geometric (the shared rotation cancels; shadow geometry) | internally consistent; the omitted solar aberration shifts contacts well under the NASA receipt bands — stated |
+| solar eclipse | TT inside the geometry | true sun + aberration vs geometric moon (the shared separation helper, deduplicated this rung) | deliberate near-conjunction frame; receipt bands absorb the asymmetry |
+
+**The finding.** Nutation in longitude (Δψ, ±17.2″ over the 18.6-year
+node cycle) had been applied to the Sun alone — `sunApparentLongitude` =
+true + ν + aberration — while the Moon stayed geometric (Meeus Ch.47,
+mean equinox of date). For an angular separation a common frame rotation
+cancels between the two bodies; applied to ONE body it turns the
+separation itself: every tithi and karana angle carried −Δψ, and every
+tithi/karana boundary sat correspondingly later than a true-apparent
+separation puts it. In the corpus window Δψ ≈ +8.0″ ≈ 16 s of tithi
+boundary time — which quantitatively explains most of the post-R7a Swiss
+signed mean (−14.3 s) that had been attributed to the Meeus Ch.47
+truncation alone: the truncation scatter is real but smaller; the
+nutation asymmetry was the systematic. The sidereal paths carried the
+same class: the moon sat in the mean-equinox frame while the publishers'
+convention (apparent − ayanamsa, the drik software convention) is
+nutated — nakshatra and yoga now apply the nutation to the moon like the
+sun.
+
+The named, deliberately skipped contributor is the Moon's own
+light-time: ~1.3 s of time, ~0.7″ of longitude, ~1.4 s of boundary time.
+Computing it would evaluate the 60-term series twice per bisection step
+for a term far below the publisher minute floor — stated, never silently
+dropped.
+
+Every served boundary therefore shifts ~13–16 s earlier in the window
+(ν = +8.0″: tithi/karana ~16 s, nakshatra ~15 s, yoga ~14 s). All
+receipt corpora, the bounded karana knife-edge rule, the NPNS 730-day
+audit, the festival gates and the rung A property suite re-verify green
+in CI on this change — measured, not asserted. The fitted per-publisher
+ayanamsa profiles (BhaktiBharat −0.0795°, Hamro Patro −0.0117°) are NOT
+re-fit here: re-fitting is deferred to the next receipt-driven
+calibration crawl so a convention change and a fit change never land in
+the same PR. The post-fix Swiss scoreboard is recorded in the
+Swiss-truth section above, re-measured on this change.

@@ -23,14 +23,51 @@ double sunTrueLongitude(double jd) => vsop87dEarthSunGeometricLongitudeDeg(jd);
 /// four-term formula) and for aberration (Meeus chapter 25: constant
 /// 20.4898 arcsec scaled by the Earth-Sun distance in AU).
 double sunApparentLongitude(double jd) {
+  return _norm360(
+      sunTrueLongitude(jd) + nutationInLongitudeDeg(jd) + sunAberrationDeg(jd));
+}
+
+/// Nutation in longitude (Meeus chapter 22 low-accuracy four-term
+/// formula), degrees. Exposed by the R10.5 rung B frame audit (HYA-445):
+/// an angular separation between two bodies needs no nutation (a common
+/// frame rotation cancels between the bodies), but the publishers'
+/// apparent-sidereal convention needs it on the moon as well as the sun.
+/// Amplitude +-17.2 arcsec over the 18.6-year node cycle (+8.0 arcsec in
+/// late 2026, ~16 s of tithi boundary time).
+double nutationInLongitudeDeg(double jd) {
   final t = (jd - 2451545.0) / 36525.0;
   final omega = 125.04452 - 1934.136261 * t;
   final ls = 280.4665 + 36000.7698 * t;
   final lm = 218.3165 + 481267.8813 * t;
-  final nutationDeg =
-      (-17.20 * math.sin(omega * _radPerDeg) - 1.32 * math.sin(2 * ls * _radPerDeg) - 0.23 * math.sin(2 * lm * _radPerDeg) + 0.21 * math.sin(2 * omega * _radPerDeg)) / 3600.0;
-  final aberrationDeg = -20.4898 / 3600.0 / sunEarthDistanceAu(jd);
-  return _norm360(sunTrueLongitude(jd) + nutationDeg + aberrationDeg);
+  return (-17.20 * math.sin(omega * _radPerDeg) - 1.32 * math.sin(2 * ls * _radPerDeg) - 0.23 * math.sin(2 * lm * _radPerDeg) + 0.21 * math.sin(2 * omega * _radPerDeg)) / 3600.0;
+}
+
+/// Solar aberration (Meeus chapter 25), degrees: -20.4898 arcsec scaled
+/// by the Earth-Sun distance in AU - the first-order light-time term of
+/// the Sun's apparent position.
+double sunAberrationDeg(double jd) =>
+    -20.4898 / 3600.0 / sunEarthDistanceAu(jd);
+
+/// Solar longitude in the SEPARATION frame (R10.5 rung B, HYA-445): the
+/// true (VSOP87D) longitude plus the aberration term only, nutation
+/// omitted - the frame the solar eclipse solver always used privately,
+/// now public and shared with the tithi/karana elongation.
+///
+/// A common frame rotation cancels in an angular separation, so the
+/// apparent separation carries nutation on NEITHER body - while each
+/// body's own light-time correction is real and stays (for the Sun that
+/// is the aberration). The tithi elongation formerly subtracted
+/// [sunApparentLongitude] - nutation applied to the Sun ALONE - from the
+/// geometric moon, rotating the Sun alone by the nutation and putting a
+/// systematic -nutation into every tithi/karana angle (up to +-17.2
+/// arcsec; +8.0 arcsec in late 2026 = ~16 s of boundary time).
+///
+/// The Moon's own light-time (~1.3 s of time, ~0.7 arcsec of longitude,
+/// ~1.4 s of boundary time) is a NAMED, deliberately skipped
+/// contributor: computing it would double the moon evaluations inside
+/// every bisection for a term far below the publisher minute floor.
+double sunLongitudeForSeparationDeg(double jd) {
+  return _norm360(sunTrueLongitude(jd) + sunAberrationDeg(jd));
 }
 
 /// Earth-Sun distance for [jd] in Terrestrial Time, in astronomical units.

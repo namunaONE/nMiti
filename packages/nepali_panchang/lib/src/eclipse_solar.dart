@@ -27,7 +27,9 @@ const double _degPerRad = 180 / math.pi;
 /// [sunApparentLongitude] is deliberately NOT used: it adds nutation for
 /// the Sun alone, which would break the frame cancellation against the
 /// geometric moon. The separation frame uses the true longitude plus the
-/// aberration term only.
+/// aberration term only - the frame [sunLongitudeForSeparationDeg] has
+/// exposed in sun.dart since the R10.5 rung B frame audit, shared with
+/// the tithi/karana separation; the behavior here is unchanged.
 ///
 /// Visibility finding (decoded from the 2026-2027 Kathmandu receipts,
 /// never silently assumed): the Moon's penumbra reaches past the
@@ -166,16 +168,6 @@ double _gmstDeg(double jdUt) {
       t * t * t / 38710000;
 }
 
-double _norm360(double deg) => deg % 360.0;
-
-/// Sun longitude in the separation frame: the true (VSOP87D) longitude
-/// plus the aberration term only. Nutation is omitted for both bodies
-/// (see the library doc); [sunApparentLongitude] is not used.
-double _sunLongitudeForSeparation(double jdTt) {
-  return _norm360(sunTrueLongitude(jdTt) -
-      20.4898 / 3600.0 / sunEarthDistanceAu(jdTt));
-}
-
 /// Observer ECEF position in km on the reference ellipsoid at sea
 /// level, rotated into the equatorial frame by GMST + longitude.
 List<double> _observerEcefKm(double jdUt, double latitudeDeg, double longitudeDeg) {
@@ -196,7 +188,7 @@ _LocalGeometry _geometryAt(double jdUt, double latitudeDeg, double longitudeDeg)
   final jdTt = jdTtFromJdUt(jdUt);
   final moon = moonPosition(jdTt);
   final eps = _meanObliquityDeg(jdUt) * _radPerDeg;
-  final sunLon = _sunLongitudeForSeparation(jdTt) * _radPerDeg;
+  final sunLon = sunLongitudeForSeparationDeg(jdTt) * _radPerDeg;
   final sunDistKm = sunEarthDistanceAu(jdTt) * auKm;
   final cosEps = math.cos(eps);
   final sinEps = math.sin(eps);
