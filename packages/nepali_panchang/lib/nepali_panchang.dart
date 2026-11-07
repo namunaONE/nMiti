@@ -59,9 +59,18 @@
 /// naming, and the C1-C6 publisher convention collisions decoded and
 /// exposed rather than silently resolved. Step 5 (site/API display)
 /// follows.
+///
+/// R10.1 (HYA-441) opens the ritual display layers on the shipped engines:
+/// layer 1 is the Bhadra module - the eight Vishti karana half-tithi windows
+/// per lunar month with the loka (moon-rashi) table and its named contiguous
+/// variant, both mukha/puchha rule families (ghati primary, fraction
+/// exposed), and the begins-date convention, all derived from the karana
+/// limb and gated by the 2026 Bhadra receipt corpus (Swarnsiddhi windows,
+/// BhaktiBharat rule text and date lists, corpus-pinned window edges).
 library;
 
 export 'src/ayanamsa.dart';
+export 'src/bhadra.dart';
 export 'src/civil_time.dart';
 export 'src/delta_t.dart';
 export 'src/eclipse_lunar.dart';
