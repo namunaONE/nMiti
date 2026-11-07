@@ -63,11 +63,17 @@ Three anchors:
    Apache-2.0, dev-dependency only) cross-checks our tithi in CI: every
    day-tithi label agrees and transition instants sit inside the provisional
    bands.
-3. **Swiss-truth scoreboard** (HYA-369, first CI run 2026-11-06) — the
+3. **Swiss-truth scoreboard** (HYA-369, first CI run 2026-11-06;
+   re-measured post-R7a on merge `ff8b3ae`, CI #146) — the
    full engine window is re-solved with Swiss Ephemeris in CI:
-   tithi/karana boundaries mean 7.9 s (max 19 s), moonrise 0.3 s
-   (max 1 s), sunrise 11.3 s (max 12 s); the nakshatra/yoga deltas
-   (~60 / ~104 s) are the ayanamsa convention gap, stated, never absorbed.
+   tithi/karana boundaries mean 14.3 s (max 26 s — the named
+   Meeus Ch.47 truncation, exposed once the pre-R7a ΔT error
+   stopped partially canceling it), moonrise 0.2 s, sunrise 11.3 s
+   (max 12 s, unchanged — UT-direct); the nakshatra/yoga deltas
+   (~66 / ~111 s) are the ayanamsa convention gap plus the −6.5 s
+   R7a ΔT wall-clock shift, stated, never absorbed. The
+   Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to
+   mean −0.30 s (max 0.31 s, n=233).
 
 | Limb | ± minutes | Basis |
 | -- | -- | -- |
@@ -76,7 +82,7 @@ Three anchors:
 | yoga | ±2.0 | max ~0.97 post ayanamsa fit |
 | karana | 0 | convention-anchored: 76/76 exact at the pinned reference moment |
 | sunrise | ±1.0 | vs geometric (NOAA-style) rise; BhaktiBharat's ~+4.5 min is a stated convention offset, not an error |
-| moonrise | ±12 (provisional) | JPL topocentric rise receipts vs the served Meeus 15.1 geocentric target — convention gap; Swiss parity at the identical target is 0.3 s mean |
+| moonrise | ±12 (provisional) | JPL topocentric rise receipts vs the served Meeus 15.1 geocentric target — convention gap; Swiss parity at the identical target is 0.2 s mean |
 
 Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
 2–13 min on the same boundaries) is a measured fact about Nepali publishing —
@@ -109,6 +115,28 @@ the bands tightened to measured + margin (max / mean, seconds):
 | solar_loc | 3 | 5.0 s | 6 s | +1.8 s | 60 / 30 |
 | lunar_loc | 15 | 38.8 s | 180 s | +38.7 s | 300 / 120 |
 
+Post-R7a re-measurement (CI #146, merge `ff8b3ae`, 2026-11-06, hybrid ΔT channel): every TT limb band shifted by the −6.5 s ΔT wall-clock correction (engine ΔT dropped 75.6 → 69.1 s for the window) and every band still passes; sunrise is UT-direct and unchanged. The Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to mean −0.30 s (max 0.31 s, n=233):
+
+| Channel | n | measured mean abs | measured max | signed mean | band (hard / mean) |
+| -- | -- | -- | -- | -- | -- |
+| tithi | 47 | 14.3 s | 26 s | −14.3 s | 60 / 30 PASS |
+| karana | 93 | 14.3 s | 26 s | −14.3 s | 60 / 30 PASS |
+| nakshatra | 45 | 66.2 s | 78 s | −66.2 s | 180 / 120 PASS |
+| yoga | 48 | 110.8 s | 125 s | −110.8 s | 300 / 180 PASS |
+| moonrise | 44 | 0.2 s | 0 s | −0.0 s | 60 / 15 PASS |
+| sunrise | 45 | 11.3 s | 12 s | +11.3 s | 60 / 30 PASS |
+| lunar_ecl | 12 | 12.0 s | 35 s | +4.4 s | 120 / 60 PASS |
+| solar_loc | 3 | 5.0 s | 6 s | +1.8 s | 60 / 30 PASS |
+| lunar_loc | 15 | 38.8 s | 180 s | +38.7 s | 300 / 120 PASS |
+| ΔT residual | 233 | 0.30 s | 0.31 s | −0.30 s | n/a |
+
+The pre-R7a ΔT error was partially *canceling* the named Meeus
+Ch.47 truncation (~20 s) in the tithi/karana channels; with ΔT
+corrected the raw truncation gap (14.3 s, signed −14.3 s) stands
+exposed — stated, never absorbed, still well inside every band.
+The UT1-direct channels (sunrise, moonrise) did not move, confirming the
+ΔT channel change as the sole cause of the shift.
+
 Tithi, karana and moonrise are pure ephemeris/algorithm parity —
 moonrise is near-exact (0.3 s mean) and the USNO low-accuracy sunrise
 closed form tracks the Swiss crossing to ~11 s. The nakshatra and yoga
@@ -116,8 +144,9 @@ deltas are near-constant — the ayanamsa convention gap (our fitted base
 profile vs Swiss Lahiri), itself an informative number, not noise. A
 regression now trips a band within ~3× of the recorded maxima.
 
-The harness also reports the **ΔT residual** (Swiss internal model minus our
-Espenak–Meeus polynomial, at every boundary) — a direct measurement of the
+The harness also reports the **ΔT residual** (Swiss internal model minus
+the engine's served ΔT at every boundary — the Espenak–Meeus polynomial
+before R7a, the hybrid channel since) — a direct measurement of the
 named systematic contributor in the error bars above — and flags
 **knife-edge boundaries**: any boundary within 30 minutes of a sunrise, the
 days where two honest panchangs can print different limbs. The knife-edge
@@ -146,8 +175,11 @@ past the systematic.
 USNO observed monthly through 2026-04, USNO quarterly predictions through
 2033-10, Espenak–Meeus long-range beyond, with the join steps declared, not
 blended — closing the ~6.5 s systematic. Served boundary times shift ~6.5 s
-later (truer); the published bands are ceilings and stay until the
-post-R7a Swiss-truth scoreboard re-measures them.
+later (truer); re-measured on the merge (CI #146): every TT limb band
+moved by the −6.5 s ΔT correction and stays inside its published
+ceiling, the Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to
+mean −0.30 s (n=233), and the UT1-direct channels (sunrise, moonrise)
+did not move. The post-R7a scoreboard table is above.
 
 ## Delta T — the hybrid channel (R7a, HYA-438)
 
