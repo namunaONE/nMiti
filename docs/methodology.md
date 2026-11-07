@@ -420,3 +420,85 @@ nakshatra and yoga sector at least once) plus seeded-random windows over
 AD 1975–2100, probing the sector index to flip across every crossing; it
 is also the ready fast path (~4× fewer evaluations) should a future
 corpus re-baseline ever justify switching the served value.
+
+
+## Delta T horizon — the one error-bar surface (R10.5 rung D, HYA-445)
+
+Every served value carries an honest uncertainty; until rung D the
+Delta-T channel's uncertainty was R7a's per-segment declaration,
+static per date. Rung D ships the horizon term: **one function**,
+`deltaTHorizonAtJdUt(jdUt, nowJdUt)`, that composes the R7a
+declaration with what the vendored tables measure about their own
+prediction error, so every served error bar can carry a Delta-T
+component that grows with how far the queried date sits from the day
+the caller serves. The channel itself is untouched — same segments,
+same served values, same R7a declarations; the horizon is a new
+public surface on top, and the engine never reads a clock: the caller
+states today, so receipts and tests are reproducible.
+
+Three measured facts drive the composition, each derived from the
+vendored tables (or the published record) at evaluation time, never
+hardcoded:
+
+1. **The USNO error column is an estimate, not a bound.** Over the
+   vendored overlap — the 15 prediction rows the observations shadow
+   (2022-07 .. 2026-01) — the realized |prediction − observed| exceeded
+   the stated error by up to **2.31×** (worst row: 2023-10, 0.062 s
+   realized against 0.027 s stated; the maximum absolute miss was
+   0.095 s at 2024-10 against 0.070 s stated). An independent vendoring
+   of the same USNO file (hyper-calendar PR #140) measured the same
+   class of understatement at up to 2.7×. The preds-era envelope is
+   therefore the stated error scaled by the measured optimism factor
+   (`deltaTPredsOverlapInflationFactor`, recomputed from the tables
+   on every evaluation, so the refresh workflow re-measures it
+   automatically).
+2. **The Espenak–Meeus join step is a level systematic of the served
+   value.** The declared +8.91 s step at 2033-10-01 is the measured
+   disagreement between the polynomial the channel serves beyond the
+   USNO horizon and the USNO trajectory it replaces. R7a's knot
+   envelope declared 1 s at the join — the USNO trajectory's own
+   horizon error — but the *served* value there is the polynomial,
+   which sits the full step above that trajectory, and a level bias
+   does not decay with calendar year. The EM-era envelope therefore
+   composes the measured disagreement
+   (`deltaTEmJoinDisagreementSeconds`, derived from the tables)
+   **in quadrature** with the unchanged growth knots (1/6/12/20 s at
+   2033.75/2050/2100/2150): ~8.96 s at the join, 9.76 s at 2043,
+   21.8 s by 2149. The knots themselves stand with two published
+   corroborations: the vendored SMH2021 published error table extends
+   into the future (2 s at 2030, 6 s at 2050, 10 s at 2100), and
+   Espenak's own σ estimate for the Five Millennium Canon is 0.8·t²
+   with t = (year−1820)/100 — both sit at or below the declared knots
+   at every point (Espenak & Meeus, "Uncertainty in Delta T",
+   eclipsewise.com/help/uncertainty2004.html).
+3. **History never ages.** For queried dates inside the observations
+   the envelope stays the R7a declaration (0.05 s; the published
+   SMH2021 error table before 1973-02), whatever today is. The
+   envelopes are anchored at the tables' own epochs, not at runtime
+   today; while the freshness guarantee holds (the canary asserts the
+   observed table stays within ~16 months of today —
+   `deltaTObservationsFreshnessWindowDays` = 497 d), the anchor
+   sits within months of today and the envelope reads as growth with
+   |date − today|. The horizon object states the freshness verdict
+   per call (`observationsCurrent`), so a receipt can say whether
+   the guarantee still held when it was written.
+
+Wall-clock mapping, stated per the rung B frame audit: on TT-anchored
+channels (tithi/karana/nakshatra/yoga, masa, eclipse contacts) one
+second of Delta-T error is one second of served boundary time — the
+horizon uncertainty is directly the Delta-T component of those error
+bars. The UT-direct channels (sunrise, sunset, moonrise) are
+Delta-T-free by construction and carry zero Delta-T wall-clock
+uncertainty. The IERS mid/long-term UT1-UTC prediction literature
+(bulletin-style forecasts evaluated over 90–360-day spans) is the
+published context for prediction-error growth; the USNO quarterly
+column itself is the operative model inside its horizon.
+
+The permanent gate `packages/nepali_panchang/test/delta_t_horizon_test.dart`
+pins the measured constants, the exact composition per segment (never
+below the R7a declaration), strict growth across the forecast horizon
+(2027 < 2030 < 2033-06 < 2034-06 < 2043 < 2050 < 2100 < 2149), the
+matured/forecast classification, the freshness window, determinism,
+and the argument range. No served-value, fixture, band, receipt or
+site changes in this rung; the display layer (today.json honesty
+fields, the honesty pages) consumes this surface in a later arc.
