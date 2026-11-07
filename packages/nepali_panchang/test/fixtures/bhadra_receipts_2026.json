@@ -1,0 +1,344 @@
+{
+  "schema": "nmiti-bhadra-receipts/1",
+  "description": "nMiti Bhadra (Vishti karana) receipt corpus - golden fixtures (R10.1 ritual layer 1, HYA-441). Live-crawled 2026-11-07. Window receipts: Swarnsiddhi's next-12-Bhadras table (IST display; NPT = IST + 15 min exactly). Rule receipts: BhaktiBharat's Bhadra festival page (tithi-half map, loka table, ghati mukha/puchha, today window, date lists) and the contiguous-arc loka variant from bhaktivoice (rule statements only - their window times are unreconcilable, see caveats). Window edges cross-pinned against the locked lunar corpora: every corpus-pinned edge is a tithi boundary the calibration corpus already gates, and the karana receipts of the same corpora independently show Vishti on every gated window day.",
+  "crawl_date": "2026-11-07",
+  "sources": {
+    "swarnsiddhi": {
+      "name": "Swarnsiddhi Bhadra Kaal - next 12 Bhadras table",
+      "url": "https://swarnsiddhi.com/bhadra-kaal",
+      "conventions": "Times printed in IST (India); NPT = IST + 15 min. Table rows: tithi label, begin/end times, moon loka path (rashi columns), mukha/puchha times. Row date = the day the window begins; the Dec 16 row additionally annotates the end day '(17 Dec)'. Mukha/puchha on the current window follow the fraction rule (mukha = first 1/6, puchha = last 1/10 - verified exactly on the Nov 7 window: 12 h 18 m window gives 2 h 03 m mukha / 1 h 14 m puchha)."
+    },
+    "bb_festival": {
+      "name": "BhaktiBharat festival page - Bhadra (Vishti Karana)",
+      "url": "https://bhaktibharat.com/en/festival/bhadra",
+      "conventions": "Rule text: Bhadra occurs in the first half of Shukla Ashtami and Purnima and in the latter part of Shukla Chaturthi and Ekadashi; and in the first half of Krishna Saptami and Chaturdashi and in the latter part of Krishna Tritiya and Dashami. Loka table: Swarga = Mesha, Vrishabha, Mithuna, Vrischika; Prithvi = Karka, Simha, Kumbha, Meena; Patala = Kanya, Tula, Dhanu, Makara. Ghati rule: 5 ghatis (2 h) of mukha at the start are discarded, 3 ghatis (1 h 12 min) of puchha at the end are auspicious. Today window Nov 7: 10:47 AM - 11:04 PM IST. Next dates: Nov 7, 13, 17, 20, 23, 26, 30. Past dates: Oct 8, 14, 18, 22, 25, 28, 31, Nov 3, 7. All dates are the day the window BEGINS."
+    },
+    "bhaktivoice": {
+      "name": "BhaktiVoice Bhadra page (rule statements only)",
+      "url": "https://bhaktivoice.com/bhadra-kaal",
+      "conventions": "Used ONLY for rule statements: the ghati mukha/puchha rule (same as BhaktiBharat) and the contiguous-arc loka variant (Prithvi = rashi 4-7, Patala = rashi 9-12). Their live window times are unreconcilable with the locked corpora and are never gated - see caveats."
+    }
+  },
+  "rules": {
+    "tithi_half_map": {
+      "shukla": {
+        "Chaturthi": "second",
+        "Ashtami": "first",
+        "Ekadashi": "second",
+        "Purnima": "first"
+      },
+      "krishna": {
+        "Tritiya": "second",
+        "Saptami": "first",
+        "Dashami": "second",
+        "Chaturdashi": "first"
+      }
+    },
+    "loka_canonical": {
+      "swarga": [1, 2, 3, 8],
+      "prithvi": [4, 5, 11, 12],
+      "patala": [6, 7, 9, 10]
+    },
+    "loka_contiguous_variant": {
+      "prithvi": [4, 5, 6, 7],
+      "patala": [9, 10, 11, 12],
+      "swarga_by_elimination_unstated_by_source": [1, 2, 3, 8]
+    },
+    "mukha_puchha_ghati": {
+      "mukha": "first 5 ghatis = 2 h of the window, discarded",
+      "puchha": "last 3 ghatis = 1 h 12 min of the window, auspicious",
+      "primary": true
+    },
+    "mukha_puchha_fraction": {
+      "mukha": "first 1/6 of the window",
+      "puchha": "last 1/10 of the window",
+      "primary": false
+    }
+  },
+  "caveats": [
+    {
+      "id": "bhaktivoice-window-unreconcilable",
+      "note": "bhaktivoice's live page printed a Nov 3 window 05:32-17:32 IST with loka Prithvi. That instant pair matches no Vishti sector: the corpora place the Krishna Dashami Vishti at Nov 3 ~23:43 - Nov 4 11:19 NPT (BB Dashami ends Nov 4 11:19). Their loka label (Prithvi) is consistent with the moon in Karka on Nov 3, so the page is not a different-date cache either. Their window times are excluded from every gate; only their rule statements are used."
+    },
+    {
+      "id": "row7-leading-edge-knife-edge",
+      "note": "The moon leaves Karka (rashi 4) for Simha (rashi 5) within minutes of the Nov 30 02:02 NPT window begin (the Ashlesha-to-Magha rashi crossing at 120 deg sits ~02:00). Swarnsiddhi prints both rashis; an engine segment list differing by that leading segment is allowed only as a window-edge knife-edge (transition within 20 min of the window edge)."
+    },
+    {
+      "id": "oct8-to-oct14-six-day-gap",
+      "note": "The six-day gap between the Oct 8 and Oct 14 Bhadra dates (and Nov 7 to Nov 13) is structural: the month-end fixed karanas (Shakuni, Chatushpada, Naga, Kimstughna) break the 7-cycle across Amavasya, so the Krishna Chaturdashi window is followed only ~6.4 days later by the Shukla Chaturthi window. All nine BB past dates are valid begins-dates."
+    }
+  ],
+  "bb_today_window_ist": {
+    "date": "2026-11-07",
+    "begin": "10:47",
+    "end": "23:04"
+  },
+  "bb_date_lists": {
+    "next": ["2026-11-07", "2026-11-13", "2026-11-17", "2026-11-20", "2026-11-23", "2026-11-26", "2026-11-30"],
+    "past": ["2026-10-08", "2026-10-14", "2026-10-18", "2026-10-22", "2026-10-25", "2026-10-28", "2026-10-31", "2026-11-03", "2026-11-07"]
+  },
+  "karana_vishti_cross_check": [
+    { "date": "2026-11-13", "source": "bb", "reference": "noon" },
+    { "date": "2026-11-17", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-03", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-07", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-13", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-20", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-23", "source": "bb", "reference": "noon" },
+    { "date": "2026-12-26", "source": "bb", "reference": "noon" },
+    { "date": "2026-10-22", "source": "hp", "reference": "udaya" },
+    { "date": "2026-11-04", "source": "hp", "reference": "udaya" },
+    { "date": "2026-11-21", "source": "hp", "reference": "udaya" },
+    { "date": "2026-11-24", "source": "hp", "reference": "udaya" },
+    { "date": "2026-11-27", "source": "hp", "reference": "udaya" },
+    { "date": "2026-12-07", "source": "hp", "reference": "udaya" },
+    { "date": "2026-12-13", "source": "hp", "reference": "udaya" },
+    { "date": "2026-12-17", "source": "hp", "reference": "udaya" }
+  ],
+  "windows": [
+    {
+      "date": "2026-11-07",
+      "tithi": "Krishna Chaturdashi",
+      "half": "first",
+      "karana_number": 57,
+      "ist_begin": "10:48",
+      "ist_end": "23:06",
+      "npt_begin": "2026-11-07T11:03",
+      "npt_end": "2026-11-07T23:21",
+      "loka_rasi": [6, 7],
+      "mukha_ist": ["10:48", "12:51"],
+      "puchha_ist": ["21:52", "23:06"],
+      "corpus_pin": null,
+      "pin_note": "begin matches the live Nov 7 Chaturdashi begin 11:03 NPT (site/API and the BB today window 10:47-23:04 IST = 11:02-23:19 NPT); the day falls between the Oct and Nov corpora, so no fixture corpus pin."
+    },
+    {
+      "date": "2026-11-13",
+      "tithi": "Shukla Chaturthi",
+      "half": "second",
+      "karana_number": 8,
+      "ist_begin": "07:25",
+      "ist_end": "20:43",
+      "npt_begin": "2026-11-13T07:40",
+      "npt_end": "2026-11-13T20:58",
+      "loka_rasi": [9],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Shukla Chaturthi ends",
+        "published_npt": "2026-11-13T20:58",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 3
+      },
+      "pin_note": "the window end IS the Chaturthi end the Nov corpus gates; the begin is the Chaturthi midpoint (Chaturthi Nov 12 18:25 - Nov 13 20:58, half = 13 h 16 m -> 07:41)."
+    },
+    {
+      "date": "2026-11-17",
+      "tithi": "Shukla Ashtami",
+      "half": "first",
+      "karana_number": 15,
+      "ist_begin": "04:20",
+      "ist_end": "17:18",
+      "npt_begin": "2026-11-17T04:35",
+      "npt_end": "2026-11-17T17:33",
+      "loka_rasi": [10, 11],
+      "corpus_pin": {
+        "edge": "begin",
+        "limb": "tithi",
+        "receipt": "Shukla Saptami ends / Ashtami begins",
+        "published_npt": "2026-11-17T04:35",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 3
+      },
+      "pin_note": "the window begin IS the Ashtami begin the Nov corpus gates; the end is the Ashtami midpoint (Ashtami 04:35 - Nov 18 06:21)."
+    },
+    {
+      "date": "2026-11-20",
+      "tithi": "Shukla Ekadashi",
+      "half": "second",
+      "karana_number": 22,
+      "ist_begin": "19:01",
+      "ist_end": "06:32",
+      "ist_end_day": "2026-11-21",
+      "npt_begin": "2026-11-20T19:16",
+      "npt_end": "2026-11-21T06:47",
+      "loka_rasi": [12],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Shukla Ekadashi ends",
+        "published_npt": "2026-11-21T06:47",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 3
+      },
+      "pin_note": "the window end IS the Ekadashi end the Nov corpus gates; HP shows Vishti at the Nov 21 udaya (sunrise 06:28 falls inside the window)."
+    },
+    {
+      "date": "2026-11-23",
+      "tithi": "Purnima",
+      "half": "first",
+      "karana_number": 29,
+      "ist_begin": "23:43",
+      "ist_end": "10:06",
+      "ist_end_day": "2026-11-24",
+      "npt_begin": "2026-11-23T23:58",
+      "npt_end": "2026-11-24T10:21",
+      "loka_rasi": [1, 2],
+      "corpus_pin": {
+        "edge": "begin",
+        "limb": "tithi",
+        "receipt": "Purnima begins",
+        "published_npt": "2026-11-23T23:58",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 3
+      },
+      "pin_note": "the window begin IS the Purnima begin the Nov corpus gates, 2 min before NPT midnight - the begins-date knife-edge case (a begin within 3 min of midnight may shift the printed date by one day)."
+    },
+    {
+      "date": "2026-11-26",
+      "tithi": "Krishna Tritiya",
+      "half": "second",
+      "karana_number": 36,
+      "ist_begin": "23:31",
+      "ist_end": "09:49",
+      "ist_end_day": "2026-11-27",
+      "npt_begin": "2026-11-26T23:46",
+      "npt_end": "2026-11-27T10:04",
+      "loka_rasi": [3],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Krishna Tritiya ends",
+        "published_npt": "2026-11-27T10:13",
+        "source": "hp",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 10
+      },
+      "pin_note": "HP prints the Tritiya end 9 min later than Swarnsiddhi prints the window end (their ephemeris/rounding); the wider HP band absorbs the publisher divergence, not engine error. HP shows Vishti at the Nov 27 udaya."
+    },
+    {
+      "date": "2026-11-30",
+      "tithi": "Krishna Saptami",
+      "half": "first",
+      "karana_number": 43,
+      "ist_begin": "01:47",
+      "ist_end": "12:55",
+      "npt_begin": "2026-11-30T02:02",
+      "npt_end": "2026-11-30T13:10",
+      "loka_rasi": [4, 5],
+      "corpus_pin": null,
+      "pin_note": "Saptami begin falls between the Nov corpus (ends Nov 28/29) and the Dec corpus (starts Dec 1); structural consistency: Saptami begin + 2 tithis = the corpus Ashtami end 2026-12-01T23:29 (bb), i.e. Saptami + Ashtami = Nov 30 02:02 - Dec 1 23:29, 45.5 h for two tithis. Leading rashi edge is the knife-edge case (see caveats)."
+    },
+    {
+      "date": "2026-12-03",
+      "tithi": "Krishna Dashami",
+      "half": "second",
+      "karana_number": 50,
+      "ist_begin": "10:54",
+      "ist_end": "23:04",
+      "npt_begin": "2026-12-03T11:09",
+      "npt_end": "2026-12-03T23:19",
+      "loka_rasi": [6],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Krishna Ekadashi begins",
+        "published_npt": "2026-12-03T23:19",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3
+      },
+      "pin_note": "the window end IS the Dashami end the Dec corpus gates; BB prints Vishti at the Dec 3 noon."
+    },
+    {
+      "date": "2026-12-07",
+      "tithi": "Krishna Chaturdashi",
+      "half": "first",
+      "karana_number": 57,
+      "ist_begin": "02:23",
+      "ist_end": "15:15",
+      "npt_begin": "2026-12-07T02:38",
+      "npt_end": "2026-12-07T15:30",
+      "loka_rasi": [7, 8],
+      "corpus_pin": {
+        "edge": "begin",
+        "limb": "tithi",
+        "receipt": "Krishna Chaturdashi begins",
+        "published_npt": "2026-12-07T02:38",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3
+      },
+      "pin_note": "the window begin IS the Chaturdashi begin the Dec corpus gates; both BB (noon) and HP (udaya) print Vishti on Dec 7."
+    },
+    {
+      "date": "2026-12-13",
+      "tithi": "Shukla Chaturthi",
+      "half": "second",
+      "karana_number": 8,
+      "ist_begin": "03:28",
+      "ist_end": "16:48",
+      "npt_begin": "2026-12-13T03:43",
+      "npt_end": "2026-12-13T17:03",
+      "loka_rasi": [10],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Shukla Panchami begins",
+        "published_npt": "2026-12-13T17:03",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3
+      },
+      "pin_note": "the window end IS the Chaturthi end the Dec corpus gates (BB and HP both print 17:03); the begin is the Chaturthi midpoint (Chaturthi Dec 12 14:22 - Dec 13 17:03, half = 13 h 20 m -> 03:42 - a long half: the moon slows toward the Dec 22 perigee)."
+    },
+    {
+      "date": "2026-12-16",
+      "tithi": "Shukla Ashtami",
+      "half": "first",
+      "karana_number": 15,
+      "ist_begin": "22:46",
+      "ist_end": "11:13",
+      "ist_end_day": "2026-12-17",
+      "end_day_annotation": "(17 Dec)",
+      "npt_begin": "2026-12-16T23:01",
+      "npt_end": "2026-12-17T11:28",
+      "loka_rasi": [11, 12],
+      "corpus_pin": {
+        "edge": "begin",
+        "limb": "tithi",
+        "receipt": "Shukla Ashtami begins",
+        "published_npt": "2026-12-16T23:01",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3
+      },
+      "pin_note": "the window begin IS the Ashtami begin the Dec corpus gates; Swarnsiddhi's own row annotates the end day (17 Dec) - the begins-date convention confirmed from both sides. HP prints Vishti at the Dec 17 udaya."
+    },
+    {
+      "date": "2026-12-20",
+      "tithi": "Shukla Ekadashi",
+      "half": "second",
+      "karana_number": 22,
+      "ist_begin": "09:18",
+      "ist_end": "20:15",
+      "npt_begin": "2026-12-20T09:33",
+      "npt_end": "2026-12-20T20:30",
+      "loka_rasi": [1],
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "tithi",
+        "receipt": "Shukla Dwadashi begins",
+        "published_npt": "2026-12-20T20:30",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3
+      },
+      "pin_note": "the window end IS the Ekadashi end the Dec corpus gates (BB 20:30, HP 20:31); BB prints Vishti at the Dec 20 noon."
+    }
+  ]
+}
