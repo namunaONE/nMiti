@@ -382,3 +382,41 @@ re-fit here: re-fitting is deferred to the next receipt-driven
 calibration crawl so a convention change and a fit change never land in
 the same PR. The post-fix Swiss scoreboard is recorded in the
 Swiss-truth section above, re-measured on this change.
+
+## Solver convergence — the two-method boundary solve (R10.5 rung C, HYA-445)
+
+Every served limb boundary is now solved twice, and the solver throws
+unless both methods agree — convergence is enforced, not assumed.
+
+**The served path** (numerics unchanged, output bit-identical): a
+six-hour-stepped coarse bracket (always exactly 0.25 d wide; the limb
+rates 9.5–17.5 °/day put every crossing within it), then 60 bisections
+on the wrap-safe sector index, returning the strictly-after upper bound
+the API contract requires. Near JD 2460000 one double-precision ULP is
+~5.4e-10 d (~47 µs), so the bisection is bit-converged after ~35 of its
+declared 60 iterations — the remainder is belt-and-suspenders — and the
+served value sits within ~2 ULP (~100 µs) of the true crossing, far
+below every receipt band (minutes) and Swiss-truth band (seconds).
+
+**The cross-check**: a derivative-accelerated Newton solve, started from
+the same coarse bracket — never from the collapsed bisection bracket,
+so agreement is a genuine two-method result rather than a clamp
+artifact. It linearizes the wrap-safe signed distance to the boundary
+angle (wrap180(angle − span·(target+1)); the wrap keeps the distance
+continuous across the 0/360 seam) with a central-difference rate (step
+1e-4 d) and iterates with bracket-clamped steps: quadratic convergence,
+machine precision in ~3–4 iterations, ~15 angle evaluations versus the
+bisection's ~63. The two answers must agree within 1e-8 d (~0.86 ms,
+~9× the bisection's double-precision residue) or the solver throws a
+StateError — fail closed.
+
+Because the gate lives inside the boundary solver itself, every boundary
+every corpus test solves — the receipt corpora, the NPNS 730-day audit,
+the festival gates, the property suite, the sweph dump — re-verifies the
+two-method agreement on every CI run. The Newton path is exported
+(`nextLimbBoundaryNewtonJdTt`) and pinned by `solver_convergence_test.dart`
+with full sector-chain sweeps (every tithi sector twice, every karana,
+nakshatra and yoga sector at least once) plus seeded-random windows over
+AD 1975–2100, probing the sector index to flip across every crossing; it
+is also the ready fast path (~4× fewer evaluations) should a future
+corpus re-baseline ever justify switching the served value.
