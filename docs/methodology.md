@@ -64,16 +64,18 @@ Three anchors:
    day-tithi label agrees and transition instants sit inside the provisional
    bands.
 3. **Swiss-truth scoreboard** (HYA-369, first CI run 2026-11-06;
-   re-measured post-R7a on merge `ff8b3ae`, CI #146) — the
+   re-measured post-R7a on merge `ff8b3ae`, CI #146; re-measured
+   post-rung-B on the R10.5 frame audit, PR #58) — the
    full engine window is re-solved with Swiss Ephemeris in CI:
-   tithi/karana boundaries mean 14.3 s (max 26 s — the named
-   Meeus Ch.47 truncation, exposed once the pre-R7a ΔT error
-   stopped partially canceling it), moonrise 0.2 s, sunrise 11.3 s
+   tithi/karana boundaries mean 4.0 s (max 11 s, signed +1.9 s —
+   the residual Meeus Ch.47 truncation scatter plus the named
+   skipped Moon light-time, after the rung B frame audit removed
+   the nutation systematic), moonrise 0.2 s, sunrise 11.3 s
    (max 12 s, unchanged — UT-direct); the nakshatra/yoga deltas
-   (~66 / ~111 s) are the ayanamsa convention gap plus the −6.5 s
+   (~51 / ~97 s) are the ayanamsa convention gap plus the −6.5 s
    R7a ΔT wall-clock shift, stated, never absorbed. The
-   Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to
-   mean −0.30 s (max 0.31 s, n=233).
+   Swiss-vs-engine ΔT residual reads mean −0.30 s (max 0.31 s,
+   n=233).
 
 | Limb | ± minutes | Basis |
 | -- | -- | -- |
@@ -86,8 +88,10 @@ Three anchors:
 
 Publisher-vs-publisher divergence (BhaktiBharat ↔ Hamro Patro agree within
 2–13 min on the same boundaries) is a measured fact about Nepali publishing —
-stated, never absorbed into our bands. Named systematic contributor: Meeus Ch.47 truncation ≈ 20 s of
-boundary time. The former ΔT source gap (≈6.6 s for 2026) was closed by the
+stated, never absorbed into our bands. Named systematic contributors (post-rung B): the residual
+Meeus Ch.47 truncation scatter plus the deliberately skipped Moon light-time (~0.7″ ≈ 1.4 s of
+boundary time) — together the measured 4.0 s mean / 11 s max tithi Swiss gap; the former ~16 s
+nutation frame systematic was fixed by the R10.5 rung B frame audit, never absorbed. The former ΔT source gap (≈6.6 s for 2026) was closed by the
 hybrid Delta-T channel (R7a) — see the Delta-T section below.
 
 ## Swiss-truth cross-check (HYA-369)
@@ -136,6 +140,38 @@ corrected the raw truncation gap (14.3 s, signed −14.3 s) stands
 exposed — stated, never absorbed, still well inside every band.
 The UT1-direct channels (sunrise, moonrise) did not move, confirming the
 ΔT channel change as the sole cause of the shift.
+
+**R10.5 rung B correction (HYA-445, 2026-11-07): the frame audit found
+that most of the exposed "truncation" gap was not truncation.** The
+tithi/karana elongation had been subtracting the nutated apparent Sun
+from the geometric Moon — a frame rotation applied to one body of a
+separation — so every tithi/karana angle carried −Δψ (+8.0″ in the
+window ≈ 16 s of boundary time; see the frame-audit section below).
+With the frames made consistent, the re-measured scoreboard (CI on the
+rung B PR, all bands PASS):
+
+| Channel | n | measured mean abs | measured max | signed mean | band (hard / mean) |
+| -- | -- | -- | -- | -- | -- |
+| tithi | 47 | 4.0 s | 11 s | +1.9 s | 60 / 30 PASS |
+| karana | 93 | 4.1 s | 11 s | +1.9 s | 60 / 30 PASS |
+| nakshatra | 45 | 51.2 s | 62 s | −51.2 s | 180 / 120 PASS |
+| yoga | 48 | 96.8 s | 111 s | −96.8 s | 300 / 180 PASS |
+| moonrise | 44 | 0.2 s | 0 s | −0.0 s | 60 / 15 PASS |
+| sunrise | 45 | 11.3 s | 12 s | +11.3 s | 60 / 30 PASS |
+| lunar_ecl | 12 | 12.0 s | 35 s | +4.4 s | 120 / 60 PASS |
+| solar_loc | 3 | 5.0 s | 6 s | +1.8 s | 60 / 30 PASS |
+| lunar_loc | 15 | 38.8 s | 180 s | +38.7 s | 300 / 120 PASS |
+| ΔT residual | 233 | 0.30 s | 0.31 s | −0.30 s | n/a |
+
+The tithi/karana mean collapsed 14.3 → 4.0 s and the signed mean
+−14.3 → +1.9 s: the residual is the true Meeus Ch.47 truncation
+scatter plus the named skipped contributor (the Moon's light-time,
+~1.4 s of boundary time). The nakshatra/yoga convention gaps moved
+66.2 → 51.2 s and 110.8 → 96.8 s — the engine's moon now sits in the
+publishers' apparent-sidereal frame, so the remaining gap is the
+ayanamsa profile difference alone. Sunrise, moonrise, both eclipse
+channels and the ΔT residual did not move, confirming the change
+touched only the limb frames.
 
 Tithi, karana and moonrise are pure ephemeris/algorithm parity —
 moonrise is near-exact (0.3 s mean) and the USNO low-accuracy sunrise
