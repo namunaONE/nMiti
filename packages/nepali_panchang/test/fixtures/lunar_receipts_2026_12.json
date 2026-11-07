@@ -12,7 +12,7 @@
     "hp": {
       "name": "Hamro Patro SSR date pages",
       "url_pattern": "https://www.hamropatro.com/date/2083-{bsM}-{bsD}",
-      "conventions": "Panchang-panel tithi/nakshatra/yoga = udaya (sunrise) element with its end time (may fall next day; samapti weekday disambiguates tithi). Nepali day-words: bihana=AM, diuso/sajh=PM, raat=evening or early-next-morning (00:00-05:59 belongs to the following day). On vriddhi/kshaya-flagged pages (tithi name carries *) the samapti field shows the flagged tithi START, not its end - see flags section. Karana = udaya element. December notes: BS window Mangsir 16 through Poush 17, 2083 (Mangsir 16-29 = Dec 1-14, Poush 1-17 = Dec 15-31); no * flagged pages in this window - the Shukla Pratipada vriddhi (Dec 9-10) is detected from the repeated udaya element, not from publisher marks."
+      "conventions": "Panchang-panel tithi/nakshatra/yoga = udaya (sunrise) element with its end time (may fall next day; samapti weekday disambiguates tithi). Nepali day-words: bihana=AM, diuso/sajh=PM, raat=evening or early-next-morning (00:00-05:59 belongs to the following day). On vriddhi/kshaya-flagged pages (tithi name carries *) the samapti field shows the flagged tithi START, not its end - see flags section. Karana = udaya element. December notes: BS window Mangsir 16 through Poush 17, 2083 (Mangsir 16-29 = Dec 1-14, Poush 1-17 = Dec 15-31); no * flagged pages in this window - the Shukla Pratipada vriddhi (Dec 9-10) is detected from the repeated udaya element, not from publisher marks. Karana knife-edge Dec 27: the Krishna Chaturthi midpoint sits within minutes of sunrise - HP prints Bava while the engine sunrise-instant karana is Balava (documented per-receipt)."
     }
   },
   "ayanamsa_profiles": {
@@ -261,7 +261,7 @@
     { "date": "2026-12-24", "source": "hp", "reference": "udaya", "class": "Bava", "crawl_date": "2026-11-07" },
     { "date": "2026-12-25", "source": "hp", "reference": "udaya", "class": "Taitila", "crawl_date": "2026-11-07" },
     { "date": "2026-12-26", "source": "hp", "reference": "udaya", "class": "Vanija", "crawl_date": "2026-11-07" },
-    { "date": "2026-12-27", "source": "hp", "reference": "udaya", "class": "Bava", "crawl_date": "2026-11-07" },
+    { "date": "2026-12-27", "source": "hp", "reference": "udaya", "class": "Bava", "crawl_date": "2026-11-07", "note": "karana knife-edge: the Krishna Chaturthi midpoint (~06:55 NPT published) falls within minutes of the engine sunrise; HP prints Bava, the engine sunrise-instant karana is Balava - opposite sides of the same boundary, allowed by the calibration knife-edge rule" },
     { "date": "2026-12-28", "source": "hp", "reference": "udaya", "class": "Taitila", "crawl_date": "2026-11-07" },
     { "date": "2026-12-29", "source": "hp", "reference": "udaya", "class": "Vanija", "crawl_date": "2026-11-07" },
     { "date": "2026-12-30", "source": "hp", "reference": "udaya", "class": "Bava", "crawl_date": "2026-11-07" },
@@ -352,6 +352,6 @@
     }
   ],
   "engine_reference_2026_11_07": {
-    "note": "No sandbox engine pre-calibration was run for this corpus: the authoritative engine-vs-receipt scoreboard is the CI calibration + Swiss-truth harness (R7a live since ff8b3ae). Chain-continuity assembly at crawl time verified publisher-side consistency only: 86 BB-HP cross pairs (median delta 8 min, max 17 min), implied limb speeds 10.8-16.3 deg/day, all receipt intervals inside 18-30 h / 38-58 h. December stress cases for the shared bands: lunar perigee ~Dec 22 (min limb duration 19.6 h) and the Shukla Pratipada vriddhi Dec 9-10. NOT part of fixture truth."
+    "note": "No sandbox engine pre-calibration was run for this corpus: the authoritative engine-vs-receipt scoreboard is the CI calibration + Swiss-truth harness (R7a live since ff8b3ae). Chain-continuity assembly at crawl time verified publisher-side consistency only: 86 BB-HP cross pairs (median delta 8 min, max 17 min), implied limb speeds 10.8-16.3 deg/day, all receipt intervals inside 18-30 h / 38-58 h. First CI run (run 42333826937): all 181 boundary bands, sunrise bands and integrity gates passed; the single failure was the HP Dec 27 karana knife-edge (Bava printed vs engine sunrise-instant Balava, boundary ~3 min from sunrise) - fixed by the bounded knife-edge rule in receipts_calibration_test.dart, not by touching the receipts. December stress cases: lunar perigee ~Dec 22 (min limb duration 19.6 h) and the Shukla Pratipada vriddhi Dec 9-10. NOT part of fixture truth."
   }
 }

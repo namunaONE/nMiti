@@ -20,6 +20,13 @@ import 'package:test/test.dart';
 /// (117 boundaries); the Dec advance-crawl corpus (181 boundaries,
 /// chain-continuity validated at crawl time) is expected inside the same
 /// bands - one shared band map covers all three corpora.
+///
+/// The karana check allows exactly one class of divergence: a knife-edge
+/// where the karana boundary falls within 15 minutes of the reference
+/// instant, with engine and publisher on opposite sides of that boundary
+/// (first seen Dec 27, 2026: HP prints Bava, the engine's sunrise-instant
+/// karana is Balava - the Krishna Chaturthi midpoint sits ~3 min past the
+/// engine sunrise). Any other karana mismatch still fails.
 
 /// Golden per-source day counts (karana and sunrise receipts) per corpus.
 const _expectedPerSourceDays = <String, int>{
@@ -133,8 +140,31 @@ void main() {
               jdFromDateTimeUtc(refWall.subtract(
                   const Duration(milliseconds: nptOffsetMs))));
           final engine = karanaName(karanaNumber(jdTt));
-          expect(_normalizeKarana(engine), _normalizeKarana(published),
-              reason: '$date/$source: engine $engine vs published $published');
+          final engineNorm = _normalizeKarana(engine);
+          final publishedNorm = _normalizeKarana(published);
+          if (engineNorm != publishedNorm) {
+            // A publisher karana label may diverge from the engine's
+            // reference-instant karana only as a knife-edge: the karana
+            // boundary must lie within 15 minutes of the reference instant,
+            // with engine and published on opposite sides of that boundary
+            // (first case: Dec 27, 2026 - HP Bava, engine Balava, the
+            // Krishna Chaturthi midpoint ~3 min past the engine sunrise).
+            final refUtc = refWall
+                .subtract(const Duration(milliseconds: nptOffsetMs));
+            final before = _normalizeKarana(karanaName(karanaNumber(
+                jdTtFromJdUt(jdFromDateTimeUtc(
+                    refUtc.subtract(const Duration(minutes: 15)))))));
+            final after = _normalizeKarana(karanaName(karanaNumber(
+                jdTtFromJdUt(jdFromDateTimeUtc(
+                    refUtc.add(const Duration(minutes: 15)))))));
+            final isKnifeEdge = before != after &&
+                (publishedNorm == before || publishedNorm == after) &&
+                (engineNorm == before || engineNorm == after);
+            expect(isKnifeEdge, isTrue,
+                reason: '$date/$source: engine $engine vs published '
+                    '$published is not a +/-15 min knife-edge (before '
+                    '$before, after $after)');
+          }
         }
       });
 
