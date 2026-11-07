@@ -2,6 +2,13 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.5 rung C: solver convergence cross-check (HYA-445)
+
+- The wrap-safe limb boundary solver now solves every crossing twice and throws on disagreement: the served 60-iteration bisection upper bound (numerics unchanged, output bit-identical) plus an independent derivative-accelerated Newton solve from the same coarse 0.25 d bracket — wrap-safe signed distance to the boundary angle, central-difference rate (step 1e-4 d), bracket-clamped steps, quadratic convergence to machine precision in ~3–4 iterations (~15 angle evaluations vs the bisection's ~63). Agreement gate 1e-8 d (~0.86 ms, ~9× the bisection's double-precision residue); StateError otherwise — fail closed.
+- Convergence documented in docs/methodology.md: the bisection is bit-converged after ~35 of its declared 60 iterations (one ULP at JD 2.46e6 ≈ 47 µs), the served value sits within ~2 ULP (~100 µs) of the true crossing, and the Newton path deliberately starts from the coarse bracket so agreement is a genuine two-method result, not a clamp artifact.
+- New permanent CI gate `packages/nepali_panchang/test/solver_convergence_test.dart`: full sector-chain sweeps (every tithi sector crossed twice, every karana/nakshatra/yoga sector at least once) plus seeded-random windows over AD 1975–2100, asserting Newton-vs-bisection agreement on every crossing and the sector index flipping across it. Because the gate lives inside the solver itself, every corpus test re-verifies it on every CI run.
+- `nextLimbBoundaryNewtonJdTt` exported as the cross-check path and the ready fast path (~4× fewer evaluations) should a future corpus re-baseline ever justify switching the served value. No served-value, fixture, band, receipt or site changes.
+
 ## [Unreleased] — R10.5 rung B: frame audit — consistent separation and sidereal frames (HYA-445)
 
 - The rung B audit walked every solver path's reference frame (ΔT→TT on input, nutation and light-time on output) and found one real frame inconsistency: the tithi/karana elongation subtracted the nutated apparent Sun (`sunApparentLongitude`) from the geometric moon (Meeus Ch.47) — a frame rotation applied to one body of a separation — so every tithi/karana angle carried −Δψ (±17.2″ over the 18.6-year node cycle; +8.0″ in the corpus window ≈ 16 s of boundary time). The same class sat in the sidereal paths: nakshatra used a mean-equinox moon where the publishers' convention is apparent-sidereal, and yoga nutated the Sun side only.
