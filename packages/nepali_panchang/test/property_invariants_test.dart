@@ -249,7 +249,11 @@ void main() {
             rise.subtract(const Duration(milliseconds: nptOffsetMs)));
         final margin = moonGeocentricAltitudeDeg(jdUt: jdRise) -
             moonRiseTargetAltitudeDeg(jdRise);
-        expect(margin.abs(), lessThan(1.0e-6));
+        // The solver's own residue is ~1e-11 deg; the wall-clock round
+        // trip (JD -> ms -> JD) adds up to ~1 ms of time, which at a
+        // fast rise moves the margin by a few microdegrees - still a
+        // zero margin for any physical purpose.
+        expect(margin.abs(), lessThan(1.0e-5));
       }
       expect(noRiseDays, lessThan(3));
     });
