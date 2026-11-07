@@ -2,6 +2,17 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — property-based invariant suite (R10.5 rung A, HYA-445)
+
+- New permanent CI gate `packages/nepali_panchang/test/property_invariants_test.dart`: the SOFA published-validation-vector pattern applied continuously to our own engine — seeded-random property windows over AD 1975–2100 (fixed-seed LCG, so every CI run samples the same instants: reproducible failures, zero flake) asserting the structural laws every served value must obey, independent of any receipt corpus.
+- Limb chains: consecutive boundaries of all four limbs strictly increase with in-band durations (tithi 0.68–1.30 d, karana 0.33–0.68, nakshatra 0.80–1.25, yoga 0.75–1.15), and the sector index advances by exactly one across every boundary (wrap-safe, probed ±8.6 ms either side of each solved crossing).
+- Elongation strictly increasing at 9.5–17.5 °/day (the physical elongation-rate envelope); karana is the half-tithi identity (karana index ∈ {2·tithi, 2·tithi+1}) at every sampled instant; canonical name tables round-trip (30 tithis, 27+27 unique limb names, 11 distinct karanas with the fixed Kimstughna/Shakuni/Chatushpada/Naga positions).
+- Day block: every udaya element contains the day's sunrise and every madhyahna element contains 12:00 NPT; the vriddhi/kshaya flags match the udaya chain across adjacent days (vriddhi fires on both affected days, kshaya on both).
+- Sunrise/sunset: both land inside the queried NPT civil day, sunrise within 04:45–07:15 NPT, daylight 10–14 h (Kathmandu anchor); moonrise solves to a zero margin at the Meeus 15.1 target inside the civil day.
+- Amanta months chain exactly (month i+1 begins where month i ends), span 28–32 days, adhika ⟺ no sankranti, kshaya ⟺ exactly two (adjacent rasis), never two consecutive adhika months — checked over the 2026 window (contains the receipt-anchored Adhika Jestha) plus a random 400-day window.
+- Delta T: in range (20–400 s) with a labeled segment and honest uncertainty (0–25 s) over the whole sweep; continuous within the observed/prediction era (<0.5 s per 31-day step, away from the declared 2033-10 Espenak–Meeus join); UT↔TT JD funnels round-trip within 1 ms; the ayanamsa drifts at exactly the fitted rate (1.36062°/Julian century).
+- Adds ~5 s to CI. No engine, fixture, band, or site changes — this rung is the protection net for the R10.5 engine rungs (frame audit, Newton cross-check, Delta-T horizon term) that follow.
+
 ## [Unreleased] — December 2026 lunar corpus extension (HYA-404)
 
 - Third golden corpus locked: `lunar_receipts_2026_12.json` — 181 boundary receipts for Dec 1-31, 2026 (BhaktiBharat: tithi 30 / nakshatra 29 / yoga 31; Hamro Patro: tithi 30 / nakshatra 30 / yoga 31) plus 62 karana and 62 sunrise receipts, advance-crawled 2026-11-07 from the publishers' pre-published December pages.
