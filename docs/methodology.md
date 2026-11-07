@@ -478,9 +478,9 @@ hardcoded:
    today; while the freshness guarantee holds (the canary asserts the
    observed table stays within ~16 months of today —
    `deltaTObservationsFreshnessWindowDays` = 497 d), the anchor
-   sits within months of today and the envelope reads as growth with
-   |date − today|. The horizon object states the freshness verdict
-   per call (`observationsCurrent`), so a receipt can say whether
+   sits within months of today and the envelope reads as growth with |date − today|. The horizon
+   object states the freshness verdict per call
+   (`observationsCurrent`), so a receipt can say whether
    the guarantee still held when it was written.
 
 Wall-clock mapping, stated per the rung B frame audit: on TT-anchored
