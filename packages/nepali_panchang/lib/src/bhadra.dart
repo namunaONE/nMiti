@@ -262,7 +262,15 @@ List<BhadraWindow> bhadraWindows({
       if (!window.beginsAtNpt.isBefore(start)) {
         out.add(window);
       }
-      t = _jdTtFromNptWall(window.endsAtNpt);
+      // Advance in the JD domain, never through the NPT wall clock.
+      // dateTimeUtcFromJd quantises to whole milliseconds, so the wall
+      // round-trip reconstructs the end instant only to the 1 ms grid;
+      // a reconstruction that lands before the true boundary re-enters
+      // the same Vishti sector and re-emits the same window forever
+      // (CI run 42386078588 hung this way). The next karana boundary
+      // after t inside the Vishti sector IS the window end, so this
+      // advances monotonically in the JD domain.
+      t = nextLimbBoundaryJdTt('karana', t, sourceDelta);
     } else {
       t = nextLimbBoundaryJdTt('karana', t, sourceDelta);
     }
@@ -304,7 +312,10 @@ BhadraWindow nextBhadraAfter(
       if (!window.beginsAtNpt.isBefore(afterNpt)) {
         return window;
       }
-      t = _jdTtFromNptWall(window.endsAtNpt);
+      // Same JD-domain advance as bhadraWindows: the wall-clock
+      // round-trip quantises to 1 ms and can land back inside the
+      // running Vishti sector, looping forever.
+      t = nextLimbBoundaryJdTt('karana', t, sourceDelta);
     } else {
       t = nextLimbBoundaryJdTt('karana', t, sourceDelta);
     }
