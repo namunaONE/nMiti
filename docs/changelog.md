@@ -2,6 +2,15 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — December 2026 lunar corpus extension (HYA-404)
+
+- Third golden corpus locked: `lunar_receipts_2026_12.json` — 181 boundary receipts for Dec 1-31, 2026 (BhaktiBharat: tithi 30 / nakshatra 29 / yoga 31; Hamro Patro: tithi 30 / nakshatra 30 / yoga 31) plus 62 karana and 62 sunrise receipts, advance-crawled 2026-11-07 from the publishers' pre-published December pages.
+- Chain-continuity assembly validated at crawl time with display-reference constraints (BB noon-span + same-day yoga ends; HP udaya + successor-page rules): every chain resolved uniquely; 8 two-step `prev_gap` rows, each cross-covered by the other source's receipt; 5 continuation rows taken from the first page; 86 BB↔HP cross pairs (median Δ 8 min, max 17 min); implied limb speeds 10.8–16.3 °/day.
+- December conventions documented in the fixture: Shukla Pratipada vriddhi spans both udayas Dec 9-10 with no `*` marks printed this window; BB "Dhanishtha" normalized to "Dhanishta" (publisher-naming-bug, Dec 14); Krishna Pratipada (Dec 24-25) never udaya on HP (udaya-display-gap, Dec 25) — BB displays it.
+- Tests: `receipts_integrity_test.dart` gains the Dec corpus (counts, 31 days, 3 flags) with per-file crawl dates generalized (2026-11-04 / 2026-11-07); `receipts_calibration_test.dart` registers the Dec corpus against the shared minute-level band map. First CI run: all 181 boundary bands, sunrise bands and integrity gates green — the lunar-perigee window (~Dec 22, min limb duration 19.6 h) passes the shared bands without widening.
+- Bounded karana knife-edge rule added to `receipts_calibration_test.dart`: a publisher karana label may diverge from the engine's reference-instant karana only when the karana boundary falls within 15 minutes of the reference and both labels sit on opposite sides of that same boundary; any other karana mismatch still fails. First case: HP Dec 27, 2026 — HP prints Bava, the engine's sunrise-instant karana is Balava, the Krishna Chaturthi midpoint ~3 min past the engine sunrise (documented per-receipt in the fixture, receipt untouched).
+- Same-day re-verification of Dec 1-14 (and Nov 9-14) during the live window remains recommended before these corpora gate releases.
+
 ## [Unreleased] — post-R7a Swiss-truth scoreboard receipts (HYA-438)
 
 - Re-measured every Swiss-truth band on the R7a merge (CI #146, `ff8b3ae`): the Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to mean −0.30 s (max 0.31 s, n=233) — the R7a goal, measured, not derived. Every TT limb band shifted by the −6.5 s ΔT wall-clock correction and still passes: tithi/karana 14.3 s mean / 26 s max (the named Meeus Ch.47 truncation, exposed once the pre-R7a ΔT error stopped partially canceling it), nakshatra 66.2 s, yoga 110.8 s.
