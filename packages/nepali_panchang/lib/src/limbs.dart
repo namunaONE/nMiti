@@ -5,13 +5,24 @@ import 'sun.dart';
 /// Lunar panchang limbs: angles, sector indices and canonical names
 /// (R6a-1 step 3, HYA-403).
 ///
-/// Conventions (validated against the Nov 2026 golden-fixture corpus):
-///   tithi      = norm360(moon - apparent sun), 12 deg sectors (30);
-///   nakshatra  = norm360(moon - ayanamsa), 13 deg 20' sectors (27);
-///   yoga       = norm360((moon - ayanamsa) + (sun - ayanamsa)), 27 sectors -
-///                the ayanamsa is subtracted from EACH body, never once from
-///                the sum (a sum-only slip shifts the chain +1.8 sectors and
-///                mislabels every position while tithi/nakshatra still pass);
+/// Conventions (validated against the Nov 2026 golden-fixture corpus;
+/// frames made consistent by the R10.5 rung B frame audit, HYA-445):
+///   tithi      = norm360(moon - separation sun), 12 deg sectors (30) -
+///                the SEPARATION frame ([sunLongitudeForSeparationDeg]):
+///                nutation cancels between the two bodies, each body's
+///                light-time stays (the solar aberration). The former
+///                convention subtracted the nutated apparent sun from
+///                the geometric moon, rotating the sun alone by the
+///                nutation (up to +-17.2 arcsec, ~16 s of boundary time
+///                in late 2026) - the systematic the audit found;
+///   nakshatra  = norm360(apparent moon - ayanamsa), 13 deg 20' sectors
+///                (27) - the publishers' apparent-sidereal convention:
+///                nutation applied to the moon like the sun;
+///   yoga       = norm360((apparent moon - ayanamsa) + (apparent sun -
+///                ayanamsa)), 27 sectors - the ayanamsa is subtracted from
+///                EACH body, never once from the sum (a sum-only slip
+///                shifts the chain +1.8 sectors and mislabels every
+///                position while tithi/nakshatra still pass);
 ///   karana     = half-tithi, 6 deg sectors of the elongation, 1..60.
 
 /// Sector span of the tithi limb, degrees.
@@ -26,24 +37,40 @@ const double yogaSpanDeg = 360.0 / 27.0;
 /// Sector span of the karana limb, degrees (half a tithi).
 const double karanaSpanDeg = 6.0;
 
-/// Elongation moon minus apparent sun, degrees in [0, 360).
+/// Elongation moon minus sun in the separation frame, degrees in
+/// [0, 360).
 ///
-/// This is the tithi angle; karana uses the same angle with 6 deg sectors.
+/// This is the tithi angle; karana uses the same angle with 6 deg
+/// sectors. Both bodies sit in the mean-equinox-of-date frame with the
+/// light-time terms kept and no nutation (a common rotation cancels in
+/// a separation; the moon's ~0.7 arcsec light-time is a named skipped
+/// contributor, see [sunLongitudeForSeparationDeg]).
 double elongationDeg(double jdTt) {
   final moon = moonPosition(jdTt).longitudeDeg;
-  return _norm360(moon - sunApparentLongitude(jdTt));
+  return _norm360(moon - sunLongitudeForSeparationDeg(jdTt));
 }
 
-/// Sidereal longitude of the moon at [jdTt], degrees in [0, 360).
+/// Apparent sidereal longitude of the moon at [jdTt], degrees in
+/// [0, 360) - the publishers' convention: the nutation-corrected
+/// (apparent) longitude minus the ayanamsa. The moon's own light-time
+/// (~0.7 arcsec, ~1.4 s of boundary time) is a named skipped
+/// contributor.
 double moonSiderealDeg(double jdTt, double sourceDelta) {
-  final moon = moonPosition(jdTt).longitudeDeg;
+  final moon =
+      moonPosition(jdTt).longitudeDeg + nutationInLongitudeDeg(jdTt);
   return _norm360(moon - ayanamsaTotal(jdTt, sourceDelta));
 }
 
 /// Yoga angle at [jdTt], degrees in [0, 360).
+///
+/// Both bodies apparent-sidereal (each minus the ayanamsa); the moon
+/// side carries the nutation like the sun side since the R10.5 rung B
+/// frame audit.
 double yogaSiderealDeg(double jdTt, double sourceDelta) {
   final ay = ayanamsaTotal(jdTt, sourceDelta);
-  final moon = _norm360(moonPosition(jdTt).longitudeDeg - ay);
+  final moon = _norm360(moonPosition(jdTt).longitudeDeg +
+      nutationInLongitudeDeg(jdTt) -
+      ay);
   final sun = _norm360(sunApparentLongitude(jdTt) - ay);
   return _norm360(moon + sun);
 }

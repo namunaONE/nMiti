@@ -61,4 +61,25 @@ void main() {
     expect(minutes, greaterThan(6 * 60 + 10));
     expect(minutes, lessThan(6 * 60 + 25));
   });
+
+  test('R10.5 rung B: separation frame drops the nutation from the sun', () {
+    final jdTt =
+        jdTtFromJdUt(jdFromDateTimeUtc(DateTime.utc(2026, 11, 9, 6, 0)));
+    final sep = elongationDeg(jdTt);
+    final legacy =
+        (moonPosition(jdTt).longitudeDeg - sunApparentLongitude(jdTt)) % 360.0;
+    var delta = (sep - legacy) % 360.0;
+    if (delta > 180.0) delta -= 360.0;
+    if (delta < -180.0) delta += 360.0;
+    expect(delta, closeTo(nutationInLongitudeDeg(jdTt), 1e-9));
+  });
+
+  test('R10.5 rung B: nutation magnitude stays in the 18.6-year envelope', () {
+    final jdTt =
+        jdTtFromJdUt(jdFromDateTimeUtc(DateTime.utc(2026, 11, 9, 6, 0)));
+    final nu = nutationInLongitudeDeg(jdTt);
+    expect(nu.abs(), lessThan(20.0 / 3600.0));
+    // Late 2026: the four-term formula reads about +8.0 arcsec.
+    expect(nu, closeTo(8.0 / 3600.0, 1.0 / 3600.0));
+  });
 }
