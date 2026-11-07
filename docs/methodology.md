@@ -20,7 +20,8 @@ Every row states its rung on the ladder:
 ## What was done (R1–R13, condensed)
 
 - **R1–R4 (L0):** BS calendar deep dive, hardening with a 24-anchor verification, an ecosystem accuracy audit (which found live sites running corrupted tables and a genuine 372-day-year defect in a widely used Dart library's data), and an astronomical engine with erratum.
-- **R5 (L1):** solar engine built on Meeus algorithms with a calibrated sidereal reference. Ayanamsa model: `23.87508 + 1.36062·(J−2451545)/36525`. Calibrated on 48 drikpangang ingress moments AD 2025–2028: **mean error 3.7 minutes, max 8.6 minutes, 48/48 correct NPT dates.** The 1,308-anchor experiment produced the era law: no pre-sankranti month starts from BS 2036 on.
+- **R5 (L1):** solar engine built on Meeus algorithms with a calibrated sidereal reference. Ayanamsa model: `23.87508 + 1.36062·(J−2451545)/36525`. Calibrated on 48 drikpangang ingress moments AD 2025–2028: **mean error 3.7 minutes, max 8.6 minutes, 48/48 correct NPT dates.** The 1,308-anchor
+ experiment produced the era law: no pre-sankranti month starts from BS 2036 on.
 - **R6:** tithi/festival research; the "+1" day rule was shown to be a committee judgment over admissible windows — engines validate the window, the official print supplies the +1. (Negative result, published as such.)
 - **R8:** printed NPNS-approved panchangs obtained and OCR-mined; engines print-validated (sunrise/sunset to 1 minute; sankranti within 5 minutes; 12/12 independent confirmation against a traditional Indian panchang chain).
 - **R12:** machine cross-validation of the core table — 109/109 rows identical to the reference dataset, anchor chain closing exactly on the official Baisakh 1 2084 anchor, live confirmation across 10+ sites. Full record: [data-provenance.md](data-provenance.md).
@@ -46,7 +47,8 @@ Every row states its rung on the ladder:
 
 9. `data/` and the embedded copies in `packages/nepali_date_data` must be byte-identical (drift check).
 10. The site output contract (`scripts/site_contract.py`) runs pre-merge against the local build and post-deploy as the smoke — one source of truth, no drift between gates.
-11. The post-deploy smoke is N-version: an independent Python implementation recomputes today's BS date from the raw CSV and compares it to the deployed JSON and HTML. Freshness SLA: 26 hours.
+11. The post-deploy smoke 
+is N-version: an independent Python implementation recomputes today's BS date from the raw CSV and compares it to the deployed JSON and HTML. Freshness SLA: 26 hours.
 
 **Accuracy claim (honest, current):** astronomy ±minutes (SWEPH-comparable at date level); civil rules NPNS-validated. No ephemeris knows NPNS committee discretion — where the print record exists, it wins.
 
@@ -80,7 +82,8 @@ Three anchors:
 | Limb | ± minutes | Basis |
 | -- | -- | -- |
 | tithi | ±1.5 | corpus max ~1.0 min; oracle labels agree, transitions mean < 2 min |
-| nakshatra | ±2.0 | typical ≤0.94, observed max 1.7 near lunar perigee |
+| nakshatra | ±2.0 | typical ≤0.94, observed max 1.7 near luna
+r perigee |
 | yoga | ±2.0 | max ~0.97 post ayanamsa fit |
 | karana | 0 | convention-anchored: 76/76 exact at the pinned reference moment |
 | sunrise | ±1.0 | vs geometric (NOAA-style) rise; BhaktiBharat's ~+4.5 min is a stated convention offset, not an error |
@@ -111,7 +114,8 @@ the bands tightened to measured + margin (max / mean, seconds):
 | -- | -- | -- | -- | -- | -- |
 | tithi | 47 | 7.9 s | 19 s | −7.9 s | 60 / 30 |
 | karana | 93 | 7.9 s | 19 s | −7.8 s | 60 / 30 |
-| nakshatra | 45 | 59.8 s | 71 s | −59.8 s | 180 / 120 |
+| nakshatra | 45 | 59.8 s | 71 s | −59.8
+ s | 180 / 120 |
 | yoga | 48 | 104.3 s | 119 s | −104.3 s | 300 / 180 |
 | moonrise | 44 | 0.3 s | 1 s | −0.2 s | 60 / 15 |
 | sunrise | 45 | 11.3 s | 12 s | +11.3 s | 60 / 30 |
@@ -144,7 +148,8 @@ The UT1-direct channels (sunrise, moonrise) did not move, confirming the
 **R10.5 rung B correction (HYA-445, 2026-11-07): the frame audit found
 that most of the exposed "truncation" gap was not truncation.** The
 tithi/karana elongation had been subtracting the nutated apparent Sun
-from the geometric Moon — a frame rotation applied to one body of a
+from the geom
+etric Moon — a frame rotation applied to one body of a
 separation — so every tithi/karana angle carried −Δψ (+8.0″ in the
 window ≈ 16 s of boundary time; see the frame-audit section below).
 With the frames made consistent, the re-measured scoreboard (CI on the
@@ -180,7 +185,8 @@ deltas are near-constant — the ayanamsa convention gap (our fitted base
 profile vs Swiss Lahiri), itself an informative number, not noise. A
 regression now trips a band within ~3× of the recorded maxima.
 
-The harness also reports the **ΔT residual** (Swiss internal model minus
+The harness also reports the **ΔT residual
+** (Swiss internal model minus
 the engine's served ΔT at every boundary — the Espenak–Meeus polynomial
 before R7a, the hybrid channel since) — a direct measurement of the
 named systematic contributor in the error bars above — and flags
@@ -212,7 +218,8 @@ USNO observed monthly through 2026-04, USNO quarterly predictions through
 2033-10, Espenak–Meeus long-range beyond, with the join steps declared, not
 blended — closing the ~6.5 s systematic. Served boundary times shift ~6.5 s
 later (truer); re-measured on the merge (CI #146): every TT limb band
-moved by the −6.5 s ΔT correction and stays inside its published
+moved 
+by the −6.5 s ΔT correction and stays inside its published
 ceiling, the Swiss-vs-engine ΔT residual collapsed from ≈6.6 s to
 mean −0.30 s (n=233), and the UT1-direct channels (sunrise, moonrise)
 did not move. The post-R7a scoreboard table is above.
@@ -239,7 +246,8 @@ of record, left visible. The vendored values were validated three ways:
 three Wayback snapshots of the USNO files, the independently vendored
 hyper-calendar copy (C04-identity-checked to 0.002 s), and the IERS-derived
 astronomia monthly series. The tables regenerate via
-`tools/refresh_delta_t.dart` (monthly workflow; it refuses to write
+`tools/refresh_delta_t.dart` (monthly workflow; it refuses to wri
+te
 on any anomaly), and the freshness canary asserts the observed table stays
 current (last observed month within ~16 months).
 
@@ -274,7 +282,8 @@ require, with the citations printed on every battery rule:
   Krishna Chaturdashi, Kamya Shiva Raatri Vrata is performed as in the
   case of Maha Shiva Raatri; that is the timing should be such that
   Chaturdashi should be till midnight." The 2082 receipt pins it:
-  Falgun 3 = Feb 15 2026 carried udaya tithi Trayodashi, Chaturdashi
+  Falgun 3 = Feb 15 2026 carried udaya tithi Trayodashi, Cha
+turdashi
   spanned the midnight — publishers took Feb 15 while the udaya
   convention gives Feb 16. The divergence is exposed, not absorbed.
 - **chandrodaya-vyāpti** — the tithi running at the day's moonrise:
@@ -308,7 +317,8 @@ locally visible moksha (C4: an eclipse not visible from the location
 carries no sutak); a penumbral lunar eclipse is upachhaya — not kept
 as a grahan, no sutak (C5); a grastodit rise anchors the sutak clock
 to the local rise. Every publisher collision is decoded and
-displayed (C6: global class vs locally observed phase; C2: Hamro
+displayed (C6: global class vs lo
+cally observed phase; C2: Hamro
 Patro’s 59-minute “duration”; C3: the reversed-hours FAQ), never
 silently picked.
 
@@ -327,7 +337,8 @@ after.
 
 The lunar engine is now also checked against a full-year publisher corpus, not just festival windows: every day of BS 2082 and BS 2083 — 730 receipts — crawled live from the Hamro Patro portal (the NPNS-aligned publisher), each carrying the tithi label and paksha exactly as displayed plus the portal’s own rendered AD date. The corpus itself is gated in CI: 365 days per year, month lengths matching the portal month ends, and a strictly consecutive AD chain from 2025-04-14 to 2027-04-13 — an independent cross-check of the portal’s BS↔AD mapping. The decoded label chain walks the tithi cycle with only legal udaya steps (689 normal, 26 kshaya, 14 vriddhi over the two years) — astronomy visible in the raw labels, nothing hand-transcribed.
 
-The engine gate: the runtime tithi at udaya (the Hamro Patro display convention) must equal the portal label on every day, except on knife-edge days — a tithi boundary within half an hour of sunrise, or any vriddhi/kshaya day (engine flags or the portal’s own merged-window mark) — where publishers legitimately diverge. Agreement floor 90%, measured rather than aspirational — the first CI run (2026-11-06) agreed 671/730 days (91.92%): 59 mismatches, every one on a knife-edge day, zero disagreements anywhere else; the hard gate is exact agreement on every non-knife-edge day. Every mismatch prints to the CI log with its knife-edge status. The 40 vriddhi/kshaya days plus a fixed-stride systematic sample (every 25th day of the AD chain, offset 5) form the print spot-verification queue against the printed NPNS panchangs held from R8 — the corpus is portal-truth until print-verified, and says so.
+The engine gate: the runtime tithi at udaya (the Hamro Patro display convention) must equal the portal label on every day, except on knife-edge days — a tithi boundary within half an hour of sunrise, or any vriddhi/kshaya day (engine flags or the portal’s own merged-window mark) — where publishers legitimately diverge. Agreement floor 90%, measured rather than aspirational — the first CI run (2026-11-06) agreed 671/730 days (91.92%): 59 mismatches, every one on a knife-edge day, ze
+ro disagreements anywhere else; the hard gate is exact agreement on every non-knife-edge day. Every mismatch prints to the CI log with its knife-edge status. The 40 vriddhi/kshaya days plus a fixed-stride systematic sample (every 25th day of the AD chain, offset 5) form the print spot-verification queue against the printed NPNS panchangs held from R8 — the corpus is portal-truth until print-verified, and says so.
 
 Adjudication of the disagreement days (2026-11-06): all 59 mismatches are off-by-one, every one on a day the portal itself marks vriddhi/kshaya, forming short runs bounded by events the two sources place on different days. Third-party check: on the 30 disagreement days with populated BhaktiBharat pages (its online archive begins ~July 2026; the remaining ~29 pre-July-2026 days are unavailable there), BhaktiBharat's own tithi windows match the engine on 30/30, boundary deltas 0–1 minutes — e.g. Janai Purnima week: on 2026-07-18 BhaktiBharat's Sunrise Tithi is Panchami (the engine; the portal prints Chaturthi, which BhaktiBharat lists as the early-hours tithi that ended 4:58 AM). The disagreement class is therefore the portal's vriddhi/kshaya boundary convention — the publisher-divergence fact already on record (BhaktiBharat ↔ Hamro Patro agree within 2–13 min on the same boundaries) — stated, never absorbed. BhaktiBharat corroboration is not print verification; the R8 print spot-verification queue stands.
 
@@ -340,7 +351,8 @@ the bodies)? The per-path verdict:
 
 | Path | ΔT input | Output frame | Verdict |
 | -- | -- | -- | -- |
-| tithi/karana boundaries | TT inside the solver; callers convert | separation frame: both bodies mean-equinox-of-date, own light-time kept, no nutation | FIXED this rung — was: nutated sun vs geometric moon |
+| tithi/karana boundaries | TT inside the solver; callers convert | separation frame: both bodies mean-equinox-of-date, own light-time kept, no nutation | FIXED 
+this rung — was: nutated sun vs geometric moon |
 | nakshatra | same | apparent-sidereal moon (nutation applied) − ayanamsa | FIXED this rung — was mean-sidereal |
 | yoga | same | both bodies apparent-sidereal | FIXED this rung — nutation was on the sun side only |
 | sunrise/sunset | UT closed form, ΔT-free by construction | geometric −0.8333° target | clean, documented |
@@ -362,7 +374,8 @@ signed mean (−14.3 s) that had been attributed to the Meeus Ch.47
 truncation alone: the truncation scatter is real but smaller; the
 nutation asymmetry was the systematic. The sidereal paths carried the
 same class: the moon sat in the mean-equinox frame while the publishers'
-convention (apparent − ayanamsa, the drik software convention) is
+conventio
+n (apparent − ayanamsa, the drik software convention) is
 nutated — nakshatra and yoga now apply the nutation to the moon like the
 sun.
 
@@ -398,7 +411,8 @@ declared 60 iterations — the remainder is belt-and-suspenders — and the
 served value sits within ~2 ULP (~100 µs) of the true crossing, far
 below every receipt band (minutes) and Swiss-truth band (seconds).
 
-**The cross-check**: a derivative-accelerated Newton solve, started from
+**The cross-check**: a derivative-accelerated Newton 
+solve, started from
 the same coarse bracket — never from the collapsed bisection bracket,
 so agreement is a genuine two-method result rather than a clamp
 artifact. It linearizes the wrap-safe signed distance to the boundary
@@ -420,3 +434,84 @@ nakshatra and yoga sector at least once) plus seeded-random windows over
 AD 1975–2100, probing the sector index to flip across every crossing; it
 is also the ready fast path (~4× fewer evaluations) should a future
 corpus re-baseline ever justify switching the served value.
+
+## Delta T horizon — the one error-bar surface (R10.5 rung D, HYA-445)
+
+Every served value carries an honest uncertainty; until rung D the
+Delta-T channel's uncertainty was R7a's per-segment declaration,
+static per date. Rung D ships the horizon term: **one function**,
+`deltaTHorizonAtJdUt(jdUt, nowJdUt)`, that composes the R7a
+declaration with what the vendored tables measure about their own
+prediction error, so every served error bar can carry a Delta-T
+component that grows with how far the queried date sits from the day
+the caller serves. The channel itself is untouched — same segments,
+same served values, same R7a declarations; the horizon is a new
+public surface on top, and the engine never reads a clock: the caller
+states today, so receipts and tests are reproducible.
+
+Three measured facts drive the composition, each derived from the
+vendored tables (or the published record) at evaluation time, never
+hardcoded:
+
+1. **The USNO error column is an estimate, not a bound.** Over the
+   vendored overlap — the 15 prediction rows the observations shadow
+   (2022-07 .. 2026-01) — the realized |prediction − observed| exceeded
+   the stated error by up to **2.31×** (worst row: 2023-10, 0.062 s
+   realized against 0.027 s stated; the maximum absolute miss was
+   0.095 s at 2024-10 against 0.070 s stated). An independent vendoring
+   of the same USNO file (hyper-calendar PR #140) measured the same
+   class of understatement at up to 2.7×. The preds-era envelope is
+   therefore the stated error scaled by the measured optimism factor
+   (`deltaTPredsOverlapInflationFactor`, recomputed from the tables
+   on every evaluation, so the refresh workflow re-measures it
+   automatically).
+2. **The Espenak–Meeus join step is a level systematic of the served
+   value.** The declared +8.91 s step at 2033-10-01 is the measured
+   disagreement between the polynomial the channel serves beyond the
+   USNO horizon and the USNO trajectory it replaces. R7a's knot
+   envelope declared 1 s at the join — the USNO trajectory's own
+   horizon error — but the *served* value there is the polynomial,
+   which sits the full step above that trajectory, and a level bias
+   does not decay with calendar year. The EM-era envelope therefore
+   composes the measured disagreement
+   (`deltaTEmJoinDisagreementSeconds`, derived from the tables)
+   **in quadrature** with the unchanged growth knots (1/6/12/20 s at
+   2033.75/2050/2100/2150): ~8.96 s at the join, 9.76 s at 2043,
+   21.8 s by 2149. The knots themselves stand with two published
+   corroborations: the vendored SMH2021 published error table extends
+   into the future (2 s at 2030, 6 s at 2050, 10 s at 2100), and
+   Espenak's own σ estimate for the Five Millennium Canon is 0.8·t²
+   with t = (year−1820)/100 — both sit at or below the declared knots
+   at every point (Espenak & Meeus, "Uncertainty in Delta T",
+   eclipsewise.com/help/uncertainty2004.html).
+3. **History never ages.** For queried dates inside the observations
+   the envelope stays the R7a declaration (0.05 s; the published
+   SMH2021 error table before 1973-02), whatever today is. The
+   envelopes are anchored at the tables' own epochs, not at runtime
+   today; while the freshness guarantee holds (the canary asserts the
+   observed table stays within ~16 months of today —
+   `deltaTObservationsFreshnessWindowDays` = 497 d), the anchor
+   sits within months of today and the envelope reads as growth with
+   |date − today|. The horizon object states the freshness verdict
+   per call (`observationsCurrent`), so a receipt can say whether
+   the guarantee still held when it was written.
+
+Wall-clock mapping, stated per the rung B frame audit: on TT-anchored
+channels (tithi/karana/nakshatra/yoga, masa, eclipse contacts) one
+second of Delta-T error is one second of served boundary time — the
+horizon uncertainty is directly the Delta-T component of those error
+bars. The UT-direct channels (sunrise, sunset, moonrise) are
+Delta-T-free by construction and carry zero Delta-T wall-clock
+uncertainty. The IERS mid/long-term UT1-UTC prediction literature
+(bulletin-style forecasts evaluated over 90–360-day spans) is the
+published context for prediction-error growth; the USNO quarterly
+column itself is the operative model inside its horizon.
+
+The permanent gate `packages/nepali_panchang/test/delta_t_horizon_test.dart`
+pins the measured constants, the exact composition per segment (never
+below the R7a declaration), strict growth across the forecast horizon
+(2027 < 2030 < 2033-06 < 2034-06 < 2043 < 2050 < 2100 < 2149), the
+matured/forecast classification, the freshness window, determinism,
+and the argument range. No served-value, fixture, band, receipt or
+site changes in this rung; the display layer (today.json honesty
+fields, the honesty pages) consumes this surface in a later arc.
