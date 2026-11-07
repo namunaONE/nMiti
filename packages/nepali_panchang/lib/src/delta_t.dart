@@ -1,3 +1,5 @@
+import 'dart:math' show sqrt;
+
 import 'delta_t_data.dart';
 
 /// Delta T = TT - UT1 in seconds: the hybrid four-segment channel
@@ -27,6 +29,10 @@ import 'delta_t_data.dart';
 ///
 /// Valid range: AD -720 through 2150; outside, [ArgumentError]. The
 /// uncertainty is the honest per-segment envelope, never zero.
+///
+/// R10.5 rung D (HYA-445) adds the horizon surface at the bottom of
+/// this file: one function composing these declarations into the
+/// Delta-T error bar for any served date, growing with |date - today|.
 
 /// One Delta T evaluation: the value, its source segment and that
 /// segment's honest uncertainty.
@@ -239,4 +245,180 @@ double deltaTSeconds(int year, int month) {
     throw ArgumentError('deltaTSeconds: year $year outside AD -720..2150');
   }
   return deltaTAtJdUt(_jdFromCivilYmd(year, month, 15)).seconds;
+}
+
+// ---------------------------------------------------------------------------
+// R10.5 rung D (HYA-445): the Delta-T horizon term.
+//
+// One function - deltaTHorizonAtJdUt below - composes the honest
+// Delta-T uncertainty for any queried instant, relative to the day the
+// caller serves, so every served error bar can carry a Delta-T
+// component that grows with how far the queried date sits from today.
+// The channel above is untouched: same segments, same served values,
+// same R7a per-segment declarations. The horizon layer adds what the
+// vendored tables measure about their own prediction error - never an
+// invented growth law:
+//
+// 1. The USNO error column is an estimate, not a bound. Over the
+//    vendored overlap (the prediction rows the observations shadow,
+//    2022-07 .. 2026-01) the realized |prediction - observed| exceeded
+//    the stated error by up to a measured factor
+//    (deltaTPredsOverlapInflationFactor, ~2.3 on the current tables);
+//    an independent vendoring of the same USNO file measured the same
+//    class of understatement at up to 2.7x (hyper-calendar PR #140).
+//    The preds-era envelope is the stated error scaled by that factor.
+// 2. The Espenak-Meeus join step (+8.91 s at 2033-10-01, declared by
+//    R7a) is the measured disagreement between the polynomial the
+//    channel serves and the USNO trajectory it replaces. The R7a knot
+//    envelope declared 1 s at the join - the USNO trajectory's own
+//    horizon error - but the served value there is the polynomial,
+//    which sits the full step above that trajectory, and a level bias
+//    does not decay with calendar year. The EM-era envelope composes
+//    the measured disagreement (deltaTEmJoinDisagreementSeconds) in
+//    quadrature with the unchanged growth knots (1/6/12/20 s at
+//    2033.75/2050/2100/2150). The knots stand corroborated two ways:
+//    the vendored SMH2021 published error table extends into the
+//    future (2 s at 2030, 6 s at 2050, 10 s at 2100) and Espenak's own
+//    sigma estimate is 0.8 t^2 with t = (year - 1820)/100 - both at or
+//    below the declared knots at every point.
+// 3. History never ages. For queried dates inside the observations
+//    the envelope stays the R7a declaration (0.05 s; the published
+//    SMH2021 error table before 1973-02), whatever today is. The
+//    envelopes are anchored at the tables' own epochs; while the
+//    freshness guarantee holds (the canary asserts the observed table
+//    stays within ~16 months of today), the anchor sits within months
+//    of today and the envelope reads as growth with |date - today|.
+//    The function takes today explicitly - the engine never reads a
+//    clock - and exposes the freshness verdict per call.
+//
+// Wall-clock mapping (rung B frame audit): on the TT-anchored channels
+// (tithi/karana/nakshatra/yoga, masa, eclipse contacts) one second of
+// Delta-T error is one second of served boundary time. The UT-direct
+// channels (sunrise, sunset, moonrise) are Delta-T-free by
+// construction and carry zero Delta-T wall-clock uncertainty.
+
+/// The measured USNO optimism factor over the vendored overlap: the
+/// maximum of |prediction - observed| / stated error across the
+/// prediction rows the observations shadow, floored at 1. Computed from
+/// the vendored tables at first use - never hardcoded - so the refresh
+/// workflow re-measures it whenever it lands new tables.
+final double deltaTPredsOverlapInflationFactor = () {
+  var worst = 1.0;
+  for (var i = 0; i < usnoPredsJd.length; i++) {
+    if (usnoPredsJd[i] > _lastObservedJd) break;
+    final observed =
+        _interp(usnoObservedJd, usnoObservedSeconds, usnoPredsJd[i]);
+    final stated = usnoPredsErrorSeconds[i];
+    if (stated <= 0) continue;
+    final ratio = (usnoPredsSeconds[i] - observed).abs() / stated;
+    if (ratio > worst) worst = ratio;
+  }
+  return worst;
+}();
+
+/// The measured channel disagreement at the Espenak-Meeus join: the
+/// long-range polynomial's value at the last USNO prediction minus the
+/// prediction itself - the declared +8.91 s step, derived from the
+/// tables. A level systematic of the served value beyond the join; the
+/// horizon function composes it in quadrature with the R7a growth
+/// knots.
+final double deltaTEmJoinDisagreementSeconds =
+    _espMeeusSeconds(_yearFraction(_lastPredJd)) - usnoPredsSeconds.last;
+
+/// The freshness guarantee the site canary asserts for the vendored
+/// observed table: the last observed month must be within ~16 months
+/// of today. Declared at sixteen maximum-length (31-day) months.
+const int deltaTObservationsFreshnessWindowDays = 497;
+
+/// One Delta-T horizon evaluation: the honest uncertainty of the
+/// served Delta-T at a queried instant, relative to the day the
+/// caller serves.
+class DeltaTHorizon {
+  /// The queried instant, UT Julian Day.
+  final double jdUt;
+
+  /// The instant the caller serves as today, UT Julian Day.
+  final double nowJdUt;
+
+  /// jdUt - nowJdUt, signed: positive is the forecast horizon,
+  /// negative the matured past.
+  final double horizonDays;
+
+  /// The serving channel segment id, as [DeltaTValue.source].
+  final String segment;
+
+  /// The honest Delta-T envelope at the queried instant, in seconds:
+  /// the R7a segment declaration composed with the measured horizon
+  /// terms - never below the declaration.
+  final double uncertaintySeconds;
+
+  /// Machine-stable composition statement, for receipts and the
+  /// honesty pages.
+  final String basis;
+
+  /// Whether the vendored observations satisfy the freshness window
+  /// against [nowJdUt] (the canary's ~16-month guarantee).
+  final bool observationsCurrent;
+
+  const DeltaTHorizon({
+    required this.jdUt,
+    required this.nowJdUt,
+    required this.horizonDays,
+    required this.segment,
+    required this.uncertaintySeconds,
+    required this.basis,
+    required this.observationsCurrent,
+  });
+
+  @override
+  String toString() =>
+      'DeltaTHorizon(' +
+      uncertaintySeconds.toStringAsFixed(3) +
+      ' s at horizon ' +
+      horizonDays.toStringAsFixed(1) +
+      ' d, ' +
+      segment +
+      ')';
+}
+
+/// The one Delta-T error-bar surface (R10.5 rung D, HYA-445): the honest
+/// uncertainty of the Delta-T behind a served value at [jdUt], given
+/// that the caller serves [nowJdUt] as today. The engine never reads a
+/// clock - the caller states today, so tests and receipts are
+/// reproducible and the site build passes its own build date.
+///
+/// Throws [ArgumentError] outside AD -720..2150 for either instant.
+DeltaTHorizon deltaTHorizonAtJdUt(double jdUt, {required double nowJdUt}) {
+  if (nowJdUt < _minJd || _yearFraction(nowJdUt) >= 2150) {
+    throw ArgumentError('deltaTHorizonAtJdUt: now outside AD -720..2150');
+  }
+  final value = deltaTAtJdUt(jdUt);
+  final horizonDays = jdUt - nowJdUt;
+  final side = horizonDays <= 0 ? 'matured' : 'forecast';
+  var envelope = value.uncertaintySeconds;
+  String basis;
+  if (value.source == 'usno-preds') {
+    envelope *= deltaTPredsOverlapInflationFactor;
+    basis = 'USNO stated error x overlap-measured optimism factor; ' + side;
+  } else if (value.source == 'espenak-meeus') {
+    final level = deltaTEmJoinDisagreementSeconds;
+    final knot = value.uncertaintySeconds;
+    envelope = sqrt(level * level + knot * knot);
+    basis =
+        'growth knots + measured join disagreement in quadrature; ' + side;
+  } else if (value.source == 'usno-observed') {
+    basis = 'USNO observed monthly, 0.05 s; history does not age; ' + side;
+  } else {
+    basis = 'published SMH2021 error table; history does not age; ' + side;
+  }
+  return DeltaTHorizon(
+    jdUt: jdUt,
+    nowJdUt: nowJdUt,
+    horizonDays: horizonDays,
+    segment: value.source,
+    uncertaintySeconds: envelope,
+    basis: basis,
+    observationsCurrent: (nowJdUt - _lastObservedJd) <=
+        deltaTObservationsFreshnessWindowDays,
+  );
 }
