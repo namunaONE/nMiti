@@ -29,8 +29,7 @@ const int _seed = 20261107;
 
 /// Deterministic 31-bit LCG (rand() semantics, reproducible everywhere).
 class _Lcg {
-  int _state;
-  _Lcg([this._state = _seed]);
+  int _state = _seed;
 
   double next01() {
     _state = (_state * 1103515245 + 12345) & 0x7fffffff;
