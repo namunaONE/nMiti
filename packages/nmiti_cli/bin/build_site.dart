@@ -19,6 +19,7 @@ const _adMonthNamesNp = [
 
 const _gridHeadsNp = ['आइत', 'सोम', 'मङ्गल', 'बुध', 'बिही', 'शुक्र', 'शनि'];
 const _gridHeadsEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 // The site builder is one library split into part files, one per page
 // family, so each file stays small and independently reviewable.
 part 'build_site_json.dart';
