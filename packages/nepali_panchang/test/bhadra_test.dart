@@ -175,7 +175,7 @@ void main() {
           expect(r, lessThanOrEqualTo(12));
         }
         if (prevBegin != null) {
-          expect(begin.isAfter(prevBegin!), isTrue,
+          expect(begin.isAfter(prevBegin), isTrue,
               reason: '${w['date']}: begins before the previous window');
         }
         prevBegin = begin;
