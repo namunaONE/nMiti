@@ -184,15 +184,21 @@ void main() {
   });
 
   group('structural windows', () {
-    test('Nov 1 - Dec 31: 15 windows, first Nov 7, last Dec 29', () {
+    test('Nov 1 - Dec 31: 16 windows, first Nov 3, last Dec 29', () {
+      // 16, not 15: the Nov 1 scan floor also contains the Krishna
+      // Dashami window beginning Nov 3 23:43 NPT - pinned by the
+      // fixture's own BB past list (Oct 8 ... Nov 3, Nov 7) and the
+      // bhaktivoice caveat row. The first draft of this expectation
+      // forgot it: the pre-fix wall-clock round-trip hang meant the
+      // scan had never completed when the list was written.
       final wins = bhadraWindows(
           start: DateTime.utc(2026, 11, 1),
           end: DateTime.utc(2026, 12, 31));
       final expected = <String>[
-        '2026-11-07', '2026-11-13', '2026-11-17', '2026-11-20',
-        '2026-11-23', '2026-11-26', '2026-11-30', '2026-12-03',
-        '2026-12-07', '2026-12-13', '2026-12-16', '2026-12-20',
-        '2026-12-23', '2026-12-26', '2026-12-29',
+        '2026-11-03', '2026-11-07', '2026-11-13', '2026-11-17',
+        '2026-11-20', '2026-11-23', '2026-11-26', '2026-11-30',
+        '2026-12-03', '2026-12-07', '2026-12-13', '2026-12-16',
+        '2026-12-20', '2026-12-23', '2026-12-26', '2026-12-29',
       ];
       _expectBeginsDates(wins, expected, 'Nov-Dec scan');
     });
@@ -417,8 +423,12 @@ void main() {
     });
 
     test('next dates: seven Bhadra days Nov 7 - Nov 30', () {
+      // The BB 'next' list starts at the crawl day (Nov 7), so the
+      // scan floor must be Nov 7 too: a Nov 1 floor also contains
+      // the Nov 3 Krishna Dashami window, which BB lists under
+      // 'past'.
       final wins = bhadraWindows(
-          start: DateTime.utc(2026, 11, 1),
+          start: DateTime.utc(2026, 11, 7),
           end: DateTime.utc(2026, 12, 1));
       _expectBeginsDates(
           wins, (dateLists['next'] as List).cast<String>(), 'next list');
