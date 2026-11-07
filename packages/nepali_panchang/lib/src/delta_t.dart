@@ -49,8 +49,7 @@ class DeltaTValue {
   /// The source segment's span.
   final String sourceSpan;
 
-  const Delt
-aTValue({
+  const DeltaTValue({
     required this.seconds,
     required this.source,
     required this.uncertaintySeconds,
@@ -122,8 +121,7 @@ final double _lastObservedSeconds = usnoObservedSeconds.last;
 final double _lastPredJd = usnoPredsJd.last;
 final double _minJd = _jdFromCivilYmd(-720, 1, 1);
 
-/// Index of the first prediction row after the
- observed era (the
+/// Index of the first prediction row after the observed era (the
 /// bridge target), derived from the tables.
 final int _bridgePredIndex = () {
   for (var i = 0; i < usnoPredsJd.length; i++) {
@@ -181,8 +179,7 @@ DeltaTValue deltaTAtJdUt(double jdUt) {
     return DeltaTValue(
       seconds: _splineSeconds(y),
       source: 'smh2021-spline',
-      uncertaintySeconds: _splineUncertainty(
-y),
+      uncertaintySeconds: _splineUncertainty(y),
       sourceSpan: 'SMH2016/Morrison2021 spline, -720..1973-02',
     );
   }
@@ -239,8 +236,7 @@ DeltaTValue deltaTAtJdTt(double jdTt) {
 }
 
 /// Legacy month-granular wrapper: Delta T at 0h UT on the 15th of the
-/// month (mid-month, the convention the Espenak-Me
-eus API used). The
+/// month (mid-month, the convention the Espenak-Meeus API used). The
 /// engine's time funnel goes through [deltaTAtJdUt] at full precision;
 /// this stays for compatibility with existing callers.
 double deltaTSeconds(int year, int month) {
