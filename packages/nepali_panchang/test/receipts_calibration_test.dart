@@ -8,20 +8,24 @@ import 'package:test/test.dart';
 ///
 /// Runs the full engine - 60-term Meeus moon, Ch.25 apparent sun, Delta T,
 /// per-source ayanamsa profiles, wrap-free boundary solver - against every
-/// receipt of both golden corpora crawled live from BhaktiBharat and Hamro
-/// Patro (Nov 9-28, 2026 and Oct 18 - Nov 4, 2026; both crawled 2026-11-04).
+/// receipt of the golden corpora crawled live from BhaktiBharat and Hamro
+/// Patro (Nov 9-28, 2026 and Oct 18 - Nov 4, 2026, both crawled 2026-11-04;
+/// Dec 1-31, 2026, advance-crawled 2026-11-07).
 /// This is the permanent minute-level accuracy gate for the lunar limb layer.
 ///
 /// Bands were derived from pre-push sandbox calibrations of these exact
 /// formulas; the wide HP bands absorb the publishers' mutual divergence
 /// (documented per-receipt in the fixtures), not engine error. The Oct
 /// corpus (109 boundaries) lands inside the same bands as the Nov corpus
-/// (117 boundaries) - one shared band map covers both.
+/// (117 boundaries); the Dec advance-crawl corpus (181 boundaries,
+/// chain-continuity validated at crawl time) is expected inside the same
+/// bands - one shared band map covers all three corpora.
 
 /// Golden per-source day counts (karana and sunrise receipts) per corpus.
 const _expectedPerSourceDays = <String, int>{
   'lunar_receipts_2026_11.json': 20,
   'lunar_receipts_2026_10.json': 18,
+  'lunar_receipts_2026_12.json': 31,
 };
 
 /// Shared minute-level |engine - published| bands per (limb, source).

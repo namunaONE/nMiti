@@ -7,7 +7,8 @@ import 'package:test/test.dart';
 ///
 /// Loads every test/fixtures/lunar_receipts_*.json corpus (live-crawled
 /// publisher receipts: Nov 9-28, 2026 and Oct 18 - Nov 4, 2026, both crawled
-/// 2026-11-04) and verifies that each corpus is internally consistent:
+/// 2026-11-04; Dec 1-31, 2026 advance-crawled 2026-11-07) and verifies that
+/// each corpus is internally consistent:
 /// every receipt is complete, every (limb, source) chain is strictly
 /// monotone with physically plausible intervals and correct element
 /// chaining, and the supporting karana / sunrise / flags sections are
@@ -35,12 +36,21 @@ const _expectedBoundaryCounts = <String, Map<String, int>>{
     'nakshatra/hp': 18,
     'yoga/hp': 18,
   },
+  'lunar_receipts_2026_12.json': {
+    'tithi/bb': 30,
+    'nakshatra/bb': 29,
+    'yoga/bb': 31,
+    'tithi/hp': 30,
+    'nakshatra/hp': 30,
+    'yoga/hp': 31,
+  },
 };
 
 /// Golden per-source day counts (karana and sunrise receipts) per corpus.
 const _expectedPerSourceDays = <String, int>{
   'lunar_receipts_2026_11.json': 20,
   'lunar_receipts_2026_10.json': 18,
+  'lunar_receipts_2026_12.json': 31,
 };
 
 /// Golden flag receipts (flag + date) that must be present per corpus.
@@ -53,6 +63,18 @@ const _expectedFlags = <String, List<Map<String, String>>>{
     {'flag': 'shukla-vriddhi/kshaya', 'date': '2026-10-28'},
     {'flag': 'publisher-naming-bug', 'date': '2026-10-18'},
   ],
+  'lunar_receipts_2026_12.json': [
+    {'flag': 'shukla-vriddhi/kshaya', 'date': '2026-12-10'},
+    {'flag': 'publisher-naming-bug', 'date': '2026-12-14'},
+    {'flag': 'udaya-display-gap', 'date': '2026-12-25'},
+  ],
+};
+
+/// Golden crawl dates per corpus.
+const _expectedCrawlDate = <String, String>{
+  'lunar_receipts_2026_11.json': '2026-11-04',
+  'lunar_receipts_2026_10.json': '2026-11-04',
+  'lunar_receipts_2026_12.json': '2026-11-07',
 };
 
 void main() {
@@ -78,7 +100,7 @@ void main() {
 
       test('fixture file exists and declares the expected schema', () {
         expect(data['schema'], 'nmiti-lunar-receipts/1');
-        expect(data['crawl_date'], '2026-11-04');
+        expect(data['crawl_date'], _expectedCrawlDate[fileName]);
         expect(data['page_window'], isNotNull);
       });
 
@@ -111,7 +133,7 @@ void main() {
           // Must parse as an ISO local NPT instant.
           DateTime.parse(b['published_npt'] as String);
           DateTime.parse(b['page_date'] as String);
-          expect(b['crawl_date'], '2026-11-04',
+          expect(b['crawl_date'], _expectedCrawlDate[fileName],
               reason: 'unexpected crawl_date in $b');
         }
       });
