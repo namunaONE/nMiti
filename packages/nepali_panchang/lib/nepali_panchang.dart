@@ -76,10 +76,23 @@
 /// midnight knife-edge exposed - gated by the 2026 Panchak receipt corpus
 /// (Swarnsiddhi and PanchangBodh tables, the BhaktiBharat window and date
 /// lists, golden-corpus Revati-end edge pins on the Oct/Nov/Dec windows).
+///
+/// R10.1 layer 3 is the Chandra Darshan module: the first sighting of the
+/// young crescent Moon after each new moon, saait = [sunset, moonset] of
+/// the darshan evening, day rule = the first civil evening at or after the
+/// local conjunction whose moonset-minus-sunset lag reaches 39.0 min
+/// (corpus band 37.80-40.33, the classical ~8 deg darshan-amsha carried as
+/// an honesty field), the conjunction-day darshan decoded (May 17 2026),
+/// 'Dwitiya at sunset' refuted, the drikpanchang Delhi divergences recorded
+/// and never absorbed - gated by the 2026-11-08 Chandra Darshan receipt
+/// corpus (nepaljyotish Kathmandu windows, BhaktiBharat day-calls, the
+/// drikpanchang 2026-2027 tables) and backed by the new moonset solver,
+/// the setting twin of moonrise.
 library;
 
 export 'src/ayanamsa.dart';
 export 'src/bhadra.dart';
+export 'src/chandra_darshan.dart';
 export 'src/civil_time.dart';
 export 'src/delta_t.dart';
 export 'src/eclipse_lunar.dart';
@@ -91,6 +104,7 @@ export 'src/limbs.dart';
 export 'src/masa.dart';
 export 'src/moon.dart';
 export 'src/moonrise.dart';
+export 'src/moonset.dart';
 export 'src/muhurta.dart';
 export 'src/panchak.dart';
 export 'src/panchang_day.dart';
