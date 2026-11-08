@@ -2,6 +2,14 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.1 ritual layer 2 engine: Panchak windows (HYA-441)
+
+- New engine module `packages/nepali_panchang/lib/src/panchak.dart`: Panchak = the Moon's sidereal transit 300°→360° (Dhanishta's last two padas through the end of Revati, ~4.5 days per window, 13 windows in 2026), computed from the same apparent-sidereal moon and calibrated ayanamsa as the nakshatra limb. The 300° begin is a pada boundary, so the module carries its own wrap-safe sector solver — 60-iteration bisection plus the same derivative-accelerated Newton cross-check the limb solver enforces (two methods, one answer, on every served edge); the 360° end IS the Revati→Ashwini boundary the golden corpora already gate.
+- Window types by the weekday of the begin (NPT civil day): Rog (Sunday), Rajya (Monday), Agni (Tuesday), Madhyam (Wednesday/Thursday), Chor (Friday), Mrityu (Saturday). The Wed/Thu naming collision (Madhyam / Dosh-Mukt / untyped) and the Dec 14/15 midnight knife-edge (engine + Swarnsiddhi + BhaktiBharat: Dec 14 Monday → Rajya; PanchangBodh past midnight → their Agni) are decoded and exposed, never absorbed.
+- New fixture `test/fixtures/panchak_receipts_2026.json` (crawled 2026-11-08): Swarnsiddhi's 13-window table, PanchangBodh's independent 13-window table, BhaktiBharat's current window and date lists, golden-corpus Revati-end pins plus the full segment chains for the Oct/Nov/Dec windows — and the bhaktivoice table recorded as fabricated (constant 4 d 14 h durations, begins ~20 h early; the same caveat family as their Bhadra windows) and excluded from every gate.
+- New CI gate `test/panchak_test.dart`: Swarnsiddhi band 15 min with the constant-offset signature (observed ~−7 min, every delta negative), PanchangBodh band 150 min (observed spread ≤ 111 min), corpus pins 3 min, begins-date labels vs all three publishers, weekday-type consistency, physics invariants (durations 4.0–5.0 d, spacing 26.5–28.5 d, exactly 13 windows in calendar 2026), and covering/next query semantics with half-open windows.
+- No display-layer changes yet — the today.json `panchak` block and panchak.html page follow as the next PR, the same two-PR flow the Bhadra layer used.
+
 ## [Unreleased] — R10.1 ritual layer 1 display: Bhadra windows at the site/API layer (HYA-441)
 
 - today.json gains an additive `bhadra` block: the Bhadra (Vishti karana) window touching today (a late-evening begin spans two civil days, so the query unions `bhadraNear` over day−1/day/day+1 and deduplicates by begins instant), `bhadra_active` at the build instant, and the next window — every entry serves both mukha/puchha rule families (ghati primary, fraction exposed, neither absorbed) with the loka (moon-rashi) segments. Every key always serializes, so the contract markers are date-stable on Bhadra days and quiet days alike.
