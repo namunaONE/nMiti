@@ -727,3 +727,177 @@ $convRows
       body,
       shortSha);
 }
+/// The Panchak window touching the NPT civil day [dayStart, dayEnd) -
+/// covering the day start or beginning inside the day - or null.
+PanchakWindow? _panchakTouching(DateTime dayStart, DateTime dayEnd) {
+  final covering = panchakOn(dayStart);
+  if (covering != null) return covering;
+  final up = nextPanchakAfter(dayStart);
+  if (up.beginsAtNpt.isBefore(dayEnd)) return up;
+  return null;
+}
+
+/// One Panchak window as a JSON object body. Every key is always
+/// emitted so the site contract markers stay date-stable on Panchak
+/// days and quiet days alike.
+String _panchakWindowJson(String ind, PanchakWindow w) {
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  final segs = [
+    for (final s in w.nakshatraSegments)
+      '{"name": "${s.name}", "begins_at": "${isoNpt(s.beginsAtNpt)}"}'
+  ].join(',\n$ind  ');
+  return [
+    '$ind"date_iso": "${_iso(w.beginsAtNpt)}",',
+    '$ind"begins_at": "${isoNpt(w.beginsAtNpt)}",',
+    '$ind"ends_at": "${isoNpt(w.endsAtNpt)}",',
+    '$ind"type": "${w.type.name}",',
+    '$ind"type_name": "${w.typeName}",',
+    '$ind"weekday": ${w.beginsWeekdayNpt},',
+    '$ind"duration_minutes": ${w.durationNpt.inMinutes},',
+    '$ind"nakshatras": [\n$ind  $segs\n$ind],',
+    '$ind"evidence_tier": "${w.evidenceTier}"',
+  ].join('\n');
+}
+
+/// The panchak block of today.json (R10.1 layer 2, HYA-441). The keys -
+/// "panchak", "today", "panchak_active", "next" - always serialize on
+/// every build, so the site contract markers are date-stable on Panchak
+/// days and on quiet days alike.
+String _panchakBlock(DateTime todayAd, String urlBase) {
+  final dayStart = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final dayEnd = dayStart.add(const Duration(days: 1));
+  final nowNpt = DateTime.now().toUtc().add(nepalTimeOffset);
+  final today = _panchakTouching(dayStart, dayEnd);
+  final next = nextPanchakAfter(nowNpt);
+  var active = false;
+  if (today != null &&
+      !today.beginsAtNpt.isAfter(nowNpt) &&
+      nowNpt.isBefore(today.endsAtNpt)) {
+    active = true;
+  }
+  final todayJson = today == null
+      ? 'null'
+      : '{\n${_panchakWindowJson('      ', today)}\n    }';
+  final nextJson = '{\n${_panchakWindowJson('      ', next)}\n    }';
+  return '{\n'
+      '    "note": "engine-computed at build time; the window is the Moon\'s 300-360 deg sidereal transit - the Panchak date is the NPT civil day the window begins",\n'
+      '    "today": $todayJson,\n'
+      '    "panchak_active": $active,\n'
+      '    "next": $nextJson,\n'
+      '    "provenance": "${next.provenance}",\n'
+      '    "evidence_tier": "${next.evidenceTier}",\n'
+      '    "details": "${urlBase}panchak.html"\n'
+      '  }';
+}
+
+/// The /panchak page (R10.1 layer 2, HYA-441): today's Panchak state,
+/// the next window, the upcoming windows with their weekday types, and
+/// the full conventions map - receipt-anchored, every collision
+/// exposed, never silently picked.
+String _panchakPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final dayStart = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final dayEnd = dayStart.add(const Duration(days: 1));
+  final nowNpt = DateTime.now().toUtc().add(nepalTimeOffset);
+  final today = _panchakTouching(dayStart, dayEnd);
+  final next = nextPanchakAfter(nowNpt);
+  final upcoming = panchakWindows(
+      start: dayStart, end: dayStart.add(const Duration(days: 400)));
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String dt(DateTime t) => '${_iso(t)} ${hm(t)} NPT';
+  String days(Duration d) => (d.inMinutes / 1440.0).toStringAsFixed(2);
+  const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  String segList(PanchakWindow w) => [
+        for (final s in w.nakshatraSegments)
+          '${s.name} from ${dt(s.beginsAtNpt)}'
+      ].join(' · ');
+  final String todayCard;
+  if (today == null) {
+    todayCard =
+        '<p>No Panchak window touches today. Panchak is the Moon\'s position, not a local event - a quiet day is not an anomaly; the next window is below.</p>';
+  } else {
+    final activeNow = !today.beginsAtNpt.isAfter(nowNpt) &&
+        nowNpt.isBefore(today.endsAtNpt);
+    todayCard = [
+      '<p><strong>पञ्चक · Panchak touches today</strong> - active at this build: ${activeNow ? 'yes' : 'no'}.</p>',
+      '<ul>',
+      '<li><strong>प्रकार · Type:</strong> ${today.typeName}</li>',
+      '<li><strong>आरम्भ · Begins:</strong> ${dt(today.beginsAtNpt)}</li>',
+      '<li><strong>अन्त्य · Ends:</strong> ${dt(today.endsAtNpt)} (${today.durationNpt.inMinutes} min, ${days(today.durationNpt)} days)</li>',
+      '<li><strong>नक्षत्रहरू · Nakshatras:</strong> ${segList(today)}</li>',
+      '</ul>',
+    ].join('\n');
+  }
+  final nextCard = [
+    '<p>The next Panchak window is <strong>${next.typeName}</strong>.</p>',
+    '<ul>',
+    '<li><strong>मिति · Date (begins):</strong> ${_iso(next.beginsAtNpt)} (${wd[next.beginsWeekdayNpt - 1]})</li>',
+    '<li><strong>आरम्भ · Begins:</strong> ${dt(next.beginsAtNpt)} · <strong>अन्त्य · Ends:</strong> ${dt(next.endsAtNpt)}</li>',
+    '<li><strong>अवधि · Duration:</strong> ${next.durationNpt.inMinutes} min (${days(next.durationNpt)} days)</li>',
+    '<li><strong>नक्षत्रहरू · Nakshatras:</strong> ${segList(next)}</li>',
+    '</ul>',
+  ].join('\n');
+  final upcomingRows = [
+    for (final w in upcoming)
+      '<tr><td>${_iso(w.beginsAtNpt)}</td>'
+      '<td>${wd[w.beginsWeekdayNpt - 1]}</td>'
+      '<td>${w.type.name}</td>'
+      '<td>${dt(w.beginsAtNpt)} - ${dt(w.endsAtNpt)}</td>'
+      '<td>${days(w.durationNpt)} d</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'identity': 'Identity',
+    'window_frame': 'Window frame',
+    'date_label': 'Date label',
+    'type_rule': 'Type rule',
+    'type_naming_collision': 'Type naming collision (Wed/Thu)',
+    'dec_midnight_knife_edge': 'Dec 2026 midnight knife-edge',
+    'prohibited': 'Traditionally cautioned activities',
+    'unreconciled_source': 'Unreconciled sources',
+  };
+  final convRows = [
+    for (final k in convLabels.keys)
+      '<tr><td>${convLabels[k]}</td><td>${panchakConventions[k] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Panchak <span lang="ne">· पञ्चक</span></h1>
+<p>Panchak is the Moon's sidereal transit of the last five nakshatras: Dhanishta's last two padas (from sidereal 300 deg), then Shatabhisha, Purva Bhadrapada, Uttara Bhadrapada and Revati (to 360 deg) - about 4.5 days per window, once per sidereal month, 13 windows in 2026. The window is a global instant pair; Indian pages print the same moments in IST (NPT minus 15 minutes). The type is the weekday of the begin: Rog (Sunday), Rajya (Monday), Agni (Tuesday), Madhyam (Wednesday/Thursday), Chor (Friday), Mrityu (Saturday).</p>
+
+<h2 id="panchak-today">आज · Today</h2>
+$todayCard
+
+<h2 id="panchak-next">अर्को पञ्चक · Next Panchak</h2>
+$nextCard
+
+<h2 id="panchak-upcoming">आउँदै पञ्चक · Upcoming windows</h2>
+<p>Every window beginning in the next 400 days - the weekday type comes from the engine, not from any publisher table.</p>
+<table>
+<tr><th>Begins (AD)</th><th>Weekday</th><th>Type</th><th>Window (NPT)</th><th>Duration</th></tr>
+$upcomingRows
+</table>
+
+<h2 id="panchak-conventions">नियम · Conventions</h2>
+<p>Every rule below is receipt-anchored; where publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="panchak-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${next.provenance}</li>
+<li><strong>Evidence:</strong> ${next.evidenceTier}</li>
+<li><strong>Verification:</strong> the 300 deg begin and 360 deg end are solved by a dedicated wrap-safe bisection with a Newton cross-check on the same apparent-sidereal moon as the nakshatra limb; the end IS the Revati/Ashwini boundary the golden corpora pin. The gate (<code>panchak_test.dart</code>) bands all 13 Swarnsiddhi and 13 PanchangBodh windows, the BhaktiBharat current window and date lists and the corpus Revati-end pins on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/panchak_receipts_2026.json">panchak_receipts_2026.json</a> - the Swarnsiddhi and PanchangBodh tables, the BhaktiBharat window and date lists, golden-corpus edge pins; the fabricated bhaktivoice table is excluded from every gate. Publishers: <a href="https://swarnsiddhi.com/panchak/2026">Swarnsiddhi</a>, <a href="https://panchangbodh.com/panchak-yoga-dates-timings">PanchangBodh</a>, <a href="https://www.bhaktibharat.com/en/festival/panchak">BhaktiBharat</a>.</li>
+<li><strong>Machine-readable:</strong> the <a href="${urlBase}api/v1/today.json">today.json</a> <code>panchak</code> block carries the window touching today, the active flag and the next window with its type and nakshatra segments.</li>
+</ul>
+''';
+  return _docShell(
+      'Panchak (five-nakshatra windows)',
+      'Nepal Panchak windows from the nMiti engine: today window, the next Panchak with its weekday type, the upcoming table and every convention decoded - receipt-anchored, never copied.',
+      urlBase,
+      'panchak.html',
+      body,
+      shortSha);
+}

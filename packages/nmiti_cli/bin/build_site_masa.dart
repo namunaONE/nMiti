@@ -375,7 +375,7 @@ $convRows
 String _sitemap(String urlBase) {
   final lastmod = DateTime.now().toUtc().toIso8601String().substring(0, 10);
   final urls = [
-    for (final p in ['', 'accuracy.html', 'methodology.html', 'ayanamsa.html', 'data.html', 'docs.html', 'sankranti.html', 'masa.html', 'panchang.html', 'bhadra.html', 'muhurta.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
+    for (final p in ['', 'accuracy.html', 'methodology.html', 'ayanamsa.html', 'data.html', 'docs.html', 'sankranti.html', 'masa.html', 'panchang.html', 'bhadra.html', 'panchak.html', 'muhurta.html', 'grahan.html', 'festivals.html', 'embed/example.html'])
       '<url><loc>$urlBase$p</loc><lastmod>$lastmod</lastmod></url>'
   ].join('\n');
   return '''
@@ -394,7 +394,7 @@ String _llmsTxt(BsCalendar core, BsCalendar tail, String urlBase, BsDate today) 
 > Verified, evidence-tagged Bikram Sambat dates for Nepal, rebuilt automatically every day at 00:00 Nepal Time (UTC+05:45).
 
 Today's date (bilingual page): $urlBase
-Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan - and a festivals block: today's observances, the next festival and the 45-day horizon, each naming its day-choosing convention - plus a masa block, the amanta lunar month containing today with adhika/kshaya flags, and a muhurta block: Rahu Kalam, Yamaganda, Gulika, Abhijit and Brahma muhurta, the choghadiya slots and the hora windows, plus a bhadra block - the Bhadra (Vishti karana) window touching today and the next Bhadra - plus a delta_t honesty block - the served Delta T with its source segment, uncertainty and span): ${urlBase}api/v1/today.json
+Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both udaya and madhyahna conventions, sunrise, vriddhi/kshaya flags, provenance, evidence tier, plus a grahan block - today's eclipse/sutak state and the next grahan - and a festivals block: today's observances, the next festival and the 45-day horizon, each naming its day-choosing convention - plus a masa block, the amanta lunar month containing today with adhika/kshaya flags, and a muhurta block: Rahu Kalam, Yamaganda, Gulika, Abhijit and Brahma muhurta, the choghadiya slots and the hora windows, plus a bhadra block - the Bhadra (Vishti karana) window touching today and the next Bhadra - plus a panchak block - the Panchak window touching today, its weekday type and the next Panchak - plus a delta_t honesty block - the served Delta T with its source segment, uncertainty and span): ${urlBase}api/v1/today.json
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
@@ -411,6 +411,7 @@ Festivals (receipt-pinned battery; today's observances, the next festival, the y
 Masa (amanta lunar months, new moon to new moon, with adhika/kshaya detection; engine-computed): ${urlBase}masa.html
 Muhurta (Rahu Kalam, Yamaganda, Gulika, Abhijit, Brahma, choghadiya, horas; engine-computed): ${urlBase}muhurta.html
 Bhadra (the eight Vishti karana windows per lunar month, with mukha/puchha spans and the loka table; engine-computed): ${urlBase}bhadra.html
+Panchak (the five-nakshatra windows, Dhanishta's last two padas through Revati, with the weekday types and the prohibited-activity canon; engine-computed): ${urlBase}panchak.html
 Embeddable today-in-BS widget (free, visible credit required): ${urlBase}embed/example.html
 Verified dataset CSVs: https://github.com/namunaONE/nMiti/tree/main/data
 
