@@ -75,6 +75,8 @@ void main(List<String> args) {
       _masaPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/muhurta.html'),
       _muhurtaPageHtml(todayAd, urlBase, commitSha));
+  _write(File('${out.path}/bhadra.html'),
+      _bhadraPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/ayanamsa.html'),
       _ayanamsaPageHtml(todayAd, urlBase, commitSha));
   _write(File('${out.path}/accuracy.html'),
@@ -184,6 +186,7 @@ ${limbJson('      ', p.karanaAtUdaya, p.karanaAtNoon)}
   "festivals": ${_festivalsBlock(full, todayAd, urlBase)},
   "masa": ${_masaBlock(todayAd, urlBase)},
   "muhurta": ${_muhurtaBlock(todayAd, urlBase)},
+  "bhadra": ${_bhadraBlock(todayAd, urlBase)},
   "timezone": "Asia/Kathmandu (UTC+05:45, no DST)",
   "generated_at_utc": "${DateTime.now().toUtc().toIso8601String()}",
   "commit": "$commitSha",
@@ -298,7 +301,7 @@ a{color:#0a72c4}
 <body>
 <main>
 <h1>आजको मिति · Today's date in Nepal</h1>
-<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="ayanamsa.html">Ayanamsa</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="masa.html">Masa</a> · <a href="panchang.html">Panchang</a> · <a href="muhurta.html">Muhurta</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
+<p class="nav"><a href="accuracy.html">Accuracy &amp; honesty</a> · <a href="methodology.html">Methodology</a> · <a href="ayanamsa.html">Ayanamsa</a> · <a href="data.html">Data &amp; API</a> · <a href="sankranti.html">Sankranti</a> · <a href="masa.html">Masa</a> · <a href="panchang.html">Panchang</a> · <a href="bhadra.html">Bhadra</a> · <a href="muhurta.html">Muhurta</a> · <a href="grahan.html">Grahan</a> · <a href="festivals.html">Festivals</a> · <a href="docs.html">Docs</a></p>
 <p class="answer" id="ans-en">Today is <strong>$monthNameEn ${today.day}, ${today.year} BS</strong> (<span lang="ne">$monthNameNp $dayNp, $yearNp</span>)<br>— <strong>$adLabel</strong> (Gregorian).</p>
 <p class="answer" lang="ne" id="ans-ne">आज <strong>$adLabelNp</strong> विक्रम संवत् अनुसार <strong>$monthNameNp $dayNp, $yearNp</strong> हो।</p>
 <p class="tier" id="tier-note">$tierNote</p>
