@@ -2,6 +2,12 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — evidence-tier receipt-count honesty gate (2026-11-08 audit)
+
+- The served panchang `evidenceTier` honesty field stated "226 boundary receipts" long after the locked golden corpora grew to 407 (Oct 109 + Nov 117 + Dec 181; the Dec advance-crawl corpus landed 2026-11-07). The string in `packages/nepali_panchang/lib/src/panchang_day.dart` now states the true count.
+- New permanent CI gate `packages/nepali_panchang/test/evidence_tier_honesty_test.dart`: loads all three lunar corpora, sums their `boundaries` arrays and asserts the served `evidenceTier` states exactly that count — a future corpus addition that forgets the string now fails CI instead of silently serving a stale honesty field. The count is derived from the fixtures at test time, never hand-pinned in the test.
+- No engine, fixture, band or receipt changes; the today.json panchang `evidence_tier` string is the only served value affected (`site_contract.py` checks key presence only, unchanged).
+
 ## [Unreleased] — R10.1 ritual layer 1: Bhadra windows (HYA-441)
 
 - New engine module `packages/nepali_panchang/lib/src/bhadra.dart`: Bhadra = the Vishti karana half-tithi, derived from the karana limb the engine already serves — no new astronomy, no precomputed tables, full BS range inherited from the limb layer. Public surface: `bhadraWindows` / `bhadraNear` / `nextBhadraAfter`, `BhadraWindow` with the loka (moon-rashi) segments and both mukha/puchha rule families, the canonical `bhadraLokaByRasi` table, the contiguous variant `bhadraLokaByRasiContiguousVariant`, and the `bhadraConventions` honesty map.
