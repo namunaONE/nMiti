@@ -1,0 +1,116 @@
+{
+  "schema": "nmiti-chandra-darshan-receipts/1",
+  "description": "nMiti Chandra Darshan receipt corpus - golden fixtures (R10.1 ritual layer 3, HYA-441). Live-crawled 2026-11-08 and re-crawled byte-identical the same day. Window receipts: nepaljyotish's Chandra Darshan calendar for Kathmandu (13 saait windows for BS 2083, Apr 2026 - Apr 2027; the saait IS their published sunset-moonset pair) and drikpanchang's New Delhi vrats tables for 2026 and 2027 (25 rows, IST printed; NPT = IST + 15 min exactly; two rows documented as diverging from the engine). Day-call receipts: BhaktiBharat's daily panchang pages for the Nov 10-11 / Dec 9-10 2026 and Jan 8-9 2027 evening pairs (sunset + moonset printed with an explicit darshan/no-darshan statement). Recorded absence: Hamro Patro publishes no Chandra Darshan table.",
+  "crawl_date": "2026-11-08",
+  "sources": {
+    "nepaljyotish": {
+      "name": "nepaljyotish Chandra Darshan 2026 (Kathmandu)",
+      "url": "https://nepaljyotish.org/en/chandra-darshan/",
+      "conventions": "13 rows for BS 2083 (Apr 2026 - Apr 2027), Kathmandu, NPT wall clock. Each row prints a BS date, the tithi label Shukla Pratipada, the lunar month, and a 'Chandra Darshan Window' (the saait, sunset to moonset). The tithi label is their lunar-day label, not the rule input (the Feb 7 2027 row is Pratipada and accepted; a Dwitiya evening is refuted - see rules). The page states the sighting time changes with place (district selector); the corpus rows are the Kathmandu district."
+    },
+    "drikpanchang": {
+      "name": "drikpanchang Chandra Darshan dates, New Delhi (2026 + 2027)",
+      "url": "https://www.drikpanchang.com/vrats/chandra-darshan-dates.html",
+      "conventions": "12 rows for 2026 and 13 rows for 2027 (the ?year=2027 page), New Delhi, IST printed; stored here as NPT = IST + 15 min exactly. Their rule prose: 'the moon ... sets about one hour after sunset and can be sighted only after sunset' - prose, not an algorithm. Their May 17 2026 row is printed as 'Adhika Chandra Darshana' (the conjunction-day darshan). Their moonset column runs ~3-4 min early vs the engine (publisher ephemeris convention). Their corpus fits no monotone rule: the 2027-02-08 and 2027-10-01 rows are marked agree:false (engine: Feb 7 and Oct 2) - decoded, never absorbed."
+    },
+    "bhaktibharat": {
+      "name": "BhaktiBharat daily panchang pages (Kathmandu) - evening pairs",
+      "url": "https://www.bhaktibharat.com/en/panchang/nepal/kathmandu (daily pages for 2026-11-10, 2026-11-11, 2026-12-09, 2026-12-10, 2027-01-08, 2027-01-09)",
+      "conventions": "Six day-calls: each row is one evening's printed sunset + moonset with an explicit Chandra Darshan statement. Their display runs ~+3/+4 min vs the engine (the documented sunrise/sunset display convention); day-calls are gated exact and window edges at 5 min. Dec 9 2026: moonset 17:11 BEFORE sunset 17:13 - no moon in the evening sky at all."
+    },
+    "hamro_patro_absence": {
+      "name": "Hamro Patro - recorded absence",
+      "url": "https://www.hamropatro.com/",
+      "conventions": "Hamro Patro publishes daily panchang and festival lists but no Chandra Darshan table or saait windows were found anywhere on their calendar or festival pages (checked 2026-11-08). Recorded absence, not negative evidence."
+    }
+  },
+  "rules": {
+    "saait_window": "Saait = [sunset, moonset] of the darshan evening, local wall clock. nepaljyotish publishes exactly this pair for Kathmandu; drikpanchang's rule prose: 'the moon ... sets about one hour after sunset and can be sighted only after sunset'.",
+    "day_rule": "The darshan day is the first civil evening at or after the local conjunction whose moonset-minus-sunset lag reaches 39.0 minutes (the served constant chandraDarshanMinMoonsetLagMinutes).",
+    "threshold_band": "The corpus pins only a band, (37.80, 40.33] minutes: binding rejected New Delhi 2026-06-15 lag 37.80 (drikpanchang prints Jun 16; Kathmandu Jun 15 = 35.78), binding accepted Kathmandu 2027-02-07 lag 40.33 (nepaljyotish prints it). 39.0 sits at the band midpoint, margins 1.20 / 1.33 min; every threshold inside the band reproduces every corpus day-call identically.",
+    "linger_altitude_equivalence": "Equivalent within the corpus: accepted evenings carry the Moon at >= 8.4 deg geocentric altitude at sunset, rejected evenings <= 7.4 deg - the classical ~8 deg darshan-amsha lies inside the empty band. The corpus cannot separate the two formulations; the linger is the served rule, the altitude an honesty field.",
+    "conj_day": "A conjunction-day darshan is real: 2026-05-17 (Moon 15-17 h old at saait begins, Shukla Pratipada, lag 54.1 min) is printed by nepaljyotish, drikpanchang ('Adhika Chandra Darshana') and BhaktiBharat - the rule is the linger, not the tithi.",
+    "tithi_refuted": "'Dwitiya at sunset' is refuted: 2026-11-10 is Shukla Dwitiya at sunset (elongation 13.4 deg) and is rejected by every source (lag 26.5 min); 2027-02-07 is Pratipada at sunset and accepted (lag 40.3 min)."
+  },
+  "nepaljyotish_ktm": [
+    { "date": "2026-04-18", "begins": "2026-04-18T18:30", "ends": "2026-04-18T19:39" },
+    { "date": "2026-05-17", "begins": "2026-05-17T18:46", "ends": "2026-05-17T19:40" },
+    { "date": "2026-06-16", "begins": "2026-06-16T19:01", "ends": "2026-06-16T20:37" },
+    { "date": "2026-07-15", "begins": "2026-07-15T19:01", "ends": "2026-07-15T20:02" },
+    { "date": "2026-08-14", "begins": "2026-08-14T18:42", "ends": "2026-08-14T19:46" },
+    { "date": "2026-09-13", "begins": "2026-09-13T18:11", "ends": "2026-09-13T19:18" },
+    { "date": "2026-10-12", "begins": "2026-10-12T17:38", "ends": "2026-10-12T18:23" },
+    { "date": "2026-11-11", "begins": "2026-11-11T17:13", "ends": "2026-11-11T18:26" },
+    { "date": "2026-12-10", "begins": "2026-12-10T17:09", "ends": "2026-12-10T18:04" },
+    { "date": "2027-01-09", "begins": "2027-01-09T17:25", "ends": "2027-01-09T18:44" },
+    { "date": "2027-02-07", "begins": "2027-02-07T17:48", "ends": "2027-02-07T18:29" },
+    { "date": "2027-03-09", "begins": "2027-03-09T18:08", "ends": "2027-03-09T19:06" },
+    { "date": "2027-04-08", "begins": "2027-04-08T18:24", "ends": "2027-04-08T19:56" }
+  ],
+  "bhaktibharat_ktm_day_calls": [
+    { "date": "2026-11-10", "sunset": "2026-11-10T17:17", "moonset": "2026-11-10T17:41", "darshan": false },
+    { "date": "2026-11-11", "sunset": "2026-11-11T17:17", "moonset": "2026-11-11T18:27", "darshan": true },
+    { "date": "2026-12-09", "sunset": "2026-12-09T17:13", "moonset": "2026-12-09T17:11", "darshan": false },
+    { "date": "2026-12-10", "sunset": "2026-12-10T17:13", "moonset": "2026-12-10T18:04", "darshan": true },
+    { "date": "2027-01-08", "sunset": "2027-01-08T17:28", "moonset": "2027-01-08T17:49", "darshan": false },
+    { "date": "2027-01-09", "sunset": "2027-01-09T17:29", "moonset": "2027-01-09T18:45", "darshan": true }
+  ],
+  "drikpanchang_del": [
+    { "date": "2026-01-20", "begins_npt": "2026-01-20T18:05", "ends_npt": "2026-01-20T19:31", "agree": true },
+    { "date": "2026-02-18", "begins_npt": "2026-02-18T18:28", "ends_npt": "2026-02-18T19:20", "agree": true },
+    { "date": "2026-03-20", "begins_npt": "2026-03-20T18:47", "ends_npt": "2026-03-20T20:14", "agree": true },
+    { "date": "2026-04-18", "begins_npt": "2026-04-18T19:04", "ends_npt": "2026-04-18T20:11", "agree": true },
+    { "date": "2026-05-17", "begins_npt": "2026-05-17T19:21", "ends_npt": "2026-05-17T20:13", "agree": true, "note": "drikpanchang prints 'Adhika Chandra Darshana' - the conjunction-day darshan" },
+    { "date": "2026-06-16", "begins_npt": "2026-06-16T19:36", "ends_npt": "2026-06-16T21:09", "agree": true },
+    { "date": "2026-07-15", "begins_npt": "2026-07-15T19:36", "ends_npt": "2026-07-15T20:34", "agree": true },
+    { "date": "2026-08-14", "begins_npt": "2026-08-14T19:17", "ends_npt": "2026-08-14T20:16", "agree": true },
+    { "date": "2026-09-13", "begins_npt": "2026-09-13T18:44", "ends_npt": "2026-09-13T19:46", "agree": true },
+    { "date": "2026-10-12", "begins_npt": "2026-10-12T18:10", "ends_npt": "2026-10-12T18:51", "agree": true },
+    { "date": "2026-11-11", "begins_npt": "2026-11-11T17:44", "ends_npt": "2026-11-11T18:53", "agree": true },
+    { "date": "2026-12-10", "begins_npt": "2026-12-10T17:40", "ends_npt": "2026-12-10T18:31", "agree": true },
+    { "date": "2027-01-09", "begins_npt": "2027-01-09T17:56", "ends_npt": "2027-01-09T19:13", "agree": true },
+    { "date": "2027-02-08", "begins_npt": "2027-02-08T18:21", "ends_npt": "2027-02-08T19:53", "agree": false, "note": "engine: Feb 7 2027 (Delhi Feb 7 lag 41.8 >= 39; nepaljyotish also prints Feb 7 for Kathmandu)" },
+    { "date": "2027-03-09", "begins_npt": "2027-03-09T18:41", "ends_npt": "2027-03-09T19:37", "agree": true },
+    { "date": "2027-04-08", "begins_npt": "2027-04-08T18:58", "ends_npt": "2027-04-08T20:28", "agree": true },
+    { "date": "2027-05-07", "begins_npt": "2027-05-07T19:15", "ends_npt": "2027-05-07T20:26", "agree": true },
+    { "date": "2027-06-05", "begins_npt": "2027-06-05T19:31", "ends_npt": "2027-06-05T20:21", "agree": true },
+    { "date": "2027-07-05", "begins_npt": "2027-07-05T19:38", "ends_npt": "2027-07-05T20:51", "agree": true },
+    { "date": "2027-08-03", "begins_npt": "2027-08-03T19:26", "ends_npt": "2027-08-03T20:05", "agree": true },
+    { "date": "2027-09-02", "begins_npt": "2027-09-02T18:57", "ends_npt": "2027-09-02T19:45", "agree": true },
+    { "date": "2027-10-01", "begins_npt": "2027-10-01T18:23", "ends_npt": "2027-10-01T18:51", "agree": false, "note": "engine: Oct 2 2027 (Oct 1 Delhi lag 32.6 < 39)" },
+    { "date": "2027-10-31", "begins_npt": "2027-10-31T17:52", "ends_npt": "2027-10-31T18:52", "agree": true },
+    { "date": "2027-11-29", "begins_npt": "2027-11-29T17:39", "ends_npt": "2027-11-29T18:26", "agree": true },
+    { "date": "2027-12-29", "begins_npt": "2027-12-29T17:48", "ends_npt": "2027-12-29T19:06", "agree": true }
+  ],
+  "caveats": [
+    {
+      "id": "threshold-band",
+      "note": "The corpus pins only a threshold band, (37.80, 40.33] minutes of moonset-minus-sunset lag. The served constant 39.0 sits at the band midpoint (margins 1.20 min against the binding rejected row, New Delhi Jun 15 2026 at 37.80, and 1.33 min against the binding accepted row, Kathmandu Feb 7 2027 at 40.33). Every threshold inside the band reproduces every corpus day-call identically; a finer corpus (narrower evenings near the band edges) is needed before the constant can be tightened."
+    },
+    {
+      "id": "drik-no-monotone-rule",
+      "note": "drikpanchang's 25-row Delhi corpus fits NO monotone rule of lag, gap, age, elongation or altitude (at least one miss in every brute-forced family). Exactly two rows collide with the engine (2027-02-08, engine Feb 7; 2027-10-01, engine Oct 2) and are recorded agree:false, decoded in chandraDarshanConventions['drik_divergence'], never absorbed. 23/25 rows agree."
+    },
+    {
+      "id": "bb-display-convention",
+      "note": "BhaktiBharat's daily pages print sunset/moonset ~+3/+4 min vs the engine (their documented sunrise/sunset display convention). Their day-calls (darshan / no darshan statements) are gated exact; their printed window edges are gated at 5 min. Dec 9 2026 prints moonset 17:11 before sunset 17:13 - no evening moon at all, no darshan."
+    },
+    {
+      "id": "hp-absence",
+      "note": "Hamro Patro publishes no Chandra Darshan table or saait windows (checked 2026-11-08 across their calendar and festival pages) - recorded absence, not negative evidence."
+    },
+    {
+      "id": "ist-npt-shift",
+      "note": "drikpanchang prints IST for New Delhi; rows are stored as NPT = IST + 15 min exactly. The engine's day rule anchors on the NPT civil day for every longitude; for Delhi this is a named 15-min civil-boundary approximation relative to the IST date (no corpus conjunction instant falls within an hour of the IST/NPT date seam, and every saait edge is an evening hour, so no receipt is affected)."
+    },
+    {
+      "id": "advance-crawl-re-verification",
+      "note": "The corpus was live-crawled 2026-11-08 and re-crawled byte-identical the same day. The Nov 2026 rows gate the imminent release window directly; the Dec 2026 - Dec 2027 rows are publisher tables verified same-day - same-day re-verification of the Dec 2026 and later rows is recommended before any release that gates on them."
+    }
+  ],
+  "engine_reference_2026_11_08": {
+    "note": "HYA-441 sandbox pre-check, 2026-11-08: full TS replication of the Dart engine semantics (60-term Meeus Ch.47 moon, USNO sunset equations, Delta T ~69.2 s) run against every receipt. NOT part of fixture truth. Engine-minus-published saait deltas, minutes - nepaljyotish Kathmandu windows: begins +0.0 to +1.3, ends +0.0 to +0.9 (all 13 rows within 2 min). Kathmandu moonset-minus-sunset lags, accepted (the 13 darshan evenings): Apr 18 69.50, May 17 54.10, Jun 16 96.53, Jul 15 61.14, Aug 14 63.20, Sep 13 66.55, Oct 12 45.47, Nov 11 72.92, Dec 10 54.89, Jan 9 79.20, Feb 7 40.33 (binding accepted min), Mar 9 58.02, Apr 8 91.59. Kathmandu rejected candidate evenings (max 35.78, all < 39): Nov 10 26.46, Dec 9 2.46, Jan 8 24.20, Jun 15 35.78, Sep 12 33.79, Aug 13 28.70, Oct 11 9.45, Jul 14 13.30, Mar 8 3.03, Apr 7 29.32, May 6 5.97, Apr 17 0.15, Dec 28 25.06, Jan 19 29.06, Mar 19 24.61, Oct 30 16.49. Delhi: Jun 15 2026 lag 37.80 (binding rejected max; drikpanchang prints Jun 16), agree-row minimum Aug 3 2027 at 43.32; the two collisions: Feb 7 2027 lag 41.81 (engine accepts Feb 7; drikpanchang prints Feb 8) and Oct 1 2027 lag 32.61 (engine accepts Oct 2; drikpanchang prints Oct 1). Conjunction anchors: Nov 9 2026 12:47 NPT (matches the BhaktiBharat Pratipada receipt to the minute); conjunction dates cross-check the real solar eclipses of Feb 17 and Aug 12 2026. Day indices in the corpus: May 17 2026 is k0 (conjunction-day darshan); Aug 14, Sep 13, Oct 12, Nov 11 2026 are k2; the rest k1.",
+    "threshold_served": 39.0,
+    "threshold_band": "(37.80, 40.33]"
+  }
+}
