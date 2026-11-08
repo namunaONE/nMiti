@@ -2,6 +2,11 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.1 ritual layer 2 display: Panchak windows at the site/API layer (HYA-441)
+
+- New `panchak` block in `api/v1/today.json`: the window touching today (begins/ends NPT, weekday type, type name, duration, the five nakshatra segments), `panchak_active` and the next window - keys always emitted, `today: null` on quiet days (the PR #41 marker rule).
+- New `panchak.html` honesty page (today / next / 400-day upcoming table / all eight named conventions, collisions decoded / receipts with the fabricated bhaktivoice table excluded), plus nav, sitemap, llms.txt, the data.html API description, site-contract markers and the Pages smoke list.
+
 ## [Unreleased] — R10.1 ritual layer 2 engine: Panchak windows (HYA-441)
 
 - New engine module `packages/nepali_panchang/lib/src/panchak.dart`: Panchak = the Moon's sidereal transit 300°→360° (Dhanishta's last two padas through the end of Revati, ~4.5 days per window, 13 windows in 2026), computed from the same apparent-sidereal moon and calibrated ayanamsa as the nakshatra limb. The 300° begin is a pada boundary, so the module carries its own wrap-safe sector solver — 60-iteration bisection plus the same derivative-accelerated Newton cross-check the limb solver enforces (two methods, one answer, on every served edge); the 360° end IS the Revati→Ashwini boundary the golden corpora already gate.
