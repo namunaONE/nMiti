@@ -1,0 +1,320 @@
+{
+  "schema": "nmiti-panchak-receipts/1",
+  "description": "nMiti Panchak receipt corpus - golden fixtures (R10.1 ritual layer 2, HYA-441). Live-crawled 2026-11-08. Window receipts: Swarnsiddhi's 2026 Panchak table (13 windows, IST printed; NPT = IST + 15 min exactly; their page states 'Panchak is the Moon's position, not a local sunrise') and PanchangBodh's independent 2026 table (13 windows, New Delhi = IST clock). Rule receipts: BhaktiBharat's Panchak festival page (current window, past/next date lists, the five-nakshatra span, the five prohibited activities). The panchak END is the Moon's 360 deg sidereal crossing - the Revati-to-Ashwini nakshatra boundary the locked lunar corpora already gate; the Oct/Nov/Dec windows carry those corpus pins plus their full internal segment chains.",
+  "crawl_date": "2026-11-08",
+  "sources": {
+    "swarnsiddhi": {
+      "name": "Swarnsiddhi Panchak 2026",
+      "url": "https://swarnsiddhi.com/panchak/2026",
+      "conventions": "13 rows; IST printed, NPT = IST + 15 min. Row date = the day the window begins. Kind column: typed for Sunday-Tuesday, Friday and Saturday begins; the Wednesday/Thursday rows print '-' (no type - see the naming collision caveat). Rule statement: 'from the second half of Dhanishta to the end of Revati'; 'the instants are the same everywhere in India'."
+    },
+    "panchangbodh": {
+      "name": "PanchangBodh Panchak Yoga 2026 (New Delhi)",
+      "url": "https://panchangbodh.com/panchak-yoga-dates-timings",
+      "conventions": "13 windows, New Delhi local = IST clock, NPT = IST + 15 min. Type column: Madhyam for Wed/Thu begins (their own table documents the weekday mapping). Their ephemeris disagrees with Swarnsiddhi by 16-111 min per boundary (independent computation, coarser theory); their Dec window begins 00:12 IST Dec 15 - past NPT midnight - so their type column prints Agni (see the Dec knife-edge caveat)."
+    },
+    "bb_festival": {
+      "name": "BhaktiBharat festival page - Panchak",
+      "url": "https://www.bhaktibharat.com/en/festival/panchak",
+      "conventions": "Current window: begins Tuesday Nov 17 2026 3:30 PM, ends Sunday Nov 22 2026 5:54 AM IST (= 15:45 / 06:09 NPT). Past dates (begins-days): Oct 21, Sep 23, Aug 27, Jul 4, Jun 6, May 10, Apr 13, Mar 16, Feb 17, Jan 21 (2026), Dec 24 2025, and a printed '3 January 2025' row (a source data quirk: no Panchak begins on Jan 3 of either year; the sidereal month puts the next begin at Jan 21 - recorded as printed, never gated). Their 2026 past list skips the Jul 31 window (11 real windows begin Jan-Oct; they list 10) - subset-gated in the test. Rule text: 'When the Moon remains in Aquarius and Pisces'; the five nakshatras Ghanishtha, Shatabhisha, Purvabhadrapada, Uttarabhadrapada, Revati; five prohibited activities (roofing/lintel, cot/bed, South travel, gathering grass/wood/fuel, cremation without the Shanti vidhi); worship, havan and idol immersion not hindered."
+    },
+    "bhaktivoice": {
+      "name": "BhaktiVoice Panchak page (EXCLUDED - fabricated table)",
+      "url": "https://www.bhaktivoice.com/muhurat/panchak",
+      "conventions": "Their 13-row 2026 table is fabricated and never gated (see caveats). Only their rule statements agree with the corpus: the five-nakshatra span, the weekday type table (they print 'Dosh-Mukt' for Wed/Thu begins) and the five prohibited activities."
+    }
+  },
+  "rules": {
+    "span": "Moon sidereal 300 to 360 deg: Dhanishta's last two padas (300 to 306 deg 40), then Shatabhisha, Purva Bhadrapada, Uttara Bhadrapada, Revati. All four rule pages state this span; no publisher dissent found.",
+    "weekday_type_map": {
+      "Sunday": "rog",
+      "Monday": "rajya",
+      "Tuesday": "agni",
+      "Wednesday": "madhyam",
+      "Thursday": "madhyam",
+      "Friday": "chor",
+      "Saturday": "mrityu"
+    },
+    "prohibited_five": [
+      "roofing or laying the lintel of a house",
+      "purchasing or manufacturing a wooden cot or bed",
+      "travel toward the South",
+      "gathering combustible grass, wood or fuel",
+      "cremation without the Panchak Shanti vidhi"
+    ]
+  },
+  "caveats": [
+    {
+      "id": "bhaktivoice-fabricated-panchak",
+      "note": "The bhaktivoice 2026 table prints 13 windows whose durations are all 4 d 14 h 07-40 m - a real table tracks the lunar speed (this corpus year spans 4 d 07 h to 4 d 17 h) - and every begin sits ~20 h before the three agreeing sources (their 'Nov 16 04:00 PM' vs the agreed Nov 17 ~15:30-15:45 IST; their 'Dec 13 11:20 PM' vs the agreed Dec 14 22:35 IST). Same fabrication family as their Bhadra window times (bhadra_receipts_2026.json caveat). Excluded from every gate."
+    },
+    {
+      "id": "dec-midnight-knife-edge",
+      "note": "The Dec 2026 begin sits ~1.3 h before NPT midnight: Swarnsiddhi prints Monday Dec 14 22:35 IST and BhaktiBharat lists Dec 14; the engine computes Dec 14 ~22:4x NPT (Monday, Rajya). PanchangBodh's own ephemeris lands 00:12 IST Dec 15 (00:27 NPT, Tuesday) so their type prints Agni. The engine serves the computed instant - Rajya - and the disagreement is exposed, not absorbed."
+    },
+    {
+      "id": "wed-thu-naming-collision",
+      "note": "Wed/Thu begins carry no specific dosha; publishers label them 'Madhyam' (PanchangBodh), 'Dosh-Mukt' (bhaktivoice) or print '-' (Swarnsiddhi). One rule, three labels; the engine serves 'madhyam' and exposes the collision in panchakConventions."
+    },
+    {
+      "id": "bb-list-quirks",
+      "note": "BhaktiBharat's past list skips the Jul 31 window and prints a '3 January 2025' row that matches no window; both recorded as printed, subset-gated only."
+    },
+    {
+      "id": "hp-window-absence",
+      "note": "Hamro Patro publishes no Panchak window table (checked 2026-11-08); no Nepali-source window receipts exist yet. Recorded absence - the Nepali tradition observes Panchak, so a future HP/samiti crawl should extend this corpus."
+    }
+  ],
+  "bb_today_window": {
+    "date": "2026-11-17",
+    "npt_begin": "2026-11-17T15:45",
+    "npt_end": "2026-11-22T06:09"
+  },
+  "bb_date_lists": {
+    "past_2026": [
+      "2026-01-21",
+      "2026-02-17",
+      "2026-03-16",
+      "2026-04-13",
+      "2026-05-10",
+      "2026-06-06",
+      "2026-07-04",
+      "2026-08-27",
+      "2026-09-23",
+      "2026-10-21"
+    ],
+    "next": [
+      "2026-11-17",
+      "2026-12-14"
+    ]
+  },
+  "engine_reference_2026_11_08": {
+    "note": "HYA-441 sandbox pre-check, 2026-11-08: full TS replication of the Dart engine semantics (60-term Meeus Ch.47 moon, approximate Delta T 69.1 s, no nutation - the real engine differs by under 1 min) run against all receipts. Deltas engine-minus-published, minutes: Swarnsiddhi begins -6.9 to -8.2, ends -6.1 to -7.6 (a constant ~-7 min ephemeris convention, the same class as the sunrise convention offsets); PanchangBodh |delta| up to 110.9; golden-corpus Revati-end pins -1 on all three pinned windows; durations 4.34-4.72 d; begins spacing 27.24-27.40 d; 13 windows begin in calendar 2026. NOT part of fixture truth."
+  },
+  "windows": [
+    {
+      "date": "2026-01-21",
+      "weekday": "Wednesday",
+      "ss_type": null,
+      "pb_type": "madhyam",
+      "ss_npt_begin": "2026-01-21T01:50",
+      "ss_npt_end": "2026-01-25T13:50",
+      "pb_npt_begin": "2026-01-21T02:06",
+      "pb_npt_end": "2026-01-25T12:47",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-02-17",
+      "weekday": "Tuesday",
+      "ss_type": "agni",
+      "pb_type": "agni",
+      "ss_npt_begin": "2026-02-17T09:20",
+      "ss_npt_end": "2026-02-21T19:22",
+      "pb_npt_begin": "2026-02-17T08:23",
+      "pb_npt_end": "2026-02-21T20:58",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-03-16",
+      "weekday": "Monday",
+      "ss_type": "rajya",
+      "pb_type": "rajya",
+      "ss_npt_begin": "2026-03-16T18:29",
+      "ss_npt_end": "2026-03-21T02:42",
+      "pb_npt_begin": "2026-03-16T19:43",
+      "pb_npt_end": "2026-03-21T02:52",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-04-13",
+      "weekday": "Monday",
+      "ss_type": "rajya",
+      "pb_type": "rajya",
+      "ss_npt_begin": "2026-04-13T03:59",
+      "ss_npt_end": "2026-04-17T12:17",
+      "pb_npt_begin": "2026-04-13T02:49",
+      "pb_npt_end": "2026-04-17T12:33",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-05-10",
+      "weekday": "Sunday",
+      "ss_type": "rog",
+      "pb_type": "rog",
+      "ss_npt_begin": "2026-05-10T12:28",
+      "ss_npt_end": "2026-05-14T22:49",
+      "pb_npt_begin": "2026-05-10T14:08",
+      "pb_npt_end": "2026-05-14T23:03",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-06-06",
+      "weekday": "Saturday",
+      "ss_type": "mrityu",
+      "pb_type": "mrityu",
+      "ss_npt_begin": "2026-06-06T19:18",
+      "ss_npt_end": "2026-06-11T08:31",
+      "pb_npt_begin": "2026-06-06T18:54",
+      "pb_npt_end": "2026-06-11T08:41",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-07-04",
+      "weekday": "Saturday",
+      "ss_type": "mrityu",
+      "pb_type": "mrityu",
+      "ss_npt_begin": "2026-07-04T01:03",
+      "ss_npt_end": "2026-07-08T16:15",
+      "pb_npt_begin": "2026-07-04T00:18",
+      "pb_npt_end": "2026-07-08T17:15",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-07-31",
+      "weekday": "Friday",
+      "ss_type": "chor",
+      "pb_type": "chor",
+      "ss_npt_begin": "2026-07-31T06:53",
+      "ss_npt_end": "2026-08-04T22:09",
+      "pb_npt_begin": "2026-07-31T08:36",
+      "pb_npt_end": "2026-08-04T21:17",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-08-27",
+      "weekday": "Thursday",
+      "ss_type": null,
+      "pb_type": "madhyam",
+      "ss_npt_begin": "2026-08-27T13:50",
+      "ss_npt_end": "2026-09-01T03:39",
+      "pb_npt_begin": "2026-08-27T13:28",
+      "pb_npt_end": "2026-09-01T04:07",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-09-23",
+      "weekday": "Wednesday",
+      "ss_type": null,
+      "pb_type": "madhyam",
+      "ss_npt_begin": "2026-09-23T22:12",
+      "ss_npt_end": "2026-09-28T10:31",
+      "pb_npt_begin": "2026-09-23T22:51",
+      "pb_npt_end": "2026-09-28T11:36",
+      "corpus_pin": null
+    },
+    {
+      "date": "2026-10-21",
+      "weekday": "Wednesday",
+      "ss_type": null,
+      "pb_type": "madhyam",
+      "ss_npt_begin": "2026-10-21T07:15",
+      "ss_npt_end": "2026-10-25T19:37",
+      "pb_npt_begin": "2026-10-21T07:42",
+      "pb_npt_end": "2026-10-25T18:34",
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "nakshatra",
+        "receipt": "Revati ends / Ashwini begins",
+        "published_npt": "2026-10-25T19:30",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_10.json",
+        "band_min": 3,
+        "segment_receipts": [
+          {
+            "receipt": "Dhanishta ends / Shatabhisha begins",
+            "published_npt": "2026-10-21T19:55"
+          },
+          {
+            "receipt": "Shatabhisha ends / Purva Bhadrapada begins",
+            "published_npt": "2026-10-22T20:56"
+          },
+          {
+            "receipt": "Purva Bhadrapada ends / Uttara Bhadrapada begins",
+            "published_npt": "2026-10-23T21:11"
+          },
+          {
+            "receipt": "Uttara Bhadrapada ends / Revati begins",
+            "published_npt": "2026-10-24T20:40"
+          }
+        ],
+        "pin_note": "the panchak end IS the Revati-to-Ashwini boundary the Oct corpus gates; the four internal segment transitions are the corpus nakshatra receipts of the same window."
+      }
+    },
+    {
+      "date": "2026-11-17",
+      "weekday": "Tuesday",
+      "ss_type": "agni",
+      "pb_type": "agni",
+      "ss_npt_begin": "2026-11-17T15:45",
+      "ss_npt_end": "2026-11-22T06:10",
+      "pb_npt_begin": "2026-11-17T14:52",
+      "pb_npt_end": "2026-11-22T07:24",
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "nakshatra",
+        "receipt": "Revati ends / Ashwini begins",
+        "published_npt": "2026-11-22T06:03",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_11.json",
+        "band_min": 3,
+        "segment_receipts": [
+          {
+            "receipt": "Dhanishta ends / Shatabhisha begins",
+            "published_npt": "2026-11-18T04:42"
+          },
+          {
+            "receipt": "Shatabhisha ends / Purva Bhadrapada begins",
+            "published_npt": "2026-11-19T06:18"
+          },
+          {
+            "receipt": "Purva Bhadrapada ends / Uttara Bhadrapada begins",
+            "published_npt": "2026-11-20T07:04"
+          },
+          {
+            "receipt": "Uttara Bhadrapada ends / Revati begins",
+            "published_npt": "2026-11-21T06:58"
+          }
+        ],
+        "pin_note": "the panchak end IS the Revati-to-Ashwini boundary the Nov corpus gates; the BhaktiBharat current window (15:45 / 06:09 NPT) and Swarnsiddhi (15:45 / 06:10 NPT) independently print the same window. Nov corpus is an advance crawl - same-day re-verification of Nov 9-14 recommended before release gating."
+      }
+    },
+    {
+      "date": "2026-12-14",
+      "weekday": "Monday",
+      "ss_type": "rajya",
+      "pb_type": "agni",
+      "ss_npt_begin": "2026-12-14T22:50",
+      "ss_npt_end": "2026-12-19T16:13",
+      "pb_npt_begin": "2026-12-15T00:27",
+      "pb_npt_end": "2026-12-19T15:08",
+      "corpus_pin": {
+        "edge": "end",
+        "limb": "nakshatra",
+        "receipt": "Revati ends / Ashwini begins",
+        "published_npt": "2026-12-19T16:06",
+        "source": "bb",
+        "corpus": "lunar_receipts_2026_12.json",
+        "band_min": 3,
+        "segment_receipts": [
+          {
+            "receipt": "Dhanishta ends / Shatabhisha begins",
+            "published_npt": "2026-12-15T12:00"
+          },
+          {
+            "receipt": "Shatabhisha ends / Purva Bhadrapada begins",
+            "published_npt": "2026-12-16T14:09"
+          },
+          {
+            "receipt": "Purva Bhadrapada ends / Uttara Bhadrapada begins",
+            "published_npt": "2026-12-17T15:38"
+          },
+          {
+            "receipt": "Uttara Bhadrapada ends / Revati begins",
+            "published_npt": "2026-12-18T16:17"
+          }
+        ],
+        "pin_note": "the panchak end IS the Revati-to-Ashwini boundary the Dec corpus gates; the begin is the midnight knife-edge window (see caveats) - the engine and Swarnsiddhi both place it Dec 14 NPT, PanchangBodh past midnight. Dec corpus is an advance crawl - same-day re-verification of Dec 1-14 recommended before release gating."
+      }
+    }
+  ]
+}

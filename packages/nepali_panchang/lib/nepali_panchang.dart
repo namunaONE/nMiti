@@ -67,6 +67,15 @@
 /// exposed), and the begins-date convention, all derived from the karana
 /// limb and gated by the 2026 Bhadra receipt corpus (Swarnsiddhi windows,
 /// BhaktiBharat rule text and date lists, corpus-pinned window edges).
+///
+/// R10.1 layer 2 is the Panchak module: the Moon's sidereal 300-360 deg
+/// transit (Dhanishta's last two padas through the end of Revati), about
+/// 4.5 days per window, 13 windows a year, with the weekday-of-begin types
+/// (Rog/Rajya/Agni/Madhyam/Chor/Mrityu; the Wed/Thu naming collision
+/// decoded), the five nakshatra segments per window, and the Dec
+/// midnight knife-edge exposed - gated by the 2026 Panchak receipt corpus
+/// (Swarnsiddhi and PanchangBodh tables, the BhaktiBharat window and date
+/// lists, golden-corpus Revati-end edge pins on the Oct/Nov/Dec windows).
 library;
 
 export 'src/ayanamsa.dart';
@@ -83,6 +92,7 @@ export 'src/masa.dart';
 export 'src/moon.dart';
 export 'src/moonrise.dart';
 export 'src/muhurta.dart';
+export 'src/panchak.dart';
 export 'src/panchang_day.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
