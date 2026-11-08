@@ -29,7 +29,7 @@
     "day_rule": "The darshan day is the first civil evening at or after the local conjunction whose moonset-minus-sunset lag reaches 39.0 minutes (the served constant chandraDarshanMinMoonsetLagMinutes).",
     "threshold_band": "The corpus pins only a band, (37.80, 40.33] minutes: binding rejected New Delhi 2026-06-15 lag 37.80 (drikpanchang prints Jun 16; Kathmandu Jun 15 = 35.78), binding accepted Kathmandu 2027-02-07 lag 40.33 (nepaljyotish prints it). 39.0 sits at the band midpoint, margins 1.20 / 1.33 min; every threshold inside the band reproduces every corpus day-call identically.",
     "linger_altitude_equivalence": "Equivalent within the corpus: accepted evenings carry the Moon at >= 8.4 deg geocentric altitude at sunset, rejected evenings <= 7.4 deg - the classical ~8 deg darshan-amsha lies inside the empty band. The corpus cannot separate the two formulations; the linger is the served rule, the altitude an honesty field.",
-    "conj_day": "A conjunction-day darshan is real: 2026-05-17 (Moon ~15 h old at saait begins, Shukla Pratipada, lag 54.1 min) is printed by nepaljyotish, drikpanchang ('Adhika Chandra Darshana') and BhaktiBharat - the rule is the linger, not the tithi.",
+    "conj_day": "A conjunction-day darshan is real: 2026-05-17 (Moon ~17 h old at saait begins, Shukla Pratipada, lag 54.1 min) is printed by nepaljyotish, drikpanchang ('Adhika Chandra Darshana') and BhaktiBharat - the rule is the linger, not the tithi.",
     "tithi_refuted": "'Dwitiya at sunset' is refuted: 2026-11-10 is Shukla Dwitiya at sunset (elongation 13.4 deg) and is rejected by every source (lag 26.5 min); 2027-02-07 is Pratipada at sunset and accepted (lag 40.3 min)."
   },
   "nepaljyotish_ktm": [

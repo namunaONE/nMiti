@@ -239,13 +239,13 @@ void main() {
 
   test('the conj-day darshan is real; "Dwitiya at sunset" is refuted',
       () {
-    // May 17 2026: conjunction-day darshan (k0), Moon ~15 h old,
+    // May 17 2026: conjunction-day darshan (k0), Moon ~17 h old,
     // Shukla Pratipada, lag 54 min - printed by all three sources.
     final may = windowsNj[1];
     expect(_isoDate(may.darshanDayNpt), '2026-05-17');
     expect(may.dayIndexAfterNewMoon, 0,
         reason: 'the conjunction falls on the darshan day itself');
-    expect(may.moonAgeHoursAtSaaitBegins, inExclusiveRange(14.5, 16.5));
+    expect(may.moonAgeHoursAtSaaitBegins, inExclusiveRange(16.5, 17.5));
     expect(may.tithiAtSaaitBegins, 'Shukla Pratipada');
     expect(may.moonsetLagMinutes, greaterThan(45.0));
     // Nov 10 2026: Shukla Dwitiya at sunset, yet rejected by every
