@@ -443,7 +443,7 @@ PanchakWindow _windowFrom(double t, double sourceDelta) {
     if (idx == 26) break;
     final transition =
         nextLimbBoundaryJdTt('nakshatra', segmentBeginJdTt, sourceDelta);
-    if (!transition.isBefore(endsJdTt)) break;
+    if (transition >= endsJdTt) break;
     segmentBeginJdTt = transition;
   }
 
