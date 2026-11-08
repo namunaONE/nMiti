@@ -209,7 +209,7 @@ PanchangDay panchangFor({
         'VSOP87D sun, hybrid Delta T (SMH2021 spline + USNO tables, Espenak-Meeus long-range); ayanamsa profile delta '
         '${sourceDelta.toStringAsFixed(4)} deg (BhaktiBharat-anchored fit).',
     evidenceTier: 'runtime-computed; calibrated against the locked '
-        'BhaktiBharat/Hamro Patro golden corpora (226 boundary receipts, '
+        'BhaktiBharat/Hamro Patro golden corpora (407 boundary receipts, '
         'see docs/methodology and the accuracy receipts)',
   );
 }
