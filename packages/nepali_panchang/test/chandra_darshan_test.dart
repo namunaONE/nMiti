@@ -224,10 +224,12 @@ void main() {
             longitudeDeg: _delLng),
         isNull,
         reason: 'engine: Oct 2 2027, not drikpanchang\'s Oct 1');
-    final feb = nextChandraDarshanAfter(_npt('2027-02-01T12:00'),
+    final feb = nextChandraDarshanAfter(
+        afterNpt: _npt('2027-02-01T12:00'),
         latitudeDeg: _delLat, longitudeDeg: _delLng);
     expect(_isoDate(feb.darshanDayNpt), '2027-02-07');
-    final oct = nextChandraDarshanAfter(_npt('2027-09-25T12:00'),
+    final oct = nextChandraDarshanAfter(
+        afterNpt: _npt('2027-09-25T12:00'),
         latitudeDeg: _delLat, longitudeDeg: _delLng);
     expect(_isoDate(oct.darshanDayNpt), '2027-10-02');
   });
@@ -268,7 +270,8 @@ void main() {
     expect(chandraDarshanOn(year: 2026, month: 11, day: 8), isNull,
         reason: 'Nov 8 2026 is two days before the darshan');
     expect(chandraDarshanOn(year: 2026, month: 11, day: 10), isNull);
-    final next = nextChandraDarshanAfter(_npt('2026-11-08T18:00'));
+    final next = nextChandraDarshanAfter(
+        afterNpt: _npt('2026-11-08T18:00'));
     expect(_isoDate(next.darshanDayNpt), '2026-11-11');
     final njNov11 = nj.firstWhere((r) => r['date'] == '2026-11-11');
     expect(
