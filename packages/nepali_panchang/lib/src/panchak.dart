@@ -242,13 +242,21 @@ const double _maxMoonRateDegPerDay = 15.5;
 /// Newton iteration - and the two must agree to
 /// [_crossCheckToleranceDays] or the solver throws.
 double _nextPanchakBoundaryJdTt(double jdTtStart, double sourceDelta) {
-  final startIdx = _panchakIndex0(jdTtStart, sourceDelta);
-  final boundaryDeg = startIdx == 0 ? panchakArcDeg : panchakEndLonDeg;
+  // The bracketing and bisection key on WINDOW MEMBERSHIP (angle in
+  // [0, 60)), never on the 60-deg sector index: from outside, the
+  // next sector edge ahead is usually NOT the window edge - only the
+  // 0/360 seam is. (The first CI run of this module bracketed the
+  // 120-deg sector edge from a Jan 1 2026 scan at angle ~102 deg; the
+  // Newton cross-check caught the disagreement and failed closed -
+  // exactly its job.)
+  final startInside = _panchakIndex0(jdTtStart, sourceDelta) == 0;
+  final boundaryDeg = startInside ? panchakArcDeg : panchakEndLonDeg;
   final remainingDeg =
       boundaryDeg - _panchakAngle(jdTtStart, sourceDelta);
+  bool inside(double tt) => _panchakIndex0(tt, sourceDelta) == 0;
   // Linear jump to just before the crossing, then 0.25 d steps.
   var t = jdTtStart + (remainingDeg - 1.0) / _maxMoonRateDegPerDay;
-  while (_panchakIndex0(t, sourceDelta) == startIdx) {
+  while (inside(t) == startInside) {
     t += 0.25;
     if (t - jdTtStart > 30.0) {
       throw StateError(
@@ -258,14 +266,14 @@ double _nextPanchakBoundaryJdTt(double jdTtStart, double sourceDelta) {
   }
   var hi = t;
   var lo = t - 0.25;
-  while (_panchakIndex0(lo, sourceDelta) != startIdx) {
+  while (inside(lo) != startInside) {
     hi = lo;
     lo -= 0.25;
   }
   final newton = _panchakNewtonSolve(sourceDelta, boundaryDeg, lo, hi);
   for (var i = 0; i < 60; i++) {
     final mid = (lo + hi) / 2;
-    if (_panchakIndex0(mid, sourceDelta) == startIdx) {
+    if (inside(mid) == startInside) {
       lo = mid;
     } else {
       hi = mid;
