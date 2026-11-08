@@ -223,10 +223,18 @@ void main() {
     final running = panchakOn(midNov);
     expect(running, isNotNull);
     expect(running!.type, PanchakType.agni);
-    // Half-open: the begin instant is inside, the end instant outside.
+    // Half-open: [begin, end). The served begin instant is the
+    // bisection upper bound, within ~1e-14 d of the true crossing;
+    // the wall clock quantises to 1 us, so probing the exact begin
+    // can round to just outside - the edges are asserted at 1 s.
     final w = engine2026[11];
-    expect(panchakOn(w.beginsAtNpt), isNotNull);
+    expect(panchakOn(w.beginsAtNpt.add(const Duration(seconds: 1))),
+        isNotNull);
+    expect(panchakOn(w.beginsAtNpt.subtract(const Duration(seconds: 1))),
+        isNull);
     expect(panchakOn(w.endsAtNpt), isNull);
+    expect(panchakOn(w.endsAtNpt.subtract(const Duration(seconds: 1))),
+        isNotNull);
     // A running window is skipped: next is the following one.
     final afterMid = nextPanchakAfter(midNov);
     expect(_isoDate(afterMid.beginsDayNpt), '2026-12-14');

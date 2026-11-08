@@ -389,8 +389,10 @@ PanchakWindow? panchakNear({
 
 /// The Panchak window covering [atNpt] (NPT wall clock, UTC fields),
 /// or null when the moment is outside every window - the "today"
-/// query. Half-open semantics: the begin instant is inside, the end
-/// instant is outside.
+/// query. Half-open: the window covers [begin, end) - the end instant
+/// is outside; the begin instant is inside in exact arithmetic (the
+/// served wall clock quantises to 1 us, so the printed begin instant
+/// itself can sit a microsecond short of the true crossing).
 PanchakWindow? panchakOn(
   DateTime atNpt, {
   double sourceDelta = ayanamsaDeltaBhaktiBharat,
