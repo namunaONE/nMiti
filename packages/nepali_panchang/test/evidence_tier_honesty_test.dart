@@ -54,7 +54,7 @@ void main() {
         .firstMatch(day.evidenceTier);
     expect(match, isNotNull,
         reason: 'the served evidenceTier no longer states a '
-            'boundary-receipt count: \undefined');
+            'boundary-receipt count: ${day.evidenceTier}');
     final stated = int.parse(match!.group(1)!);
     expect(stated, total,
         reason: 'the served evidenceTier states $stated boundary receipts '
