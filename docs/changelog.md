@@ -2,6 +2,14 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.1 ritual layer 1 display: Bhadra windows at the site/API layer (HYA-441)
+
+- today.json gains an additive `bhadra` block: the Bhadra (Vishti karana) window touching today (a late-evening begin spans two civil days, so the query unions `bhadraNear` over day−1/day/day+1 and deduplicates by begins instant), `bhadra_active` at the build instant, and the next window — every entry serves both mukha/puchha rule families (ghati primary, fraction exposed, neither absorbed) with the loka (moon-rashi) segments. Every key always serializes, so the contract markers are date-stable on Bhadra days and quiet days alike.
+- New page `bhadra.html`: today's window, the next Bhadra, a 62-day upcoming table, the canonical rashi→loka table with its named contiguous variant (disagreements flagged, never silently resolved), the full conventions map, and the receipts. Wired into both navs, sitemap, llms.txt, the data.html API description and the deploy smoke 200-list.
+- Site contract: `bhadra.html` markers (five section ids + Swarga/Prithvi/Patala/Vishti) and today.json `bhadra`/`bhadra_active`/`mukha`/`puchha` markers enforced pre-merge and post-deploy.
+- Honesty fix in passing: the panchang.html accuracy line still said "226 boundary receipts" after the corpora grew to 407 — the page text no longer pins any count; the one authoritative count lives in the served `evidence_tier` string, which the 2026-11-08 honesty gate now derives from the fixtures in CI.
+- No engine, fixture or receipt changes — this layer renders the shipped R10.1 Bhadra engine module only.
+
 ## [Unreleased] — evidence-tier receipt-count honesty gate (2026-11-08 audit)
 
 - The served panchang `evidenceTier` honesty field stated "226 boundary receipts" long after the locked golden corpora grew to 407 (Oct 109 + Nov 117 + Dec 181; the Dec advance-crawl corpus landed 2026-11-07). The string in `packages/nepali_panchang/lib/src/panchang_day.dart` now states the true count.

@@ -255,7 +255,7 @@ $flagsHtml
 <ul>
 <li><strong>Engine:</strong> ${d.provenance}</li>
 <li><strong>Evidence:</strong> ${d.evidenceTier}</li>
-<li><strong>Accuracy:</strong> minute-level parity with the locked BhaktiBharat and Hamro Patro golden corpora (226 boundary receipts), enforced by CI on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Accuracy:</strong> minute-level parity with the locked BhaktiBharat and Hamro Patro golden corpora, enforced by CI on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
 <li><strong>Festivals:</strong> served on the <a href="festivals.html">festivals page</a> and in the <code>festivals</code> block of today.json - every day-choosing convention exposed, never silently picked.</li>
 </ul>
 ''';
@@ -514,6 +514,216 @@ $convRows
       'Eclipses for Kathmandu: next grahan, sutak windows, upcoming eclipses and every convention collision - engine-computed, receipt-anchored, never copied.',
       urlBase,
       'grahan.html',
+      body,
+      shortSha);
+}
+
+
+/// R10.1 display state (HYA-441): the Bhadra windows touching the given
+/// NPT civil day. A window that begins late in the evening spans two
+/// civil days, so the query unions bhadraNear over the previous, current
+/// and next civil day and deduplicates by begins instant. The date-label
+/// convention (the NPT civil day the window begins) is the engine's own
+/// named convention, restated in the block note.
+class _BhadraDayState {
+  final List<BhadraWindow> touching;
+  const _BhadraDayState(this.touching);
+}
+
+_BhadraDayState _bhadraDayState(DateTime todayAd) {
+  final dayStart = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final dayEnd = dayStart.add(const Duration(days: 1));
+  final seen = <String>{};
+  final touching = <BhadraWindow>[];
+  for (final delta in [-1, 0, 1]) {
+    final d = dayStart.add(Duration(days: delta));
+    final w = bhadraNear(year: d.year, month: d.month, day: d.day);
+    if (w == null) continue;
+    if (!seen.add(w.beginsAtNpt.toIso8601String())) continue;
+    if (w.beginsAtNpt.isBefore(dayEnd) && w.endsAtNpt.isAfter(dayStart)) {
+      touching.add(w);
+    }
+  }
+  return _BhadraDayState(touching);
+}
+
+/// One Bhadra window as a JSON object body. Every key is always emitted
+/// (both mukha/puchha rule families, neither absorbed) so the site
+/// contract markers stay date-stable on Bhadra days and quiet days
+/// alike.
+String _bhadraWindowJson(String ind, BhadraWindow w) {
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  final segs = [
+    for (final s in w.lokaSegments)
+      '{"begins_at": "${isoNpt(s.beginsAtNpt)}", "rasi": ${s.rasi}, '
+      '"rasi_name": "${bhadraRasiNames[s.rasi - 1]}", '
+      '"loka": "${s.loka.name}"}'
+  ].join(',\n$ind  ');
+  return [
+    '$ind"begins_at": "${isoNpt(w.beginsAtNpt)}",',
+    '$ind"ends_at": "${isoNpt(w.endsAtNpt)}",',
+    '$ind"date_iso": "${_iso(w.beginsAtNpt)}",',
+    '$ind"karana_number": ${w.karanaNumber},',
+    '$ind"tithi": "${tithiName(w.tithiIndex)}",',
+    '$ind"tithi_half": "${w.firstHalfOfTithi ? 'first' : 'second'}",',
+    '$ind"duration_minutes": ${w.durationNpt.inMinutes},',
+    '$ind"mukha": {"rule": "ghati", "begins_at": "${isoNpt(w.beginsAtNpt)}", "ends_at": "${isoNpt(w.mukhaEndsAtNpt)}"},',
+    '$ind"puchha": {"rule": "ghati", "begins_at": "${isoNpt(w.puchhaBeginsAtNpt)}", "ends_at": "${isoNpt(w.endsAtNpt)}"},',
+    '$ind"mukha_fraction": {"rule": "fraction", "begins_at": "${isoNpt(w.beginsAtNpt)}", "ends_at": "${isoNpt(w.mukhaEndsAtNptFractional)}"},',
+    '$ind"puchha_fraction": {"rule": "fraction", "begins_at": "${isoNpt(w.puchhaBeginsAtNptFractional)}", "ends_at": "${isoNpt(w.endsAtNpt)}"},',
+    '$ind"loka_segments": [\n$ind  $segs\n$ind],',
+    '$ind"evidence_tier": "${w.evidenceTier}"',
+  ].join('\n');
+}
+
+/// The bhadra block of today.json (R10.1, HYA-441). The keys - "bhadra",
+/// "today", "bhadra_active", "next" - always serialize on every build,
+/// so the site contract markers are date-stable on Bhadra days and on
+/// quiet days alike.
+String _bhadraBlock(DateTime todayAd, String urlBase) {
+  final state = _bhadraDayState(todayAd);
+  final nowNpt = DateTime.now().toUtc().add(nepalTimeOffset);
+  final next = nextBhadraAfter(nowNpt);
+  final today = state.touching.isEmpty ? null : state.touching.first;
+  var active = false;
+  if (today != null &&
+      !today.beginsAtNpt.isAfter(nowNpt) &&
+      nowNpt.isBefore(today.endsAtNpt)) {
+    active = true;
+  }
+  final todayJson = today == null
+      ? 'null'
+      : '{\n${_bhadraWindowJson('      ', today)}\n    }';
+  final nextJson = '{\n${_bhadraWindowJson('      ', next)}\n    }';
+  return '{\n'
+      '    "note": "engine-computed at build time; the window is the Vishti karana half-tithi itself - the Bhadra date is the NPT civil day the window begins",\n'
+      '    "today": $todayJson,\n'
+      '    "bhadra_active": $active,\n'
+      '    "next": $nextJson,\n'
+      '    "provenance": "${next.provenance}",\n'
+      '    "evidence_tier": "${next.evidenceTier}",\n'
+      '    "details": "${urlBase}bhadra.html"\n'
+      '  }';
+}
+
+/// The /bhadra page (R10.1, HYA-441): today's Bhadra state, the next
+/// window, the upcoming windows, the rashi-to-loka table with its named
+/// contiguous variant, and the full conventions map - receipt-anchored,
+/// every collision exposed, never silently picked.
+String _bhadraPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final state = _bhadraDayState(todayAd);
+  final today = state.touching.isEmpty ? null : state.touching.first;
+  final nowNpt = DateTime.now().toUtc().add(nepalTimeOffset);
+  final next = nextBhadraAfter(nowNpt);
+  final dayStart = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final upcoming = bhadraWindows(
+      start: dayStart, end: dayStart.add(const Duration(days: 62)));
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String dt(DateTime t) => '${_iso(t)} ${hm(t)} NPT';
+  String segList(BhadraWindow w) => [
+        for (final s in w.lokaSegments)
+          '${bhadraRasiNames[s.rasi - 1]} (${s.loka.name}) from ${hm(s.beginsAtNpt)}'
+      ].join(', ');
+  final String todayCard;
+  if (today == null) {
+    todayCard = '<p>No Bhadra window touches today.</p>';
+  } else {
+    final activeNow = !today.beginsAtNpt.isAfter(nowNpt) &&
+        nowNpt.isBefore(today.endsAtNpt);
+    todayCard = [
+      '<p><strong>भद्रा · Bhadra touches today</strong> - active at this build: ${activeNow ? 'yes' : 'no'}.</p>',
+      '<ul>',
+      '<li><strong>आरम्भ · Begins:</strong> ${dt(today.beginsAtNpt)}</li>',
+      '<li><strong>अन्त्य · Ends:</strong> ${dt(today.endsAtNpt)}</li>',
+      '<li><strong>तिथि · Tithi:</strong> ${tithiName(today.tithiIndex)}, ${today.firstHalfOfTithi ? 'first' : 'second'} half (Vishti karana no. ${today.karanaNumber})</li>',
+      '<li><strong>लोक · Loka:</strong> ${segList(today)}</li>',
+      '</ul>',
+    ].join('\n');
+  }
+  final nextCard = [
+    '<p>The next Bhadra window runs on the <strong>${tithiName(next.tithiIndex)}</strong> - ${next.firstHalfOfTithi ? 'first' : 'second'} half (Vishti karana no. ${next.karanaNumber}).</p>',
+    '<ul>',
+    '<li><strong>मिति · Date (begins):</strong> ${_iso(next.beginsAtNpt)}</li>',
+    '<li><strong>आरम्भ · Begins:</strong> ${dt(next.beginsAtNpt)} · <strong>अन्त्य · Ends:</strong> ${dt(next.endsAtNpt)} (${next.durationNpt.inMinutes} min)</li>',
+    '<li><strong>मुख · Mukha (ghati rule, discarded):</strong> ${dt(next.beginsAtNpt)} to ${dt(next.mukhaEndsAtNpt)}</li>',
+    '<li><strong>पुच्छा · Puchha (ghati rule, auspicious):</strong> ${dt(next.puchhaBeginsAtNpt)} to ${dt(next.endsAtNpt)}</li>',
+    '<li><strong>लोक · Loka:</strong> ${segList(next)}</li>',
+    '</ul>',
+  ].join('\n');
+  final upcomingRows = [
+    for (final w in upcoming)
+      '<tr><td>${_iso(w.beginsAtNpt)}</td>'
+      '<td>${hm(w.beginsAtNpt)}-${hm(w.endsAtNpt)}</td>'
+      '<td>${tithiName(w.tithiIndex)} (${w.firstHalfOfTithi ? 'first' : 'second'} half)</td>'
+      '<td>${segList(w)}</td></tr>'
+  ].join('\n');
+  final lokaRows = [
+    for (var r = 1; r <= 12; r++)
+      '<tr><td>${bhadraRasiNames[r - 1]}</td>'
+      '<td>${bhadraLokaByRasi[r]!.name}</td>'
+      '<td>${bhadraLokaByRasiContiguousVariant[r]!.name}${bhadraLokaByRasi[r]! == bhadraLokaByRasiContiguousVariant[r]! ? '' : ' (disagrees)'}</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'identity': 'Identity',
+    'window_frame': 'Window frame',
+    'date_label': 'Date label',
+    'mukha_puchha_primary': 'Mukha / Puchha (ghati rule, primary)',
+    'mukha_puchha_fraction': 'Mukha / Puchha (fraction rule)',
+    'loka_canonical': 'Loka (canonical table)',
+    'loka_variant': 'Loka (contiguous variant)',
+    'unreconciled_source': 'Unreconciled source',
+  };
+  final convRows = [
+    for (final k in convLabels.keys)
+      '<tr><td>${convLabels[k]}</td><td>${bhadraConventions[k] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Bhadra <span lang="ne">· भद्रा</span></h1>
+<p>Bhadra is the Vishti karana - the inauspicious half-tithi that recurs eight times per lunar month, computed here from the karana limb the engine already serves (the same sector boundaries the locked golden corpora pin to the minute). The window is a global instant pair; Indian pages print the same moments in IST (NPT minus 15 minutes). The first part of a window is the <strong>mukha</strong> (discarded) and the last part the <strong>puchha</strong> (auspicious); two published rule families exist and both are computed, neither absorbed.</p>
+
+<h2 id="bhadra-today">आज · Today</h2>
+$todayCard
+
+<h2 id="bhadra-next">अर्को भद्रा · Next Bhadra</h2>
+$nextCard
+
+<h2 id="bhadra-upcoming">आउँदै भद्रा · Upcoming windows</h2>
+<p>Every window beginning in the next 62 days.</p>
+<table>
+<tr><th>Begins (AD)</th><th>Window (NPT)</th><th>Tithi half</th><th>Loka path</th></tr>
+$upcomingRows
+</table>
+
+<h2 id="bhadra-loka">लोक तालिका · The rashi-to-loka table</h2>
+<p>The moon's rashi during the window maps to the abode Swarga, Prithvi or Patala. The canonical table (BhaktiBharat, PanchangBodh and the Swarnsiddhi live windows agree) is served; the contiguous-arc variant (bhaktivoice) is shown beside it with disagreements flagged - never silently resolved.</p>
+<table>
+<tr><th>Rashi</th><th>Canonical loka</th><th>Contiguous variant</th></tr>
+$lokaRows
+</table>
+
+<h2 id="bhadra-conventions">नियम · Conventions</h2>
+<p>Every rule below is receipt-anchored; where publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="bhadra-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${next.provenance}</li>
+<li><strong>Evidence:</strong> ${next.evidenceTier}</li>
+<li><strong>Verification:</strong> the window edges are karana-limb boundaries, pinned to the minute by the locked BhaktiBharat and Hamro Patro golden corpora and band-checked against Swiss Ephemeris in CI; the dedicated Bhadra gate (<code>bhadra_test.dart</code>) runs on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/bhadra_receipts_2026.json">bhadra_receipts_2026.json</a> - the Swarnsiddhi windows, BhaktiBharat rule text and date lists, with the golden-corpus edge pins and the bhaktivoice caveat.</li>
+<li><strong>Machine-readable:</strong> the <a href="${urlBase}api/v1/today.json">today.json</a> <code>bhadra</code> block carries the window touching today, the active flag and the next window with both rule families.</li>
+</ul>
+''';
+  return _docShell(
+      'Bhadra (Vishti karana windows)',
+      'Nepal Bhadra windows from the nMiti engine: today window, the mukha/puchha spans under both published rules, the loka table and the next Bhadra - receipt-anchored, never copied.',
+      urlBase,
+      'bhadra.html',
       body,
       shortSha);
 }
