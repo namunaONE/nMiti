@@ -38,7 +38,7 @@ import 'sunset.dart';
 /// an honesty field.
 ///
 /// The rule is the LINGER, not a tithi. A conjunction-day darshan is
-/// real - May 17 2026 (Moon 15-17 h old at saait begins, Shukla
+/// real - May 17 2026 (Moon ~15 h old at saait begins, Shukla
 /// Pratipada, lag 54 min) is printed by nepaljyotish, drikpanchang
 /// ('Adhika Chandra Darshana') and BhaktiBharat alike - while
 /// 'Dwitiya at sunset' is REFUTED: Nov 10 2026 is Shukla Dwitiya at
@@ -80,7 +80,7 @@ const Map<String, String> chandraDarshanConventions = {
   'linger_altitude_equivalence':
       "Equivalent within the corpus: accepted evenings carry the Moon at >= 8.4 deg geocentric altitude at sunset, rejected evenings <= 7.4 deg - the classical ~8 deg darshan-amsha. The corpus cannot separate the two; the 39-minute linger is the served rule, the altitude an honesty field.",
   'conj_day':
-      "A conjunction-day darshan is real: May 17 2026 (Moon 15-17 h old at saait begins, Shukla Pratipada, lag 54 min) is printed by nepaljyotish, drikpanchang (as 'Adhika Chandra Darshana') and BhaktiBharat - the rule is the linger, not the tithi.",
+      "A conjunction-day darshan is real: May 17 2026 (Moon ~15 h old at saait begins, Shukla Pratipada, lag 54 min) is printed by nepaljyotish, drikpanchang (as 'Adhika Chandra Darshana') and BhaktiBharat - the rule is the linger, not the tithi.",
   'tithi_refuted':
       "'Dwitiya at sunset' is refuted: Nov 10 2026 is Shukla Dwitiya at sunset (elongation 13.4 deg) and is rejected by every source (lag 26.5 min); Feb 7 2027 is Pratipada at sunset and accepted (lag 40.3 min).",
   'drik_divergence':

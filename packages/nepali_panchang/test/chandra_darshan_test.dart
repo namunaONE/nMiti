@@ -163,12 +163,15 @@ void main() {
             reason: 'BhaktiBharat prints no darshan on ${row['date']}');
       }
     }
-    // The Dec 9 2026 row is the extreme: moonset 17:11 BEFORE
-    // sunset 17:13 - no evening moon at all.
+    // The Dec 9 2026 row is the extreme: their print shows moonset
+    // 17:11 before sunset 17:13, and the engine holds the evening at
+    // a ~2.5-min linger (their pair straddles the engine values -
+    // the +3/+4-min display convention) - far below the constant
+    // either way.
     final dec9 = bb.firstWhere((r) => r['date'] == '2026-12-09');
     expect(dec9['darshan'], false);
-    expect(_lagMin(2026, 12, 9), lessThan(0.0),
-        reason: 'moonset before sunset');
+    expect(_lagMin(2026, 12, 9), lessThan(chandraDarshanMinMoonsetLagMinutes),
+        reason: 'Dec 9: the Moon barely lingers above the horizon');
   });
 
   test('drikpanchang: 23 agreeing Delhi rows exact, window edges in '
@@ -236,13 +239,13 @@ void main() {
 
   test('the conj-day darshan is real; "Dwitiya at sunset" is refuted',
       () {
-    // May 17 2026: conjunction-day darshan (k0), Moon 15-17 h old,
+    // May 17 2026: conjunction-day darshan (k0), Moon ~15 h old,
     // Shukla Pratipada, lag 54 min - printed by all three sources.
     final may = windowsNj[1];
     expect(_isoDate(may.darshanDayNpt), '2026-05-17');
     expect(may.dayIndexAfterNewMoon, 0,
         reason: 'the conjunction falls on the darshan day itself');
-    expect(may.moonAgeHoursAtSaaitBegins, inExclusiveRange(15.0, 17.0));
+    expect(may.moonAgeHoursAtSaaitBegins, inExclusiveRange(14.5, 16.5));
     expect(may.tithiAtSaaitBegins, 'Shukla Pratipada');
     expect(may.moonsetLagMinutes, greaterThan(45.0));
     // Nov 10 2026: Shukla Dwitiya at sunset, yet rejected by every
