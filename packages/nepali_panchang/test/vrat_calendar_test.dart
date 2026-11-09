@@ -389,7 +389,7 @@ void main() {
           'corroboration',
           'location',
         ]));
-    expect(vratConventions['ekadashi_rule'], contains('madhyahna'));
+    expect(vratConventions['ekadashi_rule'], contains('Madhyahna-vyapini'));
     expect(vratConventions['sankashti_rule'], contains('chandrodaya'));
     expect(vratConventions['ist_convention_divergence'],
         allOf(contains('Rama'), contains('Mokshada'), contains('Vijaya')));
