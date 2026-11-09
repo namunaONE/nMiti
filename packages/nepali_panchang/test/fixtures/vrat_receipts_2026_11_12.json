@@ -1,0 +1,92 @@
+{
+  "schema": "nmiti-vrat-receipts/1",
+  "crawl_date": "2026-11-09",
+  "crawl_note": "Frozen Nov 9 2026 (UTC): Hamro Patro Mangsir panel pages (Nov 17 - Dec 7 2026), BhaktiBharat Kathmandu panchang (Nov 2026 + Dec 2026 grids), the astrologger.com New Delhi vrat tables (IST), and the bhaktiras.com 2026 sankashti list. Every tithi edge below is cross-locked with the golden lunar corpora (lunar_receipts_2026_11, lunar_receipts_2026_12) wherever the windows overlap. No fresh crawl may edit this file.",
+  "location": {
+    "name": "Kathmandu",
+    "lat": 27.7172,
+    "lon": 85.324,
+    "tz_offset_min": 345,
+    "tz_name": "NPT (UTC+05:45)"
+  },
+  "sources": {
+    "hp": "hamropatro.com daily panchang, Kathmandu - named vrat labels, udaya tithi chain, samapti fields and the Nepal Sambat line; minute-precision prints.",
+    "bb": "BhaktiBharat daily panchang, Kathmandu - tithi begins/ends and moonrise; minute-precision prints.",
+    "ist_astrologger": "astrologger.com vrat tables for New Delhi - tithi begins/ends and pradosh kaal columns in IST (tz_offset_min 330; NPT = IST + 15 min on the clock).",
+    "bhaktiras": "bhaktiras.com 2026 sankashti chaturthi list - day identities only (no times)."
+  },
+  "rules": {
+    "ekadashi": "madhyahna-vyapini, both pakshas (24/yr): the LAST civil day whose NOON (12:00 NPT) falls inside the Ekadashi run; fallback the begin day. Discriminating receipt: Haribodhini Ekadashi printed 2026-11-20 though the tithi begins 07:31 NPT, after the sunrise (a strict udaya rule would print Nov 21).",
+    "pradosham": "trayodashi vyapta at SUNSET (pradosh kala = sunset -45 to +45 min), both pakshas (24/yr): the day whose sunset falls inside the Trayodashi run; fallback the begin day.",
+    "sankashti_chaturthi": "chandrodaya-vyapti: the day whose MOONRISE falls inside the Krishna Chaturthi run; fallback the udaya day. Neither HP nor BB prints a sankashti label (recorded absence) - the day is derived from their own tithi windows plus the BB moonrise and corroborated by the bhaktiras list.",
+    "purnima_amavasya": "the udaya day; vriddhi -> the FIRST udaya day (receipt: Kushmand Navami 2026-11-18, first of two).",
+    "borderline": "run edge within 30 min of a reference instant, two reference instants in one run, a fallback day, or (ekadashi) udaya divergence - convention-sensitivity, not engine doubt."
+  },
+  "tithi_boundaries": [
+    {"source": "bb", "tithi": "Shukla Ekadashi", "edge": "begins", "npt": "2026-11-20T07:31", "band_min": 1.5},
+    {"source": "bb", "tithi": "Shukla Ekadashi", "edge": "ends", "npt": "2026-11-21T06:47", "band_min": 1.5},
+    {"source": "bb", "tithi": "Shukla Trayodashi", "edge": "begins", "npt": "2026-11-22T05:12", "band_min": 1.5},
+    {"source": "bb", "tithi": "Shukla Trayodashi", "edge": "ends", "npt": "2026-11-23T02:53", "band_min": 1.5},
+    {"source": "bb", "tithi": "Purnima", "edge": "begins", "npt": "2026-11-23T23:58", "band_min": 1.5},
+    {"source": "bb", "tithi": "Purnima", "edge": "ends", "npt": "2026-11-24T20:39", "band_min": 1.5},
+    {"source": "bb", "tithi": "Krishna Chaturthi", "edge": "ends", "npt": "2026-11-28T06:55", "band_min": 1.5, "note": "begins not printed by BB that day (grid gap); the begins edge 2026-11-27T10:13 comes from the HP print"},
+    {"source": "bb", "tithi": "Krishna Ekadashi", "edge": "begins", "npt": "2026-12-03T23:19", "band_min": 1.5},
+    {"source": "bb", "tithi": "Krishna Ekadashi", "edge": "ends", "npt": "2026-12-05T00:00", "band_min": 1.5},
+    {"source": "bb", "tithi": "Krishna Trayodashi", "edge": "begins", "npt": "2026-12-06T01:08", "band_min": 1.5},
+    {"source": "bb", "tithi": "Krishna Trayodashi", "edge": "ends", "npt": "2026-12-07T02:38", "band_min": 1.5},
+    {"source": "bb", "tithi": "Amavasya", "edge": "begins", "npt": "2026-12-08T04:28", "band_min": 1.5},
+    {"source": "bb", "tithi": "Amavasya", "edge": "ends", "npt": "2026-12-09T06:37", "band_min": 1.5},
+    {"source": "hp", "tithi": "Shukla Ekadashi", "edge": "begins", "npt": "2026-11-20T07:31", "band_min": 12},
+    {"source": "hp", "tithi": "Shukla Ekadashi", "edge": "ends", "npt": "2026-11-21T06:48", "band_min": 12},
+    {"source": "hp", "tithi": "Shukla Trayodashi", "edge": "ends", "npt": "2026-11-23T02:56", "band_min": 12},
+    {"source": "hp", "tithi": "Purnima", "edge": "begins", "npt": "2026-11-24T00:04", "band_min": 12},
+    {"source": "hp", "tithi": "Purnima", "edge": "ends", "npt": "2026-11-24T20:47", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Chaturthi", "edge": "begins", "npt": "2026-11-27T10:13", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Chaturthi", "edge": "ends", "npt": "2026-11-28T07:02", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Ekadashi", "edge": "begins", "npt": "2026-12-03T23:20", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Ekadashi", "edge": "ends", "npt": "2026-12-05T00:02", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Trayodashi", "edge": "begins", "npt": "2026-12-06T01:10", "band_min": 12},
+    {"source": "hp", "tithi": "Krishna Trayodashi", "edge": "ends", "npt": "2026-12-07T02:39", "band_min": 12},
+    {"source": "hp", "tithi": "Amavasya", "edge": "begins", "npt": "2026-12-08T04:28", "band_min": 12},
+    {"source": "hp", "tithi": "Amavasya", "edge": "ends", "npt": "2026-12-09T06:35", "band_min": 12},
+    {"source": "ist_astrologger", "tithi": "Shukla Ekadashi", "edge": "begins", "npt": "2026-11-20T07:16", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Shukla Ekadashi", "edge": "ends", "npt": "2026-11-21T06:32", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Shukla Trayodashi", "edge": "begins", "npt": "2026-11-22T04:57", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Shukla Trayodashi", "edge": "ends", "npt": "2026-11-23T02:37", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Krishna Ekadashi", "edge": "begins", "npt": "2026-12-03T23:04", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Krishna Ekadashi", "edge": "ends", "npt": "2026-12-04T23:45", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Krishna Trayodashi", "edge": "begins", "npt": "2026-12-06T00:52", "band_min": 12, "tz_offset_min": 330},
+    {"source": "ist_astrologger", "tithi": "Krishna Trayodashi", "edge": "ends", "npt": "2026-12-07T02:22", "band_min": 12, "tz_offset_min": 330}
+  ],
+  "vrat_days": [
+    {"family": "ekadashi", "date": "2026-11-20", "tithi": "Shukla Ekadashi", "source": "hp_label", "label": "Haribodhini Ekadashi vrat + Tulsi Vivah", "engine_borderline": true, "note": "the tithi begins 07:31 NPT after the sunrise - the madhyahna rule keeps the day Nov 20 where a strict udaya rule would move it to Nov 21"},
+    {"family": "ekadashi", "date": "2026-12-04", "tithi": "Krishna Ekadashi", "source": "hp_label", "label": "Utpanna Ekadashi vrat", "engine_borderline": false},
+    {"family": "ekadashi", "date": "2026-11-20", "tithi": "Shukla Ekadashi", "source": "ist_astrologger", "label": "Prabodhini (Devuthani) Ekadashi", "identity_only": true},
+    {"family": "ekadashi", "date": "2026-12-04", "tithi": "Krishna Ekadashi", "source": "ist_astrologger", "label": "Utpanna Ekadashi", "identity_only": true},
+    {"family": "pradosham", "date": "2026-11-22", "tithi": "Shukla Trayodashi", "source": "hp_label", "label": "Ravi Pradosh vrat", "engine_borderline": false},
+    {"family": "pradosham", "date": "2026-12-06", "tithi": "Krishna Trayodashi", "source": "hp_label", "label": "Ravi Pradosh vrat", "engine_borderline": false},
+    {"family": "pradosham", "date": "2026-11-22", "tithi": "Shukla Trayodashi", "source": "ist_astrologger", "label": "Ravi Pradosh (Sunday)", "identity_only": true},
+    {"family": "pradosham", "date": "2026-12-06", "tithi": "Krishna Trayodashi", "source": "ist_astrologger", "label": "Ravi Pradosh (Sunday)", "identity_only": true},
+    {"family": "sankashti_chaturthi", "date": "2026-11-27", "tithi": "Krishna Chaturthi", "source": "derived", "label": "Sankashti Chaturthi", "engine_borderline": false, "note": "derived: BB moonrise 19:56 NPT falls inside the BB/HP Krishna Chaturthi window (begins 10:13 Nov 27, ends 06:55/07:02 Nov 28); corroborated by the bhaktiras 2026 list; HP and BB print no sankashti label (recorded absence)"},
+    {"family": "sankashti_chaturthi", "date": "2026-12-26", "tithi": "Krishna Chaturthi", "source": "bhaktiras", "label": "Sankashti Chaturthi", "identity_only": true, "note": "knife-edge: the BB chaturthi run ends Dec 26 20:21 and the moonrise lands ~20:20 - the udaya fallback names Dec 26 either way"},
+    {"family": "purnima", "date": "2026-11-24", "tithi": "Purnima", "source": "hp_label", "label": "Sakimana Punhi / Guru Nanak Jayanti / Kartik snan samapti", "engine_borderline": false},
+    {"family": "amavasya", "date": "2026-12-08", "tithi": "Amavasya", "source": "hp_udaya", "label": "Aunsi (udaya)", "engine_borderline": true, "note": "the run ends Dec 9 06:37 NPT, minutes before the Dec 9 sunrise (~06:42) - the udaya membership of Dec 9 flips on minutes, the day stays Dec 8"}
+  ],
+  "supporting_named_vrats": [
+    {"date": "2026-11-17", "tithi": "Shukla Ashtami", "labels": "Bhaumashtami + Gopashtami", "source": "hp", "note": "udaya naming; the ashtami ends ~06:21 Nov 18, minutes before the HP-printed Nov 18 sunrise 06:26 - HP still labels Nov 17"},
+    {"date": "2026-11-18", "tithi": "Shukla Navami", "labels": "Kushmand Navami", "source": "hp", "vriddhi": true, "note": "vriddhi navami: BOTH Nov 18 and Nov 19 sunrises fall inside the same navami run; the convention names the FIRST udaya day, Nov 18"},
+    {"date": "2026-11-23", "tithi": "Shukla Chaturdashi", "labels": "Baikuntha Chaturdashi", "source": "hp"},
+    {"date": "2026-12-01", "tithi": "Krishna Ashtami", "labels": "Bhaumashtami", "source": "hp"},
+    {"date": "2026-12-07", "tithi": "Krishna Chaturdashi", "labels": "Bala Chaturdashi", "source": "hp"}
+  ],
+  "moonrise_receipts": [
+    {"date": "2026-11-27", "npt": "2026-11-27T19:56", "source": "bb", "band_min": 12, "note": "the chandrodaya-vyapti anchor of the Nov 27 sankashti receipt"}
+  ],
+  "caveats": [
+    {"id": "sankashti-label-absence", "text": "Neither Hamro Patro nor BhaktiBharat prints a sankashti chaturthi label on 2026-11-27 - a recorded publisher absence, not an engine doubt: the day is derived from their own printed tithi windows and the BhaktiBharat moonrise, and corroborated by the bhaktiras 2026 sankashti list (Nov 27 included, next Dec 26)."},
+    {"id": "hp-flagged-panel-shift", "text": "In the Nov 19-21 vriddhi stretch Hamro Patro's panel labels ride the begin-day tithi: on 2026-11-20 the panel reads Ekadashi while the Nepal Sambat line reads Dashami (the true udaya chain), and the flagged pages print the flagged tithi START in the samapti field. The vrat rules key on tithi runs, never on panel labels, so the shift cannot leak in."},
+    {"id": "ist-convention-divergence", "text": "The Indian portals name ekadashis by the udaya family: astrologger prints Rama Ekadashi on the udaya day Nov 5 2026 (noon day Nov 4) and Mokshada on the udaya day Dec 20 2026 (no noon inside that run); the Vijaya vriddhi (Mar 4 2027) is named on the second udaya day. The engine madhyahna rule reproduces every in-window receipt (Nov 20, Dec 4 - astrologger agrees on both); the out-of-window udaya rows are recorded, never absorbed."},
+    {"id": "amanta-month-naming", "text": "The receipts confirm amanta month naming: Guru Nanak Jayanti on Kartik Purnima (2026-11-24) and Haribodhini on Kartik Shukla Ekadashi (2026-11-20), both inside amanta Kartika (Nov 10 - Dec 8 2026)."},
+    {"id": "borderline-semantics", "text": "borderline marks convention-sensitivity (a run edge within 30 min of a reference instant, two reference instants in one run, a fallback, or ekadashi udaya divergence), never engine doubt: receipt-verified days exist in both states - the Nov 20 Haribodhini Ekadashi and the Dec 8 Aunsi are borderline, the Nov 22 / Dec 6 Ravi Pradosh, Nov 27 Sankashti, Nov 24 Purnima and Dec 4 Utpanna are not."}
+  ]
+}

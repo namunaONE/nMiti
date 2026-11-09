@@ -107,6 +107,30 @@
 /// min, 6/6 rising-now degrees within 0.19 deg, 12/12 nepaljyotish
 /// interior boundaries within 2.28 min (minute-rounded print), 9/9
 /// PanchangBodh sunrise-sign day-calls exact. Zero divergences.
+///
+/// R10.3 (HYA-441) opens the vrat layer: the recurring vrat days (Sankashti
+/// Chaturthi, Pradosham, Ekadashi both pakshas, Purnima, Amavasya) as a
+/// tithi-run scan over the shipped limb engine - no new astronomy, full
+/// BS range inherited. The day-choosing conventions decoded from the
+/// publishers and exposed per day: ekadashi = madhyahna-vyapini (the LAST
+/// civil day whose noon falls inside the run - the Haribodhini receipt
+/// prints Nov 20 2026 though the tithi begins 07:31 after the sunrise,
+/// where a strict udaya rule would print Nov 21), pradosham = trayodashi
+/// vyapta at sunset (both pakshas, 24 a year, the pradosh kala anchor),
+/// sankashti = chandrodaya-vyapti (the day whose moonrise falls inside
+/// the Krishna Chaturthi run; neither HP nor BB prints the label - a
+/// recorded absence), purnima/amavasya = the udaya day (vriddhi names the
+/// FIRST, the Kushmand Navami receipt), every family with its fallback
+/// and a borderline flag on each convention-sensitive choice (knife-edge
+/// run edges within 30 min of a reference instant, two-reference runs,
+/// ekadashi udaya divergence; the Dec 8 2026 Aunsi ends 5 min before the
+/// Dec 9 sunrise), the IST udaya-family ekadashi divergence (Rama,
+/// Mokshada, Vijaya) recorded and never absorbed - gated by the
+/// 2026-11-09 vrat receipt corpus (34 BB/HP/IST tithi edges cross-locked
+/// with the golden lunar corpora, 12 day identities incl. both Ravi
+/// Pradosh Sundays and the bhaktiras sankashti list, 5 supporting
+/// named-vrat udaya receipts, the BhaktiBharat moonrise anchor): zero
+/// divergences across the corpus.
 library;
 
 export 'src/ayanamsa.dart';
@@ -133,3 +157,4 @@ export 'src/sun.dart';
 export 'src/sunrise.dart';
 export 'src/sunset.dart';
 export 'src/uncertainty.dart';
+export 'src/vrat_calendar.dart';
