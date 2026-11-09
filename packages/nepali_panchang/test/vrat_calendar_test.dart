@@ -86,6 +86,31 @@ void main() {
       (fx['moonrise_receipts'] as List).cast<Map<String, dynamic>>();
   final caveats = (fx['caveats'] as List).cast<Map<String, dynamic>>();
 
+  test('DIAG year grid counts (temporary)', () {
+    final days = vratDays(
+        startNpt: DateTime.utc(2026, 4, 15),
+        endNpt: DateTime.utc(2027, 4, 14, 23, 59));
+    final counts = <String, int>{};
+    for (final d in days) {
+      counts[d.familyName] = (counts[d.familyName] ?? 0) + 1;
+    }
+    final bl = days.where((d) => d.borderline).length;
+    final dec = vratDays(
+        startNpt: DateTime.utc(2026, 12, 20),
+        endNpt: DateTime.utc(2026, 12, 31, 23, 59));
+    String t(DateTime x) =>
+        '${x.month.toString().padLeft(2, '0')}-${x.day.toString().padLeft(2, '0')}T${x.hour.toString().padLeft(2, '0')}:${x.minute.toString().padLeft(2, '0')}';
+    final decStr = dec
+        .map((d) =>
+            '${d.dateNpt.month}-${d.dateNpt.day}${d.familyName[0]}:ref=${t(d.referenceInstantNpt)}:${d.borderline ? d.borderlineReason : '-'}')
+        .join(' | ');
+    final s26 = dec.firstWhere((d) => d.family == VratFamily.sankashtiChaturthi);
+    expect(true, isFalse,
+        reason: 'DIAG total=${days.length} BL=$bl counts=$counts '
+        'S26run=${t(s26.tithiBeginsNpt)}>${t(s26.tithiEndsNpt)} '
+        'S26ref=${t(s26.referenceInstantNpt)} '
+        'S26bl=${s26.borderline}:${s26.borderlineReason} DEC [$decStr]');
+  });
   test('schema and corpus shape', () {
     expect(fx['schema'], 'nmiti-vrat-receipts/1');
     expect(fx['crawl_date'], '2026-11-09');
