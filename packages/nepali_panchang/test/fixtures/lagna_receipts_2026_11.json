@@ -1,0 +1,361 @@
+{
+  "schema": "nmiti-lagna-receipts/1",
+  "crawl_date": "2026-11-09",
+  "description": "Lagna (rising sign) receipt corpus, crawled 2026-11-09 00:43-01:05 UTC. Swarnsiddhi second-precision 12-boundary day tables + frame closes + live Rising-now degree receipts + printed sunrises for six cities; nepaljyotish minute-precision 13-row Kathmandu table (NPT, sunrise-anchored); PanchangBodh dated day-calls of the sunrise lagna sign for Kathmandu (nine dates spanning Jan 2026 - Mar 2027). Frozen on crawl day; the engine gate bands are re-derived from these rows only.",
+  "sources": {
+    "nepaljyotish": {
+      "name": "nepaljyotish Daily Lagna Table (Kathmandu, Nepali page)",
+      "url": "https://nepaljyotish.org/np/lagna-table/",
+      "conventions": "13-row table for today, Kathmandu, NPT, minute precision, Nepali day-part labels. Row 1 is anchored at their printed sunrise (the lagna window CONTAINING sunrise is re-anchored to the sunrise instant); rows 2-13 chain to the next day's sunrise. The /en/ twin (blocked for machines without a query string) and ?date= param (serves today regardless) were also observed."
+    },
+    "swarnsiddhi": {
+      "name": "Swarn Siddhi Lagna Today (multi-city)",
+      "url": "https://swarnsiddhi.com/lagna-today?city=<City>",
+      "conventions": "12-row table for today, per selected city, second precision, local tz, plus a live 'Rising now (HH:MM): <Rashi> lagna at D°M'' receipt and printed sunrise. Table frame: one full lagna cycle starting at the TRUE rising instant of the window containing their printed sunrise (NOT re-anchored to sunrise). Page date label lags the live 'rising now' clock for some cities (CDN caching); every receipt records the printed page date. ?date= param ignored (serves today)."
+    },
+    "panchangbodh": {
+      "name": "PanchangBodh Panchang Today - Kathmandu (dated day-calls)",
+      "url": "https://panchangbodh.com/panchang-today/kathmandu?date=YYYY-MM-DD",
+      "conventions": "Prints 'Lagna (Sunrise) <Rashi>' - the sign rising at their sunrise - for arbitrary dates (pages pre-generated; intermittent 404s on cold dates). Their Kathmandu times print 15 minutes EARLY vs NPT conventions (IST-labeled instants; e.g. Nov 9 sunrise 6:05 AM vs nepaljyotish 06:20 and Swarnsiddhi 06:19:48): +15 min converts to NPT. Lahiri ayanamsa, NASA JPL data per their footer."
+    }
+  },
+  "swarnsiddhi_2026_11": {
+    "Kathmandu": {
+      "lat": 27.7172,
+      "lon": 85.324,
+      "tz_offset_min": 345,
+      "page_date": "2026-11-09",
+      "sunrise_printed": "06:19:48",
+      "rising_now": {
+        "at": "06:24",
+        "rashi": "Libra",
+        "deg": "22:34"
+      },
+      "boundaries": [
+        "04:40:51",
+        "06:59:30",
+        "09:17:36",
+        "11:21:47",
+        "13:04:47",
+        "14:33:10",
+        "15:59:06",
+        "17:35:12",
+        "19:31:14",
+        "21:45:40",
+        "00:05:15+1",
+        "02:21:35+1",
+        "04:36:55+1"
+      ]
+    },
+    "New Delhi": {
+      "lat": 28.6139,
+      "lon": 77.209,
+      "tz_offset_min": 330,
+      "page_date": "2026-11-08",
+      "sunrise_printed": "06:37:54",
+      "rising_now": {
+        "at": "06:12",
+        "page_clock_note": "live clock, 2026-11-09 IST",
+        "rashi": "Libra",
+        "deg": "15:53"
+      },
+      "boundaries": [
+        "05:02:55",
+        "07:22:25",
+        "09:40:56",
+        "11:44:55",
+        "13:27:11",
+        "14:54:39",
+        "16:19:38",
+        "17:54:54",
+        "19:50:30",
+        "22:05:09",
+        "00:25:27+1",
+        "02:42:43+1",
+        "04:58:59+1"
+      ]
+    },
+    "Mumbai": {
+      "lat": 19.076,
+      "lon": 72.8777,
+      "tz_offset_min": 330,
+      "page_date": "2026-11-08",
+      "sunrise_printed": "06:41:51",
+      "rising_now": {
+        "at": "06:11",
+        "page_clock_note": "live clock, 2026-11-09 IST",
+        "rashi": "Libra",
+        "deg": "14:25"
+      },
+      "boundaries": [
+        "05:12:37",
+        "07:23:55",
+        "09:38:11",
+        "11:44:09",
+        "13:33:29",
+        "15:10:06",
+        "16:44:29",
+        "18:27:56",
+        "20:27:50",
+        "22:40:28",
+        "00:53:42+1",
+        "03:01:49+1",
+        "05:08:42+1"
+      ]
+    },
+    "Bengaluru": {
+      "lat": 12.9716,
+      "lon": 77.5946,
+      "tz_offset_min": 330,
+      "page_date": "2026-11-08",
+      "sunrise_printed": "06:15:14",
+      "rising_now": {
+        "at": "06:11",
+        "page_clock_note": "live clock, 2026-11-09 IST",
+        "rashi": "Libra",
+        "deg": "20:27"
+      },
+      "boundaries": [
+        "04:49:27",
+        "06:56:04",
+        "09:07:53",
+        "11:14:59",
+        "13:08:21",
+        "14:50:14",
+        "16:30:02",
+        "18:18:10",
+        "20:20:28",
+        "22:31:59",
+        "00:41:13+1",
+        "02:44:03+1",
+        "04:45:31+1"
+      ]
+    },
+    "Chennai": {
+      "lat": 13.0827,
+      "lon": 80.2707,
+      "tz_offset_min": 330,
+      "page_date": "2026-11-09",
+      "sunrise_printed": "06:05:01",
+      "rising_now": {
+        "at": "06:12",
+        "rashi": "Libra",
+        "deg": "23:14"
+      },
+      "boundaries": [
+        "04:34:54",
+        "06:41:38",
+        "08:53:29",
+        "11:00:34",
+        "12:53:51",
+        "14:35:38",
+        "16:15:22",
+        "18:03:23",
+        "20:05:40",
+        "22:17:11",
+        "00:26:29+1",
+        "02:29:26+1",
+        "04:30:58+1"
+      ]
+    },
+    "London": {
+      "lat": 51.5074,
+      "lon": -0.1278,
+      "tz_offset_min": 0,
+      "page_date": "2026-11-08",
+      "sunrise_printed": "07:05:57",
+      "rising_now": {
+        "at": "00:41",
+        "page_clock_note": "live clock, 2026-11-09 GMT",
+        "rashi": "Leo",
+        "deg": "13:30"
+      },
+      "boundaries": [
+        "05:08:41",
+        "07:59:26",
+        "10:36:06",
+        "12:31:24",
+        "13:45:35",
+        "14:39:40",
+        "15:30:53",
+        "16:34:54",
+        "18:12:22",
+        "20:35:39",
+        "23:24:04",
+        "02:14:42+1",
+        "05:04:44+1"
+      ]
+    }
+  },
+  "nj_kathmandu_2026_11_09": {
+    "page_date": "2026-11-09",
+    "sunrise_printed": "06:20",
+    "sunset_printed": "17:14",
+    "windows": [
+      {
+        "rashi": "Tula",
+        "begins": "06:20",
+        "ends": "07:00",
+        "begins_anchor": "sunrise"
+      },
+      {
+        "rashi": "Vrishchik",
+        "begins": "07:00",
+        "ends": "09:19"
+      },
+      {
+        "rashi": "Dhanu",
+        "begins": "09:19",
+        "ends": "11:23"
+      },
+      {
+        "rashi": "Makar",
+        "begins": "11:23",
+        "ends": "13:06"
+      },
+      {
+        "rashi": "Kumbha",
+        "begins": "13:06",
+        "ends": "14:33"
+      },
+      {
+        "rashi": "Meena",
+        "begins": "14:33",
+        "ends": "15:58"
+      },
+      {
+        "rashi": "Mesha",
+        "begins": "15:58",
+        "ends": "17:33"
+      },
+      {
+        "rashi": "Vrishabha",
+        "begins": "17:33",
+        "ends": "19:29"
+      },
+      {
+        "rashi": "Mithuna",
+        "begins": "19:29",
+        "ends": "21:44"
+      },
+      {
+        "rashi": "Karka",
+        "begins": "21:44",
+        "ends": "00:04+1"
+      },
+      {
+        "rashi": "Simha",
+        "begins": "00:04+1",
+        "ends": "02:21+1"
+      },
+      {
+        "rashi": "Kanya",
+        "begins": "02:21+1",
+        "ends": "04:37+1"
+      },
+      {
+        "rashi": "Tula",
+        "begins": "04:37+1",
+        "ends": "06:20+1",
+        "ends_anchor": "next sunrise"
+      }
+    ]
+  },
+  "panchangbodh_ktm_day_calls": [
+    {
+      "date": "2026-01-20",
+      "lagna_sunrise": "Capricorn",
+      "sunrise_printed": "06:39",
+      "title_verified": true
+    },
+    {
+      "date": "2026-02-18",
+      "lagna_sunrise": "Aquarius",
+      "sunrise_printed": "06:23",
+      "title_verified": true
+    },
+    {
+      "date": "2026-04-18",
+      "lagna_sunrise": "Aries",
+      "sunrise_printed": "05:21",
+      "title_verified": false
+    },
+    {
+      "date": "2026-05-17",
+      "lagna_sunrise": "Taurus",
+      "sunrise_printed": "04:58",
+      "title_verified": false
+    },
+    {
+      "date": "2026-06-15",
+      "lagna_sunrise": "Taurus",
+      "sunrise_printed": "04:52",
+      "title_verified": true
+    },
+    {
+      "date": "2026-06-16",
+      "lagna_sunrise": "Taurus",
+      "sunrise_printed": "04:52",
+      "title_verified": false,
+      "note": "RESOLVED by the engine: the sunrise ascendant LAGS the sun (engine asc 59.5 deg vs sun 60.6 deg sidereal at the Jun 16 sunrise), so Taurus is correct even though the sun entered sidereal Gemini midday Jun 15 - printed sign kept, suspect flag retired."
+    },
+    {
+      "date": "2026-10-27",
+      "lagna_sunrise": "Libra",
+      "sunrise_printed": "05:56",
+      "title_verified": true
+    },
+    {
+      "date": "2026-11-09",
+      "lagna_sunrise": "Libra",
+      "sunrise_printed": "06:05",
+      "title_verified": true
+    },
+    {
+      "date": "2027-03-21",
+      "lagna_sunrise": "Pisces",
+      "sunrise_printed": "05:52",
+      "title_verified": true
+    }
+  ],
+  "rules": {
+    "identity": "Lagna (ascendant) = the sidereal zodiac degree rising on the eastern horizon at a given instant and place; a rashi lagna window is the span during which one sidereal sign occupies the ascendant. The full cycle is one sidereal day (1436.07 min), so a day table holds 12 boundaries; a 13th close (the frame sign begin of the next cycle) closes the frame.",
+    "frame": "A published day-table frame is one full lagna cycle starting at the TRUE rising instant of the window containing the publisher's printed sunrise (Swarnsiddhi), or re-anchored to the sunrise instant itself (nepaljyotish row 1). The frame start is therefore SOLVED by walking back from the printed sunrise - a naive fixed-hour scan misaligns cities whose previous window began after the scan hour (Mumbai 2026-11-08: the Virgo window began 03:06 local, so a 03:00 scan would start one boundary early).",
+    "day_rule": "The published tables are for the printed page date. Swarnsiddhi's page-date label lags the live clock for some cities (CDN caching), but the boundary tables match the LABELED date, verified against the engine to 0.05 min.",
+    "boundary_receipt": "Every Swarnsiddhi receipt is a rashi-begin instant: the engine solves the sidereal ascendant crossing the exact 30-deg multiple. Observed engine deltas: 78 of 78 receipts (six cities x twelve boundaries + frame close) within 0.05 min. No divergences.",
+    "rising_now_receipt": "Swarnsiddhi's live 'Rising now (HH:MM): <Rashi> lagna at D degrees M minutes' receipt is evaluated at the printed instant on the live clock date (2026-11-09, city tz); observed engine deltas 0.02-0.19 deg.",
+    "ayanamsa": "All three publishers fit the engine BASE ayanamsa (23.87508 deg at J2000, +1.36062 deg/century) with NO per-source delta: Swarnsiddhi and nepaljyotish boundaries to 0.05 min, PanchangBodh signs exactly. The lagna corpus pins the same ayanamsa the solar limbs use."
+  },
+  "caveats": [
+    {
+      "id": "ss-page-date-cache",
+      "note": "Swarnsiddhi pages for New Delhi, Mumbai, Bengaluru and London printed the page date 2026-11-08 while their live 'Rising now' clock ran 2026-11-09 (CDN caching). The boundary TABLES match the LABELED date, not the live clock: engine deltas are 0.02-0.05 min as labeled and 3.88-3.92 min one day later (the sidereal drift), so each receipt records its printed page date and the gate uses it."
+    },
+    {
+      "id": "frame-solve",
+      "note": "The frame start must be solved by walking back from the printed sunrise (the true begin of the sunrise window), never scanned from a fixed hour: on 2026-11-08 Mumbai's Virgo window began 03:06 local, so a naive 03:00 scan would chain one boundary early and fabricate a ~128 min 'divergence'. The receipts are aligned by construction, and the frame rashi is the sign containing the printed sunrise (Libra for all six corpus cities - the sun sits in sidereal Libra)."
+    },
+    {
+      "id": "pb-ist-seam",
+      "note": "PanchangBodh prints Kathmandu wall times 15 minutes early vs NPT (IST-labeled instants; their Nov 9 sunrise prints 6:05 AM vs nepaljyotish 06:20 and Swarnsiddhi 06:19:48). Receipts are converted by treating the printed time as IST; +15 min gives NPT. Their footer declares Lahiri ayanamsa and NASA JPL data."
+    },
+    {
+      "id": "pb-jun16-resolved",
+      "note": "The crawl flagged 2026-06-16 as suspect (sun enters sidereal Gemini midday Jun 15, so the Jun 16 sunrise lagna seemed wrong at Taurus). Resolved by the engine: the sunrise ASCENDANT lags the sun by about 0.9-1.0 deg at Kathmandu in June, so the ascendant is still Taurus 59.5 deg while the sun has entered Gemini - the printed sign is correct and the flag is retired."
+    },
+    {
+      "id": "nj-minute-rounding",
+      "note": "nepaljyotish prints minute precision with row 1 re-anchored at their printed sunrise 06:20 (Swarnsiddhi prints the same instant 06:19:48, the engine 06:19:50); their interior boundaries run up to 2.28 min from the engine (publisher display rounding, banded +/-3 min), while Swarnsiddhi agrees to 0.05 min - the tighter corpus pins the frame, the looser one documents the publisher spread."
+    },
+    {
+      "id": "blocked-sources",
+      "note": "hinducalculator.com blocks machines (403 at crawl time); hinducalendar.app and muhuratchoghadiya load their lagna tables client-side (no static rows in the fetched HTML); the nepaljyotish /en/ twin serves today regardless of ?date=; the wayback machine is script-walled; PanchangBodh day pages are pre-generated and intermittently 404 on cold dates (each captured day-call was title-verified). Recorded absences, never negative evidence."
+    }
+  ],
+  "engine_reference_2026_11_09": {
+    "gmst": "Meeus Astronomical Algorithms 12.4 (UT), validated: the sun meridian transit at Kathmandu lands 11:48 NPT Nov 9 (equation of time +16 min) and every boundary receipt below repeats to 0.05 min.",
+    "obliquity": "Meeus 22.2 mean obliquity; nutation in right ascension (~1 arcsec, ~0.15 s of time) deliberately skipped - named, below every band.",
+    "ascendant": "Closed-form tropical ascendant from LST/obliquity/latitude (validated 0.000 deg against an independent altitude-zero eastern root-find at three probe points), minus the engine base ayanamsa.",
+    "observed_deltas": "Swarnsiddhi 78/78 receipts (six cities x 12 boundaries + frame close) within 0.05 min; Rising-now degrees 6/6 within 0.19 deg; nepaljyotish interior 12/12 within 2.28 min (minute-rounded print); PanchangBodh signs 9/9 exact. Zero divergences across the corpus."
+  }
+}

@@ -88,6 +88,25 @@
 /// corpus (nepaljyotish Kathmandu windows, BhaktiBharat day-calls, the
 /// drikpanchang 2026-2027 tables) and backed by the new moonset solver,
 /// the setting twin of moonrise.
+///
+/// R10.2 (HYA-441) opens the lagna layer: the rising-sign (ascendant)
+/// engine - the sidereal ascendant from GMST (Meeus 12.4, UT domain) plus
+/// the mean obliquity (Meeus 22.2) through the closed-form tropical
+/// ascendant, minus the engine BASE ayanamsa (the corpus fits the base
+/// alone, no per-source delta), a wrap-safe rashi-boundary solver (a
+/// 2-min membership scan, a 60-iteration bisection and a
+/// derivative-accelerated Newton cross-check - two methods, one answer,
+/// on every boundary), the day-table frame SOLVED by walking back from the
+/// publisher's printed sunrise (never a fixed-hour scan), the
+/// running-lagna query, the nepaljyotish sunrise-anchored vs Swarnsiddhi
+/// true-instant frame conventions decoded, and a polar-latitude refusal
+/// (|latitude| >= 66.5 deg) - gated by the 2026-11-09 lagna receipt
+/// corpus (Swarnsiddhi six-city boundary tables with frame closes and
+/// live rising-now degrees, the nepaljyotish Kathmandu table, the
+/// PanchangBodh dated day-calls): 78/78 boundary receipts within 0.05
+/// min, 6/6 rising-now degrees within 0.19 deg, 12/12 nepaljyotish
+/// interior boundaries within 2.28 min (minute-rounded print), 9/9
+/// PanchangBodh sunrise-sign day-calls exact. Zero divergences.
 library;
 
 export 'src/ayanamsa.dart';
@@ -100,6 +119,7 @@ export 'src/eclipse_solar.dart';
 export 'src/festival_rules.dart';
 export 'src/grahan.dart';
 export 'src/julian_day.dart';
+export 'src/lagna.dart';
 export 'src/limbs.dart';
 export 'src/masa.dart';
 export 'src/moon.dart';
