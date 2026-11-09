@@ -73,6 +73,7 @@ MARKERS = {
     "muhurta.html": ['id="muhurta-today"', 'id="muhurta-choghadiya"', 'id="muhurta-horas"', 'id="muhurta-conventions"', "Rahu Kalam"],
     "bhadra.html": ['id="bhadra-today"', 'id="bhadra-next"', 'id="bhadra-upcoming"', 'id="bhadra-loka"', 'id="bhadra-conventions"', "Swarga", "Prithvi", "Patala", "Vishti"],
     "panchak.html": ['id="panchak-today"', 'id="panchak-next"', 'id="panchak-upcoming"', 'id="panchak-conventions"', "Rajya", "Dhanishta", "Revati"],
+    "chandra-darshan.html": ['id="cd-today"', 'id="cd-next"', 'id="cd-upcoming"', 'id="cd-conventions"', "saait", "Pratipada"],
     "ayanamsa.html": ['id="ayanamsa-what"', 'id="ayanamsa-ours"', 'id="ayanamsa-value"', 'id="ayanamsa-limbs"', 'id="ayanamsa-nepal"', 'id="ayanamsa-receipts"', "Chitra-pakshiya", "23.87508", "1.36062", "Ketaki"],
     "api/v1/today.json": [
         '"panchang"',
@@ -104,6 +105,10 @@ MARKERS = {
         '"puchha"',
         'bhadra.html',
         'panchak.html',
+        '"chandra_darshan"',
+        '"saait_begins"',
+        '"moonset_lag_minutes"',
+        'chandra-darshan.html',
         '"delta_t"',
         '"uncertainty_seconds"',
         '"source_span"',

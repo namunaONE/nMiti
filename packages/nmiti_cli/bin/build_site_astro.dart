@@ -901,3 +901,163 @@ $convRows
       body,
       shortSha);
 }
+
+/// One Chandra Darshan window as a JSON object body. Every key is
+/// always emitted so the site contract markers stay date-stable on
+/// darshan evenings and quiet evenings alike.
+String _chandraDarshanWindowJson(String ind, ChandraDarshanWindow w) {
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  String f1(double v) => v.toStringAsFixed(1);
+  return [
+    '$ind"date_iso": "${_iso(w.darshanDayNpt)}",',
+    '$ind"new_moon": "${isoNpt(w.newMoonNpt)}",',
+    '$ind"saait_begins": "${isoNpt(w.saaitBeginsNpt)}",',
+    '$ind"saait_ends": "${isoNpt(w.saaitEndsNpt)}",',
+    '$ind"day_index_after_new_moon": ${w.dayIndexAfterNewMoon},',
+    '$ind"moon_age_hours_at_saait_begins": ${f1(w.moonAgeHoursAtSaaitBegins)},',
+    '$ind"elongation_deg_at_saait_begins": ${f1(w.elongationDegAtSaaitBegins)},',
+    '$ind"moon_altitude_deg_at_saait_begins": ${f1(w.moonAltitudeDegAtSaaitBegins)},',
+    '$ind"moonset_lag_minutes": ${f1(w.moonsetLagMinutes)},',
+    '$ind"tithi_at_saait_begins": "${w.tithiAtSaaitBegins}",',
+    '$ind"saait_duration_minutes": ${w.saaitDurationNpt.inMinutes},',
+    '$ind"evidence_tier": "${w.evidenceTier}"',
+  ].join('\n');
+}
+
+/// The chandra_darshan block of today.json (R10.1 layer 3, HYA-441).
+/// The keys - "chandra_darshan", "today", "next" - always serialize on
+/// every build, so the site contract markers are date-stable on
+/// darshan evenings and on quiet evenings alike.
+String _chandraDarshanBlock(DateTime todayAd, String urlBase) {
+  final today = chandraDarshanOn(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  final next = nextChandraDarshanAfter(
+      afterNpt: DateTime.now().toUtc().add(nepalTimeOffset));
+  final todayJson = today == null
+      ? 'null'
+      : '{\n${_chandraDarshanWindowJson('      ', today)}\n    }';
+  final nextJson = '{\n${_chandraDarshanWindowJson('      ', next)}\n    }';
+  return '{\n'
+      '    "note": "engine-computed at build time; saait = [sunset, moonset] of the darshan evening; the darshan day is the first civil evening at or after the conjunction whose moonset-minus-sunset lag reaches 39.0 min",\n'
+      '    "today": $todayJson,\n'
+      '    "next": $nextJson,\n'
+      '    "provenance": "${next.provenance}",\n'
+      '    "evidence_tier": "${next.evidenceTier}",\n'
+      '    "details": "${urlBase}chandra-darshan.html"\n'
+      '  }';
+}
+
+/// The /chandra-darshan page (R10.1 layer 3, HYA-441): today's
+/// darshan state, the next saait, the upcoming windows with their
+/// day-rule evidence, and the full conventions map - receipt-anchored,
+/// every collision exposed, never silently picked.
+String _chandraDarshanPageHtml(
+    DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final dayStart = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final nowNpt = DateTime.now().toUtc().add(nepalTimeOffset);
+  final today = chandraDarshanOn(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  final next = nextChandraDarshanAfter(afterNpt: nowNpt);
+  final upcoming = chandraDarshanWindows(
+      start: dayStart, end: dayStart.add(const Duration(days: 400)));
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String dt(DateTime t) => '${_iso(t)} ${hm(t)} NPT';
+  String f1(double v) => v.toStringAsFixed(1);
+  const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  String evidence(ChandraDarshanWindow w) =>
+      'Moon ${f1(w.moonAgeHoursAtSaaitBegins)} h old, elongation '
+      '${f1(w.elongationDegAtSaaitBegins)} deg, altitude '
+      '${f1(w.moonAltitudeDegAtSaaitBegins)} deg at saait begins, '
+      'moonset lags sunset by ${f1(w.moonsetLagMinutes)} min; tithi '
+      '${w.tithiAtSaaitBegins}';
+  final String todayCard;
+  if (today == null) {
+    todayCard =
+        '<p>Today is not a darshan evening. The young crescent is sighted once per lunation - a quiet evening is not an anomaly; the next saait is below.</p>';
+  } else {
+    todayCard = [
+      '<p><strong>चन्द्र दर्शन · Chandra Darshan today</strong> - the young crescent Moon is sightable in tonight\'s saait.</p>',
+      '<ul>',
+      '<li><strong>साइत · Saait:</strong> ${dt(today.saaitBeginsNpt)} - ${dt(today.saaitEndsNpt)} (${today.saaitDurationNpt.inMinutes} min, sunset to moonset)</li>',
+      '<li><strong>नयाँ चन्द्र · New moon:</strong> ${dt(today.newMoonNpt)} (${today.dayIndexAfterNewMoon} day(s) after the conjunction)</li>',
+      '<li><strong>दर्शन प्रमाण · Evidence:</strong> ${evidence(today)}</li>',
+      '</ul>',
+    ].join('\n');
+  }
+  final nextCard = [
+    '<p>The next Chandra Darshan is on <strong>${_iso(next.darshanDayNpt)}</strong>.</p>',
+    '<ul>',
+    '<li><strong>मिति · Darshan day:</strong> ${_iso(next.darshanDayNpt)} (${wd[next.darshanDayNpt.weekday - 1]})</li>',
+    '<li><strong>साइत · Saait:</strong> ${dt(next.saaitBeginsNpt)} - ${dt(next.saaitEndsNpt)} (${next.saaitDurationNpt.inMinutes} min)</li>',
+    '<li><strong>नयाँ चन्द्र · New moon:</strong> ${dt(next.newMoonNpt)} (${next.dayIndexAfterNewMoon} day(s) after the conjunction)</li>',
+    '<li><strong>दर्शन प्रमाण · Evidence:</strong> ${evidence(next)}</li>',
+    '</ul>',
+  ].join('\n');
+  final upcomingRows = [
+    for (final w in upcoming)
+      '<tr><td>${_iso(w.darshanDayNpt)}</td>'
+      '<td>${wd[w.darshanDayNpt.weekday - 1]}</td>'
+      '<td>${dt(w.saaitBeginsNpt)} - ${dt(w.saaitEndsNpt)}</td>'
+      '<td>${f1(w.moonsetLagMinutes)}</td>'
+      '<td>${f1(w.moonAgeHoursAtSaaitBegins)}</td>'
+      '<td>${w.tithiAtSaaitBegins}</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'identity': 'Identity',
+    'saait_window': 'Saait window',
+    'day_rule': 'Day rule (the linger)',
+    'linger_altitude_equivalence': 'Linger vs altitude equivalence',
+    'conj_day': 'Conjunction-day darshan',
+    'tithi_refuted': 'Tithi rule refuted',
+    'drik_divergence': 'drikpanchang divergences',
+    'young_moon_note': 'Young-moon note',
+    'hamro_patro_absence': 'Hamro Patro absence',
+    'location': 'Location',
+  };
+  final convRows = [
+    for (final k in convLabels.keys)
+      '<tr><td>${convLabels[k]}</td><td>${chandraDarshanConventions[k] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Chandra Darshan <span lang="ne">· चन्द्र दर्शन</span></h1>
+<p>Chandra Darshan is the first sighting of the young crescent Moon after a new moon. The sighting window - the saait - runs from sunset to moonset of the darshan evening, one darshan per lunation (12-13 per year). The darshan day is the first civil evening at or after the conjunction whose moonset lags sunset by 39.0 minutes or more - the linger, not a tithi: a conjunction-day darshan is real (May 17 2026, Moon ~17 h old), while "Dwitiya at sunset" is refuted. Computed for the nMiti Kathmandu anchor; Indian pages print the same evenings in IST (NPT minus 15 min).</p>
+
+<h2 id="cd-today">आज · Today</h2>
+$todayCard
+
+<h2 id="cd-next">अर्को दर्शन · Next Chandra Darshan</h2>
+$nextCard
+
+<h2 id="cd-upcoming">आउँदै दर्शन · Upcoming windows</h2>
+<p>Every darshan evening in the next 400 days - the saait edges come from the engine's own sunset and moonset solvers, not from any publisher table.</p>
+<table>
+<tr><th>Darshan day (AD)</th><th>Weekday</th><th>Saait (NPT)</th><th>Moonset lag (min)</th><th>Moon age (h)</th><th>Tithi</th></tr>
+$upcomingRows
+</table>
+
+<h2 id="cd-conventions">नियम · Conventions</h2>
+<p>Every rule below is receipt-anchored; where publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="cd-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${next.provenance}</li>
+<li><strong>Evidence:</strong> ${next.evidenceTier}</li>
+<li><strong>Verification:</strong> the saait edges are the engine's own sunset and moonset solutions (the Meeus eq. 15.1 target, the setting twin of the moonrise solver); the gate (<code>chandra_darshan_test.dart</code>) bands all 13 nepaljyotish Kathmandu windows at 2 min, the BhaktiBharat day-calls, the drikpanchang Delhi rows (23/25 agree, both divergences asserted) and the binding band, on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/chandra_darshan_receipts_2026.json">chandra_darshan_receipts_2026.json</a> - the nepaljyotish Kathmandu table, the BhaktiBharat day-calls, the drikpanchang Delhi corpus with both divergences recorded, the rules block and the caveats.</li>
+<li><strong>Machine-readable:</strong> the <a href="${urlBase}api/v1/today.json">today.json</a> <code>chandra_darshan</code> block carries today's saait (or null) and the next darshan with the day-rule evidence.</li>
+</ul>
+''';
+  return _docShell(
+      'Chandra Darshan (young-crescent sighting)',
+      'Nepal Chandra Darshan from the nMiti engine: today saait, the next darshan, the upcoming table and every convention decoded - receipt-anchored, never copied.',
+      urlBase,
+      'chandra-darshan.html',
+      body,
+      shortSha);
+}
