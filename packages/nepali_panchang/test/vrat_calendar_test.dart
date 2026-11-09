@@ -20,8 +20,11 @@ import 'package:test/test.dart';
 ///   day identities      every vrat_days row served exactly once with
 ///                      the receipt tithi and the receipt borderline
 ///                      state;
-///   moonrise            the Nov 27 sankashti anchor within 12 min
-///                      (the published provisional band);
+///   moonrise            the Nov 27 / Dec 26 / Dec 27 BhaktiBharat
+///                      moonrise anchors within 12 min (the
+///                      published provisional band), with the Nov 27
+///                      chandrodaya-vyapti and Dec 26 sink-case
+///                      membership checks;
 ///   supporting vrats    every named-vrat udaya receipt inside the
 ///                      engine run of its tithi, the Kushmand Navami
 ///                      vriddhi holding both sunrises;
@@ -83,34 +86,6 @@ void main() {
       (fx['moonrise_receipts'] as List).cast<Map<String, dynamic>>();
   final caveats = (fx['caveats'] as List).cast<Map<String, dynamic>>();
 
-  test('DIAG december dump (temporary)', () {
-    final days = vratDays(
-        startNpt: DateTime.utc(2026, 11, 15),
-        endNpt: DateTime.utc(2026, 12, 31, 23, 59));
-    String fam(int i) => ['s', 'p', 'e', 'P', 'a'][i];
-    final daysStr = days
-        .map((d) =>
-            '${d.dateNpt.month.toString().padLeft(2, '0')}-${d.dateNpt.day.toString().padLeft(2, '0')}${fam(d.family.index)}')
-        .join(',');
-    final runs = tithiRunsBetween(
-        startNpt: DateTime.utc(2026, 12, 1),
-        endNpt: DateTime.utc(2026, 12, 10));
-    String t(DateTime x) =>
-        '${x.month.toString().padLeft(2, '0')}-${x.day.toString().padLeft(2, '0')}T${x.hour.toString().padLeft(2, '0')}:${x.minute.toString().padLeft(2, '0')}';
-    final runsStr = runs
-        .map((r) => '${r.tithiIndex}:${t(r.beginsNpt)}>${t(r.endsNpt)}')
-        .join(' ');
-    final ek = vratDays(
-        startNpt: DateTime.utc(2026, 12, 1),
-        endNpt: DateTime.utc(2026, 12, 10, 23, 59),
-        families: {VratFamily.ekadashi});
-    final ekStr = ek
-        .map((d) =>
-            '${d.dateNpt.month}-${d.dateNpt.day}:${t(d.tithiBeginsNpt)}>${t(d.tithiEndsNpt)}:bl=${d.borderline}:${d.borderlineReason}')
-        .join(' | ');
-    expect(true, isFalse,
-        reason: 'DIAG n=${days.length} [$daysStr] RUNS [$runsStr] EK [$ekStr]');
-  });
   test('schema and corpus shape', () {
     expect(fx['schema'], 'nmiti-vrat-receipts/1');
     expect(fx['crawl_date'], '2026-11-09');
@@ -118,8 +93,8 @@ void main() {
         reason: '13 bb + 13 hp + 8 ist tithi edges');
     expect(vratDayRows.length, 12);
     expect(supporting.length, 5);
-    expect(moonrises.length, 1);
-    expect(caveats.length, 5);
+    expect(moonrises.length, 3);
+    expect(caveats.length, 6);
     // Every tithi name is a canonical engine name.
     for (final row in boundaries) {
       expect(tithiIndexFromName(row['tithi'] as String),
@@ -247,6 +222,14 @@ void main() {
     expect(gapMin.abs(), lessThan(30),
         reason: 'the Dec 9 sunrise sits ${gapMin.toStringAsFixed(1)} '
         'min from the amavasya end (knife-edge)');
+    // The Dec 26 Sankashti: NO moonrise inside the run - the nearest
+    // moonrise (Dec 26 19:56, 25 min before the 20:21 begin) names
+    // the day; a fallback riding a moonrise knife-edge.
+    final s26 = day('sankashti_chaturthi', '2026-12-26');
+    expect(s26.borderline, isTrue,
+        reason: 'the sink case is a fallback day');
+    expect(s26.borderlineReason, contains('moonrise'));
+    expect(s26.referenceKind, 'moonrise');
     // The unambiguous receipts are not flagged.
     for (final entry in [
       ['ekadashi', '2026-12-04'],
@@ -262,26 +245,54 @@ void main() {
     }
   });
 
-  test('sankashti moonrise receipt: Nov 27 inside the chaturthi run',
+  test('sankashti moonrise receipts: engine moonrises inside the BB band',
       () {
-    final row = moonrises.first;
-    final mr = moonriseNpt(year: 2026, month: 11, day: 27);
-    expect(mr, isNotNull, reason: 'the Moon rises on Nov 27 2026');
-    final rec = parseWallClock(row['npt'] as String);
-    final d = _wallDeltaMin(mr!, rec);
-    expect(d.abs(), lessThan(12),
-        reason: 'BB moonrise receipt delta ${d.toStringAsFixed(2)} min');
-    // The chandrodaya-vyapti anchor: the moonrise falls inside the
-    // Krishna Chaturthi run.
-    final runs = tithiRunsBetween(
+    for (final row in moonrises) {
+      final date = _utcDate(row['date'] as String);
+      final mr = moonriseNpt(
+          year: date.year, month: date.month, day: date.day);
+      expect(mr, isNotNull, reason: 'the Moon rises on ${row['date']}');
+      final rec = parseWallClock(row['npt'] as String);
+      final d = _wallDeltaMin(mr!, rec);
+      final band = (row['band_min'] as num).toDouble();
+      expect(d.abs(), lessThan(band),
+          reason: 'BB moonrise receipt ${row['date']} delta '
+          '${d.toStringAsFixed(2)} min (band $band)');
+    }
+    // The chandrodaya-vyapti anchor: the Nov 27 moonrise falls inside
+    // the Krishna Chaturthi run.
+    final mr27 = moonriseNpt(year: 2026, month: 11, day: 27)!;
+    final runsNov = tithiRunsBetween(
         startNpt: DateTime.utc(2026, 11, 25),
         endNpt: DateTime.utc(2026, 11, 30));
-    final chat =
-        runs.firstWhere((r) => r.tithiIndex == tithiIndexFromName('Krishna Chaturthi'));
-    expect(chat.beginsNpt.isBefore(mr) && mr.isBefore(chat.endsNpt),
+    final chatNov = runsNov.firstWhere(
+        (r) => r.tithiIndex == tithiIndexFromName('Krishna Chaturthi'));
+    expect(chatNov.beginsNpt.isBefore(mr27) && mr27.isBefore(chatNov.endsNpt),
         isTrue,
         reason: 'the Nov 27 moonrise must fall inside the Krishna '
-        'Chaturthi run (${chat.beginsNpt} -> ${chat.endsNpt})');
+        'Chaturthi run (${chatNov.beginsNpt} -> ${chatNov.endsNpt})');
+    // The Dec 26 sink case: NO moonrise inside the chaturthi run -
+    // the Dec 26 moonrise sits before the begin, the Dec 27 moonrise
+    // past the end, and the nearest-moonrise comparison must favor
+    // Dec 26 decisively.
+    final runsDec = tithiRunsBetween(
+        startNpt: DateTime.utc(2026, 12, 24),
+        endNpt: DateTime.utc(2026, 12, 29));
+    final chatDec = runsDec.firstWhere(
+        (r) => r.tithiIndex == tithiIndexFromName('Krishna Chaturthi'));
+    final mr26 = moonriseNpt(year: 2026, month: 12, day: 26)!;
+    final mr27dec = moonriseNpt(year: 2026, month: 12, day: 27)!;
+    expect(mr26.isBefore(chatDec.beginsNpt), isTrue,
+        reason: 'the Dec 26 moonrise must sit before the chaturthi '
+        'begin (${chatDec.beginsNpt})');
+    expect(mr27dec.isBefore(chatDec.endsNpt), isFalse,
+        reason: 'the Dec 27 moonrise must sit past the chaturthi '
+        'end (${chatDec.endsNpt})');
+    final d26 = chatDec.beginsNpt.difference(mr26);
+    final d27 = mr27dec.difference(chatDec.endsNpt);
+    expect(d26 < d27, isTrue,
+        reason: 'the nearest-moonrise comparison must favor Dec 26 '
+        '(${d26.inMinutes} min vs ${d27.inMinutes} min)');
   });
 
   test('supporting named vrats: every udaya receipt inside the engine run',
@@ -401,16 +412,16 @@ void main() {
     expect(vratFamilyNamesNepali[VratFamily.sankashtiChaturthi.index],
         'संकष्टी चतुर्थी');
     expect(vratFamilyTithiIndices[VratFamily.sankashtiChaturthi], [18]);
-    expect(vratFamilyTithiIndices[VratFamily.pradosham], [12, 26]);
-    expect(vratFamilyTithiIndices[VratFamily.ekadashi], [10, 24]);
+    expect(vratFamilyTithiIndices[VratFamily.pradosham], [12, 27]);
+    expect(vratFamilyTithiIndices[VratFamily.ekadashi], [10, 25]);
     expect(vratFamilyTithiIndices[VratFamily.purnima], [14]);
     expect(vratFamilyTithiIndices[VratFamily.amavasya], [29]);
     // The indices match the canonical names.
     expect(tithiName(18), 'Krishna Chaturthi');
     expect(tithiName(12), 'Shukla Trayodashi');
-    expect(tithiName(26), 'Krishna Trayodashi');
+    expect(tithiName(27), 'Krishna Trayodashi');
     expect(tithiName(10), 'Shukla Ekadashi');
-    expect(tithiName(24), 'Krishna Ekadashi');
+    expect(tithiName(25), 'Krishna Ekadashi');
   });
 
   test('honesty fields name the layer and the corpus', () {

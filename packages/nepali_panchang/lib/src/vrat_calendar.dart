@@ -16,11 +16,14 @@ import 'sunset.dart';
 /// receipt corpus and are exposed per day, never silently picked:
 ///
 ///   sankashti chaturthi = chandrodaya-vyapti: the day whose MOONRISE
-///       falls inside the Krishna Chaturthi run (the receipt: Nov 27
+///       falls inside the Krishna Chaturthi run (the receipts: Nov 27
 ///       2026, BhaktiBharat moonrise 19:56 inside the 10:13 -> 06:55+1
-///       run; neither Hamro Patro nor BhaktiBharat prints a sankashti
-///       label - the day is derived from their own tithi and moonrise
-///       data and corroborated by the bhaktiras list);
+///       run; and Dec 26 2026, where NO moonrise falls inside the
+///       20:21 -> 17:29+1 run - the nearest moonrise, Dec 26 19:56,
+///       25 min before the begin, names the day; neither Hamro Patro
+///       nor BhaktiBharat prints a sankashti label - the days are
+///       derived from their own tithi and moonrise data and
+///       corroborated by the bhaktiras list);
 ///   pradosham = trayodashi vyapta at SUNSET (the pradosh kala
 ///       anchor; both pakshas, 24 a year - the receipts: Nov 22 and
 ///       Dec 6 2026, HP prints प्रदोष on both);
@@ -33,11 +36,11 @@ import 'sunset.dart';
 ///       on vriddhi the FIRST udaya day (the receipt: Kushmand Navami
 ///       Nov 18 2026, the first of the two udaya days).
 ///
-/// Fallbacks (no receipt in the corpus pins them; every fallback day
-/// carries borderline=true): a run that traps no reference instant
-/// names the begin day (ekadashi/pradosham), the udaya day
-/// (sankashti) or the day holding the run's midpoint
-/// (purnima/amavasya). Borderline also flags the knife-edges: a run
+/// Fallbacks (every fallback day carries borderline=true): a run
+/// that traps no reference instant names the begin day
+/// (ekadashi/pradosham), the day whose moonrise lies nearest the run
+/// (sankashti - the receipt-pinned case: Dec 26 2026) or the day
+/// holding the run's midpoint (purnima/amavasya). Borderline also flags the knife-edges: a run
 /// edge within 30 minutes of a reference instant, a run holding two
 /// reference instants, and - for ekadashi - any day a strict udaya
 /// rule would have printed instead. Borderline means
@@ -68,8 +71,8 @@ const List<String> vratFamilyNamesNepali = [
 /// The tithi indices (0-based, Shukla Pratipada = 0) each family rides.
 const Map<VratFamily, List<int>> vratFamilyTithiIndices = {
   VratFamily.sankashtiChaturthi: [18],
-  VratFamily.pradosham: [12, 26],
-  VratFamily.ekadashi: [10, 24],
+  VratFamily.pradosham: [12, 27],
+  VratFamily.ekadashi: [10, 25],
   VratFamily.purnima: [14],
   VratFamily.amavasya: [29],
 };
@@ -287,8 +290,14 @@ const Map<String, String> vratConventions = {
       'Chandrodaya-vyapti: the day whose MOONRISE falls inside the Krishna '
       'Chaturthi run - the receipt: 2026-11-27, BhaktiBharat moonrise 19:56 '
       'NPT inside the 10:13 -> 06:55+1 run, corroborated by the bhaktiras '
-      '2026 list (next: Dec 26). A run trapping no moonrise falls back to '
-      'its udaya day, borderline flagged.',
+      '2026 list. A run trapping no moonrise names the day whose moonrise '
+      'lies NEAREST the run - the 2026-12-26 receipt: no moonrise inside '
+      'the 20:21 -> 17:29+1 run, the Dec 26 moonrise 19:56 sits 25 min '
+      'before the begin while the Dec 27 moonrise 21:04 sits 3.6 h past '
+      'the end, and bhaktiras, hinducalendar.app and astrologger all '
+      'print Dec 26 (astrologger New Delhi has the moonrise inside the '
+      'run by 13 min - the Delhi/Kathmandu clock shift flips the '
+      'membership, not the day). Fallback days are borderline flagged.',
   'purnima_amavasya_rule':
       'The udaya day - the civil day whose sunrise falls inside the run. On '
       'vriddhi (two sunrises) the FIRST udaya day, the receipt being '
@@ -303,16 +312,19 @@ const Map<String, String> vratConventions = {
       'udaya rule would print instead. Receipt-verified days exist in both '
       'states - the Nov 20 Haribodhini Ekadashi is borderline (udaya '
       'divergence) and the Dec 8 Amavasya is borderline (the run ends 06:37 '
-      'NPT, minutes before the Dec 9 sunrise), while Nov 22 / Dec 6 Pradosham, '
-      'Nov 27 Sankashti, Nov 24 Purnima and Dec 4 Utpanna are not.',
+      'NPT, minutes before the Dec 9 sunrise), while Nov 22 / Dec 6 '
+      'Pradosham, Nov 24 Purnima and Dec 4 Utpanna are not. The Dec 26 '
+      'Sankashti is borderline twice over - a nearest-moonrise fallback '
+      'day whose moonrise sits 25 min from the run edge; the Nov 27 '
+      'Sankashti (moonrise hours inside the run) is not.',
   'moonrise_dependency':
       'Sankashti depends on the Meeus 15.1 moonrise solver (provisional '
       '+-12 min band, the published error bar); every other family depends '
       'only on tithi runs and the USNO sunrise/sunset solvers. A moonrise '
       'within 30 minutes of a Chaturthi run edge is flagged borderline - '
-      'the Dec 26 2026 bhaktiras receipt sits exactly there (moonrise ~20:20 '
-      'vs the 20:21 run end), and the udaya fallback names Dec 26 either '
-      'way.',
+      'the Dec 26 2026 bhaktiras receipt sits exactly there: the Kathmandu '
+      'moonrise 19:56 NPT lands 25 min before the 20:21 run begin, so the '
+      'day rides the nearest-moonrise fallback with a knife-edge flag.',
   'hp_bb_sankashti_absence':
       'Neither Hamro Patro nor BhaktiBharat prints a sankashti label on '
       '2026-11-27 - a recorded publisher absence, not an engine doubt: the '
@@ -554,13 +566,47 @@ VratDay _vratDayForRun(VratFamily family, TithiRun run) {
         }
       }
       if (moonriseDay == null) {
-        final udaya = _udayaDay(run, dates);
-        day = udaya ??
-            DateTime.utc(
-                run.beginsNpt.year, run.beginsNpt.month, run.beginsNpt.day);
-        borderline = true;
-        reason = 'no-moonrise-fallback';
-        reference = _sunriseNpt(day);
+        // No moonrise inside the run: the day whose moonrise lies
+        // NEAREST the run - the Dec 26 2026 receipt: no moonrise
+        // inside the 20:21 -> 17:29+1 run, the Dec 26 moonrise 19:56
+        // sits 25 min before the begin while the Dec 27 moonrise
+        // 21:04 sits 3.6 h past the end, and bhaktiras,
+        // hinducalendar.app and astrologger all print Dec 26. Every
+        // fallback day is borderline; within the 30-minute knife
+        // edge the reason says so.
+        DateTime? nearestDay;
+        DateTime? nearestAt;
+        var best = const Duration(days: 9999);
+        for (final d in dates) {
+          final m = _moonriseNpt(d);
+          if (m == null) {
+            continue;
+          }
+          final dist = m.isBefore(run.beginsNpt)
+              ? run.beginsNpt.difference(m)
+              : m.difference(run.endsNpt);
+          if (dist < best) {
+            best = dist;
+            nearestDay = d;
+            nearestAt = m;
+          }
+        }
+        if (nearestDay == null) {
+          final udaya = _udayaDay(run, dates);
+          day = udaya ??
+              DateTime.utc(
+                  run.beginsNpt.year, run.beginsNpt.month, run.beginsNpt.day);
+          borderline = true;
+          reason = 'no-moonrise-fallback';
+          reference = _sunriseNpt(day);
+        } else {
+          day = nearestDay;
+          reference = nearestAt!;
+          borderline = true;
+          reason = best < _knifeEdge
+              ? 'nearest-moonrise-knife-edge'
+              : 'nearest-moonrise-fallback';
+        }
       } else {
         day = moonriseDay;
         reference = moonriseAt!;
@@ -654,7 +700,8 @@ String _dayRuleText(VratFamily family) {
           '(fallback: the begin day)';
     case VratFamily.sankashtiChaturthi:
       return 'sankashti = chandrodaya-vyapti: the day whose moonrise falls '
-          'inside the Krishna Chaturthi run (fallback: the udaya day)';
+          'inside the Krishna Chaturthi run (fallback: the '
+          'nearest-moonrise day)';
     case VratFamily.purnima:
     case VratFamily.amavasya:
       return 'udaya day: the civil day whose sunrise falls inside the run '
