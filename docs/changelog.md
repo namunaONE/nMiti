@@ -2,6 +2,11 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.2 lagna display: the rising sign at the site/API layer (HYA-441)
+
+- New `lagna` block in `api/v1/today.json`: `rising_now` (the rashi index, English + Nepali names, the ascendant degree and degree-in-rashi, the window begin and the next boundary, all at the build instant), the engine `sunrise_npt` anchor, and the `day_table` — twelve windows with begins/ends NPT stamps and duration minutes, one full lagna cycle from the true rising instant of the window containing today's engine sunrise (the decoded Swarnsiddhi frame; nepaljyotish re-anchors row 1 at the sunrise itself). Keys always emitted; the build refuses to deploy if the frame does not close on the frame sign.
+- New `lagna.html` honesty page: the rising-now card (degree in the D°M′ receipt format), the twelve-window day table with the cycle law (one sidereal day, ~4 min/day drift, 60-240 min windows), all eleven named conventions with the publisher divergences decoded (frame, page-date, IST seam, the resolved Jun 16 row, the scan-alignment law, recorded absences), and the verification record. Plus nav (after Chandra Darshan), sitemap, llms.txt, the data.html API description, site-contract markers (`lagna.html` page anchors + the today.json lagna keys) and the Pages smoke list. No data changes.
+
 ## [Unreleased] — R10.2 lagna engine: rising-sign boundaries (HYA-441)
 
 - New engine module `packages/nepali_panchang/lib/src/lagna.dart`: the ascendant (rising sign) computed from GMST (Meeus 12.4, UT domain), the mean obliquity (Meeus 22.2) and the closed-form tropical ascendant, minus the engine BASE ayanamsa — no per-source delta: the corpus fits the base alone (boundaries to 0.05 min at Swarnsiddhi and nepaljyotish, signs exact at PanchangBodh). The rashi-boundary solver is wrap-safe (rashi-index membership, never raw degrees across the 0/360 seam): a 2-min scan bracket, a 60-iteration bisection and a derivative-accelerated Newton cross-check that must agree to 1e-8 days or throw — two methods, one answer, on every served boundary, the same discipline the panchak solver enforces.

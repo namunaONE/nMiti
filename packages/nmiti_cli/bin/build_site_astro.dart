@@ -1061,3 +1061,197 @@ $convRows
       body,
       shortSha);
 }
+/// R10.2 display state (HYA-441): one window of the sunrise-anchored
+/// lagna day table - the sign, its true rising instant and the next
+/// boundary. Plain jdUt doubles so the JSON layer and the page layer
+/// format independently.
+class _LagnaDayWindow {
+  final int rashiIndex;
+  final double beginsJdUt;
+  final double endsJdUt;
+  const _LagnaDayWindow(this.rashiIndex, this.beginsJdUt, this.endsJdUt);
+}
+
+/// R10.2 display state: the engine sunrise and the twelve-window day
+/// table anchored at it.
+class _LagnaDayState {
+  final DateTime sunriseNpt;
+  final List<_LagnaDayWindow> windows;
+  const _LagnaDayState(this.sunriseNpt, this.windows);
+}
+
+/// The sunrise-anchored lagna day table (R10.2, HYA-441): one full
+/// lagna cycle from the TRUE rising instant of the window containing
+/// today's engine sunrise - the frame convention the publishers print
+/// (Swarnsiddhi starts at the true instant; nepaljyotish re-anchors
+/// row 1 at the sunrise itself). The frame start is SOLVED by walking
+/// back from the sunrise, never scanned from a fixed hour (the
+/// documented Mumbai 03:06 misalignment). Twelve windows; the twelfth
+/// ends at the frame close, and the build refuses to deploy if the
+/// frame does not close on the same sign.
+_LagnaDayState _lagnaDayState(DateTime todayAd) {
+  final p = panchangFor(
+      year: todayAd.year, month: todayAd.month, day: todayAd.day);
+  final sunriseJdUt =
+      jdFromDateTimeUtc(p.sunriseNpt.subtract(nepalTimeOffset));
+  final frameStart = previousLagnaBoundaryBefore(
+      jdUt: sunriseJdUt, latitudeDeg: 27.7172, longitudeDeg: 85.324);
+  final crossings = lagnaBoundariesBetween(
+      jdUtStart: frameStart.jdUt,
+      jdUtEnd: frameStart.jdUt + 1.05,
+      latitudeDeg: 27.7172,
+      longitudeDeg: 85.324);
+  if (crossings.length < 12 ||
+      crossings[11].rashiIndex != frameStart.rashiIndex) {
+    throw StateError('lagna day table did not close its frame: ' +
+        crossings.length.toString() +
+        ' crossings from jdUt ' +
+        frameStart.jdUt.toStringAsFixed(3));
+  }
+  final windows = <_LagnaDayWindow>[
+    _LagnaDayWindow(
+        frameStart.rashiIndex, frameStart.jdUt, crossings[0].jdUt),
+    for (var k = 1; k < 12; k++)
+      _LagnaDayWindow(
+          crossings[k - 1].rashiIndex, crossings[k - 1].jdUt, crossings[k].jdUt),
+  ];
+  return _LagnaDayState(p.sunriseNpt, windows);
+}
+
+/// One lagna day-table window as a JSON object body. Every key is
+/// always emitted so the site contract markers stay date-stable.
+String _lagnaWindowJson(String ind, _LagnaDayWindow w) {
+  String isoNpt(double jdUt) {
+    final wall = dateTimeUtcFromJd(jdUt).add(nepalTimeOffset);
+    return '${_iso(wall)}T${_skTwo(wall.hour)}:${_skTwo(wall.minute)}:00+05:45';
+  }
+  return [
+    '$ind"rashi_index": ${w.rashiIndex},',
+    '$ind"rashi_name": "${lagnaRashiNames[w.rashiIndex]}",',
+    '$ind"rashi_name_np": "${lagnaRashiNamesNepali[w.rashiIndex]}",',
+    '$ind"begins_at": "${isoNpt(w.beginsJdUt)}",',
+    '$ind"ends_at": "${isoNpt(w.endsJdUt)}",',
+    '$ind"duration_minutes": '
+        '${((w.endsJdUt - w.beginsJdUt) * 1440.0).toStringAsFixed(1)}',
+  ].join('\n');
+}
+
+/// The lagna block of today.json (R10.2 display, HYA-441). The keys -
+/// "lagna", "rising_now", "day_table" - always serialize on every
+/// build, so the site contract markers stay date-stable on boundary
+/// days and quiet days alike.
+String _lagnaBlock(DateTime todayAd, String urlBase) {
+  final state = _lagnaDayState(todayAd);
+  final running = lagnaAtNpt(DateTime.now().toUtc().add(nepalTimeOffset));
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  final windowsJson = [
+    for (final w in state.windows)
+      '{\n${_lagnaWindowJson('        ', w)}\n      }'
+  ].join(',\n      ');
+  return '{\n'
+      '    "note": "engine-computed at build time; the day table is one '
+      'full lagna cycle from the true rising instant of the window '
+      'containing today\'s engine sunrise (the Swarnsiddhi frame; '
+      'nepaljyotish re-anchors row 1 at the sunrise itself)",\n'
+      '    "rising_now": {\n'
+      '      "rashi_index": ${running.rashiIndex},\n'
+      '      "rashi_name": "${running.rashiName}",\n'
+      '      "rashi_name_np": "${running.rashiNameNepali}",\n'
+      '      "ascendant_deg": ${running.ascendantDeg.toStringAsFixed(2)},\n'
+      '      "degree_in_rashi": '
+      '${running.degreeInRashi.toStringAsFixed(2)},\n'
+      '      "begins_at": "${isoNpt(running.beginsAtNpt)}",\n'
+      '      "next_boundary_at": "${isoNpt(running.nextBoundaryAtNpt)}"\n'
+      '    },\n'
+      '    "sunrise_npt": "${isoNpt(state.sunriseNpt)}",\n'
+      '    "day_table": [\n      $windowsJson\n    ],\n'
+      '    "provenance": "${running.provenance}",\n'
+      '    "evidence_tier": "${running.evidenceTier}",\n'
+      '    "details": "${urlBase}lagna.html"\n'
+      '  }';
+}
+
+/// The /lagna page (R10.2, HYA-441): the rising sign now with its
+/// degree, today's twelve-window day table anchored at the sunrise
+/// frame, the cycle law, and the full conventions map -
+/// receipt-anchored, every collision exposed, never silently picked.
+String _lagnaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final state = _lagnaDayState(todayAd);
+  final running = lagnaAtNpt(DateTime.now().toUtc().add(nepalTimeOffset));
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String dt(DateTime t) => '${_iso(t)} ${hm(t)} NPT';
+  String dtJd(double jdUt) => dt(dateTimeUtcFromJd(jdUt).add(nepalTimeOffset));
+  String mins(_LagnaDayWindow w) =>
+      ((w.endsJdUt - w.beginsJdUt) * 1440.0).toStringAsFixed(1);
+  String dms(double deg) {
+    final d = deg.floor();
+    final m = ((deg - d) * 60.0).floor();
+    return '$d\u00b0 ${m.toString().padLeft(2, '0')}\u2032';
+  }
+  final nextName = lagnaRashiNames[(running.rashiIndex + 1) % 12];
+  final tableRows = [
+    for (final w in state.windows)
+      '<tr><td>${lagnaRashiNames[w.rashiIndex]} \u00b7 '
+      '${lagnaRashiNamesNepali[w.rashiIndex]}</td>'
+      '<td>${dtJd(w.beginsJdUt)}</td>'
+      '<td>${dtJd(w.endsJdUt)}</td>'
+      '<td>${mins(w)} min</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'identity': 'Identity',
+    'frame': 'Day-table frame',
+    'day_rule': 'Page-date rule',
+    'ayanamsa': 'Ayanamsa',
+    'nj_anchor': 'nepaljyotish anchor',
+    'rising_now': 'Rising-now degree',
+    'pb_ist_seam': 'PanchangBodh IST seam',
+    'pb_jun16_resolved': 'PanchangBodh Jun 16 row (resolved)',
+    'scan_alignment': 'Frame alignment',
+    'unreconciled_source': 'Unreconciled sources',
+    'location': 'Location',
+  };
+  final convRows = [
+    for (final k in convLabels.keys)
+      '<tr><td>${convLabels[k]}</td>'
+      '<td>${lagnaConventions[k] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Lagna <span lang="ne">\u00b7 \u0932\u0917\u094d\u0928</span></h1>
+<p>The lagna - the ascendant, the rising sign - is the sidereal zodiac sign occupying the eastern horizon at a given instant and place: the anchor of every muhurta window and every janma chart. One sign rises at a time; the twelve-sign cycle takes one sidereal day (1436.07 min, about four minutes shorter than the clock day), so every day's table drifts about four minutes earlier. Computed at build time for the nMiti Kathmandu anchor (27.7172 N, 85.324 E), NPT (UTC+05:45) - no copied tables, no client JavaScript.</p>
+
+<h2 id="lagna-now">\u0905\u0939\u093f\u0932\u0947 \u00b7 Rising now</h2>
+<p>At this build: <strong>${running.rashiName}</strong> (${running.rashiNameNepali}) lagna at <strong>${dms(running.degreeInRashi)}</strong> of the sign - ascendant ${running.ascendantDeg.toStringAsFixed(2)} deg sidereal. This window began ${dt(running.beginsAtNpt)}; the next sign to rise is <strong>$nextName</strong> at ${dt(running.nextBoundaryAtNpt)}.</p>
+
+<h2 id="lagna-today">\u0906\u091c\u0915\u094b \u0924\u093e\u0932\u093f\u0915\u093e \u00b7 Today's day table</h2>
+<p>One full lagna cycle from the true rising instant of the window containing today's engine sunrise (${dt(state.sunriseNpt)}) - the frame convention the publishers print. Window lengths vary with the sign and the season (roughly 60-240 min at Kathmandu's latitude): signs of short ascension rise fast, and the whole frame shifts about four minutes earlier each day.</p>
+<table>
+<tr><th>Rising sign</th><th>Begins (NPT)</th><th>Ends (NPT)</th><th>Duration</th></tr>
+$tableRows
+</table>
+
+<h2 id="lagna-conventions">\u0928\u093f\u092f\u092e \u00b7 Conventions</h2>
+<p>Every rule below is receipt-anchored (Swarnsiddhi, nepaljyotish, PanchangBodh - the 2026-11 lagna corpus); where publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="lagna-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${running.provenance}</li>
+<li><strong>Evidence:</strong> ${running.evidenceTier}</li>
+<li><strong>Verification:</strong> the gate (<code>lagna_test.dart</code>) bands all 78 Swarnsiddhi boundary receipts (six cities, twelve boundaries plus the frame close each) within 0.05 min, the six live rising-now degrees within 0.19 deg, all twelve nepaljyotish Kathmandu interior boundaries within 2.28 min (their minute-rounded print) and nine of nine PanchangBodh sunrise-sign day-calls exactly, on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/lagna_receipts_2026_11.json">lagna_receipts_2026_11.json</a> - the Swarnsiddhi six-city tables with frame closes and rising-now degrees, the nepaljyotish Kathmandu table, the PanchangBodh day-calls, the rules block and the recorded absences.</li>
+<li><strong>Machine-readable:</strong> the <a href="${urlBase}api/v1/today.json">today.json</a> <code>lagna</code> block carries the rising sign at the build instant (with its degree and the next boundary) and the twelve-window day table.</li>
+</ul>
+''';
+  return _docShell(
+      'Lagna (the rising sign)',
+      'Nepal lagna from the nMiti engine: the rising sign now with its degree, today\'s twelve-window day table anchored at the sunrise frame, and every publisher convention decoded - receipt-anchored, never copied.',
+      urlBase,
+      'lagna.html',
+      body,
+      shortSha);
+}
