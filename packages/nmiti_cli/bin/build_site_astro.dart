@@ -1255,3 +1255,200 @@ $convRows
       body,
       shortSha);
 }
+
+/// One vrat day as a JSON object body. Every key is always emitted so
+/// the site contract markers stay date-stable on vrat days and quiet
+/// days alike.
+String _vratDayJson(String ind, VratDay d) {
+  String isoNpt(DateTime t) =>
+      '${_iso(t)}T${_skTwo(t.hour)}:${_skTwo(t.minute)}:00+05:45';
+  return [
+    '$ind"family": "${d.familyName}",',
+    '$ind"family_np": "${d.familyNameNepali}",',
+    '$ind"tithi": "${d.tithiName}",',
+    '$ind"tithi_index": ${d.tithiIndex},',
+    '$ind"date": "${_iso(d.dateNpt)}",',
+    '$ind"tithi_begins_npt": "${isoNpt(d.tithiBeginsNpt)}",',
+    '$ind"tithi_ends_npt": "${isoNpt(d.tithiEndsNpt)}",',
+    '$ind"reference_kind": "${d.referenceKind}",',
+    '$ind"reference_instant_npt": "${isoNpt(d.referenceInstantNpt)}",',
+    '$ind"day_rule": "${d.dayRule}",',
+    '$ind"borderline": ${d.borderline},',
+    '$ind"borderline_reason": "${d.borderlineReason}"',
+  ].join('\n');
+}
+
+/// The vrat horizon of the today.json vrat block (days).
+const int _vratWindowDays = 45;
+
+/// The vrat block of today.json (R10.3 display, HYA-441): the recurring
+/// vrat days observed today, the next vrat day and the 45-day horizon -
+/// every entry naming its day-choosing rule, the reference instant that
+/// pinned it and the borderline state. The keys - "vrat", "today",
+/// "next", "upcoming", "vrat_window_days" - always serialize on every
+/// build, so the site contract markers are date-stable on vrat days and
+/// quiet days alike.
+String _vratBlock(DateTime todayAd, String urlBase) {
+  final today = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final horizon = today.add(const Duration(days: _vratWindowDays));
+  final scanned = vratDays(startNpt: today, endNpt: horizon);
+  final todayOnes = scanned.where((d) => d.dateNpt == today).toList();
+  final upcoming = scanned.where((d) => d.dateNpt.isAfter(today)).toList();
+  String one(String ind, VratDay d) =>
+      '{\n${_vratDayJson(ind + '  ', d)}\n$ind}';
+  final todayJson = todayOnes.isEmpty
+      ? '[]'
+      : '[\n${[for (final d in todayOnes) one('      ', d)].join(',\n')}\n    ]';
+  final nextJson = upcoming.isEmpty ? 'null' : one('      ', upcoming.first);
+  final upcomingJson = upcoming.isEmpty
+      ? '[]'
+      : '[\n${[for (final d in upcoming) one('      ', d)].join(',\n')}\n    ]';
+  final provenance = scanned.isEmpty
+      ? 'nMiti nepali_panchang vrat calendar layer on the runtime lunar engine'
+      : scanned.first.provenance;
+  final evidence = scanned.isEmpty
+      ? 'runtime-computed; day identity pinned by the vrat receipts corpus'
+      : scanned.first.evidenceTier;
+  return '{\n'
+      '    "note": "engine-computed at build time; every entry names its day-choosing rule, the reference instant that pinned it and the borderline state",\n'
+      '    "today": $todayJson,\n'
+      '    "next": $nextJson,\n'
+      '    "upcoming": $upcomingJson,\n'
+      '    "vrat_window_days": $_vratWindowDays,\n'
+      '    "provenance": "$provenance",\n'
+      '    "evidence_tier": "$evidence",\n'
+      '    "details": "${urlBase}vrat.html"\n'
+      '  }';
+}
+
+/// The /vrat page (R10.3 display, HYA-441): today's vrat days, the next
+/// vrat, the five families with every day rule decoded, the 400-day
+/// year grid, and the full conventions map - receipt-anchored, every
+/// collision exposed, never silently picked.
+String _vratPageHtml(DateTime todayAd, String urlBase, String commitSha) {
+  final shortSha = commitSha == 'local' ? 'local' : commitSha.substring(0, 7);
+  final today = DateTime.utc(todayAd.year, todayAd.month, todayAd.day);
+  final yearEnd = today.add(const Duration(days: 400));
+  final grid = vratDays(startNpt: today, endNpt: yearEnd);
+  final todayOnes = grid.where((d) => d.dateNpt == today).toList();
+  final upcoming = grid.where((d) => d.dateNpt.isAfter(today)).toList();
+  String hm(DateTime t) => '${_skTwo(t.hour)}:${_skTwo(t.minute)}';
+  String dt(DateTime t) => '${_iso(t)} ${hm(t)} NPT';
+  const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const familyTitles = {
+    'sankashti_chaturthi': 'Sankashti Chaturthi',
+    'pradosham': 'Pradosham',
+    'ekadashi': 'Ekadashi',
+    'purnima': 'Purnima',
+    'amavasya': 'Amavasya',
+  };
+  final counts = <String, int>{};
+  for (final d in grid) {
+    final k = d.familyName;
+    counts[k] = (counts[k] ?? 0) + 1;
+  }
+  final borderlineCount = grid.where((d) => d.borderline).length;
+  final next = upcoming.isEmpty ? null : upcoming.first;
+  String title(VratDay d) => familyTitles[d.familyName] ?? d.familyName;
+  final todaySection = todayOnes.isEmpty
+      ? '<p>No recurring vrat day falls on ${_iso(today)}. The five families ride the tithi chain - a quiet day is not an anomaly; the next vrat is below.</p>'
+      : [
+          for (final d in todayOnes)
+            '<p><strong>${title(d)} <span lang="ne">${d.familyNameNepali}</span></strong> is observed today - ${d.tithiName}, the run ${dt(d.tithiBeginsNpt)} to ${dt(d.tithiEndsNpt)}. Day rule: ${d.dayRule}${d.borderline ? ' - borderline (${d.borderlineReason})' : ''}.</p>'
+        ].join('\n');
+  final String nextCard;
+  if (next == null) {
+    nextCard = '<p>No vrat day is computed within the next 400 days.</p>';
+  } else {
+    nextCard = [
+      '<p><strong>${title(next)} <span lang="ne">${next.familyNameNepali}</span></strong> - ${next.tithiName}</p>',
+      '<ul>',
+      '<li><strong>मिति · Date:</strong> ${_iso(next.dateNpt)} (${wd[next.dateNpt.weekday - 1]})</li>',
+      '<li><strong>तिथि · Tithi run:</strong> ${dt(next.tithiBeginsNpt)} to ${dt(next.tithiEndsNpt)}</li>',
+      '<li><strong>नियम · Day rule:</strong> ${next.dayRule}</li>',
+      '<li><strong>साक्षी · Reference:</strong> ${next.referenceKind} at ${dt(next.referenceInstantNpt)}</li>',
+      '<li><strong>Borderline:</strong> ${next.borderline ? 'yes - ${next.borderlineReason}' : 'no'}</li>',
+      '</ul>',
+    ].join('\n');
+  }
+  final gridRows = [
+    for (final d in grid)
+      '<tr><td>${_iso(d.dateNpt)}<br><small>${wd[d.dateNpt.weekday - 1]}</small></td>'
+      '<td>${title(d)}<br><span lang="ne">${d.familyNameNepali}</span></td>'
+      '<td>${d.tithiName}</td>'
+      '<td>${dt(d.tithiBeginsNpt)} - ${dt(d.tithiEndsNpt)}</td>'
+      '<td>${d.referenceKind}<br><small>${dt(d.referenceInstantNpt)}</small></td>'
+      '<td>${d.borderline ? 'yes - ${d.borderlineReason}' : '-'}</td></tr>'
+  ].join('\n');
+  final convLabels = <String, String>{
+    'identity': 'Identity',
+    'ekadashi_rule': 'Ekadashi rule',
+    'pradosham_rule': 'Pradosham rule',
+    'sankashti_rule': 'Sankashti rule',
+    'purnima_amavasya_rule': 'Purnima / Amavasya rule',
+    'borderline_rule': 'Borderline semantics',
+    'moonrise_dependency': 'Moonrise dependency',
+    'hp_bb_sankashti_absence': 'Publisher absence (Nov 27 2026)',
+    'hp_flagged_panel_shift': 'Hamro Patro panel-label shift',
+    'ist_convention_divergence': 'IST convention divergence',
+    'amanta_month_naming': 'Amanta month naming',
+    'publisher_divergence': 'Publisher divergence',
+    'corroboration': 'Corroboration',
+    'location': 'Location',
+  };
+  final convRows = [
+    for (final k in convLabels.keys)
+      '<tr><td>${convLabels[k]}</td><td>${vratConventions[k] ?? '(not recorded)'}</td></tr>'
+  ].join('\n');
+  final body = '''
+<h1>Vrat <span lang="ne">· व्रत</span></h1>
+<p>Vrat days are the recurring lunar observances of the ritual calendar - Sankashti Chaturthi, Pradosham, Ekadashi, Purnima and Amavasya - each riding a tithi of the engine lunar chain. Because a tithi can begin and end at any hour, the civil day a vrat is printed on depends on a day-choosing convention; this page serves the decoded rule for every day and flags every convention-sensitive (borderline) choice. Computed at build time for the nMiti Kathmandu anchor (27.7172 N, 85.324 E), NPT (UTC+05:45) - no copied tables, no client JavaScript.</p>
+
+<h2 id="vrat-today">आज · Today</h2>
+$todaySection
+
+<h2 id="vrat-next">अर्को व्रत · Next vrat</h2>
+$nextCard
+
+<h2 id="vrat-families">पाँच थरि व्रत · The five families</h2>
+<p>Every family rides the tithi chain of the shipped lunar engine; what differs is the day-choosing rule - which reference instant (sunrise, noon, sunset or moonrise) pins the tithi run to a civil day. The rules were decoded from the 2026 receipt corpus and are stated per day, never silently picked.</p>
+<table>
+<tr><th>Family</th><th>Rides</th><th>Day rule</th></tr>
+<tr><td>Sankashti Chaturthi <span lang="ne">संकष्टी चतुर्थी</span></td><td>Krishna Chaturthi</td><td>chandrodaya-vyapti - the day whose moonrise falls inside the run; when no moonrise falls inside, the day whose moonrise lies nearest the run</td></tr>
+<tr><td>Pradosham <span lang="ne">प्रदोष</span></td><td>Shukla and Krishna Trayodashi</td><td>trayodashi vyapta at sunset - the pradosh kala anchor</td></tr>
+<tr><td>Ekadashi <span lang="ne">एकादशी</span></td><td>Shukla and Krishna Ekadashi</td><td>madhyahna-vyapini - the last civil day whose noon falls inside the run</td></tr>
+<tr><td>Purnima <span lang="ne">पूर्णिमा</span></td><td>Purnima</td><td>the udaya day (the sunrise inside the run); on vriddhi the first</td></tr>
+<tr><td>Amavasya <span lang="ne">औंसी</span></td><td>Amavasya</td><td>the udaya day; on vriddhi the first</td></tr>
+</table>
+
+<h2 id="vrat-year">वर्ष तालिका · The year grid</h2>
+<p>Every vrat day from ${_iso(today)} through ${_iso(yearEnd)} - ${grid.length} days: sankashti ${counts['sankashti_chaturthi'] ?? 0}, pradosham ${counts['pradosham'] ?? 0}, ekadashi ${counts['ekadashi'] ?? 0}, purnima ${counts['purnima'] ?? 0}, amavasya ${counts['amavasya'] ?? 0}; ${borderlineCount} flagged borderline. Every day comes from the engine's own tithi runs and reference instants, not from any publisher table.</p>
+<table>
+<tr><th>Date (AD)</th><th>Family</th><th>Tithi</th><th>Tithi run (NPT)</th><th>Reference</th><th>Borderline</th></tr>
+$gridRows
+</table>
+
+<h2 id="vrat-conventions">नियम · Conventions</h2>
+<p>Every rule below is receipt-anchored (Hamro Patro, BhaktiBharat, astrologger, bhaktiras - the 2026-11/12 vrat corpus); where publishers disagree, the collision is decoded and shown, never silently picked.</p>
+<table>
+<tr><th>Rule</th><th>What nMiti serves and why</th></tr>
+$convRows
+</table>
+
+<h2 id="vrat-meta">How this is computed</h2>
+<ul>
+<li><strong>Engine:</strong> ${grid.isEmpty ? 'the nMiti nepali_panchang vrat calendar layer on the runtime lunar engine' : grid.first.provenance}</li>
+<li><strong>Evidence:</strong> ${grid.isEmpty ? 'runtime-computed; day identity pinned by the vrat receipts corpus' : grid.first.evidenceTier}</li>
+<li><strong>Verification:</strong> the gate (<code>vrat_calendar_test.dart</code>) bands every corpus boundary (13 BhaktiBharat tithi edges at the locked 1.5-min band, 13 Hamro Patro at 12 min, 8 astrologger IST rows at the +15-min NPT seam), checks run contiguity, day identity on every receipt row, the moonrise memberships (Nov 27 inside the run; the Dec 26 nearest-moonrise fallback vs Dec 27), the family bindings and the BS-2083 year-grid structure on every change. See <a href="${urlBase}methodology.html">methodology</a> and <a href="${urlBase}accuracy.html">accuracy &amp; honesty</a>.</li>
+<li><strong>Receipts:</strong> <a href="https://github.com/namunaONE/nMiti/blob/main/packages/nepali_panchang/test/fixtures/vrat_receipts_2026_11_12.json">vrat_receipts_2026_11_12.json</a> - the tithi-boundary corpus, the named-vrat identity rows, the BhaktiBharat moonrise receipts and the caveats, including the documented Dec 26 sink case.</li>
+<li><strong>Machine-readable:</strong> the <a href="${urlBase}api/v1/today.json">today.json</a> <code>vrat</code> block carries today's vrat days, the next vrat and the 45-day horizon with every day rule and borderline state.</li>
+</ul>
+''';
+  return _docShell(
+      'Vrat (the recurring vrat days)',
+      'Nepal vrat calendar from the nMiti engine: Sankashti Chaturthi, Pradosham, Ekadashi, Purnima and Amavasya days with every day-choosing rule decoded - receipt-anchored, never copied.',
+      urlBase,
+      'vrat.html',
+      body,
+      shortSha);
+}

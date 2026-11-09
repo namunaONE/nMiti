@@ -2,6 +2,11 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.3 vrat display: vrat year grid at the site/API layer (HYA-441)
+
+- New `vrat` block in `today.json`: today's vrat days (list, possibly empty), the next vrat day and the 45-day horizon (`vrat_window_days`), every entry carrying family (English + Nepali), the tithi and its NPT run edges, the day-choosing rule, the reference kind and instant, and the borderline flag + reason; keys always emitted.
+- New `vrat.html` honesty page: today/next cards, the five-family table with every day rule decoded (ekadashi madhyahna-vyapini, pradosham trayodashi-at-sunset, sankashti chandrodaya-vyapti with nearest-moonrise fallback, purnima/amavasya udaya), the 400-day year grid, all fourteen conventions, receipts record; plus nav (after Lagna), sitemap, `llms.txt`, `data.html` API description, site-contract markers and the Pages smoke list. No data changes.
+
 ## [Unreleased] — R10.3 vrat engine: vrat/tithi year grids (HYA-441)
 
 - New engine module `packages/nepali_panchang/lib/src/vrat_calendar.dart`: the recurring vrat days — Sankashti Chaturthi, Pradosham (both pakshas), Ekadashi (both pakshas), Purnima, Amavasya — as a tithi-run scan over the shipped limb engine: no new astronomy, full BS range inherited from the lunar core. Public surface: `tithiRunsBetween` / `vratDays` (window queries keyed on the CHOSEN civil date), the `TithiRun` / `VratDay` types carrying the day rule, the borderline flag + reason, provenance and evidence-tier honesty fields, English + Nepali family name tables, the `vratFamilyTithiIndices` bindings (Chaturthi 18, Trayodashi 12 + 27, Ekadashi 10 + 25, Purnima 14, Amavasya 29) and the 14-key `vratConventions` honesty map.
