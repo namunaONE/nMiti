@@ -2,6 +2,11 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — R10.1 ritual layer 3 display: Chandra Darshan at the site/API layer (HYA-441)
+
+- New `chandra_darshan` block in `api/v1/today.json`: today's darshan window (the saait = [sunset, moonset] pair, the new-moon instant, the day index, the moon age / elongation / altitude at saait begins, the moonset lag, the tithi label and the duration) or `null` on non-darshan evenings, plus the next darshan - keys always emitted, `today: null` on quiet evenings (the PR #41 marker rule).
+- New `chandra-darshan.html` honesty page (today / next / the 400-day upcoming table with the moonset-lag and moon-age evidence / all ten named conventions with the conjunction-day and refuted-tithi evidence decoded / the receipts with drikpanchang's two documented divergences and Hamro Patro's recorded absence), plus nav, sitemap, llms.txt, the data.html API description, site-contract markers and the Pages smoke list.
+
 ## [Unreleased] — R10.1 ritual layer 3 engine: Chandra Darshan (HYA-441)
 
 - New `moonset.dart`: the setting twin of the moonrise solver - the same Meeus eq. 15.1 target (0.7276 * pi - 34'), the same 30-minute scan + 40-bisection solve, on the downward crossing within the NPT civil day.
