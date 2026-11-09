@@ -188,7 +188,6 @@ List<TithiRun> tithiRunsBetween({
   final startJdUt = _jdUtOfNptWall(startNpt);
   final endJdUt = _jdUtOfNptWall(endNpt);
   var cursorJdTt = jdTtFromJdUt(startJdUt) - 1.0;
-  final endJdTt = jdTtFromJdUt(endJdUt);
   final out = <TithiRun>[];
   final maxRuns = 4.0 + (endJdUt - startJdUt) * 1.6;
   var guard = 0;
@@ -443,10 +442,6 @@ List<DateTime> _candidateDates(TithiRun run) {
 /// True when [a] and [b] are the same civil date.
 bool _sameDay(DateTime a, DateTime b) =>
     a.year == b.year && a.month == b.month && a.day == b.day;
-
-/// Midnight following the civil date [d].
-DateTime _nextMidnight(DateTime d) =>
-    DateTime.utc(d.year, d.month, d.day + 1);
 
 /// The first civil date in [dates] whose sunrise falls inside [run],
 /// or null when the run traps no sunrise.
