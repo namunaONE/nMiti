@@ -396,4 +396,33 @@ void main() {
     expect(d.evidenceTier, contains('vrat_receipts_2026_11_12'));
     expect(d.dayRule, contains('madhyahna'));
   });
+
+  test('DIAG december dump (temporary)', () {
+    final days = vratDays(
+        startNpt: DateTime.utc(2026, 11, 15),
+        endNpt: DateTime.utc(2026, 12, 31, 23, 59));
+    String fam(int i) => ['s', 'p', 'e', 'P', 'a'][i];
+    final daysStr = days
+        .map((d) =>
+            '${d.dateNpt.month.toString().padLeft(2, '0')}-${d.dateNpt.day.toString().padLeft(2, '0')}${fam(d.family.index)}')
+        .join(',');
+    final runs = tithiRunsBetween(
+        startNpt: DateTime.utc(2026, 12, 1),
+        endNpt: DateTime.utc(2026, 12, 10));
+    String t(DateTime x) =>
+        '${x.month.toString().padLeft(2, '0')}-${x.day.toString().padLeft(2, '0')}T${x.hour.toString().padLeft(2, '0')}:${x.minute.toString().padLeft(2, '0')}';
+    final runsStr = runs
+        .map((r) => '${r.tithiIndex}:${t(r.beginsNpt)}>${t(r.endsNpt)}')
+        .join(' ');
+    final ek = vratDays(
+        startNpt: DateTime.utc(2026, 12, 1),
+        endNpt: DateTime.utc(2026, 12, 10, 23, 59),
+        families: {VratFamily.ekadashi});
+    final ekStr = ek
+        .map((d) =>
+            '${d.dateNpt.month}-${d.dateNpt.day}:${t(d.tithiBeginsNpt)}>${t(d.tithiEndsNpt)}:bl=${d.borderline}:${d.borderlineReason}')
+        .join(' | ');
+    expect(true, isFalse,
+        reason: 'DIAG n=${days.length} [$daysStr] RUNS [$runsStr] EK [$ekStr]');
+  });
 }
