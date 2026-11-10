@@ -30,9 +30,20 @@ import 'package:test/test.dart';
 /// the publisher's convention does not fire under this engine's
 /// at-sunrise convention.
 
-final Map<String, dynamic> _fixture =
-    jsonDecode(File('test/fixtures/saait_receipts_2083.json')
-        .readAsStringSync()) as Map<String, dynamic>;
+/// The fixture is loaded through a two-path fallback like the vrat
+/// gate: the test runs from the package root locally and from the
+/// repo root in CI, so both variants are honoured.
+final Map<String, dynamic> _fixture = _loadFixture();
+
+Map<String, dynamic> _loadFixture() {
+  final file = File('test/fixtures/saait_receipts_2083.json');
+  if (file.existsSync()) {
+    return jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+  }
+  final alt =
+      File('packages/nepali_panchang/test/fixtures/saait_receipts_2083.json');
+  return jsonDecode(alt.readAsStringSync()) as Map<String, dynamic>;
+}
 
 const List<String> _weekdayNames = [
   'Monday',
