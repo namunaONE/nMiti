@@ -2,6 +2,7 @@
 """ELP2000-82B truncation spike: what would a NASA-canon-class moon cost,
 and what would it buy (HYA-369 follow-up, engine-perfection research
 move #2)?
+(Fix revision for PR #79: precession frame + 2002-args D convention.)
 
 Downloads the ELP2000-82B semi-analytical lunar theory (Chapront-Touze &
 Chapront 1983, A&A 124, 50; distributed by IMCCE/Bureau des Longitudes) at
