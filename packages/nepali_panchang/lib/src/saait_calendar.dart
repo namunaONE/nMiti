@@ -56,13 +56,22 @@ class SaaitFixedDay {
   /// BS day of month.
   final int bsDay;
 
-  /// The civil (AD) day, Nepal time, as DateTime.utc(y, m, d).
-  final DateTime dateNpt;
+  /// The civil (AD) date parts, Nepal time; the day materializes as
+  /// DateTime.utc(adYear, adMonth, adDay) via [dateNpt]. The parts are
+  /// stored because DateTime's constructors are not const, and the
+  /// profile tables are compile-time constants.
+  final int adYear;
+  final int adMonth;
+  final int adDay;
 
   /// The tithi label printed by the publisher (bare name, no paksha).
   final String tithiLabel;
 
-  const SaaitFixedDay(this.bsMonth, this.bsDay, this.dateNpt, this.tithiLabel);
+  const SaaitFixedDay(this.bsMonth, this.bsDay, this.adYear, this.adMonth,
+      this.adDay, this.tithiLabel);
+
+  /// The civil (AD) day, Nepal time, as DateTime.utc(y, m, d).
+  DateTime get dateNpt => DateTime.utc(adYear, adMonth, adDay);
 }
 
 /// A ceremony's BS 2083 traditional-fixed profile: publisher metadata
@@ -117,32 +126,32 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
     closureNote: "These months fall in Chaturmas, the four months from Harishayani Ekadashi to Haribodhini Ekadashi. By tradition, weddings are not held in this period.",
     caveats: const <String>[],
     days: const [
-      SaaitFixedDay(8, 9, DateTime.utc(2026, 11, 25), 'Pratipada'),
-      SaaitFixedDay(8, 10, DateTime.utc(2026, 11, 26), 'Dwitiya'),
-      SaaitFixedDay(8, 16, DateTime.utc(2026, 12, 2), 'Navami'),
-      SaaitFixedDay(8, 17, DateTime.utc(2026, 12, 3), 'Dashami'),
-      SaaitFixedDay(8, 19, DateTime.utc(2026, 12, 5), 'Dwadashi'),
-      SaaitFixedDay(8, 24, DateTime.utc(2026, 12, 10), 'Pratipada'),
-      SaaitFixedDay(8, 25, DateTime.utc(2026, 12, 11), 'Dwitiya'),
-      SaaitFixedDay(8, 26, DateTime.utc(2026, 12, 12), 'Tritiya'),
-      SaaitFixedDay(10, 4, DateTime.utc(2027, 1, 18), 'Dashami'),
-      SaaitFixedDay(10, 12, DateTime.utc(2027, 1, 26), 'Chaturthi'),
-      SaaitFixedDay(10, 15, DateTime.utc(2027, 1, 29), 'Ashtami'),
-      SaaitFixedDay(10, 19, DateTime.utc(2027, 2, 2), 'Ekadashi'),
-      SaaitFixedDay(10, 20, DateTime.utc(2027, 2, 3), 'Dwadashi'),
-      SaaitFixedDay(10, 27, DateTime.utc(2027, 2, 10), 'Chaturthi'),
-      SaaitFixedDay(11, 3, DateTime.utc(2027, 2, 15), 'Navami'),
-      SaaitFixedDay(11, 4, DateTime.utc(2027, 2, 16), 'Dashami'),
-      SaaitFixedDay(11, 11, DateTime.utc(2027, 2, 23), 'Tritiya'),
-      SaaitFixedDay(11, 12, DateTime.utc(2027, 2, 24), 'Chaturthi'),
-      SaaitFixedDay(11, 15, DateTime.utc(2027, 2, 27), 'Saptami'),
-      SaaitFixedDay(11, 16, DateTime.utc(2027, 2, 28), 'Ashtami'),
-      SaaitFixedDay(11, 17, DateTime.utc(2027, 3, 1), 'Navami'),
-      SaaitFixedDay(11, 18, DateTime.utc(2027, 3, 2), 'Dashami'),
-      SaaitFixedDay(11, 20, DateTime.utc(2027, 3, 4), 'Ekadashi'),
-      SaaitFixedDay(11, 25, DateTime.utc(2027, 3, 9), 'Pratipada'),
-      SaaitFixedDay(11, 26, DateTime.utc(2027, 3, 10), 'Dwitiya'),
-      SaaitFixedDay(11, 30, DateTime.utc(2027, 3, 14), 'Shashthi'),
+      SaaitFixedDay(8, 9, 2026, 11, 25, 'Pratipada'),
+      SaaitFixedDay(8, 10, 2026, 11, 26, 'Dwitiya'),
+      SaaitFixedDay(8, 16, 2026, 12, 2, 'Navami'),
+      SaaitFixedDay(8, 17, 2026, 12, 3, 'Dashami'),
+      SaaitFixedDay(8, 19, 2026, 12, 5, 'Dwadashi'),
+      SaaitFixedDay(8, 24, 2026, 12, 10, 'Pratipada'),
+      SaaitFixedDay(8, 25, 2026, 12, 11, 'Dwitiya'),
+      SaaitFixedDay(8, 26, 2026, 12, 12, 'Tritiya'),
+      SaaitFixedDay(10, 4, 2027, 1, 18, 'Dashami'),
+      SaaitFixedDay(10, 12, 2027, 1, 26, 'Chaturthi'),
+      SaaitFixedDay(10, 15, 2027, 1, 29, 'Ashtami'),
+      SaaitFixedDay(10, 19, 2027, 2, 2, 'Ekadashi'),
+      SaaitFixedDay(10, 20, 2027, 2, 3, 'Dwadashi'),
+      SaaitFixedDay(10, 27, 2027, 2, 10, 'Chaturthi'),
+      SaaitFixedDay(11, 3, 2027, 2, 15, 'Navami'),
+      SaaitFixedDay(11, 4, 2027, 2, 16, 'Dashami'),
+      SaaitFixedDay(11, 11, 2027, 2, 23, 'Tritiya'),
+      SaaitFixedDay(11, 12, 2027, 2, 24, 'Chaturthi'),
+      SaaitFixedDay(11, 15, 2027, 2, 27, 'Saptami'),
+      SaaitFixedDay(11, 16, 2027, 2, 28, 'Ashtami'),
+      SaaitFixedDay(11, 17, 2027, 3, 1, 'Navami'),
+      SaaitFixedDay(11, 18, 2027, 3, 2, 'Dashami'),
+      SaaitFixedDay(11, 20, 2027, 3, 4, 'Ekadashi'),
+      SaaitFixedDay(11, 25, 2027, 3, 9, 'Pratipada'),
+      SaaitFixedDay(11, 26, 2027, 3, 10, 'Dwitiya'),
+      SaaitFixedDay(11, 30, 2027, 3, 14, 'Shashthi'),
     ],
   ),
   SaaitCeremony.bratabandha: const SaaitProfile(
@@ -154,15 +163,15 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
     closureNote: null,
     caveats: const <String>[],
     days: const [
-      SaaitFixedDay(10, 25, DateTime.utc(2027, 2, 8), 'Dwitiya'),
-      SaaitFixedDay(11, 10, DateTime.utc(2027, 2, 22), 'Dwitiya'),
-      SaaitFixedDay(11, 13, DateTime.utc(2027, 2, 25), 'Panchami'),
-      SaaitFixedDay(11, 26, DateTime.utc(2027, 3, 10), 'Dwitiya'),
-      SaaitFixedDay(12, 3, DateTime.utc(2027, 3, 17), 'Navami'),
-      SaaitFixedDay(12, 4, DateTime.utc(2027, 3, 18), 'Ekadashi'),
-      SaaitFixedDay(12, 10, DateTime.utc(2027, 3, 24), 'Dwitiya'),
-      SaaitFixedDay(12, 25, DateTime.utc(2027, 4, 8), 'Dwitiya'),
-      SaaitFixedDay(12, 28, DateTime.utc(2027, 4, 11), 'Panchami'),
+      SaaitFixedDay(10, 25, 2027, 2, 8, 'Dwitiya'),
+      SaaitFixedDay(11, 10, 2027, 2, 22, 'Dwitiya'),
+      SaaitFixedDay(11, 13, 2027, 2, 25, 'Panchami'),
+      SaaitFixedDay(11, 26, 2027, 3, 10, 'Dwitiya'),
+      SaaitFixedDay(12, 3, 2027, 3, 17, 'Navami'),
+      SaaitFixedDay(12, 4, 2027, 3, 18, 'Ekadashi'),
+      SaaitFixedDay(12, 10, 2027, 3, 24, 'Dwitiya'),
+      SaaitFixedDay(12, 25, 2027, 4, 8, 'Dwitiya'),
+      SaaitFixedDay(12, 28, 2027, 4, 11, 'Panchami'),
     ],
   ),
   SaaitCeremony.grihaPravesh: const SaaitProfile(
@@ -174,7 +183,7 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
     closureNote: null,
     caveats: const <String>[],
     days: const [
-      SaaitFixedDay(11, 20, DateTime.utc(2027, 3, 4), 'Ekadashi'),
+      SaaitFixedDay(11, 20, 2027, 3, 4, 'Ekadashi'),
     ],
   ),
   SaaitCeremony.grihaAramba: const SaaitProfile(
@@ -188,9 +197,9 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
       "months beyond Mangsir are ambiguous (4 event-consistent of 5 month assignments); the unserved raw strings are retained in test/fixtures/saait_receipts_2083.json",
     ],
     days: const [
-      SaaitFixedDay(8, 5, DateTime.utc(2026, 11, 21), 'Ekadashi'),
-      SaaitFixedDay(8, 9, DateTime.utc(2026, 11, 25), 'Pratipada'),
-      SaaitFixedDay(8, 10, DateTime.utc(2026, 11, 26), 'Dwitiya'),
+      SaaitFixedDay(8, 5, 2026, 11, 21, 'Ekadashi'),
+      SaaitFixedDay(8, 9, 2026, 11, 25, 'Pratipada'),
+      SaaitFixedDay(8, 10, 2026, 11, 26, 'Dwitiya'),
     ],
   ),
   SaaitCeremony.pasni: const SaaitProfile(
@@ -202,20 +211,20 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
     closureNote: null,
     caveats: const <String>[],
     days: const [
-      SaaitFixedDay(7, 30, DateTime.utc(2026, 11, 16), 'Saptami'),
-      SaaitFixedDay(8, 10, DateTime.utc(2026, 11, 26), 'Dwitiya'),
-      SaaitFixedDay(8, 17, DateTime.utc(2026, 12, 3), 'Dashami'),
-      SaaitFixedDay(9, 1, DateTime.utc(2026, 12, 16), 'Saptami'),
-      SaaitFixedDay(9, 15, DateTime.utc(2026, 12, 30), 'Saptami'),
-      SaaitFixedDay(10, 15, DateTime.utc(2027, 1, 29), 'Ashtami'),
-      SaaitFixedDay(10, 25, DateTime.utc(2027, 2, 8), 'Dwitiya'),
-      SaaitFixedDay(11, 7, DateTime.utc(2027, 2, 19), 'Trayodashi'),
-      SaaitFixedDay(11, 13, DateTime.utc(2027, 2, 25), 'Panchami'),
-      SaaitFixedDay(11, 26, DateTime.utc(2027, 3, 10), 'Dwitiya'),
-      SaaitFixedDay(12, 3, DateTime.utc(2027, 3, 17), 'Navami'),
-      SaaitFixedDay(12, 10, DateTime.utc(2027, 3, 24), 'Dwitiya'),
-      SaaitFixedDay(12, 18, DateTime.utc(2027, 4, 1), 'Dashami'),
-      SaaitFixedDay(12, 25, DateTime.utc(2027, 4, 8), 'Dwitiya'),
+      SaaitFixedDay(7, 30, 2026, 11, 16, 'Saptami'),
+      SaaitFixedDay(8, 10, 2026, 11, 26, 'Dwitiya'),
+      SaaitFixedDay(8, 17, 2026, 12, 3, 'Dashami'),
+      SaaitFixedDay(9, 1, 2026, 12, 16, 'Saptami'),
+      SaaitFixedDay(9, 15, 2026, 12, 30, 'Saptami'),
+      SaaitFixedDay(10, 15, 2027, 1, 29, 'Ashtami'),
+      SaaitFixedDay(10, 25, 2027, 2, 8, 'Dwitiya'),
+      SaaitFixedDay(11, 7, 2027, 2, 19, 'Trayodashi'),
+      SaaitFixedDay(11, 13, 2027, 2, 25, 'Panchami'),
+      SaaitFixedDay(11, 26, 2027, 3, 10, 'Dwitiya'),
+      SaaitFixedDay(12, 3, 2027, 3, 17, 'Navami'),
+      SaaitFixedDay(12, 10, 2027, 3, 24, 'Dwitiya'),
+      SaaitFixedDay(12, 18, 2027, 4, 1, 'Dashami'),
+      SaaitFixedDay(12, 25, 2027, 4, 8, 'Dwitiya'),
     ],
   ),
   SaaitCeremony.vyaparik: const SaaitProfile(
@@ -227,32 +236,32 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
     closureNote: null,
     caveats: const <String>[],
     days: const [
-      SaaitFixedDay(7, 29, DateTime.utc(2026, 11, 15), 'Shashthi'),
-      SaaitFixedDay(8, 5, DateTime.utc(2026, 11, 21), 'Ekadashi'),
-      SaaitFixedDay(8, 6, DateTime.utc(2026, 11, 22), 'Trayodashi'),
-      SaaitFixedDay(8, 9, DateTime.utc(2026, 11, 25), 'Pratipada'),
-      SaaitFixedDay(8, 10, DateTime.utc(2026, 11, 26), 'Dwitiya'),
-      SaaitFixedDay(8, 13, DateTime.utc(2026, 11, 29), 'Shashthi'),
-      SaaitFixedDay(8, 17, DateTime.utc(2026, 12, 3), 'Dashami'),
-      SaaitFixedDay(8, 19, DateTime.utc(2026, 12, 5), 'Dwadashi'),
-      SaaitFixedDay(8, 26, DateTime.utc(2026, 12, 12), 'Tritiya'),
-      SaaitFixedDay(9, 4, DateTime.utc(2026, 12, 19), 'Dashami'),
-      SaaitFixedDay(9, 11, DateTime.utc(2026, 12, 26), 'Tritiya'),
-      SaaitFixedDay(9, 15, DateTime.utc(2026, 12, 30), 'Saptami'),
-      SaaitFixedDay(9, 25, DateTime.utc(2027, 1, 9), 'Dwitiya'),
-      SaaitFixedDay(10, 9, DateTime.utc(2027, 1, 23), 'Pratipada'),
-      SaaitFixedDay(10, 14, DateTime.utc(2027, 1, 28), 'Saptami'),
-      SaaitFixedDay(10, 29, DateTime.utc(2027, 2, 12), 'Shashthi'),
-      SaaitFixedDay(11, 7, DateTime.utc(2027, 2, 19), 'Trayodashi'),
-      SaaitFixedDay(11, 13, DateTime.utc(2027, 2, 25), 'Panchami'),
-      SaaitFixedDay(11, 20, DateTime.utc(2027, 3, 4), 'Ekadashi'),
-      SaaitFixedDay(11, 26, DateTime.utc(2027, 3, 10), 'Dwitiya'),
-      SaaitFixedDay(12, 4, DateTime.utc(2027, 3, 18), 'Ekadashi'),
-      SaaitFixedDay(12, 10, DateTime.utc(2027, 3, 24), 'Dwitiya'),
-      SaaitFixedDay(12, 18, DateTime.utc(2027, 4, 1), 'Dashami'),
-      SaaitFixedDay(12, 25, DateTime.utc(2027, 4, 8), 'Dwitiya'),
-      SaaitFixedDay(12, 28, DateTime.utc(2027, 4, 11), 'Panchami'),
-      SaaitFixedDay(12, 29, DateTime.utc(2027, 4, 12), 'Shashthi'),
+      SaaitFixedDay(7, 29, 2026, 11, 15, 'Shashthi'),
+      SaaitFixedDay(8, 5, 2026, 11, 21, 'Ekadashi'),
+      SaaitFixedDay(8, 6, 2026, 11, 22, 'Trayodashi'),
+      SaaitFixedDay(8, 9, 2026, 11, 25, 'Pratipada'),
+      SaaitFixedDay(8, 10, 2026, 11, 26, 'Dwitiya'),
+      SaaitFixedDay(8, 13, 2026, 11, 29, 'Shashthi'),
+      SaaitFixedDay(8, 17, 2026, 12, 3, 'Dashami'),
+      SaaitFixedDay(8, 19, 2026, 12, 5, 'Dwadashi'),
+      SaaitFixedDay(8, 26, 2026, 12, 12, 'Tritiya'),
+      SaaitFixedDay(9, 4, 2026, 12, 19, 'Dashami'),
+      SaaitFixedDay(9, 11, 2026, 12, 26, 'Tritiya'),
+      SaaitFixedDay(9, 15, 2026, 12, 30, 'Saptami'),
+      SaaitFixedDay(9, 25, 2027, 1, 9, 'Dwitiya'),
+      SaaitFixedDay(10, 9, 2027, 1, 23, 'Pratipada'),
+      SaaitFixedDay(10, 14, 2027, 1, 28, 'Saptami'),
+      SaaitFixedDay(10, 29, 2027, 2, 12, 'Shashthi'),
+      SaaitFixedDay(11, 7, 2027, 2, 19, 'Trayodashi'),
+      SaaitFixedDay(11, 13, 2027, 2, 25, 'Panchami'),
+      SaaitFixedDay(11, 20, 2027, 3, 4, 'Ekadashi'),
+      SaaitFixedDay(11, 26, 2027, 3, 10, 'Dwitiya'),
+      SaaitFixedDay(12, 4, 2027, 3, 18, 'Ekadashi'),
+      SaaitFixedDay(12, 10, 2027, 3, 24, 'Dwitiya'),
+      SaaitFixedDay(12, 18, 2027, 4, 1, 'Dashami'),
+      SaaitFixedDay(12, 25, 2027, 4, 8, 'Dwitiya'),
+      SaaitFixedDay(12, 28, 2027, 4, 11, 'Panchami'),
+      SaaitFixedDay(12, 29, 2027, 4, 12, 'Shashthi'),
     ],
   ),
   SaaitCeremony.dhanyachhedan: const SaaitProfile(
@@ -266,7 +275,7 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
       'single receipt day from the sahit home events block (Kartik 26 2083); the ceremony likely recurs in the merged table but is not month-attributed in text extraction',
     ],
     days: const [
-      SaaitFixedDay(7, 26, DateTime.utc(2026, 11, 12), 'Tritiya'),
+      SaaitFixedDay(7, 26, 2026, 11, 12, 'Tritiya'),
     ],
   ),
   SaaitCeremony.hom: const SaaitProfile(
@@ -280,7 +289,7 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
       'single receipt day from the sahit home events block (Kartik 27 2083); the ceremony likely recurs in the merged table but is not month-attributed in text extraction',
     ],
     days: const [
-      SaaitFixedDay(7, 27, DateTime.utc(2026, 11, 13), 'Chaturthi'),
+      SaaitFixedDay(7, 27, 2026, 11, 13, 'Chaturthi'),
     ],
   ),
   SaaitCeremony.rudri: const SaaitProfile(
@@ -294,7 +303,7 @@ const Map<SaaitCeremony, SaaitProfile> saaitProfiles2083 = {
       'single receipt day from the sahit home events block (Kartik 28 2083); the ceremony likely recurs in the merged table but is not month-attributed in text extraction',
     ],
     days: const [
-      SaaitFixedDay(7, 28, DateTime.utc(2026, 11, 14), 'Panchami'),
+      SaaitFixedDay(7, 28, 2026, 11, 14, 'Panchami'),
     ],
   ),
 

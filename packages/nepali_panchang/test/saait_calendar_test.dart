@@ -153,7 +153,7 @@ void main() {
       };
       table.forEach((k, v) {
         expect((v as List).length, counts[k], reason: k);
-        for (final n in v as List) {
+        for (final n in v) {
           expect(nakshatraNames.contains(n as String), isTrue,
               reason: '$k: $n is not a canonical nakshatra name');
         }
