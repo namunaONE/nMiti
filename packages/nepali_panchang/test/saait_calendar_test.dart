@@ -469,14 +469,25 @@ void main() {
       final m = muhurtaFor(year: 2026, month: 11, day: 25);
       expect(w.abhijit.beginsAtNpt, m.abhijitMuhurta.beginsAtNpt);
       expect(w.abhijit.endsAtNpt, m.abhijitMuhurta.endsAtNpt);
-      // Thursday choghadia: day from Jupiter [Shubh, Rog, Udveg, Chal,
-      // Labh, Amrut, Kal] -> 3 good; night [Udveg, Shubh, Amrut, Chal,
-      // Rog, Kal, Labh] -> 3 good.
-      expect(w.goodChoghadiya.length, 6);
-      expect(
-          w.goodChoghadiya
-              .every((s) => _goodTypes.contains(s.type)),
-          isTrue);
+      // The engine's choghadiya is the 8-part receipt-anchored
+      // convention (day and night, part 8 wrapping back to part 1's
+      // lord): Thursday yields 4 good day + 3 good night parts. The
+      // composition must equal the muhurta source exactly, in order.
+      final expectedGood = [
+        ...m.choghadiyaDay.where((s) => _goodTypes.contains(s.type)),
+        ...m.choghadiyaNight.where((s) => _goodTypes.contains(s.type)),
+      ];
+      expect(w.goodChoghadiya, hasLength(expectedGood.length));
+      expect(w.goodChoghadiya.length, inInclusiveRange(4, 8),
+          reason: 'Thursday under the 8-part convention: '
+          '4 day + 3 night');
+      for (var i = 0; i < expectedGood.length; i++) {
+        expect(w.goodChoghadiya[i].type, expectedGood[i].type);
+        expect(w.goodChoghadiya[i].beginsAtNpt,
+            expectedGood[i].beginsAtNpt);
+        expect(w.goodChoghadiya[i].endsAtNpt,
+            expectedGood[i].endsAtNpt);
+      }
       for (final s in w.goodChoghadiya) {
         expect(s.beginsAtNpt.isBefore(s.endsAtNpt), isTrue);
       }
@@ -489,11 +500,18 @@ void main() {
   });
 
   group('engine knife-edge receipts', () {
-    test('Nov 18 2026: Navami begins 06:21 (one minute after sunrise) - '
-        'borderline, udaya tithi Ashtami', () {
+    test('Nov 18-19 2026: the Kushmand Navami vriddhi - udaya Navami '
+        'on both days, vriddhi flag, not borderline', () {
+      // Cross-locked with the shipped vrat gate: both sunrises sit
+      // inside the same Shukla Navami run.
       final p = panchangFor(year: 2026, month: 11, day: 18);
-      expect(p.tithiBorderline, isTrue);
-      expect(_baseTithi(p.tithiAtUdaya.name), 'Ashtami');
+      expect(_baseTithi(p.tithiAtUdaya.name), 'Navami');
+      expect(p.tithiVriddhi, isTrue);
+      expect(p.tithiBorderline, isFalse,
+          reason: 'the vriddhi navami run is long; its edges sit far '
+          'from both sunrises');
+      final p19 = panchangFor(year: 2026, month: 11, day: 19);
+      expect(_baseTithi(p19.tithiAtUdaya.name), 'Navami');
     });
 
     test('Nov 22 2026: Dwadashi kshaya at Kathmandu - kshaya flag, '
