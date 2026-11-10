@@ -68,3 +68,21 @@ jobs:
           if [ -f build/sweph_summary.md ]; then
             cat build/sweph_summary.md >> "$GITHUB_STEP_SUMMARY"
           fi
+
+      # HYA-369 follow-up (engine-perfection research move #2): ELP2000-82B
+      # truncation spike. Downloads the IMCCE ELP82B public data at CI time,
+      # truncates it per the NASA Five Millennium Canon recipe and measures
+      # what a NASA-canon-class moon would do to the tithi/karana bands at
+      # the engine's own boundary instants (predicted bands plus perfect-
+      # geometric/perfect-apparent floors). Facts out, license clean:
+      # ELP2000-82B is public research data (Bureau des Longitudes/IMCCE),
+      # nothing from it ships in any artifact and the MIT engine is
+      # untouched - a future engine upgrade is its own PR. urllib is stdlib;
+      # pyswisseph is already installed by the crosscheck step above.
+      - run: python3 tools/sweph/elp_spike.py --instants build/limb_instants.json --receipts build/sweph_receipts.json --out build/elp_spike.json --summary build/elp_spike_summary.md
+      - name: elp spike summary to the run summary
+        if: always()
+        run: |
+          if [ -f build/elp_spike_summary.md ]; then
+            cat build/elp_spike_summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi

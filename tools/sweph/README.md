@@ -117,6 +117,47 @@ Bands tightened to the first CI scoreboard (2026-11-06): solar_local
 (measured 38.8|180 s, n=15 - rise/set clamp variance on the tAD stage
 tables).
 
+## ELP2000-82B truncation spike (HYA-369 follow-up)
+
+`elp_spike.py` measures what a NASA-canon-class moon would do to the
+tithi/karana bands - the engine-perfection research move #2 - without
+touching the engine:
+
+    python3 tools/sweph/elp_spike.py --instants build/limb_instants.json --receipts build/sweph_receipts.json --out build/elp_spike.json --summary build/elp_spike_summary.md
+
+It downloads the ELP2000-82B semi-analytical lunar theory (Chapront-
+Touze & Chapront 1983; distributed by IMCCE/Bureau des Longitudes) at
+CI time (~3 MB, cached under `build/elp82b/`), truncates it per the
+NASA Five Millennium Canon recipe (neglect periodic terms smaller than
+0.0005 arcsec in longitude/latitude and about 1 m in distance) and
+evaluates it at the engine's own boundary instants in both argument
+variants (raw 1983 ELP82B mean elements vs the improved Chapront 2002
+arguments - the same polynomials the engine's Meeus Ch.47 moon uses).
+The evaluator is a faithful port of the reference Fortran `elp82b_1`.
+
+Outputs, as annotations on its own CI step plus a markdown summary:
+
+- survivor term counts per file and total (the Dart port size), and
+  an evaluation timing benchmark;
+- truncated-ELP moon longitude accuracy vs Swiss geometric
+  mean-of-date at every boundary - and the same error curve for the
+  current engine moon (the error an upgrade would remove);
+- predicted post-upgrade tithi/karana bands: the moon substitution
+  shifts each boundary by dLambda/rate, applied to the per-boundary
+  Swiss deltas from `sweph_receipts.json` - plus two floors: a
+  perfect geometric moon and a perfect apparent moon (the
+  decomposition ladder for the go/no-go call on an engine upgrade).
+
+The dump gained one field for this: `moon_deg`, the engine's
+geometric moon longitude at each boundary.
+
+**License boundary:** ELP2000-82B is public research data from the
+Bureau des Longitudes/IMCCE; this spike downloads it at CI time and
+emits numeric facts only. Nothing from it ships in any artifact, and
+the MIT engine is untouched - vendoring a truncated coefficient table
+into the engine would be a separate PR with its own review (and
+served-value changes).
+
 ## License boundary (AGPL facts-out) - read this before touching
 
 Swiss Ephemeris is AGPL-3 (free for open-source use; CHF 700 commercial).
