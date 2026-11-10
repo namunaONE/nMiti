@@ -502,3 +502,38 @@ matured/forecast classification, the freshness window, determinism,
 and the argument range. No served-value, fixture, band, receipt or
 site changes in this rung; the display layer (today.json honesty
 fields, the honesty pages) consumes this surface in a later arc.
+
+## The ayanamsa convention, reconciled (HYA-369, 2026-11-10)
+
+The post-R10.5 Swiss-truth re-measure split the residuals cleanly:
+the tropical limbs (tithi 4.0 s mean / 11 s max, karana 4.1 s mean /
+11 s max) against near-constant sidereal offsets (nakshatra −51.2 s,
+yoga −96.8 s median). A near-constant offset is the signature of a
+frame difference, not an ephemeris gap. The reconciliation pinned the
+frame term through two independent limb routes: at the Oct 17 – Dec 1
+2026 window mid (JD_TT 2461352.5008) the fitted base sits +28.607″
+from the Swiss SIDM_LAHIRI frame — bracketed by the nakshatra route
+(+28.37″) and the yoga route (+28.84″) — and the implied drift
+(50.329″/yr) converges on the general precession rate (50.29″/yr).
+
+The receipts-measured reference line
+`ayanamsa(JD_TT) = 23.85709° + 1.398024° × (JD_TT − 2451545.0)/36525`
+is now a permanent engine constant (`ayanamsaSwissLahiriReference`).
+CI scores it on every push: the deviation of the Dart line from
+`swe.get_ayanamsa_ut` over the dump window is banded at ≤5″ (measured
+sub-arcsecond at the fit epoch), and the harness additionally scores
+aligned channels — the convention term subtracted per receipt via the
+new per-boundary ayanamsa fields in the dump — which land the sidereal
+limbs in the tithi class (pure ephemeris parity, bands 60/30 s). The
+raw bands stay unchanged, so the alignment itself stays under test.
+
+Measured publisher positions relative to the same line: BhaktiBharat
+−258″ (−4.3′), Hamro Patro −14″ (essentially on the line). Stated,
+never judged — the per-source profiles remain the reconciliation
+layer for served output, and no served value changes on the reference
+line account.
+
+It is a receipts-measured linear approximation of the Swiss
+SIDM_LAHIRI frame, NOT the IAE printed table; the printed-patro anchor
+of the true Chitra-pakshiya value is an open receipt (print
+verification pending).

@@ -37,6 +37,18 @@ our fitted base vs Swiss Lahiri), moonrise 60/15 (0.3|1 - near-exact
 parity), sunrise 60/30 (11.3|12). A regression now trips a band
 within ~3x of the recorded maxima.
 
+HYA-369 alignment (2026-11-10): beside the raw scoreboard, the
+harness also scores two derived channels into the Summary and the
+receipts JSON. The aligned channels subtract the
+engine-base-vs-Swiss-Lahiri convention term per receipt (via the
+new ayanamsa_deg / ayanamsa_reference_deg fields in the dump;
+bands 60/30 s for nakshatra and yoga - expected in the tithi
+class: pure ephemeris parity). The reference-line channel checks
+the receipts-measured Dart constant (23.85709 deg at J2000 +
+1.398024 deg/cy) against swe.get_ayanamsa_ut over the dump window
+(band 5 arcsec). The raw bands stay unchanged, so a regression
+trips either way and the alignment itself stays under test.
+
 The harness also reports:
 
 - **Delta-T residual** - Swiss internal Delta-T model minus our

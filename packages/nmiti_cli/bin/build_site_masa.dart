@@ -232,13 +232,20 @@ String _ayanamsaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
 <h2 id="ayanamsa-limbs">कुन अङ्गमा के फरक? · What the choice shifts, per limb</h2>
 <table>
 <tr><th>Limb</th><th>Ayanamsa sensitivity</th><th>Measured vs Swiss Ephemeris in CI (mean)</th></tr>
-<tr><td>tithi</td><td>none — pure Moon−Sun elongation; the ayanamsa cancels</td><td>14.3 s (post-R7a re-measure — the Meeus Ch.47 truncation, exposed once the pre-R7a ΔT error stopped partially canceling it)</td></tr>
-<tr><td>karana</td><td>none — half a tithi, the same cancellation</td><td>14.3 s (post-R7a re-measure)</td></tr>
-<tr><td>nakshatra</td><td>direct — it shifts the Moon's sidereal longitude</td><td>66.2 s vs Swiss Lahiri — the convention gap plus the −6.5 s R7a ΔT shift</td></tr>
-<tr><td>yoga</td><td>direct — it shifts Moon + Sun together</td><td>110.8 s vs Swiss Lahiri — the convention gap plus the −6.5 s R7a ΔT shift</td></tr>
+<tr><td>tithi</td><td>none — pure Moon−Sun elongation; the ayanamsa cancels</td><td>4.0 s mean / 11 s max (post-R10.5 re-measure — the Meeus Ch.47 truncation plus the named Moon light-time skip, both bounded)</td></tr>
+<tr><td>karana</td><td>none — half a tithi, the same cancellation</td><td>4.1 s mean / 11 s max (post-R10.5 re-measure; the same truncation class)</td></tr>
+<tr><td>nakshatra</td><td>direct — it shifts the Moon's sidereal longitude</td><td>51.2 s mean vs Swiss Lahiri — the ayanamsa convention gap alone (post-R10.5; reconciled below)</td></tr>
+<tr><td>yoga</td><td>direct — it shifts Moon + Sun together</td><td>96.8 s mean vs Swiss Lahiri — the ayanamsa convention gap alone (post-R10.5; reconciled below)</td></tr>
 <tr><td>sankranti / masa</td><td>defining — the rashi edges ARE the ayanamsa</td><td>3.7 min mean vs the 48 drikpanchang receipts</td></tr>
 </table>
-<p>The near-constant nakshatra/yoga offsets are the fitted-base-versus-Lahiri convention gap, measured by the Swiss-truth scoreboard on every push: <strong>stated, never absorbed</strong> — an informative number, not noise. Full scoreboard and band rationale: <a href="${urlBase}methodology.html">methodology</a>.</p>
+<p>The near-constant nakshatra/yoga offsets are the fitted-base-versus-Lahiri convention gap, measured by the Swiss-truth scoreboard on every push: <strong>stated, never absorbed</strong> — an informative number, not noise. The reconciliation below pins it to the arcsecond. Full scoreboard and band rationale: <a href="${urlBase}methodology.html">methodology</a>.</p>
+
+<h2 id="ayanamsa-swiss">स्विस-लहिरी मेलमिलान · The Swiss-Lahiri reconciliation</h2>
+<p>Re-measured after R10.5, the Swiss-truth scoreboard splits cleanly: the tropical limbs (tithi, karana) sit at 4.0–4.1 s mean / 11 s max, while nakshatra (51.2 s) and yoga (96.8 s) carry a near-constant offset — the signature of a frame difference, not an ephemeris gap. HYA-369 pinned that frame term through two independent routes: at the Oct 17 – Dec 1 2026 window mid the fitted base sits <strong>+28.37″ by the nakshatra route</strong> and <strong>+28.84″ by the yoga route</strong> (+28.607″ combined) from the Swiss SIDM_LAHIRI frame, and the implied drift — 50.329″ per year — converges on the general precession rate (50.29″/yr).</p>
+<p>The receipts-measured reference line, now a pinned engine constant:</p>
+<p><code>swissLahiri(JD_TT) = 23.85709° + 1.398024° × (JD_TT − 2451545.0) / 36525</code></p>
+<p>With the convention term subtracted per receipt, the <strong>aligned channels</strong> land the sidereal limbs in the tithi class — pure ephemeris parity — banded at 60/30 s and scored in CI on every push beside the unchanged raw bands, so the alignment itself stays under test. Publisher positions relative to the same line, measured: <strong>BhaktiBharat −258″ (−4.3′)</strong>, <strong>Hamro Patro −14″</strong> — essentially on it. Stated, never judged.</p>
+<p>This is a receipts-measured linear approximation of the Swiss SIDM_LAHIRI frame, <strong>not the IAE table</strong>: the printed-patro anchor of the true Chitra-pakshiya value is an open receipt (print verification pending), and no served value changes on its account. Full method: <a href="${urlBase}methodology.html">methodology</a>.</p>
 
 <h2 id="ayanamsa-nepal">नेपालको विचलन · The Nepal divergence record</h2>
 <p>Nepal's official panchang is not computed on a modern ephemeris. The Nepal Panchang Nirnayak Samiti (NPNS) — publishing the official patro since 2078 BS — computes the five limbs on the <strong>Surya Siddhanta</strong> panchang khand and the planets on Ketkar's <strong>Ketaki Grahaganitam</strong> (tier: <em>reported</em>, from Samiti statements and Nepali press coverage). In December 2025 the Samiti moved the full computation to the Ketaki system and rolled the move back within weeks after public dates broke — a live demonstration that mixing siddhantas is fragile.</p>
@@ -255,6 +262,7 @@ String _ayanamsaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
 <tr><td>the model constants and profiles</td><td><em>computed</em> — engine source, CI-pinned</td><td>the ayanamsa module; corpus calibration tests on every push</td></tr>
 <tr><td>today's values</td><td><em>computed</em> at build time</td><td>this page regenerates on every build; the same engine serves the masa block in <a href="${urlBase}api/v1/today.json">today.json</a></td></tr>
 <tr><td>Swiss-truth limb gaps</td><td><em>measured</em> in CI on every push</td><td>the Swiss cross-check scoreboard (HYA-369)</td></tr>
+<tr><td>the Swiss-Lahiri reference line + aligned channels</td><td><em>measured</em> in CI on every push</td><td>the reconciliation scoreboard (HYA-369, 2026-11-10)</td></tr>
 <tr><td>NPNS method, Ketaki rollback</td><td><em>reported</em></td><td>Samiti statements, Nepali press, 2025–2026</td></tr>
 <tr><td>~21 kala / 15+ h printed-patro offsets</td><td><em>press-reported</em>, print verification pending</td><td>press investigation; R8 print spot-verification queue</td></tr>
 <tr><td>2083 two-day Maha Ashtami / 26.39 h vriddhi</td><td><em>computed + receipt</em></td><td>engine reproduces the vriddhi; festival receipts corpus in CI</td></tr>
@@ -265,7 +273,7 @@ String _ayanamsaPageHtml(DateTime todayAd, String urlBase, String commitSha) {
 ''';
   return _docShell(
       'Ayanamsa (the sidereal reference)',
-      'The ayanamsa behind nMiti: the fitted sidereal reference, per-source publisher profiles, what the choice shifts per limb, and the Nepal divergence record (NPNS, printed patros, the 2083 two-day Ashtami) with every claim evidence-tiered.',
+      'The ayanamsa behind nMiti: the fitted sidereal reference, per-source publisher profiles, what the choice shifts per limb, the Swiss-Lahiri reconciliation, and the Nepal divergence record (NPNS, printed patros, the 2083 two-day Ashtami) with every claim evidence-tiered.',
       urlBase,
       'ayanamsa.html',
       body,
@@ -398,7 +406,7 @@ Today's date (JSON), with a panchang block (tithi/nakshatra/yoga/karana at both 
 Calendar for one BS year (JSON): ${urlBase}api/v1/calendar/${today.year}.json (pattern: /api/v1/calendar/<bs_year>.json, BS 1975-2100)
 Accuracy and honesty (evidence tiers, known defects, errata): ${urlBase}accuracy.html
 Methodology (verification, invariants, calendar layers): ${urlBase}methodology.html
-Ayanamsa (the sidereal reference - our fitted model, the per-source publisher profiles, what the choice shifts per limb, and the Nepal divergence record with evidence tiers): ${urlBase}ayanamsa.html
+Ayanamsa (the sidereal reference - our fitted model, the per-source publisher profiles, what the choice shifts per limb, the Swiss-Lahiri reconciliation with the aligned Swiss-truth channels, and the Nepal divergence record with evidence tiers): ${urlBase}ayanamsa.html
 Data dictionary and downloads (CSV, JSON API): ${urlBase}data.html
 Documentation pack rendered verbatim (data dictionary, methodology, changelog, errata, provenance manifest): ${urlBase}docs.html
 Served CSV copies: ${urlBase}data/calendar_bs_core_1975_2083.csv and ${urlBase}data/calendar_bs_tail_2084_2100.csv

@@ -15,6 +15,12 @@ import 'package:nepali_panchang/nepali_panchang.dart';
 /// BASE ayanamsa profile (source delta 0.0) so the harness measures the
 /// engine-vs-Swiss ayanamsa gap itself; the per-source publisher profiles
 /// stay in the published engine outputs and are not dumped here.
+///
+/// HYA-369 alignment: every boundary row also carries the engine BASE
+/// ayanamsa and the receipts-measured Swiss-Lahiri reference line at
+/// that instant (ayanamsa_deg / ayanamsa_reference_deg), so the Swiss
+/// harness can score the ayanamsa convention gap separately from
+/// ephemeris parity without duplicating engine constants.
 void main(List<String> args) {
   final startIso = _arg(args, '--start');
   final endIso = _arg(args, '--end');
@@ -66,6 +72,8 @@ void main(List<String> args) {
         'jd_ut': b - dt / 86400.0,
         'delta_t_s': dt,
         'utc': _isoUtcOfJdUt(b - dt / 86400.0),
+        'ayanamsa_deg': ayanamsaBase(b),
+        'ayanamsa_reference_deg': ayanamsaSwissLahiriReference(b),
       });
       cursor = b;
     }
