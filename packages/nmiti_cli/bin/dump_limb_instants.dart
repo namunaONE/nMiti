@@ -21,6 +21,13 @@ import 'package:nepali_panchang/nepali_panchang.dart';
 /// that instant (ayanamsa_deg / ayanamsa_reference_deg), so the Swiss
 /// harness can score the ayanamsa convention gap separately from
 /// ephemeris parity without duplicating engine constants.
+///
+/// ELP2000-82B spike (HYA-369 follow-up): every boundary row also
+/// carries the engine's geometric moon longitude at that instant
+/// (moon_deg), so tools/sweph/elp_spike.py can measure what a
+/// NASA-canon-class moon (truncated ELP82B) would do to the
+/// tithi/karana bands by substitution - predicted bands and floors,
+/// without touching the engine.
 void main(List<String> args) {
   final startIso = _arg(args, '--start');
   final endIso = _arg(args, '--end');
@@ -74,6 +81,7 @@ void main(List<String> args) {
         'utc': _isoUtcOfJdUt(b - dt / 86400.0),
         'ayanamsa_deg': ayanamsaBase(b),
         'ayanamsa_reference_deg': ayanamsaSwissLahiriReference(b),
+        'moon_deg': moonPosition(b).longitudeDeg,
       });
       cursor = b;
     }
