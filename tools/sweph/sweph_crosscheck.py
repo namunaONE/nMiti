@@ -1219,6 +1219,11 @@ def main():
     # failing the run, and ci.yml appends the summary file to
     # GITHUB_STEP_SUMMARY, which GitHub renders on the run's Summary
     # tab. These are the numbers the band-tightening pass reads.
+    # GitHub renders at most 10 annotations per step (see
+    # MAX_ANNOTATIONS): the aligned channels merge into their raw
+    # sidereal-limb notices and the ref line + deltaT residual share
+    # one hybrid notice, so every channel stays visible in the
+    # Annotations table.
     summary_channels = [
         ("tithi", per_limb.get("tithi")),
         ("karana", per_limb.get("karana")),
@@ -1235,25 +1240,44 @@ def main():
     for name, out in summary_channels:
         if not out:
             continue
-        annotate_notice(
-            "SWEPH %s: n=%d mean|d|=%.1fs max=%.0fs signed=%+.1fs "
-            "band %d/%d %s"
-            % (name, out["n"], out["mean_s"] or 0.0,
-               out["max_s"] or 0.0, out["signed_mean_s"],
-               out["hard_band_s"], out["mean_band_s"],
-               "PASS" if out["pass"] else "FAIL"))
+        if name.endswith("_aligned"):
+            # Merged into the raw sidereal-limb notice below: GitHub
+            # renders at most 10 annotations per step.
+            continue
+        msg = ("SWEPH %s: n=%d mean|d|=%.1fs max=%.0fs signed=%+.1fs "
+               "band %d/%d %s"
+               % (name, out["n"], out["mean_s"] or 0.0,
+                  out["max_s"] or 0.0, out["signed_mean_s"],
+                  out["hard_band_s"], out["mean_band_s"],
+                  "PASS" if out["pass"] else "FAIL"))
+        aligned = aligned_out.get(name)
+        if aligned:
+            msg += (" | aligned: n=%d mean|d|=%.1fs max=%.0fs "
+                    "signed=%+.1fs band %d/%d %s"
+                    % (aligned["n"], aligned["mean_s"] or 0.0,
+                       aligned["max_s"] or 0.0,
+                       aligned["signed_mean_s"],
+                       aligned["hard_band_s"],
+                       aligned["mean_band_s"],
+                       "PASS" if aligned["pass"] else "FAIL"))
+        annotate_notice(msg)
+    # The ref line and the deltaT residual share one hybrid notice
+    # so every channel fits inside GitHub 10-annotations-per-step
+    # render cap.
+    hybrid_parts = []
     if ref_out:
-        annotate_notice(
-            "SWEPH swiss-lahiri ref line: n=%d mean=%.2f arcsec "
-            "max=%.2f arcsec band %.1f %s"
+        hybrid_parts.append(
+            "swiss-lahiri ref line: n=%d mean=%.2f arcsec max=%.2f "
+            "arcsec band %.1f %s"
             % (ref_out["n"], ref_out["mean_s"], ref_out["max_s"],
                REFERENCE_LINE_MAX_DEV_ARCSEC,
                "PASS" if ref_out["pass"] else "FAIL"))
-    annotate_notice(
-        "SWEPH deltaT residual (Swiss - engine hybrid): mean=%+.2fs "
+    hybrid_parts.append(
+        "deltaT residual (Swiss - engine hybrid): mean=%+.2fs "
         "max|d|=%.2fs (n=%d); knife-edge boundaries: %d"
         % (dt_signed, dt_st["max_s"] or 0.0, dt_st["n"],
            len(knife_edges)))
+    annotate_notice("SWEPH " + "; ".join(hybrid_parts))
 
     if args.summary:
         lines = [
