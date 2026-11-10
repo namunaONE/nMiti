@@ -1,0 +1,1249 @@
+{
+  "schema": "nmiti-saait-receipts/1",
+  "crawl_date": "2026-11-10",
+  "crawl_note": "Frozen 2026-11-10 (UTC). Sources: katigate.com/en/sahit merged upcoming table (249 ceremony-day rows, Kartik 26 2083 -> Chaitra 30 2083 = 2026-11-12 -> 2027-04-13, 127 distinct days) and the six per-ceremony pages with concatenated digit-string day lists; dekhopanchang.com/en/learn/sarvartha-siddhi-yoga (Sarvartha Siddhi vara-nakshatra table, classical source Muhurta Chintamani/Nirnaya Sindhu); hinducalendar.app/muhurat/amrit-siddhi/2026 (Amrit Siddhi weekday-nakshatra pairs + dated 2026 instance windows, IST computed for Ujjain). Day lists resolve with hard constraints (ascending day order + presence in the merged table + event-chip month anchors + strictly-increasing month attribution + minimal segmentation); raw digit strings retained. No fresh crawl may edit this file.",
+  "location": {
+    "name": "Kathmandu",
+    "lat": 27.7172,
+    "lon": 85.324,
+    "tz_offset_min": 345,
+    "tz_name": "NPT (UTC+05:45)"
+  },
+  "sources": {
+    "katigate_home": "https://katigate.com/en/sahit - merged upcoming saait table: BS date, AD date, weekday, tithi label per ceremony-day row; the ceremony column does not survive text extraction (attributions come from the per-ceremony pages).",
+    "katigate_pages": "https://katigate.com/en/sahit/{vivah,bratabandha,griha-pravesh,griha-aramba,pasni,vyaparik} - per-month concatenated digit-string day lists for BS 2083 (upcoming months only; passed months of the BS year are not re-listed), next-3 event chips (month anchors), page-title full-year claimed counts, closure FAQ copy.",
+    "honesty_note": "katigate.com/en/sahit states the dates follow the sahit list published each year from the traditional panchang tables, used by priests across Nepal; if the official list for a year is not published yet the page may show estimated dates calculated from the classical rules, to be checked against the published list once it is out. The published/estimated honesty tier is stated by the publisher.",
+    "dekhopanchang_ssy": "https://dekhopanchang.com/en/learn/sarvartha-siddhi-yoga - the complete Sarvartha Siddhi vara-nakshatra table (classical: Muhurta Chintamani, Nirnaya Sindhu), weekday x Moon nakshatra at sunrise; yoga runs sunrise -> end of the qualifying nakshatra; documented overrides: Rahu Kaal suspension, Bhadra (Vishti) karana, Panchak reduction, eclipse.",
+    "hinducalendar_amrit": "https://hinducalendar.app/muhurat/amrit-siddhi/2026 - Amrit Siddhi = exactly one nakshatra per weekday (Sun-Hasta, Mon-Mrigashira, Tue-Ashwini, Wed-Anuradha, Thu-Pushya, Fri-Revati, Sat-Rohini); dated 2026 instance windows, IST computed for Ujjain; windows can start mid-run when the nakshatra begins after sunrise - a convention collision with the at-sunrise convention, recorded not applied."
+  },
+  "bs_2083_month_starts": {
+    "Kartik": "2026-10-18",
+    "Mangsir": "2026-11-17",
+    "Poush": "2026-12-16",
+    "Magh": "2027-01-15",
+    "Falgun": "2027-02-13",
+    "Chaitra": "2027-03-15"
+  },
+  "ceremonies": {
+    "vivah": {
+      "display_name": "Vivah (wedding)",
+      "source_page": "https://katigate.com/en/sahit/vivah",
+      "page_title": "Marriage Sait 2083 — 41 Wedding Dates (Lagan)",
+      "claimed_count_bs2083": 41,
+      "served_count": 26,
+      "months": [
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "raw": "910161719242526",
+          "days": [
+            9,
+            10,
+            16,
+            17,
+            19,
+            24,
+            25,
+            26
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "raw": "41215192027",
+          "days": [
+            4,
+            12,
+            15,
+            19,
+            20,
+            27
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "raw": "3411121516171820252630",
+          "days": [
+            3,
+            4,
+            11,
+            12,
+            15,
+            16,
+            17,
+            18,
+            20,
+            25,
+            26,
+            30
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 9,
+          "ad": "2026-11-25",
+          "weekday": "Wednesday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 10,
+          "ad": "2026-11-26",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 16,
+          "ad": "2026-12-02",
+          "weekday": "Wednesday",
+          "tithi_label": "Navami"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 17,
+          "ad": "2026-12-03",
+          "weekday": "Thursday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 19,
+          "ad": "2026-12-05",
+          "weekday": "Saturday",
+          "tithi_label": "Dwadashi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 24,
+          "ad": "2026-12-10",
+          "weekday": "Thursday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 25,
+          "ad": "2026-12-11",
+          "weekday": "Friday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 26,
+          "ad": "2026-12-12",
+          "weekday": "Saturday",
+          "tithi_label": "Tritiya"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 4,
+          "ad": "2027-01-18",
+          "weekday": "Monday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 12,
+          "ad": "2027-01-26",
+          "weekday": "Tuesday",
+          "tithi_label": "Chaturthi"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 15,
+          "ad": "2027-01-29",
+          "weekday": "Friday",
+          "tithi_label": "Ashtami"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 19,
+          "ad": "2027-02-02",
+          "weekday": "Tuesday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 20,
+          "ad": "2027-02-03",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwadashi"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 27,
+          "ad": "2027-02-10",
+          "weekday": "Wednesday",
+          "tithi_label": "Chaturthi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 3,
+          "ad": "2027-02-15",
+          "weekday": "Monday",
+          "tithi_label": "Navami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 4,
+          "ad": "2027-02-16",
+          "weekday": "Tuesday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 11,
+          "ad": "2027-02-23",
+          "weekday": "Tuesday",
+          "tithi_label": "Tritiya"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 12,
+          "ad": "2027-02-24",
+          "weekday": "Wednesday",
+          "tithi_label": "Chaturthi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 15,
+          "ad": "2027-02-27",
+          "weekday": "Saturday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 16,
+          "ad": "2027-02-28",
+          "weekday": "Sunday",
+          "tithi_label": "Ashtami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 17,
+          "ad": "2027-03-01",
+          "weekday": "Monday",
+          "tithi_label": "Navami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 18,
+          "ad": "2027-03-02",
+          "weekday": "Tuesday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 20,
+          "ad": "2027-03-04",
+          "weekday": "Thursday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 25,
+          "ad": "2027-03-09",
+          "weekday": "Tuesday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 26,
+          "ad": "2027-03-10",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 30,
+          "ad": "2027-03-14",
+          "weekday": "Sunday",
+          "tithi_label": "Shashthi"
+        }
+      ],
+      "closure_note": "These months fall in Chaturmas, the four months from Harishayani Ekadashi to Haribodhini Ekadashi. By tradition, weddings are not held in this period.",
+      "unresolved": null
+    },
+    "bratabandha": {
+      "display_name": "Bratabandha",
+      "source_page": "https://katigate.com/en/sahit/bratabandha",
+      "page_title": "Bratabandha Sait 2083 — 13 Auspicious Dates",
+      "claimed_count_bs2083": 13,
+      "served_count": 9,
+      "months": [
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "raw": "25",
+          "days": [
+            25
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "raw": "101326",
+          "days": [
+            10,
+            13,
+            26
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "raw": "34102528",
+          "days": [
+            3,
+            4,
+            10,
+            25,
+            28
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 25,
+          "ad": "2027-02-08",
+          "weekday": "Monday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 10,
+          "ad": "2027-02-22",
+          "weekday": "Monday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 13,
+          "ad": "2027-02-25",
+          "weekday": "Thursday",
+          "tithi_label": "Panchami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 26,
+          "ad": "2027-03-10",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 3,
+          "ad": "2027-03-17",
+          "weekday": "Wednesday",
+          "tithi_label": "Navami"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 4,
+          "ad": "2027-03-18",
+          "weekday": "Thursday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 10,
+          "ad": "2027-03-24",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 25,
+          "ad": "2027-04-08",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 28,
+          "ad": "2027-04-11",
+          "weekday": "Sunday",
+          "tithi_label": "Panchami"
+        }
+      ],
+      "closure_note": null,
+      "unresolved": null
+    },
+    "griha-pravesh": {
+      "display_name": "Griha Pravesh (housewarming)",
+      "source_page": "https://katigate.com/en/sahit/griha-pravesh",
+      "page_title": "Griha Pravesh Sait 2083 — 2 Housewarming Dates",
+      "claimed_count_bs2083": 2,
+      "served_count": 1,
+      "months": [
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "raw": "20",
+          "days": [
+            20
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 20,
+          "ad": "2027-03-04",
+          "weekday": "Thursday",
+          "tithi_label": "Ekadashi"
+        }
+      ],
+      "closure_note": null,
+      "unresolved": null
+    },
+    "griha-aramba": {
+      "display_name": "Griha Aramba (breaking ground)",
+      "source_page": "https://katigate.com/en/sahit/griha-aramba",
+      "page_title": "Griha Aramba Sait 2083 — 9 Dates to Start Building",
+      "claimed_count_bs2083": 9,
+      "served_count": 3,
+      "months": [
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "raw": "5910",
+          "days": [
+            5,
+            9,
+            10
+          ],
+          "attribution": "resolved by unanimity (the month is pinned by the event-chip anchors in every event-consistent assignment)"
+        },
+        {
+          "bs_month": null,
+          "month_number": null,
+          "raw": "1411",
+          "days": [],
+          "attribution": "UNRESOLVED: 4 event-consistent of 5 month assignments; candidate months: Poush/Falgun/Chaitra"
+        },
+        {
+          "bs_month": null,
+          "month_number": null,
+          "raw": "713",
+          "days": [],
+          "attribution": "UNRESOLVED: 4 event-consistent of 5 month assignments; candidate months: Mangsir/Poush/Magh/Falgun/Chaitra"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 5,
+          "ad": "2026-11-21",
+          "weekday": "Saturday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 9,
+          "ad": "2026-11-25",
+          "weekday": "Wednesday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 10,
+          "ad": "2026-11-26",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        }
+      ],
+      "closure_note": "These months fall in Chaturmas, when tradition avoids starting major work. They are also the wettest months of the year.",
+      "unresolved": "4 event-consistent of 5 month assignments"
+    },
+    "pasni": {
+      "display_name": "Pasni (rice feeding)",
+      "source_page": "https://katigate.com/en/sahit/pasni",
+      "page_title": "Pasni Sait 2083 — 36 Rice-Feeding Dates",
+      "claimed_count_bs2083": 36,
+      "served_count": 14,
+      "months": [
+        {
+          "bs_month": "Kartik",
+          "month_number": 7,
+          "raw": "30",
+          "days": [
+            30
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "raw": "1017",
+          "days": [
+            10,
+            17
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "raw": "115",
+          "days": [
+            1,
+            15
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "raw": "1525",
+          "days": [
+            15,
+            25
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "raw": "71326",
+          "days": [
+            7,
+            13,
+            26
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "raw": "3101825",
+          "days": [
+            3,
+            10,
+            18,
+            25
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Kartik",
+          "month_number": 7,
+          "bs_day": 30,
+          "ad": "2026-11-16",
+          "weekday": "Monday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 10,
+          "ad": "2026-11-26",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 17,
+          "ad": "2026-12-03",
+          "weekday": "Thursday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 1,
+          "ad": "2026-12-16",
+          "weekday": "Wednesday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 15,
+          "ad": "2026-12-30",
+          "weekday": "Wednesday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 15,
+          "ad": "2027-01-29",
+          "weekday": "Friday",
+          "tithi_label": "Ashtami"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 25,
+          "ad": "2027-02-08",
+          "weekday": "Monday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 7,
+          "ad": "2027-02-19",
+          "weekday": "Friday",
+          "tithi_label": "Trayodashi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 13,
+          "ad": "2027-02-25",
+          "weekday": "Thursday",
+          "tithi_label": "Panchami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 26,
+          "ad": "2027-03-10",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 3,
+          "ad": "2027-03-17",
+          "weekday": "Wednesday",
+          "tithi_label": "Navami"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 10,
+          "ad": "2027-03-24",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 18,
+          "ad": "2027-04-01",
+          "weekday": "Thursday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 25,
+          "ad": "2027-04-08",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        }
+      ],
+      "closure_note": null,
+      "unresolved": null
+    },
+    "vyaparik": {
+      "display_name": "Vyaparik (business)",
+      "source_page": "https://katigate.com/en/sahit/vyaparik",
+      "page_title": "Vyaparik Sait 2083 — 44 Dates to Open a Business",
+      "claimed_count_bs2083": 44,
+      "served_count": 26,
+      "months": [
+        {
+          "bs_month": "Kartik",
+          "month_number": 7,
+          "raw": "29",
+          "days": [
+            29
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "raw": "5691013171926",
+          "days": [
+            5,
+            6,
+            9,
+            10,
+            13,
+            17,
+            19,
+            26
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "raw": "4111525",
+          "days": [
+            4,
+            11,
+            15,
+            25
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "raw": "91429",
+          "days": [
+            9,
+            14,
+            29
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "raw": "7132026",
+          "days": [
+            7,
+            13,
+            20,
+            26
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "raw": "41018252829",
+          "days": [
+            4,
+            10,
+            18,
+            25,
+            28,
+            29
+          ],
+          "attribution": "resolved (event-chip month anchors + ascending day order + merged-table presence + strictly-increasing month attribution + minimal segmentation)"
+        }
+      ],
+      "days": [
+        {
+          "bs_month": "Kartik",
+          "month_number": 7,
+          "bs_day": 29,
+          "ad": "2026-11-15",
+          "weekday": "Sunday",
+          "tithi_label": "Shashthi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 5,
+          "ad": "2026-11-21",
+          "weekday": "Saturday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 6,
+          "ad": "2026-11-22",
+          "weekday": "Sunday",
+          "tithi_label": "Trayodashi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 9,
+          "ad": "2026-11-25",
+          "weekday": "Wednesday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 10,
+          "ad": "2026-11-26",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 13,
+          "ad": "2026-11-29",
+          "weekday": "Sunday",
+          "tithi_label": "Shashthi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 17,
+          "ad": "2026-12-03",
+          "weekday": "Thursday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 19,
+          "ad": "2026-12-05",
+          "weekday": "Saturday",
+          "tithi_label": "Dwadashi"
+        },
+        {
+          "bs_month": "Mangsir",
+          "month_number": 8,
+          "bs_day": 26,
+          "ad": "2026-12-12",
+          "weekday": "Saturday",
+          "tithi_label": "Tritiya"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 4,
+          "ad": "2026-12-19",
+          "weekday": "Saturday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 11,
+          "ad": "2026-12-26",
+          "weekday": "Saturday",
+          "tithi_label": "Tritiya"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 15,
+          "ad": "2026-12-30",
+          "weekday": "Wednesday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Poush",
+          "month_number": 9,
+          "bs_day": 25,
+          "ad": "2027-01-09",
+          "weekday": "Saturday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 9,
+          "ad": "2027-01-23",
+          "weekday": "Saturday",
+          "tithi_label": "Pratipada"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 14,
+          "ad": "2027-01-28",
+          "weekday": "Thursday",
+          "tithi_label": "Saptami"
+        },
+        {
+          "bs_month": "Magh",
+          "month_number": 10,
+          "bs_day": 29,
+          "ad": "2027-02-12",
+          "weekday": "Friday",
+          "tithi_label": "Shashthi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 7,
+          "ad": "2027-02-19",
+          "weekday": "Friday",
+          "tithi_label": "Trayodashi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 13,
+          "ad": "2027-02-25",
+          "weekday": "Thursday",
+          "tithi_label": "Panchami"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 20,
+          "ad": "2027-03-04",
+          "weekday": "Thursday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Falgun",
+          "month_number": 11,
+          "bs_day": 26,
+          "ad": "2027-03-10",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 4,
+          "ad": "2027-03-18",
+          "weekday": "Thursday",
+          "tithi_label": "Ekadashi"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 10,
+          "ad": "2027-03-24",
+          "weekday": "Wednesday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 18,
+          "ad": "2027-04-01",
+          "weekday": "Thursday",
+          "tithi_label": "Dashami"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 25,
+          "ad": "2027-04-08",
+          "weekday": "Thursday",
+          "tithi_label": "Dwitiya"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 28,
+          "ad": "2027-04-11",
+          "weekday": "Sunday",
+          "tithi_label": "Panchami"
+        },
+        {
+          "bs_month": "Chaitra",
+          "month_number": 12,
+          "bs_day": 29,
+          "ad": "2027-04-12",
+          "weekday": "Monday",
+          "tithi_label": "Shashthi"
+        }
+      ],
+      "closure_note": null,
+      "unresolved": null
+    }
+  },
+  "merged_block_ceremonies": [
+    {
+      "ceremony": "dhanyachhedan",
+      "bs_month": "Kartik",
+      "month_number": 7,
+      "bs_day": 26,
+      "ad": "2026-11-12",
+      "weekday": "Thursday",
+      "tithi_label": "Tritiya"
+    },
+    {
+      "ceremony": "hom",
+      "bs_month": "Kartik",
+      "month_number": 7,
+      "bs_day": 27,
+      "ad": "2026-11-13",
+      "weekday": "Friday",
+      "tithi_label": "Chaturthi"
+    },
+    {
+      "ceremony": "rudri",
+      "bs_month": "Kartik",
+      "month_number": 7,
+      "bs_day": 28,
+      "ad": "2026-11-14",
+      "weekday": "Saturday",
+      "tithi_label": "Panchami"
+    }
+  ],
+  "ssy": {
+    "convention": "Sarvartha Siddhi Yoga = weekday x the Moon's nakshatra AT SUNRISE (udaya); window = sunrise -> end of the qualifying nakshatra. Amrit Siddhi = the one stricter pair per weekday. Computed by the engine from panchangFor udaya elements; overrides (Rahu Kaal, Bhadra karana, Panchak, eclipse) are authority-dependent and documented, NOT applied.",
+    "table": {
+      "Sunday": [
+        "Ashwini",
+        "Pushya",
+        "Uttara Phalguni",
+        "Hasta",
+        "Mula",
+        "Uttara Ashadha",
+        "Uttara Bhadrapada"
+      ],
+      "Monday": [
+        "Rohini",
+        "Mrigashira",
+        "Pushya",
+        "Hasta",
+        "Anuradha",
+        "Shravana"
+      ],
+      "Tuesday": [
+        "Ashwini",
+        "Krittika",
+        "Uttara Phalguni",
+        "Uttara Ashadha",
+        "Uttara Bhadrapada"
+      ],
+      "Wednesday": [
+        "Rohini",
+        "Mrigashira",
+        "Hasta",
+        "Anuradha",
+        "Jyeshtha",
+        "Revati"
+      ],
+      "Thursday": [
+        "Ashwini",
+        "Punarvasu",
+        "Pushya",
+        "Anuradha",
+        "Shravana",
+        "Revati"
+      ],
+      "Friday": [
+        "Ashwini",
+        "Punarvasu",
+        "Pushya",
+        "Anuradha",
+        "Shravana",
+        "Revati"
+      ],
+      "Saturday": [
+        "Rohini",
+        "Swati",
+        "Shravana",
+        "Revati"
+      ]
+    },
+    "amrit_table": {
+      "Sunday": "Hasta",
+      "Monday": "Mrigashira",
+      "Tuesday": "Ashwini",
+      "Wednesday": "Anuradha",
+      "Thursday": "Pushya",
+      "Friday": "Revati",
+      "Saturday": "Rohini"
+    },
+    "amrit_instances_2026_ist_ujjain": [
+      {
+        "date": "2026-01-14",
+        "weekday": "Wednesday",
+        "window": "07:11 -> 15 Jan 03:02"
+      },
+      {
+        "date": "2026-02-11",
+        "weekday": "Wednesday",
+        "window": "07:03 -> 10:51"
+      },
+      {
+        "date": "2026-02-20",
+        "weekday": "Friday",
+        "window": "20:06 -> 21 Feb 06:56"
+      },
+      {
+        "date": "2026-03-20",
+        "weekday": "Friday",
+        "window": "06:32 -> 21 Mar 02:26"
+      },
+      {
+        "date": "2026-04-17",
+        "weekday": "Friday",
+        "window": "06:06 -> 12:01"
+      },
+      {
+        "date": "2026-04-21",
+        "weekday": "Tuesday",
+        "window": "02:07 -> 06:02"
+      },
+      {
+        "date": "2026-04-23",
+        "weekday": "Thursday",
+        "window": "20:56 -> 24 Apr 06:00"
+      },
+      {
+        "date": "2026-05-18",
+        "weekday": "Monday",
+        "window": "11:31 -> 19 May 05:45"
+      },
+      {
+        "date": "2026-05-21",
+        "weekday": "Thursday",
+        "window": "05:44 -> 22 May 02:48"
+      },
+      {
+        "date": "2026-06-14",
+        "weekday": "Sunday",
+        "window": "01:15 -> 05:42"
+      },
+      {
+        "date": "2026-06-15",
+        "weekday": "Monday",
+        "window": "05:42 -> 19:07"
+      },
+      {
+        "date": "2026-06-18",
+        "weekday": "Thursday",
+        "window": "05:42 -> 11:31"
+      },
+      {
+        "date": "2026-07-11",
+        "weekday": "Saturday",
+        "window": "11:02 -> 12 Jul 05:50"
+      },
+      {
+        "date": "2026-07-19",
+        "weekday": "Sunday",
+        "window": "18:11 -> 20 Jul 05:53"
+      },
+      {
+        "date": "2026-08-04",
+        "weekday": "Tuesday",
+        "window": "21:53 -> 5 Aug 06:00"
+      },
+      {
+        "date": "2026-08-08",
+        "weekday": "Saturday",
+        "window": "06:01 -> 16:50"
+      },
+      {
+        "date": "2026-08-16",
+        "weekday": "Sunday",
+        "window": "06:04 -> 17 Aug 03:49"
+      },
+      {
+        "date": "2026-09-01",
+        "weekday": "Tuesday",
+        "window": "06:10 -> 2 Sept 02:41"
+      },
+      {
+        "date": "2026-09-13",
+        "weekday": "Sunday",
+        "window": "06:13 -> 13:06"
+      },
+      {
+        "date": "2026-09-16",
+        "weekday": "Wednesday",
+        "window": "17:21 -> 17 Sept 06:15"
+      },
+      {
+        "date": "2026-09-29",
+        "weekday": "Tuesday",
+        "window": "06:18 -> 09:02"
+      },
+      {
+        "date": "2026-10-14",
+        "weekday": "Wednesday",
+        "window": "06:24 -> 15 Oct 04:02"
+      },
+      {
+        "date": "2026-11-11",
+        "weekday": "Wednesday",
+        "window": "06:39 -> 11:37"
+      },
+      {
+        "date": "2026-12-18",
+        "weekday": "Friday",
+        "window": "16:09 -> 19 Dec 07:03"
+      }
+    ]
+  },
+  "validation": {
+    "merged_table_rows": 249,
+    "distinct_days": 127,
+    "weekday_selfcheck": "0 mismatches between the published weekday column and the weekday derived from the published AD date (expected 0)",
+    "bs_ad_consistency": "every served day's AD date comes from the same merged-table row as its BS date; month starts match nepali_sankranti (Kartik 2026-10-18, Mangsir 2026-11-17, Poush 2026-12-16, Magh 2027-01-15, Falgun 2027-02-13, Chaitra 2027-03-15)",
+    "tithi_labels": "publisher tithi labels carried as-is; engine udaya-tithi cross-check is a CI gate (knife-edge tolerance) in test/saait_calendar_test.dart",
+    "anchors": "each ceremony page's next-3 event chips anchor the month lists (asserted at assembly time)"
+  },
+  "caveats": [
+    {
+      "id": "griha-aramba-month-attribution",
+      "text": "Griha Aramba serves only the Mangsir list (days 5/9/10, pinned by the page's next-3 event chips in every consistent assignment). The raw strings '1411' = days [] and '713' = days [] each fit multiple months (4 event-consistent of 5 month assignments); they are retained unserved."
+    },
+    {
+      "id": "upcoming-only-window",
+      "text": "Ceremony pages list upcoming months only. Claimed full-year counts include months of BS 2083 that already passed in 2026 (Baisakh-Jestha-Ashadh), so served_count < claimed_count is expected, not data loss. Griha pravesh serves Falgun 20 only; its second 2083 date lies in a passed month."
+    },
+    {
+      "id": "merged-block-singletons",
+      "text": "Dhanyachhedan, Hom and Rudri are served from the sahit home events block as single Kartik 26/27/28 receipts. These ceremonies likely recur later in the merged table, but the merged table does not attribute them per-month in text extraction; recorded, never guessed."
+    },
+    {
+      "id": "minimal-segmentation",
+      "text": "Digit strings resolve by minimal ascending segmentation validated against merged-table presence; all served lists were unique in their assigned month at assembly time."
+    },
+    {
+      "id": "unattributed-merged-rows",
+      "text": "The merged table carries more ceremony-day rows (249) than the six crawled ceremonies + three merged-block days explain; extra rows are recorded, never guessed."
+    },
+    {
+      "id": "amrit-dec18-convention-collision",
+      "text": "The hinducalendar.app Dec 18 2026 Amrit window starts 16:09 IST (Revati begins mid-day): under the at-sunrise convention Dec 18 does not fire (udaya nakshatra Uttara Bhadrapada, not in the Friday list) and Dec 19 is a sunrise knife-edge (Revati ends 07:03 IST ~06:48 NPT, minutes before the Kathmandu sunrise). The instance is kept as the collision receipt; the engine serves the at-sunrise convention only."
+    },
+    {
+      "id": "griha-pravesh-ad-date",
+      "text": "Falgun 20 2083 = 2027-03-04 (Thursday) per the merged table (Falgun 1 = 2027-02-13 + 19 days) and the ceremony page countdown (in 114 days from 2026-11-10). An earlier working note said Feb 17 2027 - that was Falgun 5's AD date; corrected here."
+    }
+  ]
+}
