@@ -269,7 +269,7 @@ class ElpTheory:
                     c1 = _num(ln, 14, 13)
                     coef = [c1]
                     for j in range(6):
-                        coef.append(_num(ln, 29 + 10 * j, 10))
+                        coef.append(_num(ln, 29 + 12 * j, 10))
                     if abs(c1) < self.pre[iv]:
                         continue
                     if n == 3:
