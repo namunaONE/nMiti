@@ -131,6 +131,20 @@
 /// Pradosh Sundays and the bhaktiras sankashti list, 5 supporting
 /// named-vrat udaya receipts, the BhaktiBharat moonrise anchor): zero
 /// divergences across the corpus.
+///
+/// R10.4 (HYA-441) opens the saait layer: the auspicious-date
+/// finders. Traditional-fixed ceremony day lists (the katigate BS
+/// 2083 sahit pages - vivah, bratabandha, pasni, griha aramba, griha
+/// pravesh, vyaparik plus the dhanyachhedan/hom/rudri events block;
+/// 82 served days, ambiguous digit strings retained unserved) are
+/// served as named evidence, never recomputed as truth; in-day
+/// windows are composed from the L4 muhurta recipes (Abhijit, good
+/// choghadiya, auspicious horas); Sarvartha and Amrit Siddhi come
+/// from the udaya elements with the classical weekday-nakshatra
+/// table; the SSY overrides, the Guru/Shukra asta closures and the
+/// Dec 18 2026 mid-run Amrit collision are documented, never
+/// silently resolved - gated by the 2026-11-10 saait receipt corpus
+/// (schema nmiti-saait-receipts/1).
 library;
 
 export 'src/ayanamsa.dart';
@@ -152,6 +166,7 @@ export 'src/moonset.dart';
 export 'src/muhurta.dart';
 export 'src/panchak.dart';
 export 'src/panchang_day.dart';
+export 'src/saait_calendar.dart';
 export 'src/solver.dart';
 export 'src/sun.dart';
 export 'src/sunrise.dart';
