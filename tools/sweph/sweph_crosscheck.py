@@ -98,6 +98,31 @@ except ImportError:
 # margin, so the thresholds stay.
 HARD_BAND_S = {"tithi": 60, "karana": 60, "nakshatra": 180, "yoga": 300}
 MEAN_BAND_S = {"tithi": 30, "karana": 30, "nakshatra": 120, "yoga": 180}
+# HYA-369 ayanamsa alignment (2026-11-10): the near-constant
+# nakshatra/yoga offsets (raw medians -51.2 s / -96.8 s) are the
+# engine-base-vs-Swiss-Lahiri frame difference - measured +28.37"
+# and +28.84" at the Oct 17 - Dec 1 2026 window mid through two
+# independent limb routes, with the implied drift (50.329"/yr)
+# converging on the general precession rate. The dump now carries
+# the engine ayanamsa and the receipts-measured Swiss-Lahiri
+# reference line per boundary, so the harness can subtract the
+# convention term per receipt WITHOUT duplicating engine
+# constants: aligned = raw + n * conv/rate * 86400 (conv =
+# engine ayanamsa minus the Swiss ayanamsa at the engine
+# boundary; rate = central difference of the Swiss sidereal
+# angle; n = 1 for nakshatra, 2 for yoga - Moon and Sun both
+# shift). Expected aligned residual: the tithi class (the same
+# ephemeris pair, frame-corrected). The raw bands above stay, so
+# a regression trips either way and the alignment itself stays
+# under test.
+ALIGNED_HARD_BAND_S = {"nakshatra": 60, "yoga": 60}
+ALIGNED_MEAN_BAND_S = {"nakshatra": 30, "yoga": 30}
+# The Dart reference line (ayanamsaSwissLahiriReference:
+# 23.85709 deg at J2000 + 1.398024 deg/cy, receipts-measured)
+# must track swe.get_ayanamsa_ut over the dump window. It is
+# fitted at the window mid; the gate catches a wrong constant
+# with margin while the Summary records the measured deviation.
+REFERENCE_LINE_MAX_DEV_ARCSEC = 5.0
 # Moonrise parity band (HYA-417): same target convention on both sides,
 # so this is pure ephemeris + algorithm parity like tithi. Measured
 # 0.3|1 s (n=44, first CI scoreboard) - near-exact parity; 60/15 keeps
@@ -848,6 +873,9 @@ def main():
 
     sw = Sweph()
     per_limb = {}
+    aligned_out = {}
+    aligned_deltas = {"nakshatra": [], "yoga": []}
+    ref_devs = []
     all_rows = []
     knife_edges = []
     dt_residuals = []
@@ -871,6 +899,34 @@ def main():
             sw_jd = next_boundary(angle_fn, span, jd_ut - SEED_DAYS)
             delta_s = (sw_jd - jd_ut) * 86400.0
             deltas.append(delta_s)
+            # HYA-369 alignment (sidereal limbs): subtract the
+            # ayanamsa convention term so the aligned score is pure
+            # ephemeris parity. conv = engine base ayanamsa minus
+            # the Swiss Lahiri ayanamsa at the engine boundary;
+            # rate = central difference of the Swiss sidereal angle
+            # (n = 1 nakshatra, 2 yoga: Moon and Sun both shift).
+            aligned_s = None
+            if limb in ("nakshatra", "yoga"):
+                if "ayanamsa_deg" not in r:
+                    failures.append(
+                        "%s boundary at %s: dump lacks ayanamsa_deg - "
+                        "regenerate with the updated dump_limb_instants"
+                        % (limb, r.get("utc", "?")))
+                else:
+                    conv_deg = (r["ayanamsa_deg"]
+                               - swe.get_ayanamsa_ut(jd_ut))
+                    h = 0.25
+                    a2 = angle_fn(jd_ut + h)
+                    a1 = angle_fn(jd_ut - h)
+                    rate = (((a2 - a1 + 540.0) % 360.0) - 180.0) / (2.0 * h)
+                    n_conv = 2.0 if limb == "yoga" else 1.0
+                    aligned_s = (delta_s +
+                                 n_conv * conv_deg / rate * 86400.0)
+                    aligned_deltas[limb].append(aligned_s)
+            if "ayanamsa_reference_deg" in r:
+                ref_devs.append(abs(
+                    r["ayanamsa_reference_deg"] -
+                    swe.get_ayanamsa_ut(jd_ut)) * 3600.0)
             # Delta-T residual: Swiss internal model vs our polynomial.
 # swe.deltat returns Delta-T in DAYS (the C API contract): the
 # first CI run read it as seconds, producing a constant -75.60 s
@@ -893,6 +949,8 @@ def main():
                 "swiss_jd_ut": sw_jd,
                 "delta_s": round(delta_s, 2),
             }
+            if aligned_s is not None:
+                row["aligned_delta_s"] = round(aligned_s, 2)
             if knife_min is not None:
                 row["sunrise_delta_min"] = round(knife_min, 1)
                 row["knife_edge"] = knife
@@ -922,6 +980,56 @@ def main():
               "band %d/%d %s"
               % (limb, st["n"], st["mean_s"], st["max_s"], signed,
                  hard, mean_band, "PASS" if ok else "FAIL"))
+
+        # HYA-369: the aligned (convention-subtracted) scoreboard
+        # for the sidereal limbs - the same stats, bands,
+        # annotations and Summary rows as the raw channels.
+        if limb in aligned_deltas and aligned_deltas[limb]:
+            adeltas = aligned_deltas[limb]
+            avals = [abs(d) for d in adeltas]
+            ast = stats(avals)
+            asigned = sum(adeltas) / len(adeltas)
+            ahard = ALIGNED_HARD_BAND_S[limb]
+            amean = ALIGNED_MEAN_BAND_S[limb]
+            aok = ast["max_s"] <= ahard and ast["mean_s"] <= amean
+            if not aok:
+                failures.append(
+                    "%s aligned: max=%.0fs (band %ds), mean=%.0fs (band %ds)"
+                    % (limb, ast["max_s"], ahard,
+                       ast["mean_s"], amean))
+            aligned_out[limb] = {
+                **ast,
+                "signed_mean_s": round(asigned, 2),
+                "hard_band_s": ahard,
+                "mean_band_s": amean,
+                "pass": aok,
+            }
+            print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+                  "mean|d|=%7.1fs max=%6.0fs signed_mean=%+7.1fs "
+                  "band %d/%d %s"
+                  % (limb + "_aligned", ast["n"], ast["mean_s"],
+                     ast["max_s"], asigned, ahard, amean,
+                     "PASS" if aok else "FAIL"))
+
+    # HYA-369: the Dart receipts-measured Swiss-Lahiri reference
+    # line vs the actual Swiss ayanamsa over the dump window.
+    ref_out = None
+    if ref_devs:
+        rst = stats(ref_devs)
+        rok = rst["max_s"] <= REFERENCE_LINE_MAX_DEV_ARCSEC
+        if not rok:
+            failures.append(
+                "swiss-lahiri reference line deviates %.2f arcsec from "
+                "swe.get_ayanamsa_ut (band %.1f)"
+                % (rst["max_s"], REFERENCE_LINE_MAX_DEV_ARCSEC))
+        ref_out = dict(rst)
+        ref_out["band_arcsec"] = REFERENCE_LINE_MAX_DEV_ARCSEC
+        ref_out["pass"] = rok
+        print("SWEPH cross-check scoreboard: %-10s n=%-3d "
+              "mean|d|=%7.2f\" max=%6.2f\" band %.1f\" %s"
+              % ("ref_line", rst["n"], rst["mean_s"], rst["max_s"],
+                 REFERENCE_LINE_MAX_DEV_ARCSEC,
+                 "PASS" if rok else "FAIL"))
 
     # HYA-417: moonrise parity - same Meeus 15.1 target on both sides.
     moonrise_rows = dump.get("moonrises", [])
@@ -1116,6 +1224,8 @@ def main():
         ("karana", per_limb.get("karana")),
         ("nakshatra", per_limb.get("nakshatra")),
         ("yoga", per_limb.get("yoga")),
+        ("nakshatra_aligned", aligned_out.get("nakshatra")),
+        ("yoga_aligned", aligned_out.get("yoga")),
         ("moonrise", moonrise_out),
         ("sunrise", sunrise_out),
         ("lunar_ecl", eclipse_out),
@@ -1132,6 +1242,13 @@ def main():
                out["max_s"] or 0.0, out["signed_mean_s"],
                out["hard_band_s"], out["mean_band_s"],
                "PASS" if out["pass"] else "FAIL"))
+    if ref_out:
+        annotate_notice(
+            "SWEPH swiss-lahiri ref line: n=%d mean=%.2f arcsec "
+            "max=%.2f arcsec band %.1f %s"
+            % (ref_out["n"], ref_out["mean_s"], ref_out["max_s"],
+               REFERENCE_LINE_MAX_DEV_ARCSEC,
+               "PASS" if ref_out["pass"] else "FAIL"))
     annotate_notice(
         "SWEPH deltaT residual (Swiss - engine hybrid): mean=%+.2fs "
         "max|d|=%.2fs (n=%d); knife-edge boundaries: %d"
@@ -1161,6 +1278,13 @@ def main():
         lines.append("| deltaT residual | %d | %s | %s | %+.2f | n/a | "
                      "n/a |" % (dt_st["n"], dt_st["mean_s"],
                                 dt_st["max_s"], dt_signed))
+        if ref_out:
+            lines.append(
+                "| swiss-lahiri ref line (arcsec) | %d | %s | %s "
+                "| n/a | <%.1f | %s |" % (
+                    ref_out["n"], ref_out["mean_s"],
+                    ref_out["max_s"], REFERENCE_LINE_MAX_DEV_ARCSEC,
+                    "PASS" if ref_out["pass"] else "FAIL"))
         lines.append("")
         lines.append("- knife-edge boundaries (<= %.0f min from a "
                      "sunrise): %d" % (KNIFE_EDGE_MIN, len(knife_edges)))

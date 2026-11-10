@@ -77,7 +77,7 @@ MARKERS = {
     "lagna.html": ['id="lagna-now"', 'id="lagna-today"', 'id="lagna-conventions"', 'id="lagna-meta"', "Rising now", "Mesha", "1436.07"],
     "vrat.html": ['id="vrat-today"', 'id="vrat-next"', 'id="vrat-families"', 'id="vrat-year"', 'id="vrat-conventions"', 'id="vrat-meta"', "Sankashti", "Pradosham", "Ekadashi", "chandrodaya-vyapti"],
     "saait.html": ['id="saait-today"', 'id="saait-next"', 'id="saait-ceremonies"', 'id="saait-ssy"', 'id="saait-year"', 'id="saait-conventions"', 'id="saait-meta"', "Sarvartha", "Amrit", "katigate"],
-    "ayanamsa.html": ['id="ayanamsa-what"', 'id="ayanamsa-ours"', 'id="ayanamsa-value"', 'id="ayanamsa-limbs"', 'id="ayanamsa-nepal"', 'id="ayanamsa-receipts"', "Chitra-pakshiya", "23.87508", "1.36062", "Ketaki"],
+    "ayanamsa.html": ['id="ayanamsa-what"', 'id="ayanamsa-ours"', 'id="ayanamsa-value"', 'id="ayanamsa-limbs"', 'id="ayanamsa-nepal"', 'id="ayanamsa-receipts"', "Chitra-pakshiya", "23.87508", "1.36062", 'id="ayanamsa-swiss"', "23.85709", "1.398024", "Ketaki"],
     "api/v1/today.json": [
         '"panchang"',
         '"udaya"',
