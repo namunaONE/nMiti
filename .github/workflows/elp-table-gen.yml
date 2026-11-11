@@ -28,8 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      # stdlib only (the generator reuses elp_spike.py's urllib
-      # downloader); downloads ELP82B (~3 MB) on first run.
+      # elp_build_table.py imports the spike's parser, and elp_spike.py
+      # imports pyswisseph at module level (harness boundary, AGPL: CI
+      # tooling only - the generated table itself is numeric facts).
+      - run: python3 -m pip install --quiet pyswisseph
+      # stdlib only otherwise (the generator reuses elp_spike.py's
+      # urllib downloader); downloads ELP82B (~3 MB) on first run.
       - name: generate the vendored ELP2000 table
         run: python3 tools/sweph/elp_build_table.py --data-dir build/elp82b --out-dir packages/nepali_panchang/lib/src/elp2000
       - name: commit the regenerated table
