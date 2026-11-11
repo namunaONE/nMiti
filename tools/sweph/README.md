@@ -158,6 +158,46 @@ the MIT engine is untouched - vendoring a truncated coefficient table
 into the engine would be a separate PR with its own review (and
 served-value changes).
 
+## ELP2000-82B engine upgrade (HYA-369)
+
+That separate PR shipped: the engine moon (`moon.dart`) now evaluates
+the truncated ELP2000-82B series with the Chapront 2002 mean
+arguments - the spike's go-decision variant (predicted tithi
+1.2|3 s vs the 4.1|11 s the 60-term Meeus Ch.47 moon measured). The
+frame and conventions are unchanged - geometric, mean ecliptic and
+equinox of date, no nutation, no aberration, light-time still the
+named skip - so this is a fit change only; served limb times move by
+the seconds the scoreboard measures, and convention changes stay in
+their own PRs.
+
+The coefficient table under
+`packages/nepali_panchang/lib/src/elp2000/` is GENERATED, never
+hand-edited:
+
+    python3 tools/sweph/elp_build_table.py --data-dir build/elp82b --out-dir packages/nepali_panchang/lib/src/elp2000
+
+`elp_build_table.py` reuses the spike's parser (`ElpTheory`), folds
+the distance cosine shift and the a0/ath scale factor into the table
+at generation time, verifies the emitted flat table against the
+reference evaluator at three epochs plus the Meeus 47.a anchor, and
+writes the chunks in a deterministic byte-stable layout. Two guards
+keep it honest:
+
+- `.github/workflows/elp-table-gen.yml` regenerates and COMMITS the
+  table when the generator changes, so the ~300 KB of coefficients
+  never travels through a review tool;
+- the ci.yml "elp2000 vendored table freshness gate" regenerates it
+  from the `build/elp82b` download on EVERY run and fails on any
+  byte drift - a stale table cannot ride a recipe change through
+  review. The gate prints the 47.a anchor values as run notices;
+  `moon_47a_test.dart` pins them.
+
+**License:** the vendored table is numeric facts computed from the
+public IMCCE ELP2000-82B research data; the theory is cited academic
+work (Chapront-Touze & Chapront 1983; Chapront, Chapront-Touze,
+Francou & Laskar 2002) and no text or code from the distribution is
+copied - the same facts-only boundary as the publisher receipts.
+
 ## License boundary (AGPL facts-out) - read this before touching
 
 Swiss Ephemeris is AGPL-3 (free for open-source use; CHF 700 commercial).

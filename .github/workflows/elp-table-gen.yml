@@ -1,0 +1,45 @@
+name: elp2000 table generation
+
+# HYA-369 engine upgrade: the vendored ELP2000-82B Dart table under
+# packages/nepali_panchang/lib/src/elp2000/ is GENERATED from the public
+# IMCCE data by tools/sweph/elp_build_table.py - never hand-edited.
+# This workflow regenerates it whenever the generator (or the spike
+# parser it imports) changes and COMMITS the result back to the branch,
+# so the ~300 KB of coefficients never has to travel through a review
+# tool that may truncate or mangle it. The paths filter keeps the
+# workflow's own commit (which only touches the table directory) from
+# re-triggering itself.
+
+on:
+  push:
+    branches:
+      - feat/hya-369-elp-engine-upgrade
+    paths:
+      - tools/sweph/elp_build_table.py
+      - tools/sweph/elp_spike.py
+      - .github/workflows/elp-table-gen.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # stdlib only (the generator reuses elp_spike.py's urllib
+      # downloader); downloads ELP82B (~3 MB) on first run.
+      - name: generate the vendored ELP2000 table
+        run: python3 tools/sweph/elp_build_table.py --data-dir build/elp82b --out-dir packages/nepali_panchang/lib/src/elp2000
+      - name: commit the regenerated table
+        run: |
+          git config user.name "nmiti-table-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/nepali_panchang/lib/src/elp2000
+          if git diff --cached --quiet; then
+            echo "vendored table already matches the generator"
+          else
+            git commit -m "elp2000: regenerate the vendored coefficient table"
+            git push
+          fi
