@@ -4,16 +4,19 @@
 HYA-450 Wave 1 (PR-A): builds the truncated VSOP87D series (Bretagnon
 & Francou planetary theory, version D: heliocentric, geometric,
 dynamical ecliptic and equinox of the date) for Mercury through Saturn
-and emits it as deterministic Dart source under
-packages/nepali_panchang/lib/src/graha/:
+PLUS the Earth leg the geocentric subtraction needs, and emits it as
+deterministic Dart source under packages/nepali_panchang/lib/src/graha/:
 
   graha_table.dart        - layout docs, section counts, the flat list
   graha_terms_partNN.dart - kGrahaTermsPartNN chunks of the flat list
 
-The Earth leg of the geocentric subtraction reuses the already
-vendored vsop87d_earth.dart; this generator emits only the five
-planets. The table is DATA: generated, never hand-edited. Two guards
-keep it honest (see tools/sweph/README.md):
+The Earth sections live in this table because the graha channels need
+Earth's heliocentric B and R (the legacy vsop87d_earth.dart carries
+only the L series, enough for the solar channel it serves - the two
+tables share the same source theory and the same truncation spirit,
+but the graha engine must not lean on an L-only Earth). The table is
+DATA: generated, never hand-edited. Two guards keep it honest (see
+tools/sweph/README.md):
 
 - .github/workflows/graha-table-gen.yml regenerates and COMMITS the
   table when the generator changes, so the megabyte-scale coefficient
@@ -34,8 +37,11 @@ Self-verification before writing (fail-loud, no Swiss, no Horizons):
 - every term row parses to tag + 18 tokens (the Fortran i3 argument
   fields can run together, e.g. "8-13"; merged tokens are re-split,
   and any unexpected shape fails loudly);
-- A = sqrt(S^2 + K^2) within 1e-11 (the file writes all three; A is
-  what the engine evaluates);
+- A = sqrt(S^2 + K^2) within 1e-10 (the file writes all three at 11
+  decimals; the measured worst rounding deviation of the triple is
+  ~1.0e-11 - e.g. Mercury row A=9.43e-9 - so the 1e-10 band tolerates
+  the format's own rounding while still catching real parse slips,
+  which shift A by orders of magnitude);
 - the 4-digit row tag is 4 + planet + variable + power and must match
   the series header, and per-series term numbers run 1..N;
 - Venus L0 term 1 is the published mean-longitude constant 3.17614669689
@@ -63,13 +69,15 @@ PLANETS = [
     # (name, VSOP87D file suffix, VSOP87 planet number)
     ("mercury", "mer", 1),
     ("venus", "ven", 2),
+    ("earth", "ear", 3),
     ("mars", "mar", 4),
     ("jupiter", "jup", 5),
     ("saturn", "sat", 6),
 ]
 
 HEADER_PLANET_NUM = {
-    "MERCURY": 1, "VENUS": 2, "MARS": 4, "JUPITER": 5, "SATURN": 6,
+    "MERCURY": 1, "VENUS": 2, "EARTH": 3, "MARS": 4, "JUPITER": 5,
+    "SATURN": 6,
 }
 
 IMCCE_URL = "https://ftp.imcce.fr/pub/ephem/planets/vsop87/VSOP87D.%s"
@@ -79,12 +87,18 @@ MIRROR_URL = ("https://raw.githubusercontent.com/ctdk/vsop87/master/"
 # Truncation floor: terms with |A| >= TRUNC_RAD survive (radians for
 # L/B, AU for R).
 TRUNC_RAD = 1e-8
-# Budget on the summed dropped amplitude per (planet, variable); the
-# real tails are expected far below this - the assert exists so an
-# upstream data change cannot silently widen the truncation error.
-TAIL_BUDGET = {1: 1e-4, 2: 1e-4, 3: 1e-5}  # rad, rad, AU
+# Budget on the summed dropped amplitude per (planet, variable). This
+# is the WORST-CASE bound (every dropped term aligned in phase); the
+# realistic error is the far smaller root-sum-square of the same
+# dropped terms. Calibrated against the measured data (e.g. Mars L0:
+# last kept amplitude ~4e-8 with ~1000 smaller terms behind it, so the
+# aligned bound is order 1e-4-1e-3 rad) - the assert is a tripwire
+# against upstream data changes, and the ACTUAL measured tails print as
+# CI notices on every run so the floor stays visible.
+TAIL_BUDGET = {1: 1e-3, 2: 1e-3, 3: 1e-4}  # rad, rad, AU
 
-A_GUARD_TOL = 1e-11             # |sqrt(S^2+K^2) - A|; file is 11-decimal
+A_GUARD_TOL = 1e-10             # |sqrt(S^2+K^2) - A|; measured worst
+                                # 11-decimal rounding deviation ~1.0e-11
 FLAT_MIRROR_TOL = 1e-7          # rad (AU in R); structure bugs blow up
 VENUS_L0_ANCHOR = 3.17614669689  # published lambda(2) mean longitude, rad
 VENUS_L0_TOL = 1e-4
@@ -213,9 +227,10 @@ def check_anchors(parsed):
 
 
 def build_flat(parsed):
-    """Flatten into 90 sections (planet x variable x power), each term
-    3 doubles A, B, C; sections with no surviving terms keep count 0
-    so the Dart reader can derive variable and power from the index."""
+    """Flatten into 108 sections (6 bodies x 3 variables x 6 powers),
+    each term 3 doubles A, B, C; sections with no surviving terms keep
+    count 0 so the Dart reader can derive variable and power from the
+    section index."""
     counts = []
     flat = []
     tails = {}
@@ -374,18 +389,16 @@ def write_files(out_dir, counts, flat, tails, anchor):
                         for i in range(1, len(parts) + 1))
     imports = "\n".join("import '%s';" % n for n in names)
     counts_txt = ", ".join(str(c) for c in counts)
-    raws = sum(len(t) for s in tails for t in [0])  # unused; kept simple
-    raw_terms = 0
-    # raws counted by the caller via the returned info dict
 
     table = """// GENERATED FILE - tools/sweph/graha_build_table.py - DO NOT EDIT.
 //
-// Vendored VSOP87D planetary theory for the nMiti graha engine
-// (Mercury through Saturn; the geocentric subtraction reuses the
-// already-vendored vsop87d_earth.dart Earth leg). Bretagnon & Francou
-// VSOP87 version D: heliocentric, geometric, dynamical ecliptic and
-// equinox of the date - light-time and aberration are applied by the
-// engine (graha.dart), not by this table.
+// Vendored VSOP87D planetary theory for the nMiti graha engine:
+// Mercury, Venus, Earth, Mars, Jupiter, Saturn - the Earth sections
+// feed the geocentric subtraction (the legacy vsop87d_earth.dart is
+// the solar channel's table and carries only the L series). Bretagnon
+// & Francou VSOP87 version D: heliocentric, geometric, dynamical
+// ecliptic and equinox of the date - light-time and aberration are
+// applied by the engine (graha.dart), not by this table.
 //
 // Source data: VSOP87D distribution, Bureau des Longitudes / IMCCE -
 // https://ftp.imcce.fr/pub/ephem/planets/vsop87/ - public research
@@ -394,7 +407,9 @@ def write_files(out_dir, counts, flat, tails, anchor):
 // Astron. Astrophys. 202, 309 (1988).
 //
 // Truncation: terms with |A| < 1e-8 rad (AU in R) are neglected.
-// Worst dropped-tail bounds at generation: %(tail_line)s.
+// Worst dropped-tail bounds at generation: %(tail_line)s
+// (aligned worst case; the realistic error is the much smaller
+// root-sum-square of the same dropped terms).
 //
 // Regenerate:
 //   python3 tools/sweph/graha_build_table.py --data-dir build/vsop87 \\
@@ -402,13 +417,13 @@ def write_files(out_dir, counts, flat, tails, anchor):
 // CI regenerates and diffs this directory on every run (ci.yml
 // "graha VSOP87D vendored table freshness gate") - hand edits fail CI.
 //
-// LAYOUT: [kGrahaSectionCounts] lists the term count of 90 sections in
-// the order: for each planet in Mercury, Venus, Mars, Jupiter,
-// Saturn; for each variable 1=L, 2=B, 3=R; for each power T^0..T^5.
-// Within a section the terms keep the source file order. [kGrahaTerms]
-// is the flat list: each term is 3 doubles A, B, C (radians; AU in
-// the R sections), and the value of a variable is the sum over its six
-// sections of
+// LAYOUT: [kGrahaSectionCounts] lists the term count of 108 sections
+// in the order: for each body in Mercury, Venus, Earth, Mars,
+// Jupiter, Saturn; for each variable 1=L, 2=B, 3=R; for each power
+// T^0..T^5. Within a section the terms keep the source file order.
+// [kGrahaTerms] is the flat list: each term is 3 doubles A, B, C
+// (radians; AU in the R sections), and the value of a variable is the
+// sum over its six sections of
 //   tau^power * sum( A * cos(B + C * tau) )
 // with tau = (JD - 2451545.0) / 365250.0 (thousands of Julian years,
 // the native VSOP87 time unit). Total: %(doubles)d doubles
@@ -416,7 +431,7 @@ def write_files(out_dir, counts, flat, tails, anchor):
 
 %(imports)s
 
-/// Term counts of the 90 sections - planet x variable (1=L, 2=B,
+/// Term counts of the 108 sections - body x variable (1=L, 2=B,
 /// 3=R) x power (T^0..T^5), in flat [kGrahaTerms] order.
 const List<int> kGrahaSectionCounts = <int>[%(counts_txt)s];
 
