@@ -2,6 +2,19 @@
 """ELP2000-82B truncation spike: what would a NASA-canon-class moon cost,
 and what would it buy (HYA-369 follow-up, engine-perfection research
 move #2)?
+(Fix revision for PR #79: precession frame + 2002-args D convention.
+Diagnostic revision for PR #80: 3-epoch component breakdown with the
+Meeus additive stand-ins, and a top-term dump of the largest kept
+figure/planetary longitude terms - local triangulation shows the main
+problem and the figure sum track Swiss/Meeus while the planetary sum
+carries a spurious ~-27 arcsec at the 1992 anchor.
+RATE-BUG FIX: the planetary rate accumulator was initialized to pha
+and stored as b2-b1, so every planetary argument ran at (true rate
+minus its own constant part) - e.g. the 14.25 arcsec Venus/A1 term at
+38.639 deg/cy instead of 131.849, a 93.21 deg/cy corruption. The
+figure branch never had this bug; at J2000 (t=0, where rates are
+inert) the full model matched Swiss geometric to 0.71 arcsec, which
+localised the defect to the rate construction.)
 
 Downloads the ELP2000-82B semi-analytical lunar theory (Chapront-Touze &
 Chapront 1983, A&A 124, 50; distributed by IMCCE/Bureau des Longitudes) at
@@ -34,9 +47,12 @@ elp82b_1 (IMCCE, 1996): the same mean elements, the same DE200/LE200 fit
 correction machinery (delnu/dele/delg/delnp/delep applied per main-
 problem term), the same record formats (4i3,2x,f13.5,6(2x,f10.2) for the
 main problem, 5i3,1x,f9.5,1x,f9.5 for the figure/tide/relativity files,
-11i3,1x,f9.5,1x,f9.5 for the planetary files), stopping before the
-subroutine's final precession rotation so the output is the spherical
-position in the mean dynamical ecliptic of date - the engine's frame.
+11i3,1x,f9.5,1x,f9.5 for the planetary files). The pre-rotation ELP83
+spherical longitude is referred to the FIXED J2000 equinox on the
+ecliptic-of-date plane (its mean-longitude rate excludes the general
+precession in longitude), so the raw variant adds preces*t to land in
+the mean ecliptic and equinox of date - the frame of the engine's
+Meeus Ch.47 moon and of Swiss FLG_NONUT.
 TT and TDB differ by ~1.6 ms (~0.0003 arcsec of moon motion), far below
 the NASA truncation class, and are not distinguished.
 
@@ -130,9 +146,10 @@ class ElpTheory:
     Faithful port of the reference Fortran subroutine elp82b_1 (IMCCE
     1996): mean elements, DE200/LE200 fit corrections and record
     formats are transcribed exactly; the truncation threshold follows
-    the NASA Five Millennium Canon recipe. The spherical output is the
-    mean dynamical ecliptic of date (the frame before the Fortran's
-    final J2000 rotation).
+    the NASA Five Millennium Canon recipe. The spherical output is in
+    the mean ecliptic and equinox of date (the raw variant converts
+    the fixed-J2000-equinox internal longitude by adding preces*t;
+    the 2002 variant's L' polynomials are already of-date).
     """
 
     def __init__(self, data_dir, arcsec_trunc, use_2002_arguments):
@@ -226,22 +243,41 @@ class ElpTheory:
                 d[2][k] = mm[idx]
                 d[3][k] = mp[idx]
                 d[4][k] = ff[idx]
-            d[1][1] += math.pi  # the ELP D convention: D + 180 deg
-            zeta = [0.0, lp[0], lp[1] + preces]
-            # Earth mean longitude L = L' - D for the planetary args.
-            p[3][1] = lp[0] - dd[0]
-            p[3][2] = lp[1] - dd[1]
+            # The 2002 L' polynomials are already the equinox-of-date
+            # mean longitude (their rate INCLUDES the general
+            # precession in longitude), so zeta takes lp unmodified -
+            # adding preces would double-count it (the raw variant's
+            # w(1,2) is fixed-frame, which is why elp82b_1 adds preces
+            # to zeta(2) there). NO pi shift on d[1][1]: elp82b_1's
+            # del(1,1) = w(1,1) - eart(1) + pi works out to the
+            # STANDARD mean elongation D (the +pi cancels the -180 deg
+            # inherent in w(1,1) - eart(1)), and the 2002 D polynomials
+            # are already that same standard D - so unlike the raw
+            # construction, nothing needs adding here.
+            zeta = [0.0, lp[0], lp[1]]
+            # Planetary args stay RAW: they are physical angles built
+            # on the fixed-frame planetary mean longitudes with their
+            # recorded pha constants (only the frame-invariant Delaunay
+            # args and the moon's mean longitude take the 2002
+            # improvements; improved planetary longitudes are not
+            # available to us and substituting the of-date Earth L was
+            # frame-inconsistent, so it is reverted).
 
         self.w1 = w[1]
         self.p = p
         self.d = d
         self.zeta = zeta
+        self.preces = preces
         self._fit = (delnu, dele, delg, delnp, delep, am, dtasm)
 
         # Survivors per coordinate.
         self.main = [[], [], [], []]   # (arg c1..c5, amplitude)
         self.fig = [[], [], [], []]    # (a1, a2, amplitude, tpow)
-        self.planet = [[], [], [], []]  # (b1, b2-b1, amplitude, tpow)
+        self.planet = [[], [], [], []]  # (b1, rate, amplitude, tpow)
+        # Diagnostic companions to the entries above: the raw record
+        # multipliers and phase, for auditing against published tables.
+        self.fig_meta = [[], [], [], []]     # (iz, ilu, pha_deg)
+        self.planet_meta = [[], [], [], []]  # (ipla, pha_deg)
         self.counts = {}
         self._parse(data_dir)
 
@@ -304,6 +340,8 @@ class ElpTheory:
                         a1 += ilu[i - 1] * self.d[i][1]
                         a2 += ilu[i - 1] * self.d[i][2]
                     self.fig[iv].append((a1, a2, x, tpow))
+                    self.fig_meta[iv].append(
+                        (iz, ilu, pha / DEG))
                 else:
                     # format 1003: 11i3,1x,f9.5,1x,f9.5 (ELP10..21)
                     ipla = _ints(ln, 11)
@@ -314,7 +352,15 @@ class ElpTheory:
                     tpow = 1 if (13 <= n <= 15 or 19 <= n <= 21) else 0
                     table1 = n < 16
                     b1 = pha
-                    b2 = pha
+                    # b2 is the pure t-linear rate: elp82b_1 builds
+                    # y = pha*deg + (z + sum ipla*p(i,2))*t, i.e. the
+                    # phase constant pha enters the argument only at
+                    # t^0. (An earlier revision initialized b2 = pha
+                    # and stored b2 - b1, polluting every planetary
+                    # rate by -(b1 - pha) - up to ~93 deg/cy on the
+                    # 14.25 arcsec Venus term - the entire residual
+                    # -30/+7 arcsec drift.)
+                    b2 = 0.0
                     if table1:
                         for i in range(1, 9):
                             b1 += ipla[i - 1] * self.p[i][1]
@@ -332,7 +378,8 @@ class ElpTheory:
                         for i in range(1, 5):
                             b1 += ipla[i + 6] * self.d[i][1]
                             b2 += ipla[i + 6] * self.d[i][2]
-                    self.planet[iv].append((b1, b2 - b1, x, tpow))
+                    self.planet[iv].append((b1, b2, x, tpow))
+                    self.planet_meta[iv].append((ipla, pha / DEG))
                 kept += 1
             self.counts[n] = (kept, len(data_lines))
 
@@ -343,9 +390,21 @@ class ElpTheory:
                    for iv in (1, 2, 3))
 
     def spherical(self, jd_tt):
-        """Spherical position in the mean dynamical ecliptic of date:
+        """Spherical position in the mean ecliptic and equinox OF DATE:
         (longitude_deg, latitude_deg, distance_km) - the frame of the
-        engine's Meeus Ch.47 moon (geometric, no nutation)."""
+        engine's Meeus Ch.47 moon (geometric, no nutation).
+
+        Frame note: ELP83's internal mean longitude is referred to the
+        FIXED J2000 equinox - its rate w(1,2) EXCLUDES the general
+        precession in longitude (5029.0966 arcsec/cy), which is why
+        elp82b_1 adds preces to the figure-argument rate zeta(2) but
+        not to w(1,2); the reference evaluator's final rotation is a
+        small ecliptic-PLANE tilt to J2000, not an equinox drift. The
+        equinox-of-date longitude is the fixed-equinox one PLUS
+        preces*t (exactly the ayanamsa growth), so the raw variant
+        adds it here. The 2002 variant's L' polynomials are already
+        equinox-of-date: no addition.
+        """
         t = (jd_tt - 2451545.0) / 36525.0
         sin = math.sin
         r1 = r2 = r3 = 0.0
@@ -369,9 +428,34 @@ class ElpTheory:
             r3 += (x if tp == 0 else x * t) * sin(b1 + db * t)
         w1 = self.w1
         lon = r1 / RAD + w1[1] + (w1[2] + (w1[3] + (w1[4] + w1[5] * t) * t) * t) * t
+        if not self.use_2002:
+            lon += self.preces * t
         lon %= 2.0 * math.pi
         return math.degrees(lon), math.degrees(r2 / RAD), \
             r3 * (self.a0 / self.ath)
+
+    def spherical_parts(self, jd_tt):
+        """Debug helper: the of-date longitude split by component.
+        Returns (main_deg, fig_arcsec, planet_arcsec, total_deg) - the
+        main problem alone (with the mean longitude and the frame
+        conversion), then the figure/tide and planetary contribution
+        sums in arcsec, then the full longitude."""
+        t = (jd_tt - 2451545.0) / 36525.0
+        sin = math.sin
+        r1 = r1f = r1p = 0.0
+        for arg, x in self.main[1]:
+            r1 += x * sin(arg[0] + (arg[1] + (arg[2] + (arg[3] + arg[4] * t) * t) * t) * t)
+        for a1, a2, x, tp in self.fig[1]:
+            r1f += (x if tp == 0 else (x * t if tp == 1 else x * t * t)) * sin(a1 + a2 * t)
+        for b1, db, x, tp in self.planet[1]:
+            r1p += (x if tp == 0 else x * t) * sin(b1 + db * t)
+        w1 = self.w1
+        mean_lon = w1[1] + (w1[2] + (w1[3] + (w1[4] + w1[5] * t) * t) * t) * t
+        if not self.use_2002:
+            mean_lon += self.preces * t
+        main_lon = (r1 / RAD + mean_lon) % (2.0 * math.pi)
+        total = (main_lon + (r1f + r1p) / RAD) % (2.0 * math.pi)
+        return math.degrees(main_lon), r1f, r1p, math.degrees(total)
 
 
 def stats(values):
@@ -478,6 +562,102 @@ def main():
         e2 = elong(jd_ut + h)
         e1 = elong(jd_ut - h)
         return (((e2 - e1 + 540.0) % 360.0) - 180.0) / (2.0 * h)
+
+    # ---- selftest anchor (Meeus example 47.a epoch) -----------------
+    # Frame + port validation against an independently printed value:
+    # at 1992-04-12.0 TD Meeus' example 47.a gives apparent lambda =
+    # 133.162665 deg (nutation + light-time above the geometric
+    # of-date value); Swiss geometric here is the anchor. The args
+    # printout audits the raw-vs-2002 substitution line by line (both
+    # variants carry the STANDARD D: elp82b_1's +pi on del(1,1) cancels
+    # the -180 deg inherent in w(1,1) - eart(1)).
+    jd_ref = 2448724.5
+    sw_ref = sw_geo_moon(jd_ref)
+    lon_raw_ref, _b, _r = theory_raw.spherical(jd_ref)
+    lon_2002_ref, _b2, _r2 = theory_2002.spherical(jd_ref)
+
+    def meeus_additives_arcsec(jd_tt):
+        # Meeus Ch.47 additive corrections: the published stand-ins
+        # for the figure + planetary content the ELP series carries
+        # (A1 = action of Venus, 1962 sin(L'-F) = Moon figure, A2 =
+        # action of Jupiter; coefficients in 1e-6 degree -> arcsec).
+        tt = (jd_tt - 2451545.0) / 36525.0
+        lp = 218.3164477 + 481267.88123421 * tt
+        ff = 93.2720950 + 483202.0175233 * tt
+        a1 = math.radians(119.75 + 131.849 * tt)
+        a2 = math.radians(53.09 + 479264.290 * tt)
+        return (3958.0 * math.sin(a1),
+                1962.0 * math.sin(math.radians(lp - ff)),
+                318.0 * math.sin(a2))
+
+    part_lines = []
+    for _label, _jd_e in (("1992.4", 2448724.5), ("J2000", 2451545.0),
+                          ("2026.9", 2461370.0)):
+        _sw_e = sw_geo_moon(_jd_e)
+        _pr = theory_raw.spherical_parts(_jd_e)
+        _p0 = theory_2002.spherical_parts(_jd_e)
+        _av1, _av2, _av3 = meeus_additives_arcsec(_jd_e)
+        part_lines.append(
+            "%s: raw main=%+.2f fig=%+.2f plan=%+.2f tot=%+.2f | 2002 "
+            "main=%+.2f fig=%+.2f plan=%+.2f tot=%+.2f | MeeusAdd "
+            "A1=%+.2f LpF=%+.2f A2=%+.2f"
+            % (_label,
+               (_pr[0] - _sw_e) * 3600.0, _pr[1], _pr[2],
+               (_pr[3] - _sw_e) * 3600.0,
+               (_p0[0] - _sw_e) * 3600.0, _p0[1], _p0[2],
+               (_p0[3] - _sw_e) * 3600.0,
+               _av1, _av2, _av3))
+    annotate("SELFTEST jd=2448724.5 (Meeus 47a): Swiss geo lon=%.6f "
+             "(Meeus printed apparent 133.162665) | ELP raw-of-date "
+             "off=%+.2f arcsec, ELP2002 off=%+.2f arcsec || PARTS vs "
+             "Swiss geo (arcsec): %s"
+             % (sw_ref,
+                (lon_raw_ref - sw_ref) * 3600.0,
+                (lon_2002_ref - sw_ref) * 3600.0,
+                " || ".join(part_lines)))
+    annotate("SELFTEST args@1992.4 (deg, standard D): "
+             "raw D=%.6f M=%.6f Mp=%.6f F=%.6f | 2002 D=%.6f M=%.6f "
+             "Mp=%.6f F=%.6f"
+             % (math.degrees(theory_raw.d[1][1]) % 360.0,
+                math.degrees(theory_raw.d[2][1]) % 360.0,
+                math.degrees(theory_raw.d[3][1]) % 360.0,
+                math.degrees(theory_raw.d[4][1]) % 360.0,
+                math.degrees(theory_2002.d[1][1]) % 360.0,
+                math.degrees(theory_2002.d[2][1]) % 360.0,
+                math.degrees(theory_2002.d[3][1]) % 360.0,
+                math.degrees(theory_2002.d[4][1]) % 360.0))
+
+    # Biggest kept figure/planetary longitude terms with their
+    # contributions at the 1992.4 anchor and the 2026.9 epoch - if a
+    # term is mis-phased or sign-flipped, its contribution stands out
+    # against the Meeus additive stand-ins printed above (the A1
+    # Venus cluster is +13.4 arcsec at 1992.4).
+    t92 = (jd_ref - 2451545.0) / 36525.0
+    t26 = (2461370.0 - 2451545.0) / 36525.0
+
+    def fmt_top_terms(entries, metas, n):
+        order = sorted(range(len(entries)),
+                       key=lambda i: -abs(entries[i][2]))[:n]
+        parts = []
+        for i in order:
+            a1, rate, x, tp = entries[i]
+            c92 = (x * (t92 ** tp)) * math.sin(a1 + rate * t92)
+            c26 = (x * (t26 ** tp)) * math.sin(a1 + rate * t26)
+            meta = metas[i]
+            mtxt = ("iz=%d ilu=%s" % (meta[0], meta[1])
+                    if len(meta) == 3 else "ipla=%s" % (meta[0],))
+            parts.append("%s pha=%8.3f arg=%9.4f rate=%+13.6f "
+                         "x=%+9.4f c92=%+8.2f c26=%+8.2f"
+                         % (mtxt, meta[-1],
+                            math.degrees(a1) % 360.0,
+                            math.degrees(rate) % 360.0, x, c92, c26))
+        return "; ".join(parts)
+
+    annotate("TOP terms (2002 args): FIG %s || PLANET %s"
+             % (fmt_top_terms(theory_2002.fig[1],
+                              theory_2002.fig_meta[1], 6),
+                fmt_top_terms(theory_2002.planet[1],
+                              theory_2002.planet_meta[1], 8)))
 
     moon_rows = []
     moon_acc = {}
