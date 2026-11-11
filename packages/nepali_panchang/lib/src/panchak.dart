@@ -390,7 +390,9 @@ PanchakWindow? panchakNear({
 /// The Panchak window covering [atNpt] (NPT wall clock, UTC fields),
 /// or null when the moment is outside every window - the "today"
 /// query. Half-open: the window covers [begin, end) - the end instant
-/// is outside; the begin instant is inside in exact arithmetic (the
+/// is outside (guaranteed: [_windowFrom] nudges the printed end past
+/// the crossing if the 1-us-quantised round-trip would land it
+/// inside); the begin instant is inside in exact arithmetic (the
 /// served wall clock quantises to 1 us, so the printed begin instant
 /// itself can sit a microsecond short of the true crossing).
 PanchakWindow? panchakOn(
@@ -435,7 +437,19 @@ PanchakWindow _windowFrom(double t, double sourceDelta) {
   final beginsJdTt = _previousPanchakBoundaryJdTt(t, sourceDelta);
   final endsJdTt = _nextPanchakBoundaryJdTt(t, sourceDelta);
   final beginsNpt = _nptWall(beginsJdTt);
-  final endsNpt = _nptWall(endsJdTt);
+  // The served end must honor the documented half-open [begin, end)
+  // contract at wall-clock precision: the JD -> wall round-trip
+  // quantises to 1 us and can land the printed end instant a
+  // microsecond INSIDE the true crossing (the ELP2000 moon upgrade
+  // shifted the Nov 2026 crossing into exactly that phase and CI
+  // caught panchakOn(end) returning a window). Nudge the printed end
+  // just past the crossing - a few microseconds at most, orders of
+  // magnitude below every receipt band - so a query at exactly the
+  // served end instant deterministically reports "not in Panchak".
+  var endsNpt = _nptWall(endsJdTt);
+  while (_panchakIndex0(_jdTtFromNptWall(endsNpt), sourceDelta) == 0) {
+    endsNpt = endsNpt.add(const Duration(microseconds: 1));
+  }
 
   // The window opens inside Dhanishta (300 deg is its third pada) and
   // closes at Revati's end, so the chain is always the five Panchak
@@ -464,7 +478,7 @@ PanchakWindow _windowFrom(double t, double sourceDelta) {
     type: panchakTypeForWeekday(beginsNpt.weekday),
     nakshatraSegments: List.unmodifiable(segments),
     provenance: 'nMiti nepali_panchang engine: sidereal 300-360 deg '
-        'transit of the apparent Meeus Ch.47 moon; edges by the local '
+        'transit of the apparent ELP2000-82B moon; edges by the local '
         'wrap-safe bisection + Newton cross-check solver, segments by '
         'the gated nakshatra limb solver; ayanamsa profile delta '
         '${sourceDelta.toStringAsFixed(4)} deg (BhaktiBharat-anchored '

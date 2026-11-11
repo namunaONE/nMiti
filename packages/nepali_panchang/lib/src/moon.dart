@@ -1,11 +1,13 @@
 import 'dart:math' as math;
 
+import 'elp2000/elp_table.dart';
+
 /// Geometric geocentric position of the Moon, mean equinox of date.
 ///
 /// Longitudes and latitudes are in degrees, the distance in kilometers. This
-/// is the geometric position (no nutation, no aberration) of Meeus,
-/// Astronomical Algorithms (2nd ed.), chapter 47 - example 47.a is the
-/// permanent unit test.
+/// is the geometric position (no nutation, no aberration) evaluated from the
+/// truncated ELP2000-82B series - Meeus, Astronomical Algorithms (2nd ed.),
+/// example 47.a remains the permanent unit test anchor.
 class MoonPosition {
   /// Ecliptic longitude in degrees, normalized to [0, 360).
   final double longitudeDeg;
@@ -27,218 +29,100 @@ class MoonPosition {
   });
 }
 
-/// Table 47.A (Meeus p. 339-340): [D, M, M', F, Sigma-l, Sigma-r].
-///
-/// Sigma-l is in units of 1e-6 degree, Sigma-r in units of 1e-3 km.
-const List<List<int>> _table47a = [
-  [0, 0, 1, 0, 6288774, -20905355],
-  [2, 0, -1, 0, 1274027, -3699111],
-  [2, 0, 0, 0, 658314, -2955968],
-  [0, 0, 2, 0, 213618, -569925],
-  [0, 1, 0, 0, -185116, 48888],
-  [0, 0, 0, 2, -114332, -3149],
-  [2, 0, -2, 0, 58793, 246158],
-  [2, -1, -1, 0, 57066, -152138],
-  [2, 0, 1, 0, 53322, -170733],
-  [2, -1, 0, 0, 45758, -204586],
-  [0, 1, -1, 0, -40923, -129620],
-  [1, 0, 0, 0, -34720, 108743],
-  [0, 1, 1, 0, -30383, 104755],
-  [2, 0, 0, -2, 15327, 10321],
-  [0, 0, 1, 2, -12528, 0],
-  [0, 0, 1, -2, 10980, 79661],
-  [4, 0, -1, 0, 10675, -34782],
-  [0, 0, 3, 0, 10034, -23210],
-  [4, 0, -2, 0, 8548, -21636],
-  [2, 1, -1, 0, -7888, 24208],
-  [2, 1, 0, 0, -6766, 30824],
-  [1, 0, -1, 0, -5163, -8379],
-  [1, 1, 0, 0, 4987, -16675],
-  [2, -1, 1, 0, 4036, -12831],
-  [2, 0, 2, 0, 3994, -10445],
-  [4, 0, 0, 0, 3861, -11650],
-  [2, 0, -3, 0, 3665, 14403],
-  [0, 1, -2, 0, -2689, -7003],
-  [2, 0, -1, 2, -2602, 0],
-  [2, -1, -2, 0, 2390, 10056],
-  [1, 0, 1, 0, -2348, 6322],
-  [2, -2, 0, 0, 2236, -9884],
-  [0, 1, 2, 0, -2120, 5751],
-  [0, 2, 0, 0, -2069, 0],
-  [2, -2, -1, 0, 2048, -4950],
-  [2, 0, 1, -2, -1773, 4130],
-  [2, 0, 0, 2, -1595, 0],
-  [4, -1, -1, 0, 1215, -3958],
-  [0, 0, 2, 2, -1110, 0],
-  [3, 0, -1, 0, -892, 3258],
-  [2, 1, 1, 0, -810, 2616],
-  [4, -1, -2, 0, 759, -1897],
-  [0, 2, -1, 0, -713, -2117],
-  [2, 2, -1, 0, -700, 2354],
-  [2, 1, -2, 0, 691, 0],
-  [2, -1, 0, -2, 596, 0],
-  [4, 0, 1, 0, 549, -1423],
-  [0, 0, 4, 0, 537, -1117],
-  [4, -1, 0, 0, 520, -1571],
-  [1, 0, -2, 0, -487, -1739],
-  [2, 1, 0, -2, -399, 0],
-  [0, 0, 2, -2, -381, -4421],
-  [1, 1, 1, 0, 351, 0],
-  [3, 0, -2, 0, -340, 0],
-  [4, 0, -3, 0, 330, 0],
-  [2, -1, 2, 0, 327, 0],
-  [0, 2, 1, 0, -323, 1165],
-  [1, 1, -1, 0, 299, 0],
-  [2, 0, 3, 0, 294, 0],
-  [2, 0, -1, -2, 0, 8752],
-];
+/// Arc seconds to radians (the longitude/latitude table sections are in
+/// arcsec; the distance section is already in kilometers).
+const double _radPerArcsec = math.pi / 648000;
 
-/// Table 47.B (Meeus p. 341): [D, M, M', F, Sigma-b].
-///
-/// Sigma-b is in units of 1e-6 degree.
-const List<List<int>> _table47b = [
-  [0, 0, 0, 1, 5128122],
-  [0, 0, 1, 1, 280602],
-  [0, 0, 1, -1, 277693],
-  [2, 0, 0, -1, 173237],
-  [2, 0, -1, 1, 55413],
-  [2, 0, -1, -1, 46271],
-  [2, 0, 0, 1, 32573],
-  [0, 0, 2, 1, 17198],
-  [2, 0, 1, -1, 9266],
-  [0, 0, 2, -1, 8822],
-  [2, -1, 0, -1, 8216],
-  [2, 0, -2, -1, 4324],
-  [2, 0, 1, 1, 4200],
-  [2, 1, 0, -1, -3359],
-  [2, -1, -1, 1, 2463],
-  [2, -1, 0, 1, 2211],
-  [2, -1, -1, -1, 2065],
-  [0, 1, -1, -1, -1870],
-  [4, 0, -1, -1, 1828],
-  [0, 1, 0, 1, -1794],
-  [0, 0, 0, 3, -1749],
-  [0, 1, -1, 1, -1565],
-  [1, 0, 0, 1, -1491],
-  [0, 1, 1, 1, -1475],
-  [0, 1, 1, -1, -1410],
-  [0, 1, 0, -1, -1344],
-  [1, 0, 0, -1, -1335],
-  [0, 0, 3, 1, 1107],
-  [4, 0, 0, -1, 1021],
-  [4, 0, -1, 1, 833],
-  [0, 0, 1, -3, 777],
-  [4, 0, -2, 1, 671],
-  [2, 0, 0, -3, 607],
-  [2, 0, 2, -1, 596],
-  [2, -1, 1, -1, 491],
-  [2, 0, -2, 1, -451],
-  [0, 0, 3, -1, 439],
-  [2, 0, 2, 1, 422],
-  [2, 0, -3, -1, 421],
-  [2, 1, -1, 1, -366],
-  [2, 1, 0, 1, -351],
-  [4, 0, 0, 1, 331],
-  [2, -1, 1, 1, 315],
-  [2, -2, 0, -1, 302],
-  [0, 0, 1, 3, -283],
-  [2, 1, 1, -1, -229],
-  [1, 1, 0, -1, 223],
-  [1, 1, 0, 1, 223],
-  [0, 1, -2, -1, -220],
-  [2, 1, -1, -1, -220],
-  [1, 0, 1, 1, -185],
-  [2, -1, -2, -1, 181],
-  [0, 1, 2, 1, -177],
-  [4, 0, -2, -1, 176],
-  [4, -1, -1, -1, 166],
-  [1, 0, 1, -1, -164],
-  [4, 0, 1, -1, 132],
-  [1, 0, -1, -1, -119],
-  [4, -1, 0, -1, 115],
-  [2, -2, 0, 1, 107],
-];
-
-const double _radPerDeg = math.pi / 180;
+/// Radians to degrees. NOTE the direction: the return values below are
+/// radians converted to degrees - multiplying by (pi/180) instead
+/// silently scales the whole Moon by (pi/180)^2 (the exact defect found
+/// in the first upgrade CI runs, where 47.a gave 348.745 deg instead of
+/// 133.162 deg).
+const double _degPerRad = 180 / math.pi;
 
 /// Geometric geocentric position of the Moon for [jd] in Terrestrial Time.
 ///
-/// Full 60-term ELP-2000/82 series of Meeus, Astronomical Algorithms (2nd
-/// ed.), chapter 47, with the eccentricity factor E on the terms in M, the
-/// additive A1/A2/A3 corrections and the constant 385000.56 km term. [jd]
-/// must already be a TT Julian Day - convert civil UTC with
-/// [deltaTSeconds].
+/// ELP2000-82B (Chapront-Touze & Chapront 1983, Bureau des Longitudes /
+/// IMCCE), truncated per the NASA Five Millennium Canon recipe: periodic
+/// terms below 0.0005 arcsec in longitude/latitude and about 1 m in
+/// distance are neglected (4,407 of 37,872 terms survive). The improved
+/// mean arguments of Chapront et al. (2002) - the same L'/D/M/M'/F
+/// polynomials the previous 60-term Meeus Ch.47 implementation used -
+/// replace the raw 1983 Delaunay arguments. The coefficients live in the
+/// GENERATED vendored table `elp2000/` (built by
+/// tools/sweph/elp_build_table.py from the public IMCCE data; CI
+/// regenerates and diffs it on every run - hand edits fail CI).
+///
+/// Frame - deliberately unchanged from the previous moon: this upgrade is a
+/// FIT change, not a convention change. Geometric, mean ecliptic and
+/// equinox of date; no nutation (it cancels in the tithi elongation
+/// against the sun, which also omits it); no aberration; light-time
+/// (~1.4 s of Moon motion) remains a NAMED systematic skip, stated in the
+/// published error bars, never absorbed. [jd] must already be a TT Julian
+/// Day - convert civil UTC with [deltaTSeconds].
 MoonPosition moonPosition(double jd) {
   final t = (jd - 2451545.0) / 36525.0;
-  final t2 = t * t;
-  final t3 = t2 * t;
-  final t4 = t2 * t2;
-  final lp = 218.3164477 +
-      481267.88123421 * t -
-      0.0015786 * t2 +
-      t3 / 538841 -
-      t4 / 65194000;
-  final d = 297.8501921 +
-      445267.1114034 * t -
-      0.0018819 * t2 +
-      t3 / 545868 -
-      t4 / 113065000;
-  final m = 357.5291092 + 35999.0502909 * t - 0.0001536 * t2 + t3 / 24490000;
-  final mp = 134.9633964 +
-      477198.8675055 * t +
-      0.0087414 * t2 +
-      t3 / 69699 -
-      t4 / 14712000;
-  final f = 93.2720950 +
-      483202.0175233 * t -
-      0.0036539 * t2 -
-      t3 / 3526000 +
-      t4 / 863310000;
-  final e = 1 - 0.002516 * t - 0.0000074 * t2;
-  var sigmaL = 0.0;
-  var sigmaR = 0.0;
-  for (final row in _table47a) {
-    final arg = (row[0] * d + row[1] * m + row[2] * mp + row[3] * f) * _radPerDeg;
-    sigmaL += _ecc(row[1], row[4].toDouble(), e) * math.sin(arg);
-    sigmaR += _ecc(row[1], row[5].toDouble(), e) * math.cos(arg);
-  }
-  var sigmaB = 0.0;
-  for (final row in _table47b) {
-    final arg = (row[0] * d + row[1] * m + row[2] * mp + row[3] * f) * _radPerDeg;
-    sigmaB += _ecc(row[1], row[4].toDouble(), e) * math.sin(arg);
-  }
-  final a1 = 119.75 + 131.849 * t;
-  final a2 = 53.09 + 479264.290 * t;
-  final a3 = 313.45 + 481266.484 * t;
-  sigmaL += 3958 * math.sin(a1 * _radPerDeg) +
-      1962 * math.sin((lp - f) * _radPerDeg) +
-      318 * math.sin(a2 * _radPerDeg);
-  sigmaB += -2235 * math.sin(lp * _radPerDeg) +
-      382 * math.sin(a3 * _radPerDeg) +
-      175 * math.sin((a1 - f) * _radPerDeg) +
-      175 * math.sin((a1 + f) * _radPerDeg) +
-      127 * math.sin((lp - mp) * _radPerDeg) -
-      115 * math.sin((lp + mp) * _radPerDeg);
-  final distance = 385000.56 + sigmaR / 1000;
-  return MoonPosition(
-    longitudeDeg: _norm360(lp + sigmaL / 1e6),
-    latitudeDeg: sigmaB / 1e6,
-    distanceKm: distance,
-    parallaxDeg: math.asin(6378.14 / distance) / _radPerDeg,
+  final terms = elpTerms;
+  final counts = kElpSectionCounts;
+  assert(
+    terms.length ==
+        6 * (counts[0] + counts[3] + counts[6]) +
+            4 *
+                (counts[1] +
+                    counts[2] +
+                    counts[4] +
+                    counts[5] +
+                    counts[7] +
+                    counts[8]),
+    'elp2000 table layout mismatch',
   );
-}
 
-/// Applies the eccentricity factor E to a table coefficient: times E for
-/// |M| = 1, times E squared for |M| = 2 (Meeus p. 342).
-double _ecc(int m, double coeff, double e) {
-  switch (m.abs()) {
-    case 1:
-      return coeff * e;
-    case 2:
-      return coeff * e * e;
-    default:
-      return coeff;
+  // Section sums per coordinate: r[0] longitude (arcsec), r[1] latitude
+  // (arcsec), r[2] distance (km - the +pi/2 cosine shift and the a0/ath
+  // scale factor are pre-folded into the table at generation time, so no
+  // per-section special case is needed here beyond the unit summed).
+  final r = List<double>.filled(3, 0.0);
+  var off = 0;
+  for (var iv = 0; iv < 3; iv++) {
+    // Main problem: 6 doubles per term - the sine argument as a
+    // polynomial in t (coefficients for t^0..t^4, radians), then the
+    // amplitude.
+    var end = off + counts[iv * 3] * 6;
+    for (var i = off; i < end; i += 6) {
+      r[iv] += terms[i + 5] *
+          math.sin(terms[i] +
+              (terms[i + 1] +
+                  (terms[i + 2] +
+                      (terms[i + 3] + terms[i + 4] * t) * t) *
+                  t) *
+              t);
+    }
+    off = end;
+    // Figure/tide then planetary terms: 4 doubles per term - argument
+    // constant (radians), argument t-rate (radians/cy), amplitude, power
+    // of t (the amplitude scales by t^power).
+    for (var g = 1; g <= 2; g++) {
+      end = off + counts[iv * 3 + g] * 4;
+      for (var i = off; i < end; i += 4) {
+        final amp = terms[i + 2];
+        final tp = terms[i + 3];
+        r[iv] += (tp == 0 ? amp : (tp == 1 ? amp * t : amp * t * t)) *
+            math.sin(terms[i] + terms[i + 1] * t);
+      }
+      off = end;
+    }
   }
+
+  final w = kElpMeanLongitudeRad;
+  final lonRad = r[0] * _radPerArcsec +
+      w[0] + (w[1] + (w[2] + (w[3] + w[4] * t) * t) * t) * t;
+  final distance = r[2];
+  return MoonPosition(
+    longitudeDeg: _norm360(lonRad * _degPerRad),
+    latitudeDeg: r[1] * _radPerArcsec * _degPerRad,
+    distanceKm: distance,
+    parallaxDeg: math.asin(6378.14 / distance) * _degPerRad,
+  );
 }
 
 double _norm360(double deg) => deg % 360.0;

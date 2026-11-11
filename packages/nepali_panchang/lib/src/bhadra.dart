@@ -10,8 +10,8 @@ import 'solver.dart';
 /// lunar month. Every Bhadra window is the Vishti karana sector itself -
 /// [previous karana boundary, next karana boundary) - derived from the
 /// karana limb the engine already serves, so it inherits the limb layer's
-/// calibration (the golden corpora pin these same sector boundaries to the
-/// minute) and its convergence guarantees (bisection + Newton cross-check).
+/// calibration (the golden corpora pin these same sector boundaries to
+/// the minute) and its convergence guarantees (bisection + Newton cross-check).
 ///
 /// Karana arithmetic: the 60 half-tithi sectors carry karana numbers
 /// 1..60 (sector index + 1); Vishti lands where (n - 2) % 7 == 6, i.e.
@@ -378,10 +378,10 @@ BhadraWindow _windowFrom(double t, double sourceDelta) {
     mukhaEndsAtNptFractional: beginsNpt.add(mukhaFractional),
     puchhaBeginsAtNptFractional: endsNpt.subtract(puchhaFractional),
     provenance: 'nMiti nepali_panchang engine: Vishti karana sector of '
-        'the Meeus Ch.47 moon / Ch.25 sun separation frame; loka rashi '
-        'path from the apparent-sidereal moon, ayanamsa profile delta '
-        '${sourceDelta.toStringAsFixed(4)} deg (BhaktiBharat-anchored '
-        'fit).',
+        'the ELP2000-82B moon / Meeus Ch.25 sun separation frame; loka '
+        'rashi path from the apparent-sidereal moon, ayanamsa profile '
+        'delta ${sourceDelta.toStringAsFixed(4)} deg (BhaktiBharat-'
+        'anchored fit).',
     evidenceTier: 'runtime-computed; gated by the 2026 Bhadra receipt '
         'corpus (12 Swarnsiddhi windows with golden-corpus edge pins, '
         'BhaktiBharat rule text and date lists; see '
