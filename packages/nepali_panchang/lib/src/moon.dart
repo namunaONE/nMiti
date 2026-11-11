@@ -29,11 +29,16 @@ class MoonPosition {
   });
 }
 
-const double _radPerDeg = math.pi / 180;
-
 /// Arc seconds to radians (the longitude/latitude table sections are in
 /// arcsec; the distance section is already in kilometers).
 const double _radPerArcsec = math.pi / 648000;
+
+/// Radians to degrees. NOTE the direction: the return values below are
+/// radians converted to degrees - multiplying by (pi/180) instead
+/// silently scales the whole Moon by (pi/180)^2 (the exact defect found
+/// in the first upgrade CI runs, where 47.a gave 348.745 deg instead of
+/// 133.162 deg).
+const double _degPerRad = 180 / math.pi;
 
 /// Geometric geocentric position of the Moon for [jd] in Terrestrial Time.
 ///
@@ -113,10 +118,10 @@ MoonPosition moonPosition(double jd) {
       w[0] + (w[1] + (w[2] + (w[3] + w[4] * t) * t) * t) * t;
   final distance = r[2];
   return MoonPosition(
-    longitudeDeg: _norm360(lonRad * _radPerDeg),
-    latitudeDeg: r[1] * _radPerArcsec * _radPerDeg,
+    longitudeDeg: _norm360(lonRad * _degPerRad),
+    latitudeDeg: r[1] * _radPerArcsec * _degPerRad,
     distanceKm: distance,
-    parallaxDeg: math.asin(6378.14 / distance) / _radPerDeg,
+    parallaxDeg: math.asin(6378.14 / distance) * _degPerRad,
   );
 }
 

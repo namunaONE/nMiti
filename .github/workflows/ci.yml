@@ -34,22 +34,6 @@ jobs:
           grep -A 6 -F '[E]' dart_test_output.txt | while IFS= read -r line; do
             printf '::error::%s\n' "$(printf '%s' "$line" | sed 's/%/%25/g')"
           done || true
-      # TEMPORARY (HYA-369 diagnosis): the diagnostic test writes the
-      # Dart-side moon internals to build/moon_diag.txt; render it in
-      # the run Summary - annotations are capped at 10 per step, which
-      # hides anything printed after the first failing test blocks.
-      # Remove with the diagnostic test.
-      - name: moon diagnostic to the run summary (temporary)
-        if: always()
-        run: |
-          if [ -f build/moon_diag.txt ]; then
-            {
-              echo "## HYA-369 moon diagnostic (temporary)"
-              echo '```'
-              cat build/moon_diag.txt
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
       - run: dart run nmiti_cli:invariants --core data/calendar_bs_core_1975_2083.csv --tail data/calendar_bs_tail_2084_2100.csv
       # Full site build as a PR gate: catches build_site.dart and data
       # regressions before merge, not only after the post-deploy smoke.
