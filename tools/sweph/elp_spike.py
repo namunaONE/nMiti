@@ -2,7 +2,13 @@
 """ELP2000-82B truncation spike: what would a NASA-canon-class moon cost,
 and what would it buy (HYA-369 follow-up, engine-perfection research
 move #2)?
-(Fix revision for PR #79: precession frame + 2002-args D convention.)
+(Fix revision for PR #79: precession frame + 2002-args D convention.
+Diagnostic revision for PR #80: 3-epoch component breakdown with the
+Meeus additive stand-ins, and a top-term dump of the largest kept
+figure/planetary longitude terms - local triangulation shows the main
+problem and the figure sum track Swiss/Meeus while the planetary sum
+carries a spurious ~-27 arcsec at the 1992 anchor, i.e. roughly a
+sign-flipped Venus (A1) cluster.)
 
 Downloads the ELP2000-82B semi-analytical lunar theory (Chapront-Touze &
 Chapront 1983, A&A 124, 50; distributed by IMCCE/Bureau des Longitudes) at
@@ -262,6 +268,10 @@ class ElpTheory:
         self.main = [[], [], [], []]   # (arg c1..c5, amplitude)
         self.fig = [[], [], [], []]    # (a1, a2, amplitude, tpow)
         self.planet = [[], [], [], []]  # (b1, b2-b1, amplitude, tpow)
+        # Diagnostic companions to the entries above: the raw record
+        # multipliers and phase, for auditing against published tables.
+        self.fig_meta = [[], [], [], []]     # (iz, ilu, pha_deg)
+        self.planet_meta = [[], [], [], []]  # (ipla, pha_deg)
         self.counts = {}
         self._parse(data_dir)
 
@@ -324,6 +334,8 @@ class ElpTheory:
                         a1 += ilu[i - 1] * self.d[i][1]
                         a2 += ilu[i - 1] * self.d[i][2]
                     self.fig[iv].append((a1, a2, x, tpow))
+                    self.fig_meta[iv].append(
+                        (iz, ilu, pha / DEG))
                 else:
                     # format 1003: 11i3,1x,f9.5,1x,f9.5 (ELP10..21)
                     ipla = _ints(ln, 11)
@@ -353,6 +365,7 @@ class ElpTheory:
                             b1 += ipla[i + 6] * self.d[i][1]
                             b2 += ipla[i + 6] * self.d[i][2]
                     self.planet[iv].append((b1, b2 - b1, x, tpow))
+                    self.planet_meta[iv].append((ipla, pha / DEG))
                 kept += 1
             self.counts[n] = (kept, len(data_lines))
 
@@ -548,18 +561,46 @@ def main():
     sw_ref = sw_geo_moon(jd_ref)
     lon_raw_ref, _b, _r = theory_raw.spherical(jd_ref)
     lon_2002_ref, _b2, _r2 = theory_2002.spherical(jd_ref)
-    pm_r = theory_raw.spherical_parts(jd_ref)
-    pm_02 = theory_2002.spherical_parts(jd_ref)
+
+    def meeus_additives_arcsec(jd_tt):
+        # Meeus Ch.47 additive corrections: the published stand-ins
+        # for the figure + planetary content the ELP series carries
+        # (A1 = action of Venus, 1962 sin(L'-F) = Moon figure, A2 =
+        # action of Jupiter; coefficients in 1e-6 degree -> arcsec).
+        tt = (jd_tt - 2451545.0) / 36525.0
+        lp = 218.3164477 + 481267.88123421 * tt
+        ff = 93.2720950 + 483202.0175233 * tt
+        a1 = math.radians(119.75 + 131.849 * tt)
+        a2 = math.radians(53.09 + 479264.290 * tt)
+        return (3958.0 * math.sin(a1),
+                1962.0 * math.sin(math.radians(lp - ff)),
+                318.0 * math.sin(a2))
+
+    part_lines = []
+    for _label, _jd_e in (("1992.4", 2448724.5), ("J2000", 2451545.0),
+                          ("2026.9", 2461370.0)):
+        _sw_e = sw_geo_moon(_jd_e)
+        _pr = theory_raw.spherical_parts(_jd_e)
+        _p0 = theory_2002.spherical_parts(_jd_e)
+        _av1, _av2, _av3 = meeus_additives_arcsec(_jd_e)
+        part_lines.append(
+            "%s: raw main=%+.2f fig=%+.2f plan=%+.2f tot=%+.2f | 2002 "
+            "main=%+.2f fig=%+.2f plan=%+.2f tot=%+.2f | MeeusAdd "
+            "A1=%+.2f LpF=%+.2f A2=%+.2f"
+            % (_label,
+               (_pr[0] - _sw_e) * 3600.0, _pr[1], _pr[2],
+               (_pr[3] - _sw_e) * 3600.0,
+               (_p0[0] - _sw_e) * 3600.0, _p0[1], _p0[2],
+               (_p0[3] - _sw_e) * 3600.0,
+               _av1, _av2, _av3))
     annotate("SELFTEST jd=2448724.5 (Meeus 47a): Swiss geo lon=%.6f "
              "(Meeus printed apparent 133.162665) | ELP raw-of-date "
-             "off=%+.2f arcsec, ELP2002 off=%+.2f arcsec | parts vs "
-             "Swiss (arcsec): raw main=%+.2f fig=%+.2f planet=%+.2f | "
-             "2002 main=%+.2f fig=%+.2f planet=%+.2f"
+             "off=%+.2f arcsec, ELP2002 off=%+.2f arcsec || PARTS vs "
+             "Swiss geo (arcsec): %s"
              % (sw_ref,
                 (lon_raw_ref - sw_ref) * 3600.0,
                 (lon_2002_ref - sw_ref) * 3600.0,
-                (pm_r[0] - sw_ref) * 3600.0, pm_r[1], pm_r[2],
-                (pm_02[0] - sw_ref) * 3600.0, pm_02[1], pm_02[2]))
+                " || ".join(part_lines)))
     annotate("SELFTEST args@1992.4 (deg, standard D): "
              "raw D=%.6f M=%.6f Mp=%.6f F=%.6f | 2002 D=%.6f M=%.6f "
              "Mp=%.6f F=%.6f"
@@ -571,6 +612,38 @@ def main():
                 math.degrees(theory_2002.d[2][1]) % 360.0,
                 math.degrees(theory_2002.d[3][1]) % 360.0,
                 math.degrees(theory_2002.d[4][1]) % 360.0))
+
+    # Biggest kept figure/planetary longitude terms with their
+    # contributions at the 1992.4 anchor and the 2026.9 epoch - if a
+    # term is mis-phased or sign-flipped, its contribution stands out
+    # against the Meeus additive stand-ins printed above (the A1
+    # Venus cluster is +13.4 arcsec at 1992.4).
+    t92 = (jd_ref - 2451545.0) / 36525.0
+    t26 = (2461370.0 - 2451545.0) / 36525.0
+
+    def fmt_top_terms(entries, metas, n):
+        order = sorted(range(len(entries)),
+                       key=lambda i: -abs(entries[i][2]))[:n]
+        parts = []
+        for i in order:
+            a1, rate, x, tp = entries[i]
+            c92 = (x * (t92 ** tp)) * math.sin(a1 + rate * t92)
+            c26 = (x * (t26 ** tp)) * math.sin(a1 + rate * t26)
+            meta = metas[i]
+            mtxt = ("iz=%d ilu=%s" % (meta[0], meta[1])
+                    if len(meta) == 3 else "ipla=%s" % (meta[0],))
+            parts.append("%s pha=%8.3f arg=%9.4f rate=%+13.6f "
+                         "x=%+9.4f c92=%+8.2f c26=%+8.2f"
+                         % (mtxt, meta[-1],
+                            math.degrees(a1) % 360.0,
+                            math.degrees(rate) % 360.0, x, c92, c26))
+        return "; ".join(parts)
+
+    annotate("TOP terms (2002 args): FIG %s || PLANET %s"
+             % (fmt_top_terms(theory_2002.fig[1],
+                              theory_2002.fig_meta[1], 6),
+                fmt_top_terms(theory_2002.planet[1],
+                              theory_2002.planet_meta[1], 8)))
 
     moon_rows = []
     moon_acc = {}
