@@ -11,13 +11,15 @@
 ///   - all day-tithi labels agree, transition instants mean < 2 min;
 /// - Swiss-truth scoreboard (HYA-369, PR #42, 2026-11-06; re-measured
 ///   post-R7a on merge ff8b3ae, CI #146; re-measured post-rung-B on
-///   the R10.5 frame audit, PR #58): every CI run re-solves the served
-///   window with Swiss Ephemeris (Moshier) - tithi and karana
-///   boundaries mean 4.0 s max 11 s signed +1.9 s (the residual Meeus
-///   Ch.47 truncation scatter plus the named skipped Moon light-time,
-///   after rung B removed the nutation frame systematic), moonrise
-///   mean 0.2 s, sunrise mean 11.3 s max 12 s (UT-direct); the
-///   nakshatra/yoga deltas (~51/~97 s) are the ayanamsa convention gap
+///   the R10.5 frame audit, PR #58; re-measured post-ELP2000 on the
+///   HYA-449 receipts, run 42943885701): every CI run re-solves the
+///   served window with Swiss Ephemeris (Moshier) - tithi and karana
+///   boundaries mean 1.2 s max 3 s signed +0.1 s (the Meeus Ch.47
+///   truncation scatter and the skipped Moon light-time retired by
+///   the ELP2000-82B moon; rung B earlier removed the nutation frame
+///   systematic), moonrise mean 0.2 s, sunrise mean 11.3 s max 12 s
+///   (UT-direct); the nakshatra/yoga deltas (~53/~98 s) are the
+///   ayanamsa convention gap
 ///   plus the -6.5 s R7a Delta-T wall-clock shift, stated, not
 ///   absorbed. The Swiss-vs-engine Delta-T residual reads mean -0.30 s
 ///   max 0.31 s (n=233).
@@ -31,7 +33,11 @@
 /// light-time (~0.7 arcsec => ~1.4 s of boundary time) - together
 /// the measured 4.0 s mean / 11 s max tithi Swiss gap. The former
 /// ~16 s nutation frame systematic was FIXED by the R10.5 rung B
-/// frame audit, never absorbed.
+/// frame audit, never absorbed. Both moon-series contributors (the
+/// truncation scatter and the light-time) were retired on 2026-11-11
+/// by the ELP2000-82B moon (HYA-449): the measured tithi Swiss gap
+/// now reads 1.2 s mean / 3 s max - inside the ~2 s observability
+/// ceiling.
 ///
 /// Delta-T history: HYA-406 (2026-11-06) first adjudicated the
 /// Espenak-Meeus gap (75.6 s vs observed ~69 s for 2026 => ~6.6 s of
@@ -78,11 +84,11 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Receipt corpus: |engine - BhaktiBharat| max ~1.0 min (226 '
         'boundaries, Oct-Nov 2026); Swiss-anchored tithi_engine oracle '
         '(PR #30): all day labels agree, transitions mean < 2 min; '
-        'Swiss-truth scoreboard (PR #58, R10.5 rung B frame audit): '
-        'boundary instants mean 4.0 s, max 11 s, signed +1.9 s (n=47) - '
-        'the residual Meeus Ch.47 truncation plus the named skipped Moon '
-        'light-time, after the rung B fix removed the nutation frame '
-        'systematic.',
+        'Swiss-truth scoreboard (post-ELP2000 re-measure, HYA-449): '
+        'boundary instants mean 1.2 s, max 3 s, signed +0.1 s (n=47) - '
+        'the Meeus Ch.47 truncation and the Moon light-time skip '
+        'retired by the NASA-canonical ELP2000-82B moon (the rung B '
+        'fix earlier removed the nutation frame systematic).',
   ),
   UncertaintyBand(
     limb: 'nakshatra',
@@ -90,9 +96,10 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Receipt corpus: typical <= 0.94 min, observed max 1.7 min near '
         'lunar perigee (Nov 2026); BhaktiBharat ayanamsa profile '
         '(delta -0.0795 deg). Published ceiling covers perigee days. '
-        'Swiss-truth cross-check reads ~51 s mean, 62 s max (n=45, '
-        're-measured after the rung B frame audit put the moon in the '
-        'publishers apparent-sidereal convention) - the ayanamsa '
+        'Swiss-truth cross-check reads ~53 s mean, 60 s max (n=45, '
+        'post-ELP2000 re-measure, HYA-449; the moon has sat in the '
+        'publishers apparent-sidereal convention since the rung B '
+        'frame audit) - the ayanamsa '
         'convention gap vs Swiss Lahiri plus the -6.5 s R7a Delta-T '
         'wall-clock shift, stated not absorbed.',
   ),
@@ -101,8 +108,9 @@ const List<UncertaintyBand> publishedErrorBars = [
     plusMinusMinutes: 2.0,
     basis: 'Receipt corpus: max ~0.97 min after the ayanamsa fit (both '
         'corpora); Hamro Patro divergence up to ~13 min is publisher data, '
-        'not engine error. Swiss-truth cross-check reads ~97 s mean, '
-        '111 s max (n=48, post-rung-B) - the ayanamsa convention gap '
+        'not engine error. Swiss-truth cross-check reads ~98 s mean, '
+        '110 s max (n=48, post-ELP2000, HYA-449) - the ayanamsa '
+        'convention gap '
         'vs Swiss Lahiri plus the -6.5 s R7a Delta-T wall-clock shift, '
         'stated not absorbed.',
   ),
@@ -112,11 +120,10 @@ const List<UncertaintyBand> publishedErrorBars = [
     basis: 'Convention-anchored: 76/76 exact identity on the receipt corpus '
         'at the pinned reference moment (BhaktiBharat noon, Hamro Patro '
         'engine-sunrise udaya). The served value stays convention-exact; '
-        'Swiss-truth boundary parity (PR #58, R10.5 rung B frame '
-        'audit): mean 4.1 s, max 11 s, signed +1.9 s (n=93) - the '
-        'residual Meeus Ch.47 truncation plus the named skipped Moon '
-        'light-time, after the rung B fix removed the nutation frame '
-        'systematic.',
+        'Swiss-truth boundary parity (post-ELP2000 re-measure, '
+        'HYA-449): mean 1.2 s, max 3 s, signed +0.1 s (n=93) - the '
+        'same ELP2000-82B parity class as tithi (the rung B fix '
+        'earlier removed the nutation frame systematic).',
   ),
   UncertaintyBand(
     limb: 'sunrise',

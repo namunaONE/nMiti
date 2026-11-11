@@ -12,7 +12,7 @@ const double _degPerRad = 180 / math.pi;
 /// Topocentric solar eclipse solver - L6 grahan layer, step 2 (HYA-421).
 ///
 /// Local circumstances by topocentric separation: at each instant the
-/// geocentric equatorial positions of Sun and Moon (the same Meeus Ch.47
+/// geocentric equatorial positions of Sun and Moon (the same ELP2000-82B
 /// moon and VSOP87D sun every other limb shares, mean equinox of date,
 /// nutation omitted for BOTH bodies so the rotation the frames share
 /// cancels) are made topocentric by subtracting the observer's ECEF

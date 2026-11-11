@@ -191,8 +191,8 @@ ${defects.map((r) => '<tr><td>' + r.bsYear.toString() + '-' + r.monthNo.toString
 }
 
 /// The /panchang page (R6a-3, HYA-416): today's lunar panchang details,
-/// computed at BUILD TIME by the open nepali_panchang engine (full 60-term
-/// Meeus Ch.47 moon, VSOP87D sun, Espenak-Meeus Delta T, per-source
+/// computed at BUILD TIME by the open nepali_panchang engine (ELP2000-82B
+/// moon, VSOP87D sun, hybrid Delta T, per-source
 /// ayanamsa profiles) - runtime compute, zero data files, zero client
 /// JavaScript. Conventions are exposed, never silently picked: every limb
 /// is shown at BOTH reference moments (udaya = the Hamro Patro display

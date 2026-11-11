@@ -372,7 +372,7 @@ const Map<String, String> vratConventions = {
 /// Engine honesty strings served on every VratDay.
 const String _vratProvenance =
     'nMiti nepali_panchang engine: tithi runs from the separation-frame '
-    'elongation (60-term Meeus Ch.47 moon, VSOP87D sun, hybrid Delta T); '
+    'elongation (ELP2000-82B moon, VSOP87D sun, hybrid Delta T); '
     'reference instants from the USNO sunrise/sunset solvers and the Meeus '
     '15.1 moonrise solver; Kathmandu anchor 27.7172 N / 85.324 E, NPT '
     'throughout.';

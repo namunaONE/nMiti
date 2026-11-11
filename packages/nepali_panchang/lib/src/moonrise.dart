@@ -11,11 +11,11 @@ import 'moon.dart';
 /// the geocentric altitude of the Moon's center reaches
 /// h0 = 0.7276 * pi - 34', the standard upper-limb rise with the 34'
 /// refraction folded into the target (pi = the equatorial horizontal
-/// parallax, live per sample). The Moon is taken from the same 60-term
-/// Meeus Ch.47 series the lunar engine uses, so moonrise and every
+/// parallax, live per sample). The Moon is taken from the same
+/// ELP2000-82B series the lunar engine uses, so moonrise and every
 /// tithi boundary share one ephemeris.
 ///
-/// Frame: mean equinox of date (the Ch.47 series is already in that
+/// Frame: mean equinox of date (the moon series is already in that
 /// frame; nutation is omitted - a named seconds-level contributor),
 /// obliquity Meeus eq. 22.2, sidereal time Meeus eq. 12.4,
 /// ecliptic-to-equatorial Meeus eqs. 13.3/13.4.
@@ -73,7 +73,7 @@ double moonGeocentricAltitudeDeg({
 
 /// Rise target at [jdUt] (Meeus eq. 15.1): the geocentric center
 /// altitude at which the upper limb meets the refracted horizon. The
-/// parallax is live from the Ch.47 distance, so the near Moon raises
+/// parallax is live from the moon distance, so the near Moon raises
 /// the bar and the far Moon lowers it, exactly as in nature.
 double moonRiseTargetAltitudeDeg(double jdUt) {
   final pos = moonPosition(jdTtFromJdUt(jdUt));

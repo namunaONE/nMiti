@@ -225,7 +225,7 @@ $yearRows
 
 <h2 id="festivals-meta">How this is computed</h2>
 <ul>
-<li><strong>Engine:</strong> the nMiti nepali_panchang festival battery on the runtime lunar engine (60-term Meeus Ch.47 moon, VSOP87D sun, Espenak-Meeus Delta T); festivals are data, conventions are code.</li>
+<li><strong>Engine:</strong> the nMiti nepali_panchang festival battery on the runtime lunar engine (ELP2000-82B moon, VSOP87D sun, hybrid Delta-T channel); festivals are data, conventions are code.</li>
 <li><strong>Evidence:</strong> day choices pinned by the receipt corpora above; the engine's tithi timing is band-checked against publisher corpora and Swiss Ephemeris in CI.</li>
 <li><strong>Coverage, stated honestly:</strong> the battery holds ${festivalBattery.length} receipt-pinned festivals - it is NOT a complete list of Nepal's festivals. New entries ship only with fresh publisher receipts; nothing is guessed. Janai Purnima and Teej for BS 2084 are recorded as pending in the 2027 fixture until the official 2084 patro publishes (expected spring 2027).</li>
 <li><strong>Machine-readable:</strong> <a href="${urlBase}api/v1/today.json">today.json</a> carries a <code>festivals</code> block (today, next_festival, the 45-day horizon).</li>
