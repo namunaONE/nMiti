@@ -11,10 +11,13 @@ name: graha VSOP87D table generation
 # itself. Stdlib only - no pyswisseph or other install; downloads the
 # six VSOP87D files (~3.4 MB total) on first run.
 #
-# The generate step tee's its output and a failure() step copies it to
-# the run summary: the action log is sign-in-gated, but the summary is
-# rendered publicly on the run page, so a fail-loud generator message
-# (which anchor, which file, which row) is always reviewable.
+# Diagnostics contract (proven by the sweph_crosscheck channels): the
+# action log is sign-in-gated, but the run page's Annotations table
+# renders server-side. The generate step tee's its output and a
+# failure() step re-emits its tail as ::error annotations AND appends
+# it to the run summary - so the fail-loud generator message (which
+# anchor, which file, which row) is always reviewable without log
+# access.
 
 on:
   push:
@@ -37,9 +40,15 @@ jobs:
         run: |
           set -o pipefail
           python3 tools/sweph/graha_build_table.py --data-dir build/vsop87 --out-dir packages/nepali_panchang/lib/src/graha 2>&1 | tee graha_gen_output.txt
-      - name: generator failure output to the run summary
+      - name: generator failure output to annotations and summary
         if: failure()
-        run: cat graha_gen_output.txt >> "$GITHUB_STEP_SUMMARY"
+        run: |
+          if [ -f graha_gen_output.txt ]; then
+            cat graha_gen_output.txt >> "$GITHUB_STEP_SUMMARY" || true
+            tail -n 30 graha_gen_output.txt | sed 's/%/%25/g' | while IFS= read -r line; do
+              printf '::error::%s\n' "$line"
+            done || true
+          fi
       - name: commit the regenerated table
         run: |
           git config user.name "nmiti-table-bot"
