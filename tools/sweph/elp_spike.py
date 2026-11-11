@@ -7,8 +7,14 @@ Diagnostic revision for PR #80: 3-epoch component breakdown with the
 Meeus additive stand-ins, and a top-term dump of the largest kept
 figure/planetary longitude terms - local triangulation shows the main
 problem and the figure sum track Swiss/Meeus while the planetary sum
-carries a spurious ~-27 arcsec at the 1992 anchor, i.e. roughly a
-sign-flipped Venus (A1) cluster.)
+carries a spurious ~-27 arcsec at the 1992 anchor.
+RATE-BUG FIX: the planetary rate accumulator was initialized to pha
+and stored as b2-b1, so every planetary argument ran at (true rate
+minus its own constant part) - e.g. the 14.25 arcsec Venus/A1 term at
+38.639 deg/cy instead of 131.849, a 93.21 deg/cy corruption. The
+figure branch never had this bug; at J2000 (t=0, where rates are
+inert) the full model matched Swiss geometric to 0.71 arcsec, which
+localised the defect to the rate construction.)
 
 Downloads the ELP2000-82B semi-analytical lunar theory (Chapront-Touze &
 Chapront 1983, A&A 124, 50; distributed by IMCCE/Bureau des Longitudes) at
@@ -267,7 +273,7 @@ class ElpTheory:
         # Survivors per coordinate.
         self.main = [[], [], [], []]   # (arg c1..c5, amplitude)
         self.fig = [[], [], [], []]    # (a1, a2, amplitude, tpow)
-        self.planet = [[], [], [], []]  # (b1, b2-b1, amplitude, tpow)
+        self.planet = [[], [], [], []]  # (b1, rate, amplitude, tpow)
         # Diagnostic companions to the entries above: the raw record
         # multipliers and phase, for auditing against published tables.
         self.fig_meta = [[], [], [], []]     # (iz, ilu, pha_deg)
@@ -346,7 +352,15 @@ class ElpTheory:
                     tpow = 1 if (13 <= n <= 15 or 19 <= n <= 21) else 0
                     table1 = n < 16
                     b1 = pha
-                    b2 = pha
+                    # b2 is the pure t-linear rate: elp82b_1 builds
+                    # y = pha*deg + (z + sum ipla*p(i,2))*t, i.e. the
+                    # phase constant pha enters the argument only at
+                    # t^0. (An earlier revision initialized b2 = pha
+                    # and stored b2 - b1, polluting every planetary
+                    # rate by -(b1 - pha) - up to ~93 deg/cy on the
+                    # 14.25 arcsec Venus term - the entire residual
+                    # -30/+7 arcsec drift.)
+                    b2 = 0.0
                     if table1:
                         for i in range(1, 9):
                             b1 += ipla[i - 1] * self.p[i][1]
@@ -364,7 +378,7 @@ class ElpTheory:
                         for i in range(1, 5):
                             b1 += ipla[i + 6] * self.d[i][1]
                             b2 += ipla[i + 6] * self.d[i][2]
-                    self.planet[iv].append((b1, b2 - b1, x, tpow))
+                    self.planet[iv].append((b1, b2, x, tpow))
                     self.planet_meta[iv].append((ipla, pha / DEG))
                 kept += 1
             self.counts[n] = (kept, len(data_lines))
