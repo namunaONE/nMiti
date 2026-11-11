@@ -221,7 +221,7 @@ ChandraDarshanWindow? chandraDarshanForNewMoon({
       tithiAtSaaitBegins: tithiName(limbIndex('tithi', ssJdTt, 0.0)),
       provenance: 'nMiti nepali_panchang chandra_darshan layer: saait = '
           'the engine sunset-moonset pair of the darshan evening (USNO '
-          'solar equations + the Meeus Ch.47 moon); day rule: the first '
+          'solar equations + the ELP2000-82B moon); day rule: the first '
           'civil evening at/after the conjunction with a moonset-sunset '
           'lag of ${chandraDarshanMinMoonsetLagMinutes.toStringAsFixed(1)} '
           'min or more (corpus band 37.80-40.33 min, nepaljyotish / '

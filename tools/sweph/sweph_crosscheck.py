@@ -96,8 +96,18 @@ except ImportError:
 # canceling the tithi/karana Meeus Ch.47 truncation gap; with Delta-T
 # corrected the raw gap stands exposed. All bands still hold with
 # margin, so the thresholds stay.
-HARD_BAND_S = {"tithi": 60, "karana": 60, "nakshatra": 180, "yoga": 300}
-MEAN_BAND_S = {"tithi": 30, "karana": 30, "nakshatra": 120, "yoga": 180}
+#
+# Post-ELP2000 re-measurement (HYA-449, PR #81 verify run 42943885701,
+# 2026-11-11): the moon is now the NASA Five Millennium Canon
+# truncation of ELP2000-82B (4,407 of 37,872 terms, the 0.0005 arcsec
+# recipe; see elp_spike.py). Measured Swiss - engine (mean|max s):
+# tithi 1.2|3 signed +0.1 and karana 1.2|3 signed +0.1 -> tightened
+# to 10/5 (the same ~3x-of-maxima philosophy as 7.9|19 -> 60/30).
+# Raw nakshatra 53.0|60 and yoga 98.4|110 stay on the unchanged
+# convention-gap bands; moonrise/sunrise/eclipses/deltaT and the
+# reference line did not move; 17 knife-edges.
+HARD_BAND_S = {"tithi": 10, "karana": 10, "nakshatra": 180, "yoga": 300}
+MEAN_BAND_S = {"tithi": 5, "karana": 5, "nakshatra": 120, "yoga": 180}
 # HYA-369 ayanamsa alignment (2026-11-10): the near-constant
 # nakshatra/yoga offsets (raw medians -51.2 s / -96.8 s) are the
 # engine-base-vs-Swiss-Lahiri frame difference - measured +28.37"
@@ -114,9 +124,11 @@ MEAN_BAND_S = {"tithi": 30, "karana": 30, "nakshatra": 120, "yoga": 180}
 # shift). Expected aligned residual: the tithi class (the same
 # ephemeris pair, frame-corrected). The raw bands above stay, so
 # a regression trips either way and the alignment itself stays
-# under test.
-ALIGNED_HARD_BAND_S = {"nakshatra": 60, "yoga": 60}
-ALIGNED_MEAN_BAND_S = {"nakshatra": 30, "yoga": 30}
+# under test. Post-ELP2000 (HYA-449, run 42943885701): aligned
+# nakshatra 1.2|3 signed +0.4, aligned yoga 1.2|4 signed +0.7 -
+# tightened 60/30 -> 12/5.
+ALIGNED_HARD_BAND_S = {"nakshatra": 12, "yoga": 12}
+ALIGNED_MEAN_BAND_S = {"nakshatra": 5, "yoga": 5}
 # The Dart reference line (ayanamsaSwissLahiriReference:
 # 23.85709 deg at J2000 + 1.398024 deg/cy, receipts-measured)
 # must track swe.get_ayanamsa_ut over the dump window. It is
