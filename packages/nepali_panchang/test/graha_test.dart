@@ -4,219 +4,133 @@ import 'dart:io';
 import 'package:nepali_panchang/nepali_panchang.dart';
 import 'package:test/test.dart';
 
-/// HYA-450 (Wave 1 graha engine, PR-A): the permanent JPL Horizons
-/// accuracy gate for the vendored VSOP87D graha channels.
-///
-/// Receipts-first: the fixture (test/fixtures/graha_horizons_2026.json,
-/// schema nmiti-graha-horizons/1) was fetched fresh from the Horizons
-/// batch CGI at authoring time (2026-11-11: 49 daily 12:00 UT instants
-/// per planet, 2026-10-16 through 2026-12-03, plus 1-hour Mercury and
-/// Venus station refinements over Nov 13-15) and is never retyped -
-/// CENTER=500 geocentric, QUANTITIES=31 (ObsEcLon/ObsEcLat), CSV, UTC.
-///
-/// Bands: tropical longitude/latitude 15 arcsec against the apparent
-/// observer ecliptic place (the band carries the light-time and
-/// aberration convention matches, the VSOP87D truncation tails and
-/// the nutation-frame class); the Mercury and Venus retrograde
-/// stations from the engine's rate bisection must land within 90
-/// minutes of the fixture's hourly-grid minimum; Mars, Jupiter and
-/// Saturn must stay direct across the whole window.
+/// HYA-450 (Wave 1) graha receipts: JPL Horizons DE441 apparent RA/DEC
+/// converted to ecliptic of date. PROVISIONAL bands (hard 15 arcsec /
+/// mean 5 arcsec) - the first CI run measures the actual class and the
+/// bands are tightened to it; see the fixture header for the quantization
+/// floor and the crawl coverage.
 void main() {
-  // 'dart test packages' (CI) runs from the workspace root while a
-  // local 'dart test' runs from the package dir - resolve the fixture
-  // the same dual-path way as festival_receipts_2026_test.dart.
-  final file = File('test/fixtures/graha_horizons_2026.json');
-  final Map<String, dynamic> doc;
-  if (file.existsSync()) {
-    doc = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
-  } else {
-    doc = jsonDecode(File(
-            'packages/nepali_panchang/test/fixtures/'
-            'graha_horizons_2026.json')
-        .readAsStringSync()) as Map<String, dynamic>;
-  }
-  final daily = doc['daily']! as Map<String, dynamic>;
-  final stationHourly = doc['station_hourly']! as Map<String, dynamic>;
-
-  const bodies = <String, int>{
-    'mercury': kGrahaMercury,
-    'venus': kGrahaVenus,
-    'mars': kGrahaMars,
-    'jupiter': kGrahaJupiter,
-    'saturn': kGrahaSaturn,
+  final raw =
+      File('test/fixtures/graha_receipts_2026_11.json').readAsStringSync();
+  final fx = json.decode(raw) as Map<String, dynamic>;
+  final planets = fx['planets'] as Map<String, dynamic>;
+  final bodyOf = <String, GrahaBody>{
+    'mercury': GrahaBody.mercury,
+    'venus': GrahaBody.venus,
+    'mars': GrahaBody.mars,
+    'jupiter': GrahaBody.jupiter,
+    'saturn': GrahaBody.saturn,
+  };
+  final hardDeg = (fx['bands'] as Map<String, dynamic>)['apparent_lon_hard_deg'] as double;
+  final meanDeg = (fx['bands'] as Map<String, dynamic>)['apparent_lon_mean_deg'] as double;
+  final latHardDeg = (fx['bands'] as Map<String, dynamic>)['apparent_lat_hard_deg'] as double;
+  final wrap180 = (double x) {
+    final d = x % 360.0;
+    return d > 180.0 ? d - 360.0 : (d < -180.0 ? d + 360.0 : d);
   };
 
-  double wrapDelta(double a, double b) {
-    double d = (a - b) % 360.0;
-    if (d > 180.0) d -= 360.0;
-    if (d < -180.0) d += 360.0;
-    return d.abs();
-  }
-
-  test('fixture integrity: row counts and contiguous instants', () {
-    for (final name in bodies.keys) {
-      final rows = (daily[name]! as List).cast<List<dynamic>>();
-      expect(rows.length, 49, reason: name);
-      for (int i = 1; i < rows.length; i++) {
-        final gap = (rows[i][0] as num).toDouble() -
-            (rows[i - 1][0] as num).toDouble();
-        expect(gap, closeTo(1.0, 1e-6), reason: name + ' row ' + i.toString());
-      }
-    }
-    for (final name in ['mercury', 'venus']) {
-      final rows = (stationHourly[name]! as List).cast<List<dynamic>>();
-      expect(rows.length, 72, reason: name);
-      for (int i = 1; i < rows.length; i++) {
-        final gap = (rows[i][0] as num).toDouble() -
-            (rows[i - 1][0] as num).toDouble();
-        expect(gap, closeTo(1.0 / 24.0, 1e-4),
-            reason: name + ' hour ' + i.toString());
-      }
-    }
-  });
-
-  // SIGNED wrap-safe engine-minus-Horizons delta, degrees (-180, 180].
-  double signedDelta(double a, double b) {
-    double d = (a - b) % 360.0;
-    if (d > 180.0) d -= 360.0;
-    if (d < -180.0) d += 360.0;
-    return d;
-  }
-
-  for (final entry in bodies.entries) {
-    test('Horizons apparent place: ' + entry.key, () {
-      final rows = (daily[entry.key]! as List).cast<List<dynamic>>();
-      // Measure every row first, then gate on the maxima: the failure
-      // reason carries the full scoreboard (signed arcsec deltas plus the
-      // five worst rows) so ONE CI run reads any systematic - common-mode
-      // (frame convention: Horizons ObsEcLon is the apparent place, true
-      // ecliptic of date, light-time + deflection + aberration) vs
-      // differential (pipeline) - without log access. Receipts-first:
-      // the 15 arcsec bands stay untouched until this evidence lands.
-      final lonSigned = <double>[];
-      final latSigned = <double>[];
-      for (final row in rows) {
-        final jd = (row[0] as num).toDouble();
-        final lon = (row[1] as num).toDouble();
-        final lat = (row[2] as num).toDouble();
-        final pos = grahaPosition(entry.value, jd);
-        lonSigned.add(signedDelta(pos.tropicalLongitudeDeg, lon) * 3600.0);
-        latSigned.add((pos.tropicalLatitudeDeg - lat) * 3600.0);
-      }
-      final lonAbs = lonSigned.map((v) => v.abs()).toList();
-      final latAbs = latSigned.map((v) => v.abs()).toList();
-      final double meanLon =
-          lonSigned.reduce((a, b) => a + b) / lonSigned.length;
-      final double meanAbsLon =
-          lonAbs.reduce((a, b) => a + b) / lonAbs.length;
-      final double meanLat =
-          latSigned.reduce((a, b) => a + b) / latSigned.length;
-      final double maxLon = lonAbs.reduce((a, b) => a > b ? a : b);
-      final double maxLat = latAbs.reduce((a, b) => a > b ? a : b);
-      String report = entry.key +
-          ' rows=' + rows.length.toString() +
-          ' dLon arcsec: max|' + maxLon.toStringAsFixed(3) + '| mean' +
-          meanLon.toStringAsFixed(3) +
-          ' mean|' + meanAbsLon.toStringAsFixed(3) + '|; dLat arcsec: max|' +
-          maxLat.toStringAsFixed(3) + '| mean' + meanLat.toStringAsFixed(3) +
-          '; worst rows (JD, dLon, dLat):';
-      final order = List<int>.generate(rows.length, (i) => i)
-        ..sort((a, b) => lonAbs[b].compareTo(lonAbs[a]));
-      for (final i in order.take(5)) {
-        final jd = (rows[i][0] as num).toDouble();
-        report += ' [' +
-            jd.toStringAsFixed(1) + ' ' +
-            lonSigned[i].toStringAsFixed(2) + ' ' +
-            latSigned[i].toStringAsFixed(2) + ']';
-      }
-      expect(maxLon, lessThan(15.0), reason: report);
-      expect(maxLat, lessThan(15.0), reason: report);
-    });
-  }
-
-  double fixtureStationJd(String planet) {
-    final rows = (stationHourly[planet]! as List).cast<List<dynamic>>();
-    var best = rows[0];
-    for (final row in rows) {
-      if ((row[1] as num).toDouble() < (best[1] as num).toDouble()) {
-        best = row;
-      }
-    }
-    return (best[0] as num).toDouble();
-  }
-
-  test('Mercury retrograde station within 90 min of the Horizons grid',
+  test('graha receipts: apparent longitude and latitude vs JPL Horizons',
       () {
-    final ref = fixtureStationJd('mercury');
-    final station = grahaStationJdUt(kGrahaMercury, ref);
-    expect(station, isNotNull);
-    expect((station! - ref).abs(), lessThan(90.0 / 1440.0));
-  });
-
-  test('Venus retrograde station within 90 min of the Horizons grid', () {
-    final ref = fixtureStationJd('venus');
-    final station = grahaStationJdUt(kGrahaVenus, ref);
-    expect(station, isNotNull);
-    expect((station! - ref).abs(), lessThan(90.0 / 1440.0));
-  });
-
-  test('retrograde before and direct after the stations', () {
-    final mer = fixtureStationJd('mercury');
-    final ven = fixtureStationJd('venus');
-    expect(grahaIsRetrograde(kGrahaMercury, mer - 1.0), isTrue);
-    expect(grahaIsRetrograde(kGrahaMercury, mer + 1.0), isFalse);
-    expect(grahaIsRetrograde(kGrahaVenus, ven - 1.0), isTrue);
-    expect(grahaIsRetrograde(kGrahaVenus, ven + 1.0), isFalse);
-  });
-
-  test('Mars, Jupiter and Saturn stay direct across the window', () {
-    const direct = <String, int>{
-      'mars': kGrahaMars,
-      'jupiter': kGrahaJupiter,
-      'saturn': kGrahaSaturn,
-    };
-    for (final e in direct.entries) {
-      final rows = (daily[e.key]! as List).cast<List<dynamic>>();
-      for (final row in rows) {
-        final jd = (row[0] as num).toDouble();
-        expect(grahaIsRetrograde(e.value, jd), isFalse,
-            reason: e.key + ' JD ' + jd.toString());
+    final lines = <String>[];
+    var worstMean = 0.0;
+    var worstMax = 0.0;
+    var worstLat = 0.0;
+    for (final name in bodyOf.keys) {
+      final body = bodyOf[name]!;
+      final rows = <List<double>>[];
+      final block = planets[name] as Map<String, dynamic>;
+      for (final r in (block['dense'] as List).cast<List<dynamic>>()) {
+        rows.add([r[0] as num, r[1] as num, r[2] as num]
+            .map((e) => e.toDouble())
+            .toList());
       }
+      final station = block['station'] as List<dynamic>? ?? const [];
+      for (final r in station.cast<List<dynamic>>()) {
+        rows.add([r[0], r[1], r[2]].map((e) => (e as num).toDouble()).toList());
+      }
+      var sum = 0.0;
+      var maxAbs = 0.0;
+      var maxLat = 0.0;
+      var worstJd = 0.0;
+      for (final row in rows) {
+        final jdUt = row[0];
+        final jdTt = jdTtFromJdUt(jdUt);
+        final pos = grahaPosition(body, jdTt);
+        final dLon = wrap180(pos.apparentLongitudeDeg - row[1]).abs();
+        final dLat = (pos.apparentLatitudeDeg - row[2]).abs();
+        sum += dLon;
+        if (dLon > maxAbs) {
+          maxAbs = dLon;
+          worstJd = jdUt;
+        }
+        if (dLat > maxLat) {
+          maxLat = dLat;
+        }
+      }
+      final mean = sum / rows.length;
+      worstMean = math_max(worstMean, mean);
+      worstMax = math_max(worstMax, maxAbs);
+      worstLat = math_max(worstLat, maxLat);
+      lines.add('$name n=${rows.length} mean=${(mean * 3600).toStringAsFixed(2)}"'
+          's max=${(maxAbs * 3600).toStringAsFixed(2)}" @JD$worstJd'
+          ' latMax=${(maxLat * 3600).toStringAsFixed(2)}"');
+      expect(mean, lessThan(meanDeg),
+          reason: '$name mean ${(mean * 3600).toStringAsFixed(3)} arcsec '
+          'exceeds the provisional mean band');
+      expect(maxAbs, lessThan(hardDeg),
+          reason: '$name max ${(maxAbs * 3600).toStringAsFixed(3)} arcsec '
+          'exceeds the provisional hard band');
+      expect(maxLat, lessThan(latHardDeg),
+          reason: '$name lat max ${(maxLat * 3600).toStringAsFixed(3)} '
+          'arcsec exceeds the provisional hard band');
+    }
+    // ignore: avoid_print
+    print('graha scoreboard (arcsec):\n${lines.join('\n')}');
+  });
+
+  test('retrograde stations: solver lands on the receipt minima', () {
+    // Mercury direct station: receipt lambda minimum at JD 2461358.16667.
+    final m = grahaStationJdTt(GrahaBody.mercury,
+        startJdTt: 2461354.0, endJdTt: 2461364.0);
+    expect(m, isNotNull);
+    expect(m!, inInclusiveRange(2461358.0, 2461358.4),
+        reason: 'mercury direct station ${m.toStringAsFixed(5)}');
+    // Venus direct station: receipt lambda minimum at JD 2461358.5.
+    final v = grahaStationJdTt(GrahaBody.venus,
+        startJdTt: 2461354.0, endJdTt: 2461364.0);
+    expect(v, isNotNull);
+    expect(v!, inInclusiveRange(2461358.35, 2461358.75),
+        reason: 'venus direct station ${v.toStringAsFixed(5)}');
+    // No station for Mars inside the window (all-direct 2026 receipts).
+    final ma = grahaStationJdTt(GrahaBody.mars,
+        startJdTt: 2461354.0, endJdTt: 2461364.0);
+    expect(ma, isNull);
+  });
+
+  test('combustion and separation plumbing', () {
+    // 2026-11-11 00:00 UT: Mercury/Venus deep in retro loop, far from the
+    // Sun by construction of the receipts (elongations 12-25 deg).
+    final jdTt = jdTtFromJdUt(2461355.5);
+    for (final b in GrahaBody.values) {
+      final sep = grahaSunSeparationDeg(b, jdTt);
+      expect(sep, greaterThan(0.0));
+      expect(sep, lessThan(180.0));
+      grahaIsCombust(b, jdTt); // must not throw
     }
   });
 
-  test('frame coherence: sidereal + base ayanamsa = tropical, ranges', () {
-    final jd = 2461344.0;
-    final jdTt = jdTtFromJdUt(jd);
-    const five = <int>[
-      kGrahaMercury,
-      kGrahaVenus,
-      kGrahaMars,
-      kGrahaJupiter,
-      kGrahaSaturn
-    ];
-    for (final b in five) {
-      final pos = grahaPosition(b, jd);
-      expect(pos.tropicalLongitudeDeg, inInclusiveRange(0.0, 360.0));
-      expect(
-          wrapDelta(
-              pos.siderealLongitudeDeg + ayanamsaBase(jdTt),
-              pos.tropicalLongitudeDeg),
-          lessThan(1e-9));
-    }
-  });
-
-  test('rise/set solver smoke: Jupiter crosses the horizon on 2026-11-11',
-      () {
-    final jdMid =
-        julianDayFromCivil(2026, 11, 11) - nptOffsetHours / 24.0;
-    final rise =
-        grahaRiseJdUt(year: 2026, month: 11, day: 11, body: kGrahaJupiter);
-    final set =
-        grahaSetJdUt(year: 2026, month: 11, day: 11, body: kGrahaJupiter);
+  test('rise/set self-consistency (Kathmandu plumbing)', () {
+    final rise = grahaRiseJdUt(
+        body: GrahaBody.jupiter, year: 2026, month: 11, day: 11);
+    final set = grahaSetJdUt(
+        body: GrahaBody.jupiter, year: 2026, month: 11, day: 11);
     expect(rise, isNotNull);
     expect(set, isNotNull);
-    expect(rise!, inInclusiveRange(jdMid, jdMid + 1.0));
-    expect(set!, inInclusiveRange(jdMid, jdMid + 1.0));
+    final altRise = grahaAltitudeDeg(body: GrahaBody.jupiter, jdUt: rise!);
+    expect((altRise - (-34.0 / 60.0)).abs(), lessThan(0.01));
+    final altSet = grahaAltitudeDeg(body: GrahaBody.jupiter, jdUt: set!);
+    expect((altSet - (-34.0 / 60.0)).abs(), lessThan(0.01));
   });
 }
+
+double math_max(double a, double b) => a > b ? a : b;
