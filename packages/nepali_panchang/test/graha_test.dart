@@ -13,7 +13,7 @@ void main() {
   // Dual-path: 'dart test packages' runs from the workspace root in CI
   // (festival-receipts pattern), while package-local runs sit in the
   // package dir.
-  const fixturePath = File('test/fixtures/graha_receipts_2026_11.json')
+  final fixturePath = File('test/fixtures/graha_receipts_2026_11.json')
           .existsSync()
       ? 'test/fixtures/graha_receipts_2026_11.json'
       : 'packages/nepali_panchang/test/fixtures/graha_receipts_2026_11.json';
