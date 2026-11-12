@@ -272,9 +272,13 @@ def eval_series(series, var, jd):
 
 
 def eval_flat(counts, flat, jd):
-    """Mirror of the Dart reader: walk the sections, term = A, B, C."""
+    """Mirror of the Dart reader: walk the sections, term = A, B, C -
+    and AGGREGATE the six power sections of each (body, variable) into
+    one value, exactly the way graha.dart sums them (the first CI run
+    compared a single power section against the full series and "failed"
+    on its own indexing, not on the table)."""
     tau = tau_of(jd)
-    out = []
+    out = [0.0] * (len(counts) // 6)
     i = 0
     for ci in range(len(counts)):
         var = (ci % 18) // 6
@@ -285,7 +289,7 @@ def eval_flat(counts, flat, jd):
             A, B, C = flat[i], flat[i + 1], flat[i + 2]
             i += 3
             acc += t_alpha * A * math.cos(B + C * tau)
-        out.append(acc)
+        out[ci // 6] += acc
     if i != len(flat):
         raise SystemExit("mirror walk consumed %d of %d doubles"
                          % (i, len(flat)))
