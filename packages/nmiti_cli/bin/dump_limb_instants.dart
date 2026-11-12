@@ -28,6 +28,12 @@ import 'package:nepali_panchang/nepali_panchang.dart';
 /// NASA-canon-class moon (truncated ELP82B) would do to the
 /// tithi/karana bands by substitution - predicted bands and floors,
 /// without touching the engine.
+///
+/// HYA-450 (Wave 1 graha engine): every day in the window also carries
+/// the five graha sidereal longitudes (Mercury, Venus, Mars, Jupiter,
+/// Saturn; 12:00 UT instant, base ayanamsa profile) and the mean
+/// lunar node (Rahu), for tools/sweph/graha_crosscheck.py to re-solve
+/// with Swiss Ephemeris and score against the provisional bands.
 void main(List<String> args) {
   final startIso = _arg(args, '--start');
   final endIso = _arg(args, '--end');
@@ -91,6 +97,7 @@ void main(List<String> args) {
   final sunrises = <Map<String, Object?>>[];
   final moonrises = <Map<String, Object?>>[];
   var moonriseDaysWithoutRise = 0;
+  final grahas = <Map<String, Object?>>[];
   final lastDay = DateTime.utc(end.year, end.month, end.day);
   for (var d = DateTime.utc(start.year, start.month, start.day);
       !d.isAfter(lastDay);
@@ -113,14 +120,31 @@ void main(List<String> args) {
         'utc': _isoUtcOfJdUt(moonJdUt),
       });
     }
+    // HYA-450: the graha row - the five visible planets and the mean
+    // node at the 12:00 UT instant, sidereal on the BASE profile so
+    // the Swiss harness measures the ayanamsa gap itself.
+    final jdNoonUt = julianDayFromCivil(d.year, d.month, d.day + 0.5);
+    grahas.add(<String, Object?>{
+      'date': _isoDateOf(d),
+      'jd_ut': jdNoonUt,
+      'utc': _isoUtcOfJdUt(jdNoonUt),
+      'sidereal_deg': <String, double>{
+        'mercury': grahaPosition(kGrahaMercury, jdNoonUt).siderealLongitudeDeg,
+        'venus': grahaPosition(kGrahaVenus, jdNoonUt).siderealLongitudeDeg,
+        'mars': grahaPosition(kGrahaMars, jdNoonUt).siderealLongitudeDeg,
+        'jupiter': grahaPosition(kGrahaJupiter, jdNoonUt).siderealLongitudeDeg,
+        'saturn': grahaPosition(kGrahaSaturn, jdNoonUt).siderealLongitudeDeg,
+      },
+      'rahu_mean_node_deg': rahuMeanSiderealLongitudeDeg(jdNoonUt),
+    });
   }
 
   final doc = <String, Object?>{
     'window': <String, String>{'start': startIso, 'end': endIso},
     'generated_at_utc': DateTime.now().toUtc().toIso8601String(),
-    'engine': 'nepali_panchang (Meeus Ch.47 moon, VSOP87D sun, '
-        'Espenak-Meeus delta T, base ayanamsa profile, HYA-417 '
-        'Meeus 15.1 moonrise)',
+    'engine': 'nepali_panchang (ELP2000-82B moon, VSOP87D sun, '
+        'hybrid Delta-T channel, base ayanamsa profile, HYA-417 '
+        'Meeus 15.1 moonrise, HYA-450 VSOP87D graha)',
     'ayanamsa_profile': 'base (source delta 0.0)',
     'limb_spans_deg': <String, double>{
       'tithi': tithiSpanDeg,
@@ -131,6 +155,7 @@ void main(List<String> args) {
     'boundaries': boundaries,
     'sunrises': sunrises,
     'moonrises': moonrises,
+    'grahas': grahas,
     'moonrise_days_without_rise': moonriseDaysWithoutRise,
   };
   File(outPath)
@@ -146,6 +171,8 @@ void main(List<String> args) {
       sunrises.length.toString() +
       ' moonrises=' +
       moonrises.length.toString() +
+      ' grahas=' +
+      grahas.length.toString() +
       ' (no-rise days: ' +
       moonriseDaysWithoutRise.toString() +
       ') -> ' +

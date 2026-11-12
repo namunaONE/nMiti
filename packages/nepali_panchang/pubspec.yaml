@@ -1,5 +1,5 @@
 name: nepali_panchang
-description: Nepal-first lunar panchang engine (tithi, nakshatra, yoga, karana, sunrise). Meeus Ch.47 moon + Ch.25 sun, per-source ayanamsa profiles, runtime compute.
+description: Nepal-first lunar panchang engine (tithi, nakshatra, yoga, karana, sunrise). ELP2000-82B moon + VSOP87D sun, per-source ayanamsa profiles, CI-regenerated vendored tables.
 version: 0.1.0
 publish_to: none
 environment:
