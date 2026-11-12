@@ -547,7 +547,7 @@ void main() {
         'guruShukraAsta',
         'location',
       ]));
-      expect(saaitConventions['guruShukraAsta'], contains('NOT computed'));
+      expect(saaitConventions['guruShukraAsta'], contains('NOT applied'));
       expect(saaitConventions['ssyOverrides'], contains('NOT applied'));
     });
 

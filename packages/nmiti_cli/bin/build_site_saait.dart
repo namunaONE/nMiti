@@ -44,6 +44,19 @@ String _saaitBsDate(SaaitFixedDay f, int bsYear) =>
     bsMonthNameEn(f.bsMonth) + ' ' + f.bsDay.toString() + ', ' +
     bsYear.toString();
 
+/// Guru/Shukra asta (combustion) state of a served saait day, from the
+/// Wave 1 graha engine's provisional classical limits at the NPT-noon
+/// eval instant (display v1.5). The flags are EXPOSED on the grid and
+/// the today/next cards, never filtered on - the traditional day
+/// lists are served as published either way.
+String _saaitAstaCell(DateTime adDay) {
+  final flags = [
+    if (_grahaAstaOn(GrahaBody.jupiter, adDay)) 'Guru asta',
+    if (_grahaAstaOn(GrahaBody.venus, adDay)) 'Shukra asta',
+  ];
+  return flags.isEmpty ? '-' : flags.join(' + ');
+}
+
 /// The in-day windows of one saait day as JSON (today/next entries
 /// carry them; upcoming entries stay lean with windows: null).
 String _saaitWindowsJson(String ind, SaaitWindows w) {
@@ -268,6 +281,9 @@ String _saaitPageHtml(DateTime todayAd, String urlBase, String commitSha) {
   final all = saaitAllDaysBetween(
       DateTime.utc(2026, 1, 1), DateTime.utc(2027, 12, 31));
   final ssyScan = sarvarthaSiddhiBetween(today, horizon);
+  final astaByDate = <DateTime, String>{
+    for (final d in all) d.fixed.dateNpt: _saaitAstaCell(d.fixed.dateNpt),
+  };
   String hm(DateTime t) => _skTwo(t.hour) + ':' + _skTwo(t.minute);
   String dt(DateTime t) => _iso(t) + ' ' + hm(t) + ' NPT';
   String ssyCell(SaaitDay d) {
@@ -320,6 +336,12 @@ String _saaitPageHtml(DateTime todayAd, String urlBase, String commitSha) {
               : (s.amrit ? 'Amrit Siddhi' : 'Sarvartha Siddhi') + ' - ' +
                   s.nakshatraName + ', window ' + dt(s.beginsAtNpt) +
                   ' to ' + dt(s.endsAtNpt)) + '</li>',
+      '<li><strong>गुरु/शुक्र अस्त · Guru/Shukra asta:</strong> ' +
+          (astaByDate[f.dateNpt] == '-'
+              ? 'neither Guru nor Shukra is combust at the NPT-noon eval'
+              : astaByDate[f.dateNpt]! +
+                  ' - the planet is combust at the NPT-noon eval (provisional limits); flagged, never filtered') +
+          '</li>',
       '<li><strong>प्रमाण · Evidence:</strong> ' + d.evidenceTier + '</li>',
       '</ul>',
     ].join('\n');
@@ -367,7 +389,8 @@ String _saaitPageHtml(DateTime todayAd, String urlBase, String commitSha) {
           '<td>' + d.tithiAtUdaya +
           (flagCell(d) == '-' ? '' : '<br><small>' + flagCell(d) + '</small>') +
           '</td>' +
-          '<td>' + ssyCell(d) + '</td></tr>'
+          '<td>' + ssyCell(d) + '</td>' +
+          '<td>' + astaByDate[d.fixed.dateNpt]! + '</td></tr>'
   ].join('\n');
   final counts = <SaaitCeremony, int>{};
   for (final d in all) {
@@ -421,12 +444,12 @@ $ceremonyRows
 <tr><th>Date</th><th>Yoga</th><th>Nakshatra at sunrise</th><th>Window (NPT)</th></tr>
 $ssyRows
 </table>
-<p>Receipts record: the gate pins the Nov 11 2026 Amrit Siddhi fire, and that the Dec 18 2026 Revati window - which opens mid-run at 16:09 IST under another publisher's convention - does NOT fire at the at-sunrise convention. It is a recorded collision, never absorbed. The classical overrides (Rahu Kaal suspension, Bhadra karana, Panchak reduction, eclipse) are authority-dependent and documented below, not applied; Jupiter/Venus combustion (asta) closure seasons are not computed - they appear only as publisher closure notes.</p>
+<p>Receipts record: the gate pins the Nov 11 2026 Amrit Siddhi fire, and that the Dec 18 2026 Revati window - which opens mid-run at 16:09 IST under another publisher's convention - does NOT fire at the at-sunrise convention. It is a recorded collision, never absorbed. The classical overrides (Rahu Kaal suspension, Bhadra karana, Panchak reduction, eclipse) are authority-dependent and documented below, not applied; Jupiter/Venus combustion (asta) closure seasons are computed from the Wave 1 graha engine and flagged in the grid below (display v1.5) - flagged, never filtered - while publisher closure notes (e.g. the Chaturmas wedding closure) are still carried verbatim.</p>
 
 <h2 id="saait-year">BS 2083 grid · All served days</h2>
-<p>Every served day of every ceremony profile - ${all.length} days: $countLine; $borderlineCount flagged borderline. The publisher's tithi label is shown beside the engine's udaya tithi: where they differ, the day label is convention-sensitive and the flag says which (borderline, vriddhi or kshaya). Computed, not copied - the engine column comes from the runtime lunar chain.</p>
+<p>Every served day of every ceremony profile - ${all.length} days: $countLine; $borderlineCount flagged borderline. The publisher's tithi label is shown beside the engine's udaya tithi: where they differ, the day label is convention-sensitive and the flag says which (borderline, vriddhi or kshaya). Computed, not copied - the engine column comes from the runtime lunar chain. The asta column flags days inside a Guru (Jupiter) or Shukra (Venus) combustion season - exposed, never filtered.</p>
 <table>
-<tr><th>Date (AD)</th><th>BS date</th><th>Ceremony</th><th>Publisher tithi</th><th>Engine udaya tithi</th><th>Siddhi yoga</th></tr>
+<tr><th>Date (AD)</th><th>BS date</th><th>Ceremony</th><th>Publisher tithi</th><th>Engine udaya tithi</th><th>Siddhi yoga</th><th>Asta</th></tr>
 $gridRows
 </table>
 
@@ -436,6 +459,8 @@ $gridRows
 <tr><th>Rule</th><th>What nMiti serves and why</th></tr>
 $convRows
 </table>
+
+<p><strong>Guru/Shukra asta, display v1.5:</strong> since the Wave 1 graha engine the display layer computes the Jupiter and Venus combustion seasons over the served days at the NPT-noon eval instant, on the provisional classical limits (Jupiter 11&deg;, Venus 10&deg; apparent separation). Grid days inside a season are FLAGGED - never filtered: the traditional lists are served as published, and the closure decision stays with the reader. The engine saait layer itself applies no closure (see the conventions row above), and the BPHS ch. 9 citation for the limits remains an open receipt; the full graha conventions live on <a href="${urlBase}graha.html">graha.html</a>.</p>
 
 <h2 id="saait-meta">How this is computed</h2>
 <ul>

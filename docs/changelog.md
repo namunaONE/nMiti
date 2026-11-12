@@ -2,6 +2,13 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Wave 1 graha display layer: today.json graha block + graha.html + saait asta flags (HYA-450)
+
+- today.json gains a `graha` block after the saait block: the five visible grahas (Mercury–Saturn) plus Rahu/Ketu at the NPT-noon reference instant (exposed as `reference_instant_npt`), sidereal on the receipts-measured Swiss-Lahiri reference line with rashi/nakshatra/pada, the retrograde and combust flags, speed and distance, and the Kathmandu rise/set - every convention stated in the block.
+- New graha.html page: today's positions table, the stations ahead (45 days), the full conventions record (mean node, PROVISIONAL BPHS ch. 9-open-receipt combustion limits, −34′ rise/set with named skips), the Horizons/Swiss receipts and the meta section - wired into both navs, the sitemap, llms.txt, data.html, the site-contract markers and the pages smoke.
+- saait v1.5: the served grid and the today/next cards flag Guru/Shukra asta seasons, computed from the graha engine at the NPT-noon eval on the provisional limits - flagged, never filtered; the stale "not computed" sentence is retired.
+- Honesty sweep: the engine `guruShukraAsta` convention text and the saait docstring now state that the graha engine serves the provisional classical limits (test pin updated with them), and the nepali_panchang library docstring no longer calls the Swiss-truth crosscheck a "follow-up arc" - it runs in the CI verify on every push.
+
 ## [Unreleased] — Wave 1 graha engine: Mercury–Saturn + mean Rahu (HYA-450)
 
 - The panchang engine gains its first planetary channels (PR #83). `packages/nepali_panchang/lib/src/graha/` is a GENERATED vendored VSOP87D table (Bretagnon & Francou 1988; IMCCE public data with a ctdk mirror fallback; 9,000 terms / 27,000 doubles over 108 sections for Mercury, Venus, Earth, Mars, Jupiter, Saturn — three variables × six T-powers each; |A| < 1e-8 truncation with asserted dropped-tail budgets; Venus L0 anchor 3.17614669689 rad checked live) built by `tools/sweph/graha_build_table.py`, with the `graha-table-gen.yml` regen workflow and a ci.yml freshness gate that regenerates and byte-diffs the table on every run.
