@@ -2,6 +2,9 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Wave 2 Vimshottari dasha engine (HYA-451)
+
+- `packages/nepali_panchang/lib/src/dasha.dart`: the Vimshottari mahadasha/antardasha/pratyantardasha engine — pure arithmetic on the Moon's apparent-sidereal nakshatra at the birth instant (the calibrated limb machinery), the BPHS Ch. 46 nine-lord cycle (Ketu, Venus, Sun, Moon, Mars, Rahu, Jupiter, Saturn, Mercury; 7+20+6+10+7+18+16+19+17 = 120 years), balance-at-birth from the elapsed nakshatra fraction, and proportional sub-period nesting, with a stack resolver (`vimshottariAt`). Self-consistency CI tests (chain, sums, balance, convention-parameter visibility); NO publisher receipt corpus gates it yet — the deterministic dasha calculators are client-side forms (reconnaissance on HYA-451), so the dasha-year length (365.25-day solar vs 360-day classical, a ~629-day drift across the cycle) and the birth-moon ayanamsa frame are explicit parameters, never silent choices; served dates carry their convention label until dated receipts decode them.
 ## [Unreleased] — Wave 1 graha display layer: today.json graha block + graha.html + saait asta flags (HYA-450)
 
 - today.json gains a `graha` block after the saait block: the five visible grahas (Mercury–Saturn) plus Rahu/Ketu at the NPT-noon reference instant (exposed as `reference_instant_npt`), sidereal on the receipts-measured Swiss-Lahiri reference line with rashi/nakshatra/pada, the retrograde and combust flags, speed and distance, and the Kathmandu rise/set - every convention stated in the block.

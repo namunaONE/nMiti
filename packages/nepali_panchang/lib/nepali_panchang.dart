@@ -166,6 +166,7 @@ export 'src/ayanamsa.dart';
 export 'src/bhadra.dart';
 export 'src/chandra_darshan.dart';
 export 'src/civil_time.dart';
+export 'src/dasha.dart';
 export 'src/delta_t.dart';
 export 'src/eclipse_lunar.dart';
 export 'src/eclipse_solar.dart';
