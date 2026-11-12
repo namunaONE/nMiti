@@ -22,9 +22,19 @@ import 'package:test/test.dart';
 /// minutes of the fixture's hourly-grid minimum; Mars, Jupiter and
 /// Saturn must stay direct across the whole window.
 void main() {
-  final doc = jsonDecode(
-      File('test/fixtures/graha_horizons_2026.json').readAsStringSync())
-      as Map<String, dynamic>;
+  // 'dart test packages' (CI) runs from the workspace root while a
+  // local 'dart test' runs from the package dir - resolve the fixture
+  // the same dual-path way as festival_receipts_2026_test.dart.
+  final file = File('test/fixtures/graha_horizons_2026.json');
+  final Map<String, dynamic> doc;
+  if (file.existsSync()) {
+    doc = jsonDecode(file.readAsStringSync()) as Map<String, dynamic>;
+  } else {
+    doc = jsonDecode(File(
+            'packages/nepali_panchang/test/fixtures/'
+            'graha_horizons_2026.json')
+        .readAsStringSync()) as Map<String, dynamic>;
+  }
   final daily = doc['daily']! as Map<String, dynamic>;
   final stationHourly = doc['station_hourly']! as Map<String, dynamic>;
 
