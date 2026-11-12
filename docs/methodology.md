@@ -581,9 +581,13 @@ The engine's first planetary channels serve the five visible grahas
 from a generated vendored VSOP87D table (IMCCE public data, |A| < 1e-8
 truncation with asserted dropped-tail budgets, CI-regenerated and
 byte-diffed on every run). The pipeline deliberately mirrors the solar
-channel's conventions: the VSOP87D Earth series describe the
-Earth-Moon barycenter, so Earth = EMB − μ·(geocentric moon), μ =
-1/82.3006 — the graha channels and the lunar channel share one moon;
+channel's conventions: the observer is the vendored Earth series used
+directly — receipts proved the series behave Earth-center, not as the
+textbook VSOP87D Earth-Moon barycenter (the JPL Horizons geocentric
+fixture rows match the raw series at 0.42″ mean, while the textbook
+Earth = EMB − μ·(geocentric moon) correction displaced the observer
+by exactly μ·moon, ~4,670 km — a 16.26″ mean error at Venus — and was
+removed once the CI measures pinned it);
 light-time by iteration; first-order stellar aberration as
 s' = unit(s + v/c) (the exact convention that reproduces the Meeus
 Ch.25 solar constant −20.4898″); apparent = mean-of-date + the shared
@@ -597,11 +601,12 @@ RA/DEC (light-time + aberration + true-of-date) converted to ecliptic
 of date — dense daily 2026-10-16..12-03 for all five grahas plus 2h
 station-refinement windows that deliberately span a full Mercury
 retrograde loop, the Venus retrograde minimum, Saturn's retrograde
-and Jupiter decelerating toward its December station. PROVISIONAL
-bands (first measure): apparent longitude and latitude hard 15″ /
-mean 5″, expected class ~1″ — to be tightened to the measured
-distribution per the standing ~3×-of-maxima philosophy once the CI
-scoreboard reports it. The station solver is pinned against the
+and Jupiter decelerating toward its December station. Bands,
+calibrated to the post-fix measured class: apparent longitude hard
+5″ / mean 1.5″ and latitude hard 5″ (the mirror-measured class is
+mercury 0.35/0.49″ and venus 0.42/0.58″ mean/max, at the ~0.2″
+fixture quantization floor; the first-CI 6.259/16.251″ class was the
+double moon correction, not theory age). The station solver is pinned against the
 receipt λ-minima (Mercury direct station @ JD 2461358.17, Venus @
 JD 2461358.5).
 
@@ -615,7 +620,8 @@ skips everywhere: gravitational light deflection (≤0.01″ at these
 solar elongations), aberration beyond first order, topocentric
 parallax for positions.
 
-The Swiss-truth crosscheck wiring for the graha channels
-(`tools/sweph/graha_crosscheck.py`, scoring the dump's daily
-graha rows) is a follow-up arc; the Horizons receipts fixture is the
-CI gate until then.
+The Swiss-truth crosscheck for the graha channels
+(`tools/sweph/graha_crosscheck.py`, scoring the dump's daily graha
+rows against pyswisseph Lahiri, hard 120″ / mean 60″ bands carrying
+the measured +28.607″ base-vs-Swiss-Lahiri convention gap) runs in
+the CI verify alongside the Horizons receipts fixture.

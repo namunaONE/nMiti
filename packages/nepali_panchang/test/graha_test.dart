@@ -5,12 +5,12 @@ import 'package:nepali_panchang/nepali_panchang.dart';
 import 'package:test/test.dart';
 
 /// HYA-450 (Wave 1) graha receipts: JPL Horizons DE441 apparent RA/DEC
-/// converted to ecliptic of date. Bands calibrated to the first CI
-/// measure (mercury mean 6.259 arcsec - the VSOP87D-vs-DE441
-/// theory-age class for the fastest graha): lon hard 60 / mean 10
-/// arcsec, lat hard 30 arcsec, held in the fixture; to be tightened to
-/// the measured maxima once the full scoreboard is in; see the fixture
-/// header for the quantization floor and the crawl coverage.
+/// converted to ecliptic of date. Bands calibrated to the post-fix
+/// mirror measure - the first-CI class (mercury 6.259 / venus 16.251
+/// arcsec) was the double EMB -> Earth moon correction on the
+/// Earth-center vendored earth series, not theory age: lon hard 5 /
+/// mean 1.5 arcsec, lat hard 5 arcsec, held in the fixture; see the
+/// fixture header for the quantization floor and the crawl coverage.
 void main() {
   // Dual-path: 'dart test packages' runs from the workspace root in CI
   // (festival-receipts pattern), while package-local runs sit in the

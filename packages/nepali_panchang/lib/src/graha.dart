@@ -4,7 +4,6 @@ import 'ayanamsa.dart';
 import 'civil_time.dart';
 import 'graha/graha_table.dart';
 import 'julian_day.dart';
-import 'moon.dart';
 import 'sun.dart';
 
 /// Graha engine (HYA-450, Wave 1): geocentric apparent positions of the five
@@ -16,9 +15,16 @@ import 'sun.dart';
 /// Pipeline, deliberately mirroring the solar channel's conventions so all
 /// bodies share one frame discipline:
 /// - VSOP87D heliocentric spherical series of date -> rectangular AU;
-/// - the "Earth" series describe the Earth-Moon barycenter: the engine adds
-///   the EMB -> Earth correction from its own ELP2000-82B moon (mu =
-///   1/82.3006 of the geocentric moon vector, ~6.5 arcsec at worst);
+/// - the vendored "Earth" series behave as EARTH-CENTER series, not the
+///   textbook VSOP87D Earth-Moon barycenter: receipts proved it (the
+///   JPL Horizons CENTER='500' fixture rows match the raw series at
+///   0.42 arcsec mean, while adding the textbook EMB -> Earth moon
+///   correction displaced the observer by exactly mu * moon, ~4670 km,
+///   16.26 arcsec mean at Venus; the vendored R series itself carries
+///   the 29.5-day +/-3.3e-5 AU moon wobble). The engine uses the
+///   series as the observer directly - no moon correction - a
+///   vendored-table fact kept honest by the receipts, not a textbook
+///   claim;
 /// - light-time by iteration (tau = |geo| / c, three passes, c in AU/day);
 /// - first-order aberration as the observer-velocity term s' = unit(s + v/c)
 ///   (reproduces the Meeus ch.25 solar constant -20.4898 arcsec exactly);
@@ -32,11 +38,13 @@ import 'sun.dart';
 ///
 /// Receipts (test/graha_test.dart): JPL Horizons DE441 apparent RA/DEC
 /// converted to ecliptic of date, dense 2026-10-16..12-03 plus 2h station
-/// refinement windows - lon hard 60 / mean 10 arcsec, lat hard 30
-/// arcsec, calibrated to the first CI measure (mercury mean 6.259
-/// arcsec - the VSOP87D-vs-DE441 theory-age class for the fastest
-/// graha); tighten to the measured maxima once the full scoreboard
-/// is in.
+/// refinement windows - lon hard 5 / mean 1.5 arcsec, lat hard 5 arcsec.
+/// The first-CI class (mercury 6.259 / venus 16.251 arcsec) was NOT
+/// theory age: it was the double EMB -> Earth moon correction on the
+/// Earth-center vendored earth series (removed). The post-fix class,
+/// measured by a full-physics mirror of this pipeline against the
+/// fixture: mercury 0.35 mean / 0.49 max, venus 0.42 / 0.58 arcsec -
+/// at the ~0.2 arcsec fixture quantization floor.
 ///
 /// The mean lunar node (Rahu) rides along on the Meeus ch. 47.7
 /// polynomial - the classical convention (every panchang prints the MEAN
@@ -53,13 +61,6 @@ const double _degPerRad = 180 / math.pi;
 
 /// Speed of light, AU/day (499.004784 light-seconds, IAU 2012).
 const double _cAuPerDay = 173.1446327;
-
-/// Moon-to-(Earth+Moon) mass ratio for the EMB -> Earth correction
-/// (Meeus ch. 25 note on the VSOP87 Earth series).
-const double _moonMassRatio = 1.0 / 82.3006;
-
-/// 1 AU in km (IAU 2012).
-const double _auKm = 149597870.7;
 
 /// The five classical grahas the W1 engine serves.
 enum GrahaBody { mercury, venus, mars, jupiter, saturn }
@@ -133,20 +134,13 @@ _Vec _helio(int tableBody, double jdTt) {
   return _Vec(r * cb * math.cos(l), r * cb * math.sin(l), r * math.sin(b));
 }
 
-/// Heliocentric position of the EARTH: VSOP87D gives the Earth-Moon
-/// barycenter; Earth = EMB - mu * (geocentric moon vector in AU).
+/// Heliocentric position of the EARTH: the vendored series at table
+/// index 2 behave as Earth-center series (see the library doc - the
+/// receipts proved the textbook EMB -> Earth moon correction was a
+/// double correction, displacing the observer by exactly mu * moon),
+/// so the series IS the observer: no moon correction.
 _Vec _earthHelio(double jdTt) {
-  final emb = _helio(2, jdTt);
-  final m = moonPosition(jdTt);
-  final r = m.distanceKm / _auKm;
-  final lam = m.longitudeDeg * _radPerDeg;
-  final bet = m.latitudeDeg * _radPerDeg;
-  final cb = math.cos(bet);
-  return _Vec(
-    emb.x - _moonMassRatio * r * cb * math.cos(lam),
-    emb.y - _moonMassRatio * r * cb * math.sin(lam),
-    emb.z - _moonMassRatio * r * math.sin(bet),
-  );
+  return _helio(2, jdTt);
 }
 
 /// Apparent geocentric position of a graha at [jdTt] (Terrestrial Time).

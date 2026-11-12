@@ -13,8 +13,10 @@ calibrated to measured evidence (hard 120 arcsec, mean 60 arcsec, all
 bodies). The dump scores the BASE-ayanamsa channel, which sits the
 measured +28.607 arcsec base-vs-Swiss-Lahiri convention gap (R10
 ayanamsa receipts) off the Swiss reference before any engine error,
-plus the VSOP87D truncation tails and the first-CI graha class
-(mercury mean 6.259 arcsec vs JPL DE441) - the original 30 arcsec
+plus the VSOP87D truncation tails and the post-fix graha receipts
+class (sub-arcsec vs JPL DE441; the first-CI mercury 6.259 arcsec
+class was the double EMB -> Earth moon correction on the vendored
+earth series, fixed in HYA-450) - the original 30 arcsec
 mean band could not clear the convention gap alone. Tighten only on
 measured evidence, never before.
 
