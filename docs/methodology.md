@@ -574,3 +574,48 @@ It is a receipts-measured linear approximation of the Swiss
 SIDM_LAHIRI frame, NOT the IAE printed table; the printed-patro anchor
 of the true Chitra-pakshiya value is an open receipt (print
 verification pending).
+
+## The graha channels — Mercury through Saturn (HYA-450, Wave 1)
+
+The engine's first planetary channels serve the five visible grahas
+from a generated vendored VSOP87D table (IMCCE public data, |A| < 1e-8
+truncation with asserted dropped-tail budgets, CI-regenerated and
+byte-diffed on every run). The pipeline deliberately mirrors the solar
+channel's conventions: the VSOP87D Earth series describe the
+Earth-Moon barycenter, so Earth = EMB − μ·(geocentric moon), μ =
+1/82.3006 — the graha channels and the lunar channel share one moon;
+light-time by iteration; first-order stellar aberration as
+s' = unit(s + v/c) (the exact convention that reproduces the Meeus
+Ch.25 solar constant −20.4898″); apparent = mean-of-date + the shared
+4-term nutation. Sidereal longitudes ride on two stated lines: the
+base profile (the Swiss crosscheck channel, dumped for the harness to
+measure the ayanamsa gap itself) and the receipts-measured
+Swiss-Lahiri reference line (the display channel).
+
+Verification: a fresh JPL Horizons DE441 receipt fixture — apparent
+RA/DEC (light-time + aberration + true-of-date) converted to ecliptic
+of date — dense daily 2026-10-16..12-03 for all five grahas plus 2h
+station-refinement windows that deliberately span a full Mercury
+retrograde loop, the Venus retrograde minimum, Saturn's retrograde
+and Jupiter decelerating toward its December station. PROVISIONAL
+bands (first measure): apparent longitude and latitude hard 15″ /
+mean 5″, expected class ~1″ — to be tightened to the measured
+distribution per the standing ~3×-of-maxima philosophy once the CI
+scoreboard reports it. The station solver is pinned against the
+receipt λ-minima (Mercury direct station @ JD 2461358.17, Venus @
+JD 2461358.5).
+
+PROVISIONAL channels, stated: the classical combustion limits (the
+commonly printed set; the BPHS Ch.9 shastra citation and the retro
+variants are an open receipt), rise/set at h0 = −34′ with parallax and
+semidiameter named-skipped, and the mean node (Rahu) on the Meeus
+47.7 polynomial — the classical convention (every panchang prints the
+mean node; the true node's ±1.7° wobble is the named skip). Named
+skips everywhere: gravitational light deflection (≤0.01″ at these
+solar elongations), aberration beyond first order, topocentric
+parallax for positions.
+
+The Swiss-truth crosscheck wiring for the graha channels
+(`tools/sweph/graha_crosscheck.py`, scoring the dump's daily
+graha rows) is a follow-up arc; the Horizons receipts fixture is the
+CI gate until then.

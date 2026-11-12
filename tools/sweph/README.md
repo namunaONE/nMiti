@@ -218,6 +218,28 @@ If a future offline SWEPH pipeline generates derived date facts (festival
 CSVs), it follows the same boundary: generated facts are committed as
 data (CC0), the generating harness stays in `tools/`, and nothing links.
 
+## The graha channels (HYA-450, Wave 1)
+
+`dump_limb_instants.dart` also dumps a daily graha row: the
+five visible planets' sidereal longitudes (Mercury, Venus, Mars,
+Jupiter, Saturn) and the mean lunar node (Rahu) at 12:00 UT, sidereal
+on the BASE ayanamsa profile so the harness measures the ayanamsa
+convention gap itself - the same facts-out discipline as the lunar
+channels. The engine side (graha.dart) is MIT, built on the generated
+vendored VSOP87D table (`tools/sweph/graha_build_table.py`,
+IMCCE public data - numeric facts only, same license boundary as the
+ELP table: the theory is cited academic work, Bretagnon & Francou
+1988, and no text or code from the distribution is copied).
+
+The Swiss-side scorer for these rows (`graha_crosscheck.py`)
+is a follow-up arc: re-solving each graha row with pyswisseph, scoring
+the ephemeris gap and the ayanamsa convention gap separately, banded
+per the CI scoreboard. Until it lands, the graha channels are gated by
+the JPL Horizons receipts fixture in CI (apparent longitude/latitude
+vs DE441, PROVISIONAL 15"/5" bands) and the ci.yml vendored-table
+freshness gate regenerates and byte-diffs the VSOP87D table on every
+run.
+
 ## Notes and next steps
 
 - Moshier mode (FLG_MOSEPH) is file-free and deterministic - right for
