@@ -75,33 +75,62 @@ void main() {
     }
   });
 
+  // SIGNED wrap-safe engine-minus-Horizons delta, degrees (-180, 180].
+  double signedDelta(double a, double b) {
+    double d = (a - b) % 360.0;
+    if (d > 180.0) d -= 360.0;
+    if (d < -180.0) d += 360.0;
+    return d;
+  }
+
   for (final entry in bodies.entries) {
     test('Horizons apparent place: ' + entry.key, () {
       final rows = (daily[entry.key]! as List).cast<List<dynamic>>();
+      // Measure every row first, then gate on the maxima: the failure
+      // reason carries the full scoreboard (signed arcsec deltas plus the
+      // five worst rows) so ONE CI run reads any systematic - common-mode
+      // (frame convention: Horizons ObsEcLon is the apparent place, true
+      // ecliptic of date, light-time + deflection + aberration) vs
+      // differential (pipeline) - without log access. Receipts-first:
+      // the 15 arcsec bands stay untouched until this evidence lands.
+      final lonSigned = <double>[];
+      final latSigned = <double>[];
       for (final row in rows) {
         final jd = (row[0] as num).toDouble();
         final lon = (row[1] as num).toDouble();
         final lat = (row[2] as num).toDouble();
         final pos = grahaPosition(entry.value, jd);
-        final dLon = wrapDelta(pos.tropicalLongitudeDeg, lon) * 3600.0;
-        final dLat = (pos.tropicalLatitudeDeg - lat).abs() * 3600.0;
-        expect(dLon, lessThan(15.0),
-            reason: entry.key +
-                ' JD ' +
-                jd.toString() +
-                ': engine ' +
-                pos.tropicalLongitudeDeg.toStringAsFixed(6) +
-                ' vs Horizons ' +
-                lon.toString());
-        expect(dLat, lessThan(15.0),
-            reason: entry.key +
-                ' JD ' +
-                jd.toString() +
-                ': engine lat ' +
-                pos.tropicalLatitudeDeg.toStringAsFixed(6) +
-                ' vs Horizons ' +
-                lat.toString());
+        lonSigned.add(signedDelta(pos.tropicalLongitudeDeg, lon) * 3600.0);
+        latSigned.add((pos.tropicalLatitudeDeg - lat) * 3600.0);
       }
+      final lonAbs = lonSigned.map((v) => v.abs()).toList();
+      final latAbs = latSigned.map((v) => v.abs()).toList();
+      final double meanLon =
+          lonSigned.reduce((a, b) => a + b) / lonSigned.length;
+      final double meanAbsLon =
+          lonAbs.reduce((a, b) => a + b) / lonAbs.length;
+      final double meanLat =
+          latSigned.reduce((a, b) => a + b) / latSigned.length;
+      final double maxLon = lonAbs.reduce((a, b) => a > b ? a : b);
+      final double maxLat = latAbs.reduce((a, b) => a > b ? a : b);
+      final report = entry.key +
+          ' rows=' + rows.length.toString() +
+          ' dLon arcsec: max|' + maxLon.toStringAsFixed(3) + '| mean' +
+          meanLon.toStringAsFixed(3) +
+          ' mean|' + meanAbsLon.toStringAsFixed(3) + '|; dLat arcsec: max|' +
+          maxLat.toStringAsFixed(3) + '| mean' + meanLat.toStringAsFixed(3) +
+          '; worst rows (JD, dLon, dLat):';
+      final order = List<int>.generate(rows.length, (i) => i)
+        ..sort((a, b) => lonAbs[b].compareTo(lonAbs[a]));
+      for (final i in order.take(5)) {
+        final jd = (rows[i][0] as num).toDouble();
+        report += ' [' +
+            jd.toStringAsFixed(1) + ' ' +
+            lonSigned[i].toStringAsFixed(2) + ' ' +
+            latSigned[i].toStringAsFixed(2) + ']';
+      }
+      expect(maxLon, lessThan(15.0), reason: report);
+      expect(maxLat, lessThan(15.0), reason: report);
     });
   }
 
