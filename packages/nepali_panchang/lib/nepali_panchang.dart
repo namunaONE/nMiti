@@ -157,8 +157,9 @@
 /// retrograde/station rate finders, provisional
 /// classical combustion limits, the Kathmandu rise/set solvers and the
 /// mean node (Rahu) - gated by the fresh JPL Horizons receipt fixture
-/// (nmiti-graha-receipts/1); the Swiss-truth CI crosscheck
-/// (tools/sweph/graha_crosscheck.py) is a follow-up arc.
+/// (nmiti-graha-receipts/1) and scored against Swiss Ephemeris by the
+/// Swiss-truth CI crosscheck (tools/sweph/graha_crosscheck.py), which
+/// runs in the CI verify on every push.
 library;
 
 export 'src/ayanamsa.dart';
