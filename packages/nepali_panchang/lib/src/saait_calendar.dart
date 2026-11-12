@@ -27,9 +27,12 @@ import 'panchang_day.dart';
 ///
 /// Honest absences, stated not hidden: the classical SSY overrides
 /// (Rahu Kaal suspension, Bhadra/Vishti karana, Panchak reduction,
-/// eclipse) are authority-dependent and NOT applied; Jupiter/Venus
-/// combustion (asta) closure seasons are not computed (planets are the
-/// deferred L8 layer) - closure seasons appear only as publisher notes.
+/// eclipse) are authority-dependent and NOT applied. Jupiter/Venus
+/// combustion (asta) closures are not applied by this layer either -
+/// the shipped graha engine (Wave 1, HYA-450) serves the provisional
+/// classical combustion limits, so callers can flag asta seasons
+/// (exposed, never filtered) while publisher closure notes are
+/// carried verbatim.
 /// The Amrit Dec 18 2026 convention collision (a window that opens
 /// mid-run under the publisher's convention) is recorded in the fixture
 /// and never absorbed: this layer serves the at-sunrise convention only.
@@ -372,10 +375,12 @@ const Map<String, String> saaitConventions = {
       'auspicious horas = the Moon, Mercury, Jupiter and Venus lord '
       'horas. A composition of the receipt-anchored L4 recipes, no new '
       'rules.',
-  'guruShukraAsta': 'Jupiter/Venus combustion (asta) closure seasons '
-      'are NOT computed - planets are the deferred L8 layer. Closure '
-      'seasons appear only as publisher notes (e.g. the Chaturmas '
-      'wedding closure).',
+  'guruShukraAsta': 'Jupiter/Venus combustion (asta) closures are NOT '
+      'applied by the saait engine; the graha engine (Wave 1, HYA-450) '
+      'serves the provisional classical combustion limits (Jupiter 11, '
+      'Venus 10 deg) so callers can flag asta seasons - exposed, never '
+      'filtered. Publisher closure notes (e.g. the Chaturmas wedding '
+      'closure) are carried verbatim.',
   'location': 'Day lists are Nepal civil days (NPT). Windows and yogas '
       'honour the given latitude/longitude (default Kathmandu): the '
       'udaya convention is location-honouring, so a tithi or nakshatra '
