@@ -106,7 +106,7 @@ double _series(int tableBody, int varIdx, double jdTt) {
   final sec0 = tableBody * 18 + varIdx * 6;
   var off = 0;
   for (var i = 0; i < sec0; i++) {
-    off += counts[i];
+    off += 3 * counts[i]; // section offsets walk DOUBLES (A, B, C per term)
   }
   var acc = 0.0;
   var tp = 1.0;
