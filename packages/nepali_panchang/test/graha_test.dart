@@ -10,9 +10,15 @@ import 'package:test/test.dart';
 /// bands are tightened to it; see the fixture header for the quantization
 /// floor and the crawl coverage.
 void main() {
-  final raw =
-      File('test/fixtures/graha_receipts_2026_11.json').readAsStringSync();
-  final fx = json.decode(raw) as Map<String, dynamic>;
+  // Dual-path: 'dart test packages' runs from the workspace root in CI
+  // (festival-receipts pattern), while package-local runs sit in the
+  // package dir.
+  const fixturePath = File('test/fixtures/graha_receipts_2026_11.json')
+          .existsSync()
+      ? 'test/fixtures/graha_receipts_2026_11.json'
+      : 'packages/nepali_panchang/test/fixtures/graha_receipts_2026_11.json';
+  final fx = json.decode(File(fixturePath).readAsStringSync())
+      as Map<String, dynamic>;
   final planets = fx['planets'] as Map<String, dynamic>;
   final bodyOf = <String, GrahaBody>{
     'mercury': GrahaBody.mercury,
