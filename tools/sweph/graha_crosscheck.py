@@ -9,10 +9,14 @@ the BASE ayanamsa profile) and re-solves each instant with pyswisseph
 then scores the engine-vs-Swiss gap per body.
 
 Receipts-first, like tools/sweph/sweph_crosscheck.py: the bands are
-provisional (hard 120 arcsec, mean 30 arcsec, all bodies - the
-expected error class is the VSOP87D truncation tails plus the
-nutation the Swiss apparent channel carries, all far inside the
-bands). Tighten only on measured evidence, never before.
+calibrated to measured evidence (hard 120 arcsec, mean 60 arcsec, all
+bodies). The dump scores the BASE-ayanamsa channel, which sits the
+measured +28.607 arcsec base-vs-Swiss-Lahiri convention gap (R10
+ayanamsa receipts) off the Swiss reference before any engine error,
+plus the VSOP87D truncation tails and the first-CI graha class
+(mercury mean 6.259 arcsec vs JPL DE441) - the original 30 arcsec
+mean band could not clear the convention gap alone. Tighten only on
+measured evidence, never before.
 
 License boundary: pyswisseph is AGPL-3 and is invoked only by this CI
 harness - no shipped package links against it, and the only outputs
@@ -26,7 +30,9 @@ import sys
 import swisseph as swe
 
 HARD_BAND_ARCSEC = 120.0
-MEAN_BAND_ARCSEC = 30.0
+# Mean band must clear the measured +28.607 arcsec base-vs-Swiss-Lahiri
+# convention gap (R10 ayanamsa receipts) plus the VSOP87D engine class.
+MEAN_BAND_ARCSEC = 60.0
 
 PLANET_TARGETS = {
     "mercury": swe.MERCURY,

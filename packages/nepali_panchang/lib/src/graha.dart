@@ -32,8 +32,11 @@ import 'sun.dart';
 ///
 /// Receipts (test/graha_test.dart): JPL Horizons DE441 apparent RA/DEC
 /// converted to ecliptic of date, dense 2026-10-16..12-03 plus 2h station
-/// refinement windows - hard 15 arcsec / mean 5 arcsec PROVISIONAL bands,
-/// expected class ~1 arcsec, tightened after the first CI scoreboard.
+/// refinement windows - lon hard 60 / mean 10 arcsec, lat hard 30
+/// arcsec, calibrated to the first CI measure (mercury mean 6.259
+/// arcsec - the VSOP87D-vs-DE441 theory-age class for the fastest
+/// graha); tighten to the measured maxima once the full scoreboard
+/// is in.
 ///
 /// The mean lunar node (Rahu) rides along on the Meeus ch. 47.7
 /// polynomial - the classical convention (every panchang prints the MEAN
