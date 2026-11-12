@@ -113,7 +113,7 @@ void main() {
           latSigned.reduce((a, b) => a + b) / latSigned.length;
       final double maxLon = lonAbs.reduce((a, b) => a > b ? a : b);
       final double maxLat = latAbs.reduce((a, b) => a > b ? a : b);
-      final report = entry.key +
+      String report = entry.key +
           ' rows=' + rows.length.toString() +
           ' dLon arcsec: max|' + maxLon.toStringAsFixed(3) + '| mean' +
           meanLon.toStringAsFixed(3) +
