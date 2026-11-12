@@ -1,0 +1,62 @@
+name: graha VSOP87D table generation
+
+# HYA-450 graha engine: the vendored VSOP87D planetary table under
+# packages/nepali_panchang/lib/src/graha/ is GENERATED from the public
+# IMCCE data by tools/sweph/graha_build_table.py - never hand-edited.
+# This workflow regenerates it whenever the generator changes and
+# COMMITS the result back to the branch, so the megabyte-scale
+# coefficient lists never have to travel through a review tool that
+# may truncate or mangle it. The paths filter keeps the workflow's own
+# commit (which only touches the table directory) from re-triggering
+# itself. Stdlib only - no pyswisseph or other install; downloads the
+# six VSOP87D files (~3.4 MB total) on first run.
+#
+# Diagnostics contract (proven by the sweph_crosscheck channels): the
+# action log is sign-in-gated, but the run page's Annotations table
+# renders server-side. The generate step tee's its output and a
+# failure() step re-emits its tail as ::error annotations AND appends
+# it to the run summary - so the fail-loud generator message (which
+# anchor, which file, which row) is always reviewable without log
+# access.
+
+on:
+  push:
+    branches:
+      - feat/hya-450-graha-engine
+    paths:
+      - tools/sweph/graha_build_table.py
+      - .github/workflows/graha-table-gen.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: generate the vendored VSOP87D graha table
+        run: |
+          set -o pipefail
+          python3 tools/sweph/graha_build_table.py --data-dir build/vsop87 --out-dir packages/nepali_panchang/lib/src/graha 2>&1 | tee graha_gen_output.txt
+      - name: generator failure output to annotations and summary
+        if: failure()
+        run: |
+          if [ -f graha_gen_output.txt ]; then
+            cat graha_gen_output.txt >> "$GITHUB_STEP_SUMMARY" || true
+            tail -n 30 graha_gen_output.txt | sed 's/%/%25/g' | while IFS= read -r line; do
+              printf '::error::%s\n' "$line"
+            done || true
+          fi
+      - name: commit the regenerated table
+        run: |
+          git config user.name "nmiti-table-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add packages/nepali_panchang/lib/src/graha
+          if git diff --cached --quiet; then
+            echo "vendored table already matches the generator"
+          else
+            git commit -m "graha: regenerate the vendored VSOP87D coefficient table"
+            git push
+          fi

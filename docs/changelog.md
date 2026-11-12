@@ -2,6 +2,13 @@
 
 Data changes and releases of the nMiti commons. The dataset is versioned with the repo; the site carries the build version in its footer. Dates are ISO.
 
+## [Unreleased] — Wave 1 graha engine: Mercury–Saturn + mean Rahu (HYA-450)
+
+- The panchang engine gains its first planetary channels (PR #83). `packages/nepali_panchang/lib/src/graha/` is a GENERATED vendored VSOP87D table (Bretagnon & Francou 1988; IMCCE public data with a ctdk mirror fallback; 9,000 terms / 27,000 doubles over 108 sections for Mercury, Venus, Earth, Mars, Jupiter, Saturn — three variables × six T-powers each; |A| < 1e-8 truncation with asserted dropped-tail budgets; Venus L0 anchor 3.17614669689 rad checked live) built by `tools/sweph/graha_build_table.py`, with the `graha-table-gen.yml` regen workflow and a ci.yml freshness gate that regenerates and byte-diffs the table on every run.
+- `graha.dart` serves the five visible grahas: geocentric apparent positions (observer = the vendored Earth series used directly — receipts proved they behave Earth-center, not EMB, so the textbook EMB→Earth moon correction was a double correction and was removed once the CI measures pinned it; light-time by iteration, first-order aberration s' = unit(s + v/c) — the convention that reproduces the Meeus Ch.25 solar constant — and the shared 4-term nutation), sidereal on both the base profile (the crosscheck channel) and the receipts-measured Swiss-Lahiri reference line (the display channel), the retrograde-station solver (0.5-day rate sign scan + 60 bisections), sun separation in the R10.5 rung-B frame, provisional classical combustion limits (the BPHS Ch.9 citation is an open receipt), the mean lunar node (Rahu) on the Meeus 47.7 polynomial, and Kathmandu rise/set solvers (h0 = −34′; parallax and semidiameter named-skipped).
+- Receipts (bands calibrated to the post-fix measured class): a fresh JPL Horizons DE441 fixture (`test/fixtures/graha_receipts_2026_11.json`, schema nmiti-graha-receipts/1) — dense daily 2026-10-16..12-03 for all five grahas plus 2h station-refinement windows that deliberately span a full Mercury retrograde loop, the Venus retrograde minimum, Saturn's retrograde and Jupiter decelerating toward its December station — gates apparent longitude/latitude at hard 5″ / mean 1.5″ and lat hard 5″ (post-fix mirror-measured class: mercury 0.35/0.49″, venus 0.42/0.58″ mean/max — the first-CI 6.259/16.251″ class was the double moon correction, removed), the station solver against the receipt λ-minima (Mercury direct station @ JD 2461358.17, Venus @ JD 2461358.5), and rise/set self-consistency. Named skips: light deflection, aberration beyond first order, topocentric parallax, semidiameters, the true node (the classical Rahu is the mean node).
+- `dump_limb_instants.dart` extends the Swiss-truth dump with a daily graha row (five sidereal longitudes on the base profile + the mean node at 12:00 UT) for the graha crosscheck harness; the pyswisseph scorer (`graha_crosscheck.py`, Swiss MOSEPH Lahiri, hard 120″/mean 60″ bands carrying the measured +28.607″ base-vs-Swiss-Lahiri convention gap) runs in the CI verify.
+
 ## [Unreleased] — ELP2000-82B engine upgrade: NASA-canonical moon + post-ELP Swiss-truth receipts (HYA-369, HYA-449)
 
 - The lunar engine's moon is now the NASA-canonical truncation of ELP2000-82B (PR #81): `packages/nepali_panchang/lib/src/elp2000/` is a GENERATED vendored table — 4,407 of the 37,872 ELP82B terms kept at the NASA Five Millennium Canon 0.0005″ recipe (lon 2104, lat 1140, dist 1163) — built by `tools/sweph/elp_build_table.py` from the public IMCCE data, never hand-edited; the new `elp-table-gen.yml` workflow regenerates and commits it whenever the generator changes, so the ~300 KB of coefficients never travels through a review tool that may truncate it. `moon.dart` evaluates the table with the Meeus Ch.47 series and its Example 47.a anchor retained beside it for provenance; `tools/sweph/elp_spike.py` records the decomposition (ELP raw-82B args vs Swiss geometric: 0.65″ mean / 1.62″ max; the Meeus additive terms retired with the series they truncated).
@@ -205,66 +212,4 @@ Data changes and releases of the nMiti commons. The dataset is versioned with th
 - Chain sanity gate: the decoded portal labels walk the tithi cycle with only legal udaya steps — 689 normal, 26 kshaya (a tithi skipped between udayas), 14 vriddhi (the same tithi at consecutive udayas), nothing else across the two years. Vriddhi/kshaya days carry the portal’s own merged-window mark; nothing in the fixture is transcribed by hand.
 - Engine agreement gate (`packages/nepali_panchang/test/npns_daily_tithi_audit_test.dart`): the runtime engine’s tithi at udaya (the Hamro Patro display convention) must equal the portal label on every day except knife-edge days — a tithi boundary within half an hour of sunrise, or a vriddhi/kshaya day — with a full mismatch scoreboard printed to the CI log. First-run scoreboard (CI 2026-11-06): 671/730 days agree (91.92%); all 59 mismatches fall on knife-edge days and there are zero disagreements on any non-knife-edge day — the floor is set to a measured 90%, the hard gate is the non-knife-edge requirement.
 - Third-party adjudication (2026-11-06): of the 59 disagreement days, the 30 with populated BhaktiBharat pages (its online archive begins ~July 2026; the earlier days are unavailable there) were checked against BhaktiBharat's own tithi windows — BhaktiBharat matches the engine on 30/30, boundary deltas 0–1 min; the portal is the outlier on every one. The mismatches are the portal's vriddhi/kshaya boundary convention, not an engine defect — stated, never absorbed.
-
-## [Unreleased] — ΔT adjudication: keep Espenak–Meeus, document the systematic (HYA-406)
-
-- Docs-only close-out. The ΔT source gap (our Espenak–Meeus 75.6 s vs observed ≈69 s for 2026) is confirmed from three independent directions: the corrected Swiss residual (mean −6.79 s, max 6.81 s, n=233 → Swiss internal ΔT ≈68.8 s), the USNO/IERS long-term predictions table (69.05 ± 0.19 s at 2026.0), and community practice (e.g. AstronomyKit’s default switch to interpolated IERS values).
-- Decision: keep the Espenak–Meeus polynomial — deterministic and maintenance-free; the ~6.6 s systematic is sub-band (all 9 Swiss-truth bands pass with 4–15× headroom) and below the publisher minute floor. A ΔT-source swap would shift every boundary time ~6.6 s and force a corpus re-baseline for no measurable gain.
-- Adjudication text added to `uncertainty.dart` (named-contributors doc block; header corrected to three anchors) and `docs/methodology.md` (Swiss-truth section). No engine, data, band, or site changes.
-
-## [Unreleased] — Swiss bands tightened to measured + ΔT units fix (HYA-369 A2)
-
-- Every Swiss-truth CI band tightened from provisional to the first-run scoreboard (2026-11-06) measured maxima + margin: tithi/karana 60/30 s (measured 7.9/19 s), nakshatra 180/120 (59.8/71), yoga 300/180 (104.3/119), moonrise 60/15 (0.3/1 — near-exact parity), sunrise 60/30 (11.3/12), lunar_ecl 120/60 (12.0/35), solar_loc 60/30 (5.0/6), lunar_loc 300/120 held (38.8/180). A regression now trips a band within ~3× of the recorded maxima.
-- **ΔT units bug fixed:** `swe.deltat()` returns ΔT in days; the harness read it as seconds, producing the constant −75.60 s "residual" that masked the true Swiss-vs-Espenak–Meeus gap. Corrected (×86400) — the now-measurable residual (~−6.6 s expected) is the input to the IERS ΔT adjudication (HYA-406).
-- `publishedErrorBars` gains the missing **moonrise** band (±12 min provisional, JPL-receipts basis; the Swiss parity 0.3 s is noted in the basis) and every basis text now carries its measured Swiss-truth scoreboard number. The methodology error-bars anchor list gains the Swiss scoreboard as anchor 3, and the Swiss-truth section carries the full measured table. No engine, data, or site changes.
-
-## [Unreleased] — Swiss sunrise parity channel + readable scoreboard (HYA-369)
-
-- `tools/sweph/sweph_crosscheck.py` gains a **sunrise parity channel**: the Swiss mirror bisects the same USNO −0.8333° geometric center-altitude target the Dart `sunriseJdUt` solves, on Swiss apparent geocentric RA/dec — the same target on both sides, so the scored delta is the full ephemeris + low-accuracy-algorithm reconstruction gap of the served sunrise (no rise/set convention gap). Provisional band 600/300 s until the first CI run records the actual deltas.
-- The Swiss scoreboard is now readable **without sign-in log access**: every channel is emitted as a notice annotation (rendered in the run page's server-side Annotations table) and as a markdown summary appended to the GitHub run Summary (`--summary`, wired in ci.yml with `if: always()` so a banded failure still shows the measured deltas). These are the numbers the band-tightening pass reads.
-
-## [Unreleased] — grahan (eclipse) display layer (HYA-421)
-
-- `api/v1/today.json` gains a `grahan` block: the grahan event touching today’s Nepali civil day (visible, sutak or eclipse span), whether sutak is active at build time, and the next grahan — every event carrying its Nepali name (roman + Devanagari), global class, local visibility flags, sutak window, moksha, magnitude and the engine evidence tier.
-- New `grahan.html`: today’s sutak state, the next grahan, the upcoming eclipses at Kathmandu (two-year table), the full sutak-rule and convention-collision table (C1–C6), the exemptions note and the receipts pointers. `panchang.html` gains an always-present sutak line.
-- Site contract: `grahan.html` and today.json grahan markers enforced pre-merge and post-deploy; the pages.yml smoke fetches the new page; nav, sitemap and llms.txt wired. No engine or fixture changes — the display layer renders the shipped grahan module only.
-
-## [Unreleased] — moonrise solver + festival shastra layer (HYA-417)
-
-- Added `packages/nepali_panchang/lib/src/moonrise.dart`: the first moonrise within an NPT civil day at the Kathmandu anchor — Meeus eq. 15.1 target (0.7276·π − 34′, live parallax) on the same 60-term Ch.47 ephemeris the lunar engine uses. Golden receipts from JPL Horizons topocentric samples pin six 2026 festival dates to a provisional ±12 min band (`test/moonrise_test.dart`).
-- `festival_rules.dart`: two new day-choosing conventions — `nishita` (the tithi running at the midnight ending the civil day; Dharma Sindhu ch. 5: "Chaturdashi should be till midnight") and `moonrise` (chandrodaya-vyāpti, Sankata Chaturthi's class; unlocked by the solver, battery entry pending receipts). Every battery rule now carries `shastraCategory` + `shastraCitation` — translation-level (V.D.N. Rao's condensed rendering, kamakoti.org), with the shloka-level citation marked pending.
-- Battery extended with four receipt-pinned entries: Maha Shivaratri (Krishna Chaturdashi, nishita — Falgun 3 = Feb 15 2026, udaya gives Feb 16, divergence exposed), Fagu Purnima (Purnima, firstDay hills / udaya Terai, Mar 2–3 2026), Janai Purnima (udaya Aug 28 2026, publishers chose udaya over first-overlap Aug 27) and Teej (udaya Sep 14 2026). New corpus `test/fixtures/festival_receipts_2026.json` + permanent CI gate.
-- CI harness: `dump_limb_instants` dumps the per-day moonrise (+ no-rise day count); `sweph_crosscheck.py` mirrors the identical Meeus 15.1 convention on Swiss Ephemeris (geocentric equatorial, same target, 30-min scan + bisection) and enforces provisional 300/150 s moonrise bands. No site or data changes.
-
-## [Unreleased] — Swiss-truth cross-check harness (HYA-369)
-
-- Added `packages/nmiti_cli/bin/dump_limb_instants.dart`: engine-side dump of every lunar limb boundary (base ayanamsa profile) and Kathmandu sunrise in a window — an MIT-clean facts-out command for any truth harness.
-- Added `tools/sweph/sweph_crosscheck.py` (+ README): Swiss Ephemeris (pyswisseph, Moshier file-free mode, Lahiri sidereal mode) re-solves every dumped boundary, scores the reconstruction gap per limb, flags knife-edge boundaries (≤30 min from a sunrise) and measures the ΔT-model residual (Swiss internal vs our Espenak–Meeus). AGPL harness boundary: no package imports it, nothing ships from it, outputs are numeric facts only.
-- CI (`ci.yml` verify) now runs the dump + cross-check on every push with provisional bands (tithi/karana 300/150 s; nakshatra/yoga 600/300 s — wider because they include the ayanamsa convention gap). No data changes.
-
-## [Unreleased] — commons site pages /docs + /data (HYA-402)
-
-- Added `/docs` (`docs.html`): the documentation pack rendered verbatim as static semantic HTML by the site build, zero client JavaScript. Regenerated from `docs/*.md` on every build, so the page cannot drift from the repository files.
-- Extended `/data` (`data.html`): all four canonical CSVs downloadable (the two sankranti CSVs are now served too), a build-time SHA-256 checksum table computed from the exact bytes served, and an explicit CC0-1.0 data license notice.
-- The independent Python site contract (pre-merge and post-deploy) now also checks docs.html markers, the L1 CSV structure (1,308 rows, BS 1975–2083), and re-verifies every published SHA-256 digest against the served bytes. No data changes.
-
-## 2026-11-04 — docs pack (PR #15, merge `4ace3c9`)
-
-- Added commons documentation pack: docs index, data dictionary, methodology, changelog, errata log, provenance manifest (HYA-373). No data or code changes.
-
-## 2026-11-03 — site contract fix (PR #11, merge `fc1aae6`)
-
-- `scripts/site_contract.py` became the single source of truth for the site output contract; `ci.yml` runs it pre-merge, `pages.yml` imports it post-deploy. Fixes a post-deploy smoke failure caused by an incorrect CSV marker expectation written in PR #9. No data changes.
-
-## 2026-11-02 — Commons Layer 1 shipped (PRs #7–#9)
-
-- Added `packages/nepali_sankranti`: pure-Dart sidereal ingress engine (Meeus-based, calibrated ayanamsa) + Commons Layer 1 dataset `sankranti_moments_1975_2083.csv` (1,308 NPT moments) and the 1975–2100 extension.
-- Added sankranti window-law invariant to CI (HYA-358), including the 24-row pre-1980 allowlist.
-- CI calibration record: mean 3.7 min / max 8.6 min vs 48 drikpangang moments (AD 2025–2028), 48/48 correct NPT dates.
-
-## 2026-11-02 — repository scaffold & L0 verified core (PR #1)
-
-- Pub-workspace monorepo (Dart 3.13.7 CI pin): `packages/nepali_date` (pure-Dart BS↔AD engine + invariant checker), `packages/nepali_date_data` (embedded byte-identical CSVs), `packages/nmiti_cli` (invariants gate + static site builder).
-- Canonical dataset locked: core 109 verified years + labeled projection tail; BS 2096 upstream defect preserved as `projection-defect`.
-- CI: analyze + tests + invariants (fail-closed). Pages: deploy on push + 6-hourly rebuild; 18:15 UTC = 00:00 NPT rollover.
 
