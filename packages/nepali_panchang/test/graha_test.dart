@@ -32,9 +32,6 @@ void main() {
   test('graha receipts: apparent longitude and latitude vs JPL Horizons',
       () {
     final lines = <String>[];
-    var worstMean = 0.0;
-    var worstMax = 0.0;
-    var worstLat = 0.0;
     for (final name in bodyOf.keys) {
       final body = bodyOf[name]!;
       final rows = <List<double>>[];
@@ -68,9 +65,6 @@ void main() {
         }
       }
       final mean = sum / rows.length;
-      worstMean = math_max(worstMean, mean);
-      worstMax = math_max(worstMax, maxAbs);
-      worstLat = math_max(worstLat, maxLat);
       lines.add('$name n=${rows.length} mean=${(mean * 3600).toStringAsFixed(2)}"'
           's max=${(maxAbs * 3600).toStringAsFixed(2)}" @JD$worstJd'
           ' latMax=${(maxLat * 3600).toStringAsFixed(2)}"');
@@ -133,4 +127,3 @@ void main() {
   });
 }
 
-double math_max(double a, double b) => a > b ? a : b;

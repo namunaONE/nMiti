@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'ayanamsa.dart';
+import 'civil_time.dart';
 import 'graha/graha_table.dart';
 import 'julian_day.dart';
 import 'moon.dart';
@@ -34,10 +35,15 @@ import 'sun.dart';
 /// refinement windows - hard 15 arcsec / mean 5 arcsec PROVISIONAL bands,
 /// expected class ~1 arcsec, tightened after the first CI scoreboard.
 ///
+/// The mean lunar node (Rahu) rides along on the Meeus ch. 47.7
+/// polynomial - the classical convention (every panchang prints the MEAN
+/// node; the true node's +/- 1.7 deg wobble is the named skip) - sidereal
+/// on the BASE profile for the Swiss crosscheck harness.
+///
 /// Named skips (stated, never absorbed): gravitational light deflection
 /// (<=0.01 arcsec at these solar elongations), aberration beyond first
 /// order (<=0.001 arcsec), topocentric parallax for positions (rise/set
-/// below), planetary semidiameters.
+/// below), planetary semidiameters, the true node.
 
 const double _radPerDeg = math.pi / 180;
 const double _degPerRad = 180 / math.pi;
@@ -160,8 +166,14 @@ class GrahaPosition {
   /// Geocentric light-time distance, AU.
   final double distanceAu;
 
-  /// Apparent sidereal longitude against the Swiss-Lahiri reference line.
+  /// Apparent sidereal longitude against the Swiss-Lahiri reference line
+  /// (the frame the graha publisher corpus prints).
   final double siderealLongitudeDeg;
+
+  /// Apparent sidereal longitude on the BASE ayanamsa profile - the
+  /// crosscheck channel: the Swiss harness measures the ayanamsa gap
+  /// itself (the dump_limb_instants convention).
+  final double siderealLongitudeBaseDeg;
 
   const GrahaPosition({
     required this.longitudeDeg,
@@ -170,6 +182,7 @@ class GrahaPosition {
     required this.apparentLatitudeDeg,
     required this.distanceAu,
     required this.siderealLongitudeDeg,
+    required this.siderealLongitudeBaseDeg,
   });
 }
 
@@ -211,6 +224,7 @@ GrahaPosition grahaPosition(GrahaBody body, double jdTt) {
     distanceAu: _len(geo),
     siderealLongitudeDeg: _norm360(
         app - ayanamsaSwissLahiriReference(jdTt)),
+    siderealLongitudeBaseDeg: _norm360(app - ayanamsaBase(jdTt)),
   );
 }
 
@@ -268,6 +282,28 @@ double grahaSunSeparationDeg(GrahaBody body, double jdTt) {
 /// limit (see [_combustionLimitDeg] for the provisional citation status).
 bool grahaIsCombust(GrahaBody body, double jdTt) {
   return grahaSunSeparationDeg(body, jdTt) < _combustionLimitDeg[body]!;
+}
+
+/// Mean lunar ascending node (Rahu), tropical longitude of the mean
+/// equinox of date, degrees [0, 360): the Meeus ch. 47.7 polynomial -
+/// the same mean node the ELP2000-82B series carry, retrograde at
+/// ~-0.053 deg/day. The classical Rahu IS the mean node; the true node
+/// is the named skip (see the library doc).
+double rahuMeanLongitudeDeg(double jdTt) {
+  final t = (jdTt - 2451545.0) / 36525.0;
+  final omega = 125.0445479 -
+      1934.1362891 * t +
+      0.0020754 * t * t +
+      t * t * t / 467441.0 -
+      t * t * t * t / 60616000.0;
+  return _norm360(omega);
+}
+
+/// Sidereal mean node (Rahu) on the BASE ayanamsa profile - the
+/// dump/crosscheck channel: the Swiss harness measures the ayanamsa
+/// convention gap itself.
+double rahuMeanSiderealLongitudeDeg(double jdTt) {
+  return _norm360(rahuMeanLongitudeDeg(jdTt) - ayanamsaBase(jdTt));
 }
 
 /// Nutation in obliquity (Meeus ch. 22 four-term), degrees - the companion

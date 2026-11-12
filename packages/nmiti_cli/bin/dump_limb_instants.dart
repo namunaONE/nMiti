@@ -124,18 +124,24 @@ void main(List<String> args) {
     // node at the 12:00 UT instant, sidereal on the BASE profile so
     // the Swiss harness measures the ayanamsa gap itself.
     final jdNoonUt = julianDayFromCivil(d.year, d.month, d.day + 0.5);
+    final jdNoonTt = jdTtFromJdUt(jdNoonUt);
     grahas.add(<String, Object?>{
       'date': _isoDateOf(d),
       'jd_ut': jdNoonUt,
       'utc': _isoUtcOfJdUt(jdNoonUt),
       'sidereal_deg': <String, double>{
-        'mercury': grahaPosition(kGrahaMercury, jdNoonUt).siderealLongitudeDeg,
-        'venus': grahaPosition(kGrahaVenus, jdNoonUt).siderealLongitudeDeg,
-        'mars': grahaPosition(kGrahaMars, jdNoonUt).siderealLongitudeDeg,
-        'jupiter': grahaPosition(kGrahaJupiter, jdNoonUt).siderealLongitudeDeg,
-        'saturn': grahaPosition(kGrahaSaturn, jdNoonUt).siderealLongitudeDeg,
+        'mercury':
+            grahaPosition(GrahaBody.mercury, jdNoonTt).siderealLongitudeBaseDeg,
+        'venus':
+            grahaPosition(GrahaBody.venus, jdNoonTt).siderealLongitudeBaseDeg,
+        'mars':
+            grahaPosition(GrahaBody.mars, jdNoonTt).siderealLongitudeBaseDeg,
+        'jupiter':
+            grahaPosition(GrahaBody.jupiter, jdNoonTt).siderealLongitudeBaseDeg,
+        'saturn':
+            grahaPosition(GrahaBody.saturn, jdNoonTt).siderealLongitudeBaseDeg,
       },
-      'rahu_mean_node_deg': rahuMeanSiderealLongitudeDeg(jdNoonUt),
+      'rahu_mean_node_deg': rahuMeanSiderealLongitudeDeg(jdNoonTt),
     });
   }
 
