@@ -17,6 +17,7 @@ part 'build_site_festivals.dart';
 part 'build_site_masa.dart';
 part 'build_site_saait.dart';
 part 'build_site_graha.dart';
+part 'build_site_dasha.dart';
 
 const _adMonthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
