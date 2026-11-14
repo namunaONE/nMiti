@@ -149,6 +149,7 @@ jobs:
               ok = False
 
           for path in ["", "accuracy.html", "methodology.html", "data.html", "docs.html", "embed/v1/widget.js", "embed/example.html", "data/calendar_bs_core_1975_2083.csv", "data/calendar_bs_tail_2084_2100.csv", "data/sankranti_moments_1975_2083.csv", "data/sankranti_moments_1975_2100.csv", "sankranti.html", "masa.html", "panchang.html", "bhadra.html", "panchak.html", "chandra-darshan.html", "lagna.html", "graha.html", "vrat.html", "saait.html", "muhurta.html", "ayanamsa.html", "grahan.html", "festivals.html", "api/v1/sankranti.json", "api/v1/today.json", "api/v1/calendar/" + str(by) + ".json", "llms.txt", "robots.txt"]:
+          for path in ["dasha.html",
               r = get(url + path + (bust if path else ""))
               if r.status != 200:
                   print("SMOKE FAIL: " + path + " -> HTTP " + str(r.status))
